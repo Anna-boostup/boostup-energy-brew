@@ -1,6 +1,7 @@
 import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import logoBlack from "@/assets/logo-black.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,13 +11,8 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-primary-foreground" fill="currentColor">
-                <path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z" />
-              </svg>
-            </div>
-            <span className="font-display font-bold text-xl text-foreground">Boost<span className="text-olive-light">UP</span></span>
+          <a href="/" className="flex items-center">
+            <img src={logoBlack} alt="BoostUp" className="h-8 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
