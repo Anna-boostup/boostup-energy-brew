@@ -18,9 +18,9 @@ const buttonVariants = cva(
         hero: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-button hover:shadow-lg text-base font-semibold rounded-full px-8",
         announcement: "bg-foreground text-background rounded-full font-semibold tracking-wide hover:bg-foreground/90",
         flavor: "border-2 rounded-full font-medium transition-all duration-300 hover:scale-105",
-        "flavor-lemon": "border-lemon bg-lemon/10 text-lemon-dark hover:bg-lemon hover:text-foreground",
-        "flavor-red": "border-red-rush bg-red-rush/10 text-red-rush hover:bg-red-rush hover:text-primary-foreground",
-        "flavor-green": "border-silky-green bg-silky-green/10 text-silky-green hover:bg-silky-green hover:text-primary-foreground",
+        "flavor-lemon": "border-lime bg-lime/10 text-lime-dark hover:bg-lime hover:text-foreground",
+        "flavor-red": "border-terracotta bg-terracotta/10 text-terracotta-dark hover:bg-terracotta hover:text-primary-foreground",
+        "flavor-green": "border-olive bg-olive/10 text-olive-light hover:bg-olive hover:text-primary-foreground",
       },
       size: {
         default: "h-10 px-4 py-2",
