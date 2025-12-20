@@ -6,55 +6,56 @@
 
 @layer base {
   :root {
-    /* BoostUp Brand Colors */
-    --background: 40 30% 95%;
-    --foreground: 100 20% 20%;
+    /* BoostUp Brand Colors - Based on product palette */
+    --background: 60 5% 96%;
+    --foreground: 86 25% 18%;
 
-    --card: 40 25% 92%;
-    --card-foreground: 100 20% 20%;
+    --card: 60 5% 93%;
+    --card-foreground: 86 25% 18%;
 
-    --popover: 40 30% 95%;
-    --popover-foreground: 100 20% 20%;
+    --popover: 60 5% 96%;
+    --popover-foreground: 86 25% 18%;
 
-    --primary: 100 20% 28%;
-    --primary-foreground: 40 30% 95%;
+    --primary: 86 35% 28%;
+    --primary-foreground: 60 5% 96%;
 
-    --secondary: 40 25% 88%;
-    --secondary-foreground: 100 20% 28%;
+    --secondary: 60 5% 90%;
+    --secondary-foreground: 86 35% 28%;
 
-    --muted: 40 20% 90%;
-    --muted-foreground: 100 15% 40%;
+    --muted: 60 5% 88%;
+    --muted-foreground: 86 20% 40%;
 
-    --accent: 10 70% 50%;
-    --accent-foreground: 40 30% 95%;
+    --accent: 25 65% 55%;
+    --accent-foreground: 60 5% 96%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 100 15% 75%;
-    --input: 100 15% 80%;
-    --ring: 100 20% 28%;
+    --border: 86 15% 78%;
+    --input: 86 15% 82%;
+    --ring: 86 35% 28%;
 
     --radius: 0.75rem;
 
-    /* Custom Brand Colors */
-    --olive: 100 20% 28%;
-    --olive-light: 100 15% 40%;
-    --cream: 40 30% 95%;
-    --cream-dark: 40 25% 88%;
-    --lemon: 50 90% 55%;
-    --lemon-dark: 50 80% 45%;
-    --red-rush: 0 70% 50%;
-    --silky-green: 140 40% 45%;
+    /* Custom Brand Colors - From bottle design */
+    --olive: 86 35% 28%;
+    --olive-dark: 86 40% 22%;
+    --olive-light: 86 25% 38%;
+    --lime: 68 55% 60%;
+    --lime-dark: 68 50% 50%;
+    --terracotta: 25 65% 55%;
+    --terracotta-dark: 25 60% 45%;
+    --cream: 60 5% 96%;
+    --cream-dark: 60 5% 90%;
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(40 30% 95%) 0%, hsl(40 25% 90%) 100%);
-    --gradient-olive: linear-gradient(135deg, hsl(100 20% 28%) 0%, hsl(100 25% 35%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(60 5% 96%) 0%, hsl(60 5% 92%) 100%);
+    --gradient-olive: linear-gradient(135deg, hsl(86 35% 28%) 0%, hsl(86 40% 35%) 100%);
     
     /* Shadows */
-    --shadow-product: 0 20px 40px -10px hsl(100 20% 20% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(100 20% 20% / 0.1);
-    --shadow-button: 0 4px 12px -2px hsl(100 20% 28% / 0.3);
+    --shadow-product: 0 20px 40px -10px hsl(86 25% 18% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(86 25% 18% / 0.1);
+    --shadow-button: 0 4px 12px -2px hsl(86 35% 28% / 0.3);
 
     /* Sidebar defaults */
     --sidebar-background: 0 0% 98%;

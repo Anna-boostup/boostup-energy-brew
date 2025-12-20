@@ -42,15 +42,15 @@ const HeroSection = () => {
             {/* Trust Badges */}
             <div className="flex flex-wrap gap-6 mt-10 justify-center lg:justify-start">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="w-2 h-2 rounded-full bg-silky-green" />
+                <div className="w-2 h-2 rounded-full bg-olive" />
                 Čajový extrakt
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="w-2 h-2 rounded-full bg-lemon" />
+                <div className="w-2 h-2 rounded-full bg-lime" />
                 Elektrolyty
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="w-2 h-2 rounded-full bg-red-rush" />
+                <div className="w-2 h-2 rounded-full bg-terracotta" />
                 Adaptogeny
               </div>
             </div>

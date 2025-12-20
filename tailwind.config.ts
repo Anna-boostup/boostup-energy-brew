@@ -61,21 +61,24 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom brand colors
+        // Custom brand colors - From bottle design
         olive: {
           DEFAULT: "hsl(var(--olive))",
+          dark: "hsl(var(--olive-dark))",
           light: "hsl(var(--olive-light))",
         },
         cream: {
           DEFAULT: "hsl(var(--cream))",
           dark: "hsl(var(--cream-dark))",
         },
-        lemon: {
-          DEFAULT: "hsl(var(--lemon))",
-          dark: "hsl(var(--lemon-dark))",
+        lime: {
+          DEFAULT: "hsl(var(--lime))",
+          dark: "hsl(var(--lime-dark))",
         },
-        "red-rush": "hsl(var(--red-rush))",
-        "silky-green": "hsl(var(--silky-green))",
+        terracotta: {
+          DEFAULT: "hsl(var(--terracotta))",
+          dark: "hsl(var(--terracotta-dark))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
