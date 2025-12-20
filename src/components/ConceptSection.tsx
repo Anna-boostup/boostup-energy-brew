@@ -1,111 +1,107 @@
-import { Brain, Heart, Scale } from "lucide-react";
+import { Brain, Heart, Scale, ArrowRight } from "lucide-react";
+import { Button } from "./ui/button";
 
 const concepts = [
   {
     id: "brain",
-    title: "Brain",
+    title: "BRAIN",
+    subtitle: "Kognitivní fokus",
     icon: Brain,
-    color: "bg-primary",
-    description: "Kognitivní fokus a mentální výkon"
+    color: "from-olive to-olive-dark",
+    bgColor: "bg-olive",
+    description: "Maximální mentální výkon a soustředění po celý pracovní den",
+    stats: "Focus +85%"
   },
   {
     id: "body",
-    title: "Body",
+    title: "BODY",
+    subtitle: "Fyzická energie",
     icon: Heart,
-    color: "bg-red-rush",
-    description: "Fyzická energie a vitalita"
+    color: "from-terracotta to-terracotta-dark",
+    bgColor: "bg-terracotta",
+    description: "Trvalá fyzická energie bez nervozity a crash efektu",
+    stats: "Energy +6h"
   },
   {
     id: "balance",
-    title: "Balance",
+    title: "BALANCE",
+    subtitle: "Harmonie",
     icon: Scale,
-    color: "bg-lemon",
-    description: "Harmonické složení bez crash efektu"
+    color: "from-lime to-lime-dark",
+    bgColor: "bg-lime",
+    description: "Vyvážené složení pro optimální fungování těla i mysli",
+    stats: "Stability 100%"
   },
 ];
 
 const ConceptSection = () => {
   return (
-    <section id="3b" className="py-20 bg-secondary/30">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* 3B Visualization */}
-          <div className="flex-1">
-            <div className="relative flex items-center justify-center">
-              {/* Connecting lines */}
-              <svg className="absolute w-80 h-80" viewBox="0 0 320 320">
-                <path
-                  d="M160 60 L260 220 L60 220 Z"
-                  fill="none"
-                  stroke="hsl(var(--border))"
-                  strokeWidth="2"
-                  strokeDasharray="8 4"
-                />
-              </svg>
+    <section id="3b" className="py-24 bg-background relative overflow-hidden">
+      {/* Background decorative */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-secondary/50 to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-6 tracking-wide">
+            NÁŠ PŘÍSTUP
+          </span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-6">
+            KONCEPT <span className="text-primary">3B</span>
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Na český trh přinášíme unikátní přístup k energii. Tři pilíře, které na trhu chybí.
+          </p>
+        </div>
+
+        {/* 3B Cards */}
+        <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-16">
+          {concepts.map((concept, index) => (
+            <div 
+              key={concept.id}
+              className="group relative"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${concept.color} opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 blur-xl`} />
               
-              {/* Circles */}
-              <div className="relative w-80 h-80">
-                {/* Brain - Top */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                  <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center shadow-lg animate-pulse-soft">
-                    <Brain className="w-10 h-10 text-primary-foreground" />
-                  </div>
-                  <span className="mt-3 font-display font-bold text-lg text-foreground">Brain</span>
+              <div className="relative p-8 rounded-3xl bg-card border border-border hover:border-transparent transition-all duration-500 h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground">
+                {/* Icon */}
+                <div className={`w-16 h-16 rounded-2xl ${concept.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <concept.icon className={`w-8 h-8 ${concept.id === 'balance' ? 'text-foreground' : 'text-primary-foreground'}`} />
                 </div>
-                
-                {/* Body - Bottom Left */}
-                <div className="absolute bottom-8 left-0 flex flex-col items-center">
-                  <div className="w-24 h-24 rounded-full bg-red-rush flex items-center justify-center shadow-lg animate-pulse-soft animation-delay-200">
-                    <Heart className="w-10 h-10 text-primary-foreground" />
-                  </div>
-                  <span className="mt-3 font-display font-bold text-lg text-foreground">Body</span>
+
+                {/* Stats badge */}
+                <div className="absolute top-6 right-6 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-bold rounded-full group-hover:bg-primary-foreground/20 group-hover:text-primary-foreground transition-colors">
+                  {concept.stats}
                 </div>
-                
-                {/* Balance - Bottom Right */}
-                <div className="absolute bottom-8 right-0 flex flex-col items-center">
-                  <div className="w-24 h-24 rounded-full bg-lemon flex items-center justify-center shadow-lg animate-pulse-soft animation-delay-400">
-                    <Scale className="w-10 h-10 text-foreground" />
-                  </div>
-                  <span className="mt-3 font-display font-bold text-lg text-foreground">Balance</span>
+
+                {/* Content */}
+                <h3 className="text-2xl md:text-3xl font-display font-bold mb-2">
+                  {concept.title}
+                </h3>
+                <p className="text-sm text-muted-foreground group-hover:text-primary-foreground/70 mb-4 font-medium tracking-wide">
+                  {concept.subtitle}
+                </p>
+                <p className="text-muted-foreground group-hover:text-primary-foreground/80 flex-grow">
+                  {concept.description}
+                </p>
+
+                {/* Hover indicator */}
+                <div className="mt-6 flex items-center gap-2 text-primary group-hover:text-lime font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span>Zjistit více</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </div>
               </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Content */}
-          <div className="flex-1">
-            <span className="text-primary font-medium tracking-wide uppercase text-sm">
-              Náš přístup
-            </span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2 mb-6">
-              Koncept 3B
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Na český trh přinášíme unikátní přístup k energii. Věříme, že skutečný 
-              výkon vychází z harmonie tří pilířů, které na trhu chybí:
-            </p>
-            
-            <div className="space-y-4">
-              {concepts.map((concept) => (
-                <div key={concept.id} className="flex items-start gap-4 p-4 rounded-xl bg-background shadow-card">
-                  <div className={`w-10 h-10 rounded-lg ${concept.color} flex items-center justify-center flex-shrink-0`}>
-                    <concept.icon className={`w-5 h-5 ${concept.id === "balance" ? "text-foreground" : "text-primary-foreground"}`} />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold text-foreground">{concept.title}</h3>
-                    <p className="text-sm text-muted-foreground">{concept.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 p-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5">
-              <p className="text-sm text-muted-foreground italic">
-                <strong className="text-foreground">Komentář:</strong> Koněv + Zásobek stejný jako 
-                příchutím - Lahvička
-              </p>
-            </div>
-          </div>
+        {/* CTA */}
+        <div className="text-center">
+          <Button variant="hero" size="xl" className="group">
+            Objevit sílu 3B
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
         </div>
       </div>
     </section>
