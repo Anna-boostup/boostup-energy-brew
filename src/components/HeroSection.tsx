@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Zap, Sparkles } from "lucide-react";
 import bottlesHero from "@/assets/bottles-hero.jpg";
 
 const HeroSection = () => {
@@ -7,75 +7,77 @@ const HeroSection = () => {
     <section className="min-h-screen pt-20 relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary/30">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-olive/5 rounded-full blur-3xl animate-pulse-soft" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-lime/10 rounded-full blur-3xl animate-pulse-soft animation-delay-400" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-terracotta/5 rounded-full blur-3xl animate-pulse-soft animation-delay-200" />
+        <div className="absolute top-10 left-5 w-80 h-80 bg-olive/10 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-10 right-5 w-[500px] h-[500px] bg-lime/15 rounded-full blur-3xl animate-pulse-glow animation-delay-400" />
+        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-terracotta/10 rounded-full blur-3xl animate-pulse-glow animation-delay-200" />
+        <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-orange/10 rounded-full blur-3xl animate-pulse-glow animation-delay-600" />
       </div>
 
       <div className="container mx-auto px-4 pt-8 pb-16 relative z-10">
         {/* Announcement Badge */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background rounded-full font-semibold text-sm tracking-wide animate-fade-up shadow-lg">
-            <Zap className="w-4 h-4" />
+        <div className="flex justify-center mb-10">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide animate-fade-up shadow-button animate-bounce-subtle">
+            <Zap className="w-5 h-5 text-lime" />
             BRZY NA TRHU
-            <Zap className="w-4 h-4" />
+            <Sparkles className="w-5 h-5 text-lime" />
           </div>
         </div>
 
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
           {/* Text Content */}
           <div className="flex-1 text-center lg:text-left animate-fade-up z-10">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-foreground mb-6 leading-[0.95] tracking-tight">
-              <span className="block">ENERGIE</span>
-              <span className="block text-primary">NA CELÝ DEN</span>
-              <span className="block text-3xl md:text-4xl lg:text-5xl font-medium text-muted-foreground mt-2">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
+              <span className="block animate-slide-in-left">ENERGIE</span>
+              <span className="block text-gradient-energy animate-slide-in-left animation-delay-200">NA CELÝ DEN</span>
+              <span className="block text-3xl md:text-4xl lg:text-5xl font-semibold text-muted-foreground mt-4 animate-slide-in-left animation-delay-400">
                 přirozeně.
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              <span className="text-foreground font-semibold">60 ml čisté energie</span> z čajového extraktu. 
+            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed animate-fade-up animation-delay-500">
+              <span className="text-foreground font-bold">60 ml čisté energie</span> z čajového extraktu. 
               Síla 2,5 espressa bez nervozity. Minimálně{" "}
-              <span className="text-primary font-semibold">6 hodin soustředění</span>.
+              <span className="text-terracotta font-bold">6 hodin soustředění</span>.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
-              <Button variant="hero" size="xl" className="group">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12 animate-fade-up animation-delay-600">
+              <Button variant="hero" size="xl" className="group animate-energy-pulse">
                 Objevit produkty
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </Button>
-              <Button variant="outline" size="xl" className="rounded-full border-2">
+              <Button variant="outline" size="xl" className="rounded-full border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300">
                 Náš příběh
               </Button>
             </div>
 
             {/* Stats */}
-            <div className="flex flex-wrap gap-8 justify-center lg:justify-start">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-primary">60ml</div>
-                <div className="text-sm text-muted-foreground">Pure Shot</div>
+            <div className="flex flex-wrap gap-10 justify-center lg:justify-start animate-fade-up animation-delay-800">
+              <div className="text-center group cursor-pointer">
+                <div className="text-4xl md:text-5xl font-black text-primary group-hover:scale-110 transition-transform">60ml</div>
+                <div className="text-sm font-semibold text-muted-foreground mt-1">Pure Shot</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-lime-dark">6h+</div>
-                <div className="text-sm text-muted-foreground">Energie</div>
+              <div className="text-center group cursor-pointer">
+                <div className="text-4xl md:text-5xl font-black text-lime-dark group-hover:scale-110 transition-transform">6h+</div>
+                <div className="text-sm font-semibold text-muted-foreground mt-1">Energie</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-terracotta">2.5x</div>
-                <div className="text-sm text-muted-foreground">Síla espressa</div>
+              <div className="text-center group cursor-pointer">
+                <div className="text-4xl md:text-5xl font-black text-terracotta group-hover:scale-110 transition-transform">2.5x</div>
+                <div className="text-sm font-semibold text-muted-foreground mt-1">Síla espressa</div>
               </div>
             </div>
           </div>
 
           {/* Product Image - Hero */}
-          <div className="flex-1 relative animate-fade-up animation-delay-200">
+          <div className="flex-1 relative animate-fade-up animation-delay-300">
             <div className="relative">
-              {/* Glow effect behind image */}
-              <div className="absolute inset-0 bg-gradient-to-t from-lime/20 via-olive/10 to-terracotta/10 blur-3xl scale-110" />
+              {/* Multiple glow layers for depth */}
+              <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 animate-pulse-glow" />
+              <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 animate-pulse-glow animation-delay-200" />
               
               <img
                 src={bottlesHero}
                 alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
-                className="relative w-full max-w-xl mx-auto drop-shadow-2xl hover:scale-105 transition-transform duration-700 ease-out"
+                className="relative w-full max-w-2xl mx-auto drop-shadow-2xl hover:scale-105 transition-transform duration-700 ease-out animate-float-slow"
               />
             </div>
           </div>
@@ -83,20 +85,24 @@ const HeroSection = () => {
       </div>
 
       {/* Trust Badges - Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/5 to-transparent py-8">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/10 to-transparent py-10">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap gap-8 justify-center items-center">
-            <div className="flex items-center gap-3 px-6 py-3 bg-background/80 backdrop-blur-sm rounded-full shadow-sm">
-              <div className="w-3 h-3 rounded-full bg-olive animate-pulse" />
-              <span className="text-sm font-medium text-foreground">Čajový extrakt</span>
+          <div className="flex flex-wrap gap-6 justify-center items-center">
+            <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+              <div className="w-4 h-4 rounded-full bg-olive animate-pulse" />
+              <span className="text-sm font-bold text-foreground">Čajový extrakt</span>
             </div>
-            <div className="flex items-center gap-3 px-6 py-3 bg-background/80 backdrop-blur-sm rounded-full shadow-sm">
-              <div className="w-3 h-3 rounded-full bg-lime animate-pulse animation-delay-200" />
-              <span className="text-sm font-medium text-foreground">Elektrolyty</span>
+            <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+              <div className="w-4 h-4 rounded-full bg-lime animate-pulse animation-delay-200" />
+              <span className="text-sm font-bold text-foreground">Elektrolyty</span>
             </div>
-            <div className="flex items-center gap-3 px-6 py-3 bg-background/80 backdrop-blur-sm rounded-full shadow-sm">
-              <div className="w-3 h-3 rounded-full bg-terracotta animate-pulse animation-delay-400" />
-              <span className="text-sm font-medium text-foreground">Adaptogeny</span>
+            <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+              <div className="w-4 h-4 rounded-full bg-terracotta animate-pulse animation-delay-400" />
+              <span className="text-sm font-bold text-foreground">Adaptogeny</span>
+            </div>
+            <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+              <div className="w-4 h-4 rounded-full bg-orange animate-pulse animation-delay-600" />
+              <span className="text-sm font-bold text-foreground">Vitamíny</span>
             </div>
           </div>
         </div>
