@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,56 +6,75 @@
 
 @layer base {
   :root {
-    /* BoostUp Brand Colors - Based on product palette */
-    --background: 60 5% 96%;
-    --foreground: 86 25% 18%;
+    /* BoostUp Brand Colors - New Palette */
+    /* #f4f1e6 - Cream/Background */
+    --background: 48 30% 93%;
+    --foreground: 100 35% 27%;
 
-    --card: 60 5% 93%;
-    --card-foreground: 86 25% 18%;
+    /* Cards slightly darker cream */
+    --card: 48 25% 90%;
+    --card-foreground: 100 35% 27%;
 
-    --popover: 60 5% 96%;
-    --popover-foreground: 86 25% 18%;
+    --popover: 48 30% 93%;
+    --popover-foreground: 100 35% 27%;
 
-    --primary: 86 35% 28%;
-    --primary-foreground: 60 5% 96%;
+    /* Primary: #3d5a2f - Dark Green */
+    --primary: 100 35% 27%;
+    --primary-foreground: 48 30% 93%;
 
-    --secondary: 60 5% 90%;
-    --secondary-foreground: 86 35% 28%;
+    /* Secondary: Lighter cream */
+    --secondary: 48 25% 88%;
+    --secondary-foreground: 100 35% 27%;
 
-    --muted: 60 5% 88%;
-    --muted-foreground: 86 20% 40%;
+    /* Muted */
+    --muted: 48 20% 85%;
+    --muted-foreground: 100 25% 40%;
 
-    --accent: 25 65% 55%;
-    --accent-foreground: 60 5% 96%;
+    /* Accent: #aa263e - Red/Burgundy */
+    --accent: 350 64% 41%;
+    --accent-foreground: 48 30% 93%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 86 15% 78%;
-    --input: 86 15% 82%;
-    --ring: 86 35% 28%;
+    --border: 100 15% 78%;
+    --input: 100 15% 82%;
+    --ring: 100 35% 27%;
 
     --radius: 0.75rem;
 
-    /* Custom Brand Colors - From bottle design */
-    --olive: 86 35% 28%;
-    --olive-dark: 86 40% 22%;
-    --olive-light: 86 25% 38%;
-    --lime: 68 55% 60%;
-    --lime-dark: 68 50% 50%;
-    --terracotta: 25 65% 55%;
-    --terracotta-dark: 25 60% 45%;
-    --cream: 60 5% 96%;
-    --cream-dark: 60 5% 90%;
+    /* Custom Brand Colors - Exact HEX conversions to HSL */
+    /* #3d5a2f - Dark Green (Main) */
+    --olive: 100 35% 27%;
+    --olive-dark: 100 40% 20%;
+    --olive-light: 100 30% 35%;
+    
+    /* #dfdf57 - Lime Yellow (Secondary) */
+    --lime: 60 67% 61%;
+    --lime-dark: 60 65% 50%;
+    
+    /* #aa263e - Red/Burgundy (Accent) */
+    --terracotta: 350 64% 41%;
+    --terracotta-dark: 350 60% 32%;
+    
+    /* #f29739 - Orange (Accent Secondary) */
+    --orange: 32 88% 58%;
+    --orange-dark: 32 85% 48%;
+    
+    /* #f4f1e6 - Cream (Background) */
+    --cream: 48 30% 93%;
+    --cream-dark: 48 25% 88%;
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(60 5% 96%) 0%, hsl(60 5% 92%) 100%);
-    --gradient-olive: linear-gradient(135deg, hsl(86 35% 28%) 0%, hsl(86 40% 35%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(48 30% 93%) 0%, hsl(48 25% 88%) 100%);
+    --gradient-olive: linear-gradient(135deg, hsl(100 35% 27%) 0%, hsl(100 40% 35%) 100%);
+    --gradient-energy: linear-gradient(135deg, hsl(60 67% 61%) 0%, hsl(32 88% 58%) 50%, hsl(350 64% 41%) 100%);
     
     /* Shadows */
-    --shadow-product: 0 20px 40px -10px hsl(86 25% 18% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(86 25% 18% / 0.1);
-    --shadow-button: 0 4px 12px -2px hsl(86 35% 28% / 0.3);
+    --shadow-product: 0 30px 60px -15px hsl(100 35% 15% / 0.35);
+    --shadow-card: 0 8px 30px -8px hsl(100 25% 18% / 0.15);
+    --shadow-button: 0 6px 20px -4px hsl(100 35% 27% / 0.4);
+    --shadow-levitate: 0 40px 60px -20px hsl(100 40% 15% / 0.4);
 
     /* Sidebar defaults */
     --sidebar-background: 0 0% 98%;
@@ -69,25 +88,25 @@
   }
 
   .dark {
-    --background: 86 20% 8%;
-    --foreground: 60 5% 96%;
-    --card: 86 20% 12%;
-    --card-foreground: 60 5% 96%;
-    --popover: 86 20% 8%;
-    --popover-foreground: 60 5% 96%;
-    --primary: 68 55% 60%;
-    --primary-foreground: 86 25% 18%;
-    --secondary: 86 15% 15%;
-    --secondary-foreground: 60 5% 96%;
-    --muted: 86 15% 20%;
-    --muted-foreground: 60 5% 70%;
-    --accent: 25 65% 55%;
-    --accent-foreground: 60 5% 96%;
+    --background: 100 25% 8%;
+    --foreground: 48 30% 93%;
+    --card: 100 25% 12%;
+    --card-foreground: 48 30% 93%;
+    --popover: 100 25% 8%;
+    --popover-foreground: 48 30% 93%;
+    --primary: 60 67% 61%;
+    --primary-foreground: 100 35% 15%;
+    --secondary: 100 20% 15%;
+    --secondary-foreground: 48 30% 93%;
+    --muted: 100 20% 20%;
+    --muted-foreground: 48 20% 70%;
+    --accent: 350 64% 50%;
+    --accent-foreground: 48 30% 93%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 86 15% 20%;
-    --input: 86 15% 20%;
-    --ring: 68 55% 60%;
+    --border: 100 20% 20%;
+    --input: 100 20% 20%;
+    --ring: 60 67% 61%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -126,6 +145,10 @@
     background: var(--gradient-olive);
   }
   
+  .gradient-energy {
+    background: var(--gradient-energy);
+  }
+  
   .shadow-product {
     box-shadow: var(--shadow-product);
   }
@@ -137,22 +160,35 @@
   .shadow-button {
     box-shadow: var(--shadow-button);
   }
+  
+  .shadow-levitate {
+    box-shadow: var(--shadow-levitate);
+  }
 }
 
 /* Animations */
 @keyframes float {
   0%, 100% {
+    transform: translateY(0px) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-3deg);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
 }
 
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -163,7 +199,7 @@
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -174,9 +210,71 @@
 @keyframes pulse-soft {
   0%, 100% {
     opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+    filter: blur(40px);
   }
   50% {
     opacity: 0.8;
+    filter: blur(60px);
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes energy-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(60 67% 61% / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(60 67% 61% / 0.6), 0 0 60px hsl(32 88% 58% / 0.3);
   }
 }
 
@@ -184,26 +282,88 @@
   animation: float 4s ease-in-out infinite;
 }
 
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
 .animate-fade-up {
-  animation: fade-up 0.6s ease-out forwards;
+  animation: fade-up 0.8s ease-out forwards;
 }
 
 .animate-scale-in {
-  animation: scale-in 0.5s ease-out forwards;
+  animation: scale-in 0.6s ease-out forwards;
 }
 
 .animate-pulse-soft {
-  animation: pulse-soft 2s ease-in-out infinite;
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.8s ease-out forwards;
+}
+
+.animate-energy-pulse {
+  animation: energy-pulse 2s ease-in-out infinite;
+}
+
+.animation-delay-100 {
+  animation-delay: 100ms;
 }
 
 .animation-delay-200 {
   animation-delay: 200ms;
 }
 
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
 .animation-delay-400 {
   animation-delay: 400ms;
 }
 
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
 .animation-delay-600 {
   animation-delay: 600ms;
+}
+
+.animation-delay-800 {
+  animation-delay: 800ms;
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-levitate);
+}
+
+/* Text gradient */
+.text-gradient-energy {
+  background: linear-gradient(135deg, hsl(60 67% 61%) 0%, hsl(32 88% 58%) 50%, hsl(350 64% 41%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

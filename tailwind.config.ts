@@ -61,7 +61,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom brand colors - From bottle design
+        // Custom brand colors - BoostUp Palette
         olive: {
           DEFAULT: "hsl(var(--olive))",
           dark: "hsl(var(--olive-dark))",
@@ -78,6 +78,10 @@ export default {
         terracotta: {
           DEFAULT: "hsl(var(--terracotta))",
           dark: "hsl(var(--terracotta-dark))",
+        },
+        orange: {
+          DEFAULT: "hsl(var(--orange))",
+          dark: "hsl(var(--orange-dark))",
         },
       },
       borderRadius: {
