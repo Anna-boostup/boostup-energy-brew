@@ -60,8 +60,14 @@ const HeroSection = () => {
             <img
               src={bottlesHero}
               alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
-              className="relative w-full max-w-2xl mx-auto drop-shadow-2xl hover:scale-105 transition-transform duration-700 ease-out animate-float-slow"
+              className="relative w-full max-w-2xl mx-auto hover:scale-105 transition-transform duration-700 ease-out animate-float-slow"
+              style={{
+                filter: 'drop-shadow(0 30px 60px rgba(61, 90, 47, 0.4)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2))'
+              }}
             />
+            
+            {/* Soft shadow underneath for levitation effect */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-8 bg-foreground/20 blur-2xl rounded-full" />
           </div>
         </div>
 
