@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
-import bottlesHero from "@/assets/bottles-hero.jpg";
+import bottlesHero from "@/assets/bottles-hero-nobg.png";
 
 const HeroSection = () => {
   return (
