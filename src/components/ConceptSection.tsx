@@ -1,6 +1,6 @@
 import { Brain, Heart, Scale, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
-import bottlesHero from "@/assets/bottles-hero.jpg";
+import EnergyChart from "./EnergyChart";
 
 const concepts = [
   {
@@ -61,14 +61,9 @@ const ConceptSection = () => {
           </p>
         </div>
         
-        {/* Hero image - only once here */}
-        <div className="relative mb-20 animate-fade-up animation-delay-300">
-          <div className="absolute inset-0 bg-gradient-to-r from-olive/20 via-lime/20 to-terracotta/20 blur-3xl scale-105 animate-pulse-glow" />
-          <img 
-            src={bottlesHero} 
-            alt="BoostUp Pure Shot kolekce" 
-            className="relative w-full max-w-4xl mx-auto rounded-3xl shadow-levitate"
-          />
+        {/* Energy Chart */}
+        <div className="mb-20 animate-fade-up animation-delay-300">
+          <EnergyChart />
         </div>
 
         {/* 3B Cards */}
