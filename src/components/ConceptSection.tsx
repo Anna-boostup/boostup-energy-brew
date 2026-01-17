@@ -1,6 +1,14 @@
-import { Brain, Heart, Scale, ArrowRight, Sparkles } from "lucide-react";
+import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
 import { Button } from "./ui/button";
 import EnergyChart from "./EnergyChart";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 
 const concepts = [
   {
@@ -12,7 +20,23 @@ const concepts = [
     bgColor: "bg-olive",
     textColor: "text-cream",
     description: "Maximální mentální výkon a soustředění po celý pracovní den",
-    stats: "Focus +85%"
+    stats: "Focus +85%",
+    fullDescription: `
+      BRAIN představuje první pilíř našeho konceptu 3B zaměřený na optimalizaci kognitivních funkcí.
+      
+      **Co obsahuje:**
+      • L-Theanin pro klidnou koncentraci bez nervozity
+      • Guarana s postupným uvolňováním energie
+      • B-vitamíny pro zdravou funkci nervové soustavy
+      
+      **Přínosy:**
+      • Zvýšená mentální ostrost a jasnost myšlení
+      • Lepší schopnost soustředění na náročné úkoly
+      • Podpora paměti a rychlosti zpracování informací
+      • Žádný "brain fog" ani únava po odeznění účinku
+      
+      Ideální pro studenty, profesionály a každého, kdo potřebuje maximální mentální výkon.
+    `
   },
   {
     id: "body",
@@ -23,7 +47,23 @@ const concepts = [
     bgColor: "bg-terracotta",
     textColor: "text-cream",
     description: "Trvalá fyzická energie bez nervozity a crash efektu",
-    stats: "Energy +6h"
+    stats: "Energy +6h",
+    fullDescription: `
+      BODY je druhým pilířem zaměřeným na udržitelnou fyzickou energii po celý den.
+      
+      **Co obsahuje:**
+      • Přírodní kofein v optimální dávce
+      • Taurin pro podporu svalové výkonnosti
+      • Elektrolyty pro správnou hydrataci
+      
+      **Přínosy:**
+      • Stabilní energie po dobu 6+ hodin
+      • Žádný prudký nástup ani následný "crash"
+      • Podpora fyzické výkonnosti a vytrvalosti
+      • Rychlejší regenerace po námaze
+      
+      Perfektní pro sportovce, aktivní lidi i ty, kdo potřebují energii na dlouhé pracovní dny.
+    `
   },
   {
     id: "balance",
@@ -34,11 +74,29 @@ const concepts = [
     bgColor: "bg-lime",
     textColor: "text-foreground",
     description: "Vyvážené složení pro optimální fungování těla i mysli",
-    stats: "Stability 100%"
+    stats: "Stability 100%",
+    fullDescription: `
+      BALANCE je třetím pilířem, který spojuje BRAIN a BODY do harmonického celku.
+      
+      **Co obsahuje:**
+      • Adaptogeny pro odolnost vůči stresu
+      • Antioxidanty pro ochranu buněk
+      • Přírodní ingredience bez umělých přísad
+      
+      **Přínosy:**
+      • Synergie mezi mentální a fyzickou složkou
+      • Podpora přirozené rovnováhy organismu
+      • Snížení negativních účinků stresu
+      • Dlouhodobá podpora zdraví a vitality
+      
+      Klíč k udržitelnému životnímu stylu bez extrémů a kompromisů.
+    `
   },
 ];
 
 const ConceptSection = () => {
+  const [selectedConcept, setSelectedConcept] = useState<typeof concepts[0] | null>(null);
+
   return (
     <section id="3b" className="py-28 bg-background relative overflow-hidden">
       {/* Background decorative */}
@@ -71,8 +129,9 @@ const ConceptSection = () => {
           {concepts.map((concept, index) => (
             <div 
               key={concept.id}
-              className="group relative animate-fade-up"
+              className="group relative animate-fade-up cursor-pointer"
               style={{ animationDelay: `${400 + index * 150}ms` }}
+              onClick={() => setSelectedConcept(concept)}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${concept.color} opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 blur-xl scale-105`} />
               
@@ -116,6 +175,61 @@ const ConceptSection = () => {
           </Button>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      <Dialog open={!!selectedConcept} onOpenChange={() => setSelectedConcept(null)}>
+        <DialogContent className="sm:max-w-2xl bg-card border-2 border-border">
+          {selectedConcept && (
+            <>
+              <DialogHeader className="text-left">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className={`w-16 h-16 rounded-2xl ${selectedConcept.bgColor} flex items-center justify-center shadow-lg`}>
+                    <selectedConcept.icon className={`w-8 h-8 ${selectedConcept.textColor}`} />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-3xl font-display font-black text-foreground">
+                      {selectedConcept.title}
+                    </DialogTitle>
+                    <p className="text-sm text-muted-foreground font-bold tracking-widest">
+                      {selectedConcept.subtitle}
+                    </p>
+                  </div>
+                  <div className="ml-auto px-4 py-2 bg-lime text-foreground text-sm font-black rounded-full shadow-md">
+                    {selectedConcept.stats}
+                  </div>
+                </div>
+              </DialogHeader>
+              <DialogDescription asChild>
+                <div className="text-foreground space-y-4 text-base leading-relaxed">
+                  {selectedConcept.fullDescription.split('\n').map((line, i) => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return null;
+                    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                      return (
+                        <h4 key={i} className="font-bold text-lg mt-6 mb-2 text-foreground">
+                          {trimmedLine.replace(/\*\*/g, '')}
+                        </h4>
+                      );
+                    }
+                    if (trimmedLine.startsWith('•')) {
+                      return (
+                        <p key={i} className="pl-4 text-muted-foreground">
+                          {trimmedLine}
+                        </p>
+                      );
+                    }
+                    return (
+                      <p key={i} className="text-muted-foreground">
+                        {trimmedLine}
+                      </p>
+                    );
+                  })}
+                </div>
+              </DialogDescription>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
