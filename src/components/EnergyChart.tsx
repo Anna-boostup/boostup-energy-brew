@@ -2,21 +2,21 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "rec
 
 // Data pro jednotlivé složky
 const individualData = [
-  { time: 0, kofein: 0, guarana: 0, taurin: 5 },
-  { time: 0.5, kofein: 30, guarana: 5, taurin: 10 },
-  { time: 1, kofein: 70, guarana: 15, taurin: 15 },
-  { time: 1.5, kofein: 100, guarana: 30, taurin: 18 },
-  { time: 2, kofein: 85, guarana: 55, taurin: 20 },
-  { time: 2.5, kofein: 65, guarana: 75, taurin: 20 },
-  { time: 3, kofein: 45, guarana: 90, taurin: 20 },
-  { time: 3.5, kofein: 30, guarana: 95, taurin: 18 },
-  { time: 4, kofein: 20, guarana: 85, taurin: 16 },
-  { time: 4.5, kofein: 12, guarana: 70, taurin: 14 },
-  { time: 5, kofein: 8, guarana: 50, taurin: 12 },
-  { time: 5.5, kofein: 5, guarana: 35, taurin: 10 },
-  { time: 6, kofein: 3, guarana: 20, taurin: 8 },
-  { time: 6.5, kofein: 2, guarana: 10, taurin: 6 },
-  { time: 7, kofein: 0, guarana: 5, taurin: 5 },
+  { time: 0, kofein: 0, guarana: 0, theanin: 5 },
+  { time: 0.5, kofein: 30, guarana: 5, theanin: 10 },
+  { time: 1, kofein: 70, guarana: 15, theanin: 15 },
+  { time: 1.5, kofein: 100, guarana: 30, theanin: 18 },
+  { time: 2, kofein: 85, guarana: 55, theanin: 20 },
+  { time: 2.5, kofein: 65, guarana: 75, theanin: 20 },
+  { time: 3, kofein: 45, guarana: 90, theanin: 20 },
+  { time: 3.5, kofein: 30, guarana: 95, theanin: 18 },
+  { time: 4, kofein: 20, guarana: 85, theanin: 16 },
+  { time: 4.5, kofein: 12, guarana: 70, theanin: 14 },
+  { time: 5, kofein: 8, guarana: 50, theanin: 12 },
+  { time: 5.5, kofein: 5, guarana: 35, theanin: 10 },
+  { time: 6, kofein: 3, guarana: 20, theanin: 8 },
+  { time: 6.5, kofein: 2, guarana: 10, theanin: 6 },
+  { time: 7, kofein: 0, guarana: 5, theanin: 5 },
 ];
 
 // Data pro synergický efekt
@@ -50,9 +50,9 @@ const ingredientInfo = [
     description: "Pomalý a déletrvající účinek. Guarana má pozvolnější nástup, její účinek vrcholí později (kolem 3-4 hodin) a poskytuje stabilnější stimulaci."
   },
   {
-    name: "Taurin",
+    name: "Theanin",
     color: "#dfdf57",
-    description: "Stabilizační základna. Taurin nepůsobí jako stimulant, ale poskytuje nízkou, konstantní úroveň podpory, která pomáhá modulovat celkový efekt."
+    description: "Stabilizační základna. Theanin podporuje klidnou koncentraci, zmírňuje nervozitu z kofeinu a poskytuje vyváženou mentální ostrost bez vedlejších účinků."
   },
 ];
 
@@ -84,7 +84,7 @@ const EnergyChart = () => {
                   <stop offset="5%" stopColor="#f29739" stopOpacity={0.8}/>
                   <stop offset="95%" stopColor="#f29739" stopOpacity={0.1}/>
                 </linearGradient>
-                <linearGradient id="taurinGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="theaninGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#dfdf57" stopOpacity={0.8}/>
                   <stop offset="95%" stopColor="#dfdf57" stopOpacity={0.1}/>
                 </linearGradient>
@@ -115,11 +115,11 @@ const EnergyChart = () => {
               />
               <Area 
                 type="monotone" 
-                dataKey="taurin" 
+                dataKey="theanin" 
                 stroke="#dfdf57" 
                 strokeWidth={3}
-                fill="url(#taurinGradient)" 
-                name="taurin"
+                fill="url(#theaninGradient)" 
+                name="theanin"
               />
               <Area 
                 type="monotone" 
