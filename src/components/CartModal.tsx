@@ -35,10 +35,10 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed right-0 top-0 h-full w-full max-w-md bg-card shadow-2xl z-[101] flex flex-col border-l border-border"
+                        className="fixed right-0 top-0 w-full max-w-md bg-background shadow-2xl z-[101] flex flex-col border-l-2 border-b-2 border-primary h-auto max-h-[100dvh]"
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-border flex items-center justify-between">
+                        <div className="p-6 flex items-center justify-between flex-shrink-0">
                             <h2 className="text-2xl font-display font-bold text-foreground flex items-center gap-3">
                                 <ShoppingBag className="w-6 h-6 text-primary" />
                                 Váš košík
@@ -52,7 +52,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         </div>
 
                         {/* Cart Items */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                        <div className="overflow-y-auto p-6 space-y-6 flex-grow">
                             {cart.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
                                     <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center">
@@ -73,7 +73,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                     {cart.map((item) => (
                                         <div
                                             key={item.id}
-                                            className="flex gap-4 p-4 bg-secondary/20 rounded-2xl border border-border/50 group"
+                                            className="flex gap-4 p-4 bg-white rounded-2xl border border-border/50 group shadow-sm"
                                         >
                                             <div className="w-20 h-20 bg-white rounded-xl overflow-hidden flex-shrink-0 border border-border/30">
                                                 <img
@@ -119,7 +119,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
                         {/* Footer */}
                         {cart.length > 0 && (
-                            <div className="p-6 border-t border-border bg-card/50 space-y-4">
+                            <div className="p-6 border-t border-border bg-card space-y-4">
                                 <div className="flex justify-between items-center">
                                     <span className="text-muted-foreground font-medium">Celkem k úhradě:</span>
                                     <span className="text-3xl font-display font-bold text-gradient-energy">
