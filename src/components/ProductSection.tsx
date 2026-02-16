@@ -2,33 +2,35 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 type Flavor = "lemon" | "red" | "silky";
 type Pack = 3 | 12 | 21;
 type FlavorMode = "single" | "mix";
 
 const flavors = [
-  { 
-    id: "lemon" as Flavor, 
-    name: "LEMON BLAST", 
+  {
+    id: "lemon" as Flavor,
+    name: "LEMON BLAST",
     color: "from-lime to-lime-dark",
     bgColor: "bg-lime",
     borderColor: "border-lime",
     textColor: "text-foreground",
     description: "Citrusová svěžest pro jasnou mysl"
   },
-  { 
-    id: "red" as Flavor, 
-    name: "RED RUSH", 
+  {
+    id: "red" as Flavor,
+    name: "RED RUSH",
     color: "from-terracotta to-terracotta-dark",
     bgColor: "bg-terracotta",
     borderColor: "border-terracotta",
     textColor: "text-cream",
     description: "Červené ovoce pro rychlý start"
   },
-  { 
-    id: "silky" as Flavor, 
-    name: "SILKY LEAF", 
+  {
+    id: "silky" as Flavor,
+    name: "SILKY LEAF",
     color: "from-olive to-olive-dark",
     bgColor: "bg-olive",
     borderColor: "border-olive",
@@ -55,8 +57,29 @@ const ProductSection = () => {
   const [selectedPack, setSelectedPack] = useState<Pack>(12);
   const [quantity, setQuantity] = useState(1);
 
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+
   const currentFlavor = flavors.find(f => f.id === selectedFlavor)!;
   const price = packPrices[selectedPack] * quantity;
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: flavorMode === "mix" ? `mix-${selectedPack}` : `${selectedFlavor}-${selectedPack}`,
+      name: flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`,
+      price: packPrices[selectedPack],
+      quantity: quantity,
+      flavor: flavorMode === "mix" ? "MIX" : currentFlavor.name,
+      pack: selectedPack,
+      flavorMode: flavorMode,
+      image: bottleSingle
+    });
+
+    toast({
+      title: "Přidáno do košíku",
+      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : currentFlavor.name} (${selectedPack} ks)`,
+    });
+  };
 
   return (
     <section id="produkty" className="py-28 bg-secondary/30 relative overflow-hidden">
@@ -64,7 +87,7 @@ const ProductSection = () => {
       <div className="absolute top-20 left-10 w-96 h-96 bg-lime/10 rounded-full blur-3xl animate-pulse-glow" />
       <div className="absolute bottom-20 right-10 w-80 h-80 bg-terracotta/10 rounded-full blur-3xl animate-pulse-glow animation-delay-400" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-olive/5 rounded-full blur-3xl animate-pulse-soft" />
-      
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-20 animate-fade-up">
@@ -84,7 +107,7 @@ const ProductSection = () => {
             <div className="relative">
               {/* Glow effect */}
               <div className={`absolute inset-0 ${flavorMode === "mix" ? "bg-gradient-to-br from-lime via-terracotta to-olive" : `bg-gradient-to-br ${currentFlavor.color}`} opacity-30 blur-3xl scale-125 transition-all duration-700 animate-pulse-glow`} />
-              
+
               {/* Main product with levitation */}
               <div className="relative animate-float">
                 <div className="relative">
@@ -97,14 +120,14 @@ const ProductSection = () => {
                     }}
                   />
                 </div>
-                
+
                 {/* Floating badge */}
                 <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${flavorMode === "mix" ? "bg-gradient-to-r from-lime via-terracotta to-olive" : currentFlavor.bgColor} ${flavorMode === "mix" ? "text-cream" : currentFlavor.textColor} px-6 py-3 rounded-2xl font-bold shadow-lg animate-bounce-subtle`}>
                   <span className="text-lg">{selectedPack}x</span>
                   <span className="text-sm ml-1">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
                 </div>
               </div>
-              
+
               {/* Shadow on ground */}
               <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-48 h-8 bg-foreground/20 rounded-full blur-xl" />
             </div>
@@ -120,11 +143,10 @@ const ProductSection = () => {
                   <button
                     key={pack}
                     onClick={() => setSelectedPack(pack)}
-                    className={`flex-1 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover-lift ${
-                      selectedPack === pack
-                        ? "bg-primary text-primary-foreground shadow-button scale-105"
-                        : "bg-card text-foreground border-2 border-border hover:border-primary"
-                    }`}
+                    className={`flex-1 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover-lift ${selectedPack === pack
+                      ? "bg-primary text-primary-foreground shadow-button scale-105"
+                      : "bg-card text-foreground border-2 border-border hover:border-primary"
+                      }`}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     {pack}x
@@ -142,11 +164,10 @@ const ProductSection = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setFlavorMode("single")}
-                  className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${
-                    flavorMode === "single"
-                      ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
-                      : "bg-card text-foreground border-2 border-border hover:border-primary"
-                  }`}
+                  className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
+                    ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
+                    : "bg-card text-foreground border-2 border-border hover:border-primary"
+                    }`}
                 >
                   <Droplet className="w-5 h-5" />
                   <div className="text-left">
@@ -156,14 +177,13 @@ const ProductSection = () => {
                     </div>
                   </div>
                 </button>
-                
+
                 <button
                   onClick={() => setFlavorMode("mix")}
-                  className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${
-                    flavorMode === "mix"
-                      ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream shadow-button scale-[1.02]"
-                      : "bg-card text-foreground border-2 border-border hover:border-primary"
-                  }`}
+                  className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "mix"
+                    ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream shadow-button scale-[1.02]"
+                    : "bg-card text-foreground border-2 border-border hover:border-primary"
+                    }`}
                 >
                   <Blend className="w-5 h-5" />
                   <div className="text-left">
@@ -174,7 +194,7 @@ const ProductSection = () => {
                   </div>
                 </button>
               </div>
-              
+
               {/* Mix description */}
               {flavorMode === "mix" && (
                 <div className="mt-4 p-4 rounded-xl bg-card border-2 border-dashed border-lime/50 animate-fade-up">
@@ -198,11 +218,10 @@ const ProductSection = () => {
                     <button
                       key={flavor.id}
                       onClick={() => setSelectedFlavor(flavor.id)}
-                      className={`w-full p-5 rounded-2xl flex items-center gap-4 transition-all duration-300 hover-lift ${
-                        selectedFlavor === flavor.id
-                          ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-lg scale-[1.02]`
-                          : `bg-card border-2 ${flavor.borderColor} hover:scale-[1.01]`
-                      }`}
+                      className={`w-full p-5 rounded-2xl flex items-center gap-4 transition-all duration-300 hover-lift ${selectedFlavor === flavor.id
+                        ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-lg scale-[1.02]`
+                        : `bg-card border-2 ${flavor.borderColor} hover:scale-[1.01]`
+                        }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
                       <div className={`w-14 h-14 rounded-xl ${selectedFlavor === flavor.id ? 'bg-cream/20' : flavor.bgColor} flex items-center justify-center transition-transform duration-300 ${selectedFlavor === flavor.id ? 'scale-110' : ''}`}>
@@ -242,7 +261,12 @@ const ProductSection = () => {
                 </button>
               </div>
 
-              <Button variant="hero" size="xl" className="flex-1 group animate-energy-pulse">
+              <Button
+                variant="hero"
+                size="xl"
+                className="flex-1 group animate-energy-pulse"
+                onClick={handleAddToCart}
+              >
                 <ShoppingBag className="w-5 h-5" />
                 Přidat do košíku
                 <span className="font-bold ml-2">{price} Kč</span>
