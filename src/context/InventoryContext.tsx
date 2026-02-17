@@ -27,6 +27,7 @@ interface InventoryContextType {
     decrementStock: (sku: SKU, amount: number) => boolean;
     getStock: (sku: SKU) => number;
     addOrder: (order: Order) => void;
+    updateOrderStatus: (orderId: string, status: Order['status']) => void;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -90,8 +91,12 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setOrders((prev) => [order, ...prev]);
     };
 
+    const updateOrderStatus = (orderId: string, status: Order['status']) => {
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+    };
+
     return (
-        <InventoryContext.Provider value={{ stock, orders, updateStock, decrementStock, getStock, addOrder }}>
+        <InventoryContext.Provider value={{ stock, orders, updateStock, decrementStock, getStock, addOrder, updateOrderStatus }}>
             {children}
         </InventoryContext.Provider>
     );
