@@ -4,6 +4,8 @@ import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail }
 import bottleSingle from "@/assets/bottle-single.jpg";
 import bottlesHero from "@/assets/bottles-hero-final.png"; // Import hero image
 import pack3Silky from "@/assets/3pack.png"; // Import specific 3-pack image
+import pack3Lemon from "@/assets/3PackLemon.png"; // Import specific 3-pack image
+import pack3Red from "@/assets/3PackRed.png"; // Import specific 3-pack image
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +15,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+// ... (existing code)
+
+
 
 type Flavor = "lemon" | "red" | "silky";
 type Pack = 3 | 12 | 21;
@@ -75,6 +81,24 @@ const ProductSection = () => {
   const { addToCart } = useCart();
   const { getStock } = useInventory();
   const { toast } = useToast();
+
+  const getProductImage = () => {
+    if (!flavorMode && !selectedFlavor) return bottlesHero;
+    if (flavorMode === "mix") return bottleSingle;
+
+    // Single Flavor specific logic
+    if (flavorMode === "single" && selectedFlavor && selectedPack === 3) {
+      if (selectedFlavor === 'lemon') return pack3Lemon;
+      if (selectedFlavor === 'red') return pack3Red;
+      if (selectedFlavor === 'silky') return pack3Silky;
+    }
+
+    if (!selectedFlavor) return bottlesHero;
+
+    return bottleSingle;
+  };
+
+  const productImageSrc = getProductImage();
 
   const [mixCounts, setMixCounts] = useState({ lemon: 0, red: 0, silky: 0 });
 
@@ -189,17 +213,7 @@ const ProductSection = () => {
                 <div className="relative animate-float">
                   <div className="relative">
                     <img
-                      src={
-                        !flavorMode && !selectedFlavor
-                          ? bottlesHero
-                          : flavorMode === "mix"
-                            ? bottleSingle
-                            : !selectedFlavor
-                              ? bottlesHero
-                              : (selectedFlavor === 'silky' && selectedPack === 3)
-                                ? pack3Silky
-                                : bottleSingle
-                      }
+                      src={productImageSrc}
                       alt={flavorMode === "mix" ? "BoostUp Mix" : selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
                       className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
                       style={{

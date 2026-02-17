@@ -1,35 +1,17 @@
-
 import { useState } from "react";
 import { useInventory, SKU } from "@/context/InventoryContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pencil, Save, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Plus, History } from "lucide-react";
+import { RestockDialog } from "@/components/admin/RestockDialog";
+import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
 
 const Inventory = () => {
-    const { stock, updateStock } = useInventory();
-    const [editingSku, setEditingSku] = useState<SKU | null>(null);
-    const [editValue, setEditValue] = useState<number>(0);
-    const { toast } = useToast();
+    const { stock } = useInventory();
 
-    const handleEdit = (sku: SKU, currentQty: number) => {
-        setEditingSku(sku);
-        setEditValue(currentQty);
-    };
-
-    const handleSave = (sku: SKU) => {
-        updateStock(sku, editValue);
-        setEditingSku(null);
-        toast({
-            title: "Sklad aktualizován",
-            description: `Položka ${sku} byla nastavena na ${editValue} ks.`,
-        });
-    };
-
-    const handleCancel = () => {
-        setEditingSku(null);
-    };
+    // Dialog States
+    const [restockSku, setRestockSku] = useState<SKU | null>(null);
+    const [historySku, setHistorySku] = useState<SKU | null>(null);
 
     return (
         <div className="space-y-8">
@@ -42,7 +24,7 @@ const Inventory = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>SKU (Kód)</TableHead>
-                            <TableHead>Název (Odhad)</TableHead>
+                            <TableHead>Název</TableHead>
                             <TableHead className="text-right">Množství</TableHead>
                             <TableHead className="text-right">Akce</TableHead>
                         </TableRow>
@@ -68,40 +50,51 @@ const Inventory = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {editingSku === sku ? (
-                                            <Input
-                                                type="number"
-                                                value={editValue}
-                                                onChange={(e) => setEditValue(Number(e.target.value))}
-                                                className="w-24 text-right ml-auto"
-                                            />
-                                        ) : (
-                                            <span className={qty < 10 ? "text-red-600 font-bold" : ""}>
-                                                {qty} ks
-                                            </span>
-                                        )}
+                                        <span className={`font-bold ${qty < 10 ? "text-red-600" : ""}`}>
+                                            {qty} ks
+                                        </span>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        {editingSku === sku ? (
-                                            <div className="flex justify-end gap-2">
-                                                <Button size="icon" variant="ghost" onClick={() => handleSave(sku)} className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-100">
-                                                    <Save className="h-4 w-4" />
-                                                </Button>
-                                                <Button size="icon" variant="ghost" onClick={handleCancel} className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-100">
-                                                    <X className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <Button size="icon" variant="ghost" onClick={() => handleEdit(sku, qty)} className="h-8 w-8">
-                                                <Pencil className="h-4 w-4" />
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => setHistorySku(sku)}
+                                                title="Historie pohybů"
+                                            >
+                                                <History className="h-4 w-4 mr-1" />
+                                                Historie
                                             </Button>
-                                        )}
+                                            <Button
+                                                size="sm"
+                                                className="bg-green-600 hover:bg-green-700 text-white"
+                                                onClick={() => setRestockSku(sku)}
+                                                title="Naskladnit"
+                                            >
+                                                <Plus className="h-4 w-4 mr-1" />
+                                                Naskladnit
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Dialogs */}
+            <RestockDialog
+                isOpen={!!restockSku}
+                onClose={() => setRestockSku(null)}
+                sku={restockSku}
+                currentStock={restockSku ? stock[restockSku] : 0}
+            />
+
+            <StockHistoryDialog
+                isOpen={!!historySku}
+                onClose={() => setHistorySku(null)}
+                sku={historySku}
+            />
         </div>
     );
 };

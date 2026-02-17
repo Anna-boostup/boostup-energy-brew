@@ -20,10 +20,21 @@ export interface Order {
     status: 'pending' | 'paid' | 'shipped';
 }
 
+export interface StockMovement {
+    id: string;
+    sku: string;
+    type: 'restock' | 'sale' | 'correction';
+    amount: number;
+    date: string;
+    note?: string;
+}
+
 interface InventoryContextType {
     stock: Record<SKU, number>;
     orders: Order[];
-    updateStock: (sku: SKU, quantity: number) => void;
+    movements: StockMovement[];
+    addMovement: (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => void;
+    updateStock: (sku: SKU, quantity: number) => void; // Deprecated but kept for compatibility
     decrementStock: (sku: SKU, amount: number) => boolean;
     getStock: (sku: SKU) => number;
     addOrder: (order: Order) => void;
@@ -32,7 +43,6 @@ interface InventoryContextType {
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
-// Initial mock stock data (Tracking individual units/bottles)
 // Initial mock stock data (Hybrid System)
 const INITIAL_STOCK: Record<SKU, number> = {
     // Single Bottles (for Mixes)
@@ -48,14 +58,17 @@ const INITIAL_STOCK: Record<SKU, number> = {
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [stock, setStock] = useState<Record<SKU, number>>(() => {
-        // For development/demo: Force reset to INITIAL_STOCK if needed, or better, merge/ensure keys exist
-        // But for now, let's keep it simple. If the user wants to see specific numbers, we might need to reset.
         const saved = localStorage.getItem("inventory_stock");
         return saved ? { ...INITIAL_STOCK, ...JSON.parse(saved) } : INITIAL_STOCK;
     });
 
     const [orders, setOrders] = useState<Order[]>(() => {
         const saved = localStorage.getItem("inventory_orders");
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    const [movements, setMovements] = useState<StockMovement[]>(() => {
+        const saved = localStorage.getItem("inventory_movements");
         return saved ? JSON.parse(saved) : [];
     });
 
@@ -67,19 +80,47 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         localStorage.setItem("inventory_orders", JSON.stringify(orders));
     }, [orders]);
 
+    useEffect(() => {
+        localStorage.setItem("inventory_movements", JSON.stringify(movements));
+    }, [movements]);
+
+    const addMovement = (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
+        const movement: StockMovement = {
+            id: Math.random().toString(36).substr(2, 9),
+            sku,
+            type,
+            amount,
+            date: new Date().toISOString(),
+            note
+        };
+
+        setMovements(prev => [movement, ...prev]);
+
+        setStock(prev => {
+            const current = prev[sku] || 0;
+            let newAmount = current;
+
+            if (type === 'correction') {
+                newAmount = amount;
+            } else {
+                // For restock (positive amount) and sale (negative amount passed logic? or handled here?)
+                // Usually restock is +amount, sale is -amount.
+                // Let's assume 'amount' passed is the delta.
+                newAmount = current + amount;
+            }
+
+            return { ...prev, [sku]: Math.max(0, newAmount) };
+        });
+    };
+
+    // Legacy support - wraps addMovement as correction
     const updateStock = (sku: SKU, quantity: number) => {
-        setStock((prev) => ({
-            ...prev,
-            [sku]: quantity,
-        }));
+        addMovement(sku, quantity, 'correction', 'Manual update via legacy edit');
     };
 
     const decrementStock = (sku: SKU, amount: number) => {
         if ((stock[sku] || 0) < amount) return false;
-        setStock((prev) => ({
-            ...prev,
-            [sku]: prev[sku] - amount,
-        }));
+        addMovement(sku, -amount, 'sale', 'E-shop purchase');
         return true;
     };
 
@@ -96,7 +137,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     return (
-        <InventoryContext.Provider value={{ stock, orders, updateStock, decrementStock, getStock, addOrder, updateOrderStatus }}>
+        <InventoryContext.Provider value={{ stock, orders, movements, addMovement, updateStock, decrementStock, getStock, addOrder, updateOrderStatus }}>
             {children}
         </InventoryContext.Provider>
     );
