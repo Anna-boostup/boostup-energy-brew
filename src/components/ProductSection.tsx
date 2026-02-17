@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
 import bottlesHero from "@/assets/bottles-hero-final.png"; // Import hero image
+import pack3Silky from "@/assets/3pack.png"; // Import specific 3-pack image
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
