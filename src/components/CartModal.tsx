@@ -35,10 +35,10 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed right-0 top-0 w-full max-w-md bg-background shadow-2xl z-[101] flex flex-col border-l-2 border-b-2 border-primary h-auto max-h-[100dvh]"
+                        className="fixed right-0 top-0 w-full max-w-md bg-background/95 backdrop-blur-xl shadow-2xl z-[101] flex flex-col border-l border-white/20 h-[100dvh] rounded-l-[2.5rem]"
                     >
                         {/* Header */}
-                        <div className="p-6 flex items-center justify-between flex-shrink-0">
+                        <div className="p-8 flex items-center justify-between flex-shrink-0">
                             <h2 className="text-2xl font-display font-bold text-foreground flex items-center gap-3">
                                 <ShoppingBag className="w-6 h-6 text-primary" />
                                 Váš košík

@@ -72,7 +72,7 @@ const Header = () => {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 relative"
+              className="gap-2 relative rounded-full"
               onClick={() => setIsCartOpen(true)}
             >
               <ShoppingCart className="w-4 h-4" />
