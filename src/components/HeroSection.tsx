@@ -32,20 +32,19 @@ const HeroSection = () => {
               přirozeně.
             </span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-up animation-delay-500">
-            <span className="text-foreground font-bold">60 ml čisté energie</span> z čajového extraktu. 
-            Síla 2,5 espressa bez nervozity. Minimálně{" "}
-            <span className="text-terracotta font-bold">6 hodin soustředění</span>.
+            <span className="text-foreground font-bold">6 hodin soustředění a čisté energie</span> ze stimulantů.
+            Síla 2,5 espressa bez nervozity. <span className="text-terracotta font-bold">Žádná umělá sladidla a aromata</span>.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600">
             <Button variant="hero" size="xl" className="group animate-energy-pulse">
-              Objevit produkty
+              Chci koupit
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </Button>
             <Button variant="outline" size="xl" className="rounded-full border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-              Náš příběh
+              Chci objevit více
             </Button>
           </div>
         </div>
@@ -56,7 +55,7 @@ const HeroSection = () => {
             {/* Multiple glow layers for depth */}
             <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 animate-pulse-glow" />
             <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 animate-pulse-glow animation-delay-200" />
-            
+
             <img
               src={bottlesHero}
               alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
@@ -65,7 +64,7 @@ const HeroSection = () => {
                 filter: 'drop-shadow(0 30px 60px rgba(61, 90, 47, 0.4)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2))'
               }}
             />
-            
+
             {/* Soft shadow underneath for levitation effect */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-8 bg-foreground/20 blur-2xl rounded-full" />
           </div>
@@ -75,7 +74,7 @@ const HeroSection = () => {
         <div className="flex flex-wrap gap-6 justify-center items-center animate-fade-up animation-delay-800">
           <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
             <div className="w-4 h-4 rounded-full bg-olive animate-pulse" />
-            <span className="text-sm font-bold text-foreground">Čajový extrakt</span>
+            <span className="text-sm font-bold text-foreground">Přírodní stimulanty</span>
           </div>
           <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
             <div className="w-4 h-4 rounded-full bg-lime animate-pulse animation-delay-200" />

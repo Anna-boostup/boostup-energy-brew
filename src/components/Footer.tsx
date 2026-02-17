@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="py-16 bg-foreground text-primary-foreground relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" 
+        <div className="absolute inset-0"
           style={{
             backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
             backgroundSize: '32px 32px'
@@ -20,24 +20,24 @@ const Footer = () => {
           <div className="md:col-span-2">
             <img src={logoWhite} alt="BoostUp" className="h-10 mb-6" />
             <p className="text-primary-foreground/70 max-w-md mb-6">
-              60 ml čisté energie z čajového extraktu. Síla 2,5 espressa bez nervozity. 
-              Minimálně 6 hodin soustředění pro ty, kdo chtějí více.
+              6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity.
+              Žádná umělá sladidla a aromata.
             </p>
             <div className="flex items-center gap-4">
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-lime hover:text-foreground transition-all duration-300"
               >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-lime hover:text-foreground transition-all duration-300"
               >
                 <Facebook className="w-5 h-5" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-lime hover:text-foreground transition-all duration-300"
               >
                 <Linkedin className="w-5 h-5" />
@@ -51,8 +51,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {["O nás", "Produkty", "Koncept 3B", "Kontakt", "Blog"].map((link) => (
                 <li key={link}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-primary-foreground/70 hover:text-lime transition-colors duration-300"
                   >
                     {link}

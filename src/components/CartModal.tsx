@@ -84,6 +84,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="font-bold text-sm truncate">{item.name}</h3>
+                                                {item.mixConfiguration && (
+                                                    <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
+                                                        {item.mixConfiguration.lemon > 0 && <div>Lemon: {item.mixConfiguration.lemon}x</div>}
+                                                        {item.mixConfiguration.red > 0 && <div>Red: {item.mixConfiguration.red}x</div>}
+                                                        {item.mixConfiguration.silky > 0 && <div>Silky: {item.mixConfiguration.silky}x</div>}
+                                                    </div>
+                                                )}
                                                 <p className="text-primary font-bold mt-1">
                                                     {item.price} Kč
                                                 </p>

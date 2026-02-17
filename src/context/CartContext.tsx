@@ -9,6 +9,11 @@ export interface CartItem {
     pack?: number;
     flavorMode?: 'single' | 'mix';
     image?: string;
+    mixConfiguration?: {
+        lemon: number;
+        red: number;
+        silky: number;
+    };
 }
 
 interface CartState {
@@ -36,8 +41,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const cartReducer = (state: CartState, action: CartAction): CartState => {
     switch (action.type) {
         case 'ADD_TO_CART':
+            // Create a unique key for comparison including mix config
+            const newItemKey = JSON.stringify(action.payload.mixConfiguration || {});
+
             const existingItemIndex = state.items.findIndex(
-                item => item.id === action.payload.id && item.flavor === action.payload.flavor && item.pack === action.payload.pack
+                item => item.id === action.payload.id &&
+                    item.flavor === action.payload.flavor &&
+                    item.pack === action.payload.pack &&
+                    JSON.stringify(item.mixConfiguration || {}) === newItemKey
             );
             if (existingItemIndex > -1) {
                 const newItems = [...state.items];
