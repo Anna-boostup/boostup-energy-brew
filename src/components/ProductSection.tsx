@@ -66,19 +66,20 @@ const getMixDescription = (pack: Pack): string => {
 };
 
 const ProductSection = () => {
-  const [flavorMode, setFlavorMode] = useState<FlavorMode>("single");
+  const [flavorMode, setFlavorMode] = useState<FlavorMode | null>(null);
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
-  const [selectedPack, setSelectedPack] = useState<Pack>(12);
+  const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
-  const { getStock } = useInventory(); // Added access to getStock from useInventory
+  const { getStock } = useInventory();
   const { toast } = useToast();
 
   const [mixCounts, setMixCounts] = useState({ lemon: 0, red: 0, silky: 0 });
 
   // Update mix counts when pack size changes
   React.useEffect(() => {
+    if (!selectedPack) return;
     const perFlavor = Math.floor(selectedPack / 3);
     const remainder = selectedPack % 3;
     setMixCounts({
@@ -88,13 +89,13 @@ const ProductSection = () => {
     });
   }, [selectedPack]);
 
-  const currentFlavor = selectedFlavor ? flavors.find(f => f.id === selectedFlavor)! : flavors[0]; // Fallback for mix/logic, but visual handles null
-  const price = packPrices[selectedPack] * quantity;
+  const currentFlavor = selectedFlavor ? flavors.find(f => f.id === selectedFlavor)! : flavors[0]; // Fallback
+  const price = selectedPack ? packPrices[selectedPack] * quantity : 0;
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
-  const isMixValid = currentMixCount === selectedPack;
+  const isMixValid = selectedPack ? currentMixCount === selectedPack : false;
 
   const handleMixChange = (flavorId: Flavor, change: number) => {
-    // ... (logic remains same)
+    if (!selectedPack) return;
     const newCounts = { ...mixCounts, [flavorId]: Math.max(0, mixCounts[flavorId] + change) };
     const newTotal = Object.values(newCounts).reduce((a, b) => a + b, 0);
 
@@ -105,6 +106,24 @@ const ProductSection = () => {
   };
 
   const handleAddToCart = () => {
+    if (!selectedPack) {
+      toast({
+        title: "Vyberte balení",
+        description: "Prosím zvolte velikost balení (počet kusů).",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!flavorMode) {
+      toast({
+        title: "Vyberte variantu",
+        description: "Zvolte zda chcete jednu příchuť nebo mix.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (flavorMode === "single" && !selectedFlavor) {
       toast({
         title: "Vyberte příchuť",
