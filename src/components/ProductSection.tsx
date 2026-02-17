@@ -420,20 +420,20 @@ const ProductSection = () => {
                       requiredLemon = mixCounts.lemon * quantity;
                       requiredRed = mixCounts.red * quantity;
                       requiredSilky = mixCounts.silky * quantity;
-                    } else {
-                      // Single flavor
-                      const packSize = selectedPack; // 3, 12, 21
-                      if (selectedFlavor === 'lemon') requiredLemon = packSize * quantity;
-                      else if (selectedFlavor === 'red') requiredRed = packSize * quantity;
-                      else if (selectedFlavor === 'silky') requiredSilky = packSize * quantity;
-                    }
 
-                    if (
-                      (requiredLemon > 0 && getStock('lemon') < requiredLemon) ||
-                      (requiredRed > 0 && getStock('red') < requiredRed) ||
-                      (requiredSilky > 0 && getStock('silky') < requiredSilky)
-                    ) {
-                      isOutOfStock = true;
+                      if (
+                        (requiredLemon > 0 && getStock('lemon') < requiredLemon) ||
+                        (requiredRed > 0 && getStock('red') < requiredRed) ||
+                        (requiredSilky > 0 && getStock('silky') < requiredSilky)
+                      ) {
+                        isOutOfStock = true;
+                      }
+                    } else {
+                      // Single flavor: Check specific PACK SKU
+                      const sku = `${selectedFlavor}-${selectedPack}`;
+                      if (getStock(sku) < quantity) {
+                        isOutOfStock = true;
+                      }
                     }
 
                     return (
@@ -465,27 +465,14 @@ const ProductSection = () => {
                           let maxAvailable = Infinity;
 
                           if (flavorMode === 'mix') {
-                            // For Mix: Calculate how many full sets we can make based on the mix config
-                            // We care about sets of (quantity * mixCounts), but here we want "How many MORE can I add?"
-                            // Actually, the user wants "How many packs are in stock".
-                            // If I selected a 3-pack mix logic, does he mean "How many 3-packs in total"?
-                            // Yes: "packy 3, 12 a 21 se napojí na stejnojmené packy".
-                            // So we calculate available "packs" of the CURRENT mix configuration.
-
-                            // If clean mix (1,1,1 for 3-pack):
-                            // Lemon: 100 -> 100 sets
-                            // Red: 50 -> 50 sets
-                            // Result: 50 packs available.
-
+                            // For Mix: Calculate how many packs can be made from loose bottles
                             if (mixCounts.lemon > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('lemon') / mixCounts.lemon));
                             if (mixCounts.red > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('red') / mixCounts.red));
                             if (mixCounts.silky > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('silky') / mixCounts.silky));
                           } else {
-                            // Single Flavor
-                            const packSize = selectedPack;
-                            if (selectedFlavor === 'lemon') maxAvailable = Math.floor(getStock('lemon') / packSize);
-                            else if (selectedFlavor === 'red') maxAvailable = Math.floor(getStock('red') / packSize);
-                            else if (selectedFlavor === 'silky') maxAvailable = Math.floor(getStock('silky') / packSize);
+                            // Single Flavor: Check specific PACK SKU directly
+                            const sku = `${selectedFlavor}-${selectedPack}`;
+                            maxAvailable = getStock(sku);
                           }
 
                           if (maxAvailable === Infinity) maxAvailable = 0; // Fallback

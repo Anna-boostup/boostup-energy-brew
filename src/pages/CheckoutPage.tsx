@@ -34,32 +34,33 @@ const CheckoutPage = () => {
         e.preventDefault();
 
         // Calculate total required ingredients
-        const requiredStock = { lemon: 0, red: 0, silky: 0 };
+        const requiredStock: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
 
         cart.forEach(item => {
             if (item.flavorMode === 'mix' && item.mixConfiguration) {
                 // For Mix: Multiply the mix config by the number of packs (quantity)
-                requiredStock.lemon += (item.mixConfiguration.lemon || 0) * item.quantity;
-                requiredStock.red += (item.mixConfiguration.red || 0) * item.quantity;
-                requiredStock.silky += (item.mixConfiguration.silky || 0) * item.quantity;
+                requiredStock.lemon = (requiredStock.lemon || 0) + (item.mixConfiguration.lemon || 0) * item.quantity;
+                requiredStock.red = (requiredStock.red || 0) + (item.mixConfiguration.red || 0) * item.quantity;
+                requiredStock.silky = (requiredStock.silky || 0) + (item.mixConfiguration.silky || 0) * item.quantity;
             } else if (item.flavor) {
-                // For Single Flavor: Determine flavor key and add pack size * quantity
+                // For Single Flavor: Use specific PACK SKU (e.g. lemon-21)
                 const flavorKey = item.flavor.toLowerCase().includes('lemon') ? 'lemon'
                     : item.flavor.toLowerCase().includes('red') ? 'red'
                         : item.flavor.toLowerCase().includes('silky') ? 'silky' : null;
 
-                if (flavorKey && flavorKey in requiredStock) {
-                    requiredStock[flavorKey as keyof typeof requiredStock] += (item.pack || 0) * item.quantity;
+                if (flavorKey) {
+                    const sku = `${flavorKey}-${item.pack}`;
+                    requiredStock[sku] = (requiredStock[sku] || 0) + item.quantity;
                 }
             }
         });
 
         // 1. Stock Check
-        for (const [flavor, amount] of Object.entries(requiredStock)) {
-            if (amount > 0 && getStock(flavor) < amount) {
+        for (const [sku, amount] of Object.entries(requiredStock)) {
+            if (amount > 0 && getStock(sku) < amount) {
                 toast({
                     title: "Chyba objednávky",
-                    description: `Nedostatek skladových zásob pro příchuť ${flavor.toUpperCase()}. Chybí ${(amount - getStock(flavor))} ks.`,
+                    description: `Nedostatek skladových zásob pro položku ${sku.toUpperCase()}. Chybí ${(amount - getStock(sku))} ks.`,
                     variant: "destructive"
                 });
                 return;

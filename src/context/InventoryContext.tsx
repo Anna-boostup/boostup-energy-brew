@@ -32,16 +32,25 @@ interface InventoryContextType {
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 // Initial mock stock data (Tracking individual units/bottles)
+// Initial mock stock data (Hybrid System)
 const INITIAL_STOCK: Record<SKU, number> = {
-    "lemon": 200, // Total bottles/shots
+    // Single Bottles (for Mixes)
+    "lemon": 200,
     "red": 200,
     "silky": 200,
+
+    // Pre-packed SKUs (for Single Packs)
+    "lemon-3": 50, "lemon-12": 30, "lemon-21": 15,
+    "red-3": 50, "red-12": 30, "red-21": 20,
+    "silky-3": 50, "silky-12": 30, "silky-21": 20,
 };
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [stock, setStock] = useState<Record<SKU, number>>(() => {
+        // For development/demo: Force reset to INITIAL_STOCK if needed, or better, merge/ensure keys exist
+        // But for now, let's keep it simple. If the user wants to see specific numbers, we might need to reset.
         const saved = localStorage.getItem("inventory_stock");
-        return saved ? JSON.parse(saved) : INITIAL_STOCK;
+        return saved ? { ...INITIAL_STOCK, ...JSON.parse(saved) } : INITIAL_STOCK;
     });
 
     const [orders, setOrders] = useState<Order[]>(() => {

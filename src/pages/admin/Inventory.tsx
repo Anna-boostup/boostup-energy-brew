@@ -54,12 +54,18 @@ const Inventory = () => {
                                 <TableRow key={sku}>
                                     <TableCell className="font-mono font-medium">{sku}</TableCell>
                                     <TableCell>
-                                        {/* Simple mapping for demo purposes */}
-                                        {sku.includes('lemon') && "🍋 Lemon Blast"}
-                                        {sku.includes('red') && "🍓 Red Rush"}
-                                        {sku.includes('silky') && "🌿 Silky Leaf"}
-                                        {" - "}
-                                        {sku.split('-')[1]} ks
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">
+                                                {sku.includes('lemon') && "🍋 Lemon Blast"}
+                                                {sku.includes('red') && "🍓 Red Rush"}
+                                                {sku.includes('silky') && "🌿 Silky Leaf"}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {sku.includes('-')
+                                                    ? `📦 Balení ${sku.split('-')[1]} ks`
+                                                    : "🍾 Samostatná lahev (pro Mixy)"}
+                                            </span>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {editingSku === sku ? (
