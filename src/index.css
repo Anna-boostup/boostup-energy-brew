@@ -45,31 +45,31 @@
 
     /* Custom Brand Colors - Exact HEX conversions to HSL */
     /* #3d5a2f - Dark Green (Main) */
-    --olive: 100 35% 27%;
-    --olive-dark: 100 40% 20%;
-    --olive-light: 100 30% 35%;
-    
+    --olive: 100 31% 27%;
+    --olive-dark: 100 31% 20%;
+    --olive-light: 100 31% 35%;
+
     /* #dfdf57 - Lime Yellow (Secondary) */
-    --lime: 60 67% 61%;
-    --lime-dark: 60 65% 50%;
-    
+    --lime: 60 68% 61%;
+    --lime-dark: 60 68% 50%;
+
     /* #aa263e - Red/Burgundy (Accent) */
-    --terracotta: 350 64% 41%;
-    --terracotta-dark: 350 60% 32%;
-    
+    --terracotta: 349 63% 41%;
+    --terracotta-dark: 349 63% 32%;
+
     /* #f29739 - Orange (Accent Secondary) */
-    --orange: 32 88% 58%;
-    --orange-dark: 32 85% 48%;
-    
+    --orange: 30 88% 59%;
+    --orange-dark: 30 88% 48%;
+
     /* #f4f1e6 - Cream (Background) */
-    --cream: 48 30% 93%;
-    --cream-dark: 48 25% 88%;
-    
+    --cream: 47 30% 93%;
+    --cream-dark: 47 30% 88%;
+
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(48 30% 93%) 0%, hsl(48 25% 88%) 100%);
     --gradient-olive: linear-gradient(135deg, hsl(100 35% 27%) 0%, hsl(100 40% 35%) 100%);
     --gradient-energy: linear-gradient(135deg, hsl(60 67% 61%) 0%, hsl(32 88% 58%) 50%, hsl(350 64% 41%) 100%);
-    
+
     /* Shadows */
     --shadow-product: 0 30px 60px -15px hsl(100 35% 15% / 0.35);
     --shadow-card: 0 8px 30px -8px hsl(100 25% 18% / 0.15);
@@ -127,7 +127,12 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-display;
   }
 }
@@ -136,31 +141,31 @@
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .gradient-hero {
     background: var(--gradient-hero);
   }
-  
+
   .gradient-olive {
     background: var(--gradient-olive);
   }
-  
+
   .gradient-energy {
     background: var(--gradient-energy);
   }
-  
+
   .shadow-product {
     box-shadow: var(--shadow-product);
   }
-  
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
-  
+
   .shadow-button {
     box-shadow: var(--shadow-button);
   }
-  
+
   .shadow-levitate {
     box-shadow: var(--shadow-levitate);
   }
@@ -168,18 +173,24 @@
 
 /* Animations */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(-3deg);
   }
+
   50% {
     transform: translateY(-15px) rotate(-3deg);
   }
 }
 
 @keyframes float-slow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -190,6 +201,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -201,6 +213,7 @@
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -208,10 +221,13 @@
 }
 
 @keyframes pulse-soft {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.7;
     transform: scale(1.05);
@@ -219,10 +235,13 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.5;
     filter: blur(40px);
   }
+
   50% {
     opacity: 0.8;
     filter: blur(60px);
@@ -230,9 +249,12 @@
 }
 
 @keyframes bounce-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -242,6 +264,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -252,6 +275,7 @@
     opacity: 0;
     transform: translateX(-50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -263,6 +287,7 @@
     opacity: 0;
     transform: translateX(50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -270,9 +295,12 @@
 }
 
 @keyframes energy-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 20px hsl(60 67% 61% / 0.3);
   }
+
   50% {
     box-shadow: 0 0 40px hsl(60 67% 61% / 0.6), 0 0 60px hsl(32 88% 58% / 0.3);
   }
