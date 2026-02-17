@@ -72,19 +72,19 @@ const HeroSection = () => {
 
         {/* Trust Badges - Below image */}
         <div className="flex flex-wrap gap-6 justify-center items-center animate-fade-up animation-delay-800">
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-olive animate-pulse" />
             <span className="text-sm font-bold text-foreground">Přírodní stimulanty</span>
           </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-lime animate-pulse animation-delay-200" />
             <span className="text-sm font-bold text-foreground">Elektrolyty</span>
           </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-terracotta animate-pulse animation-delay-400" />
             <span className="text-sm font-bold text-foreground">Adaptogeny</span>
           </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card hover-lift cursor-pointer">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-orange animate-pulse animation-delay-600" />
             <span className="text-sm font-bold text-foreground">Vitamíny</span>
           </div>
