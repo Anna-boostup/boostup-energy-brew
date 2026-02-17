@@ -252,22 +252,21 @@ const ProductSection = () => {
                       {flavors.map((flavor, index) => (
                         <div
                           key={flavor.id}
-                          className={`w-full p-4 rounded-2xl flex items-center justify-between gap-4 transition-all duration-300 border-2 ${mixCounts[flavor.id] > 0 ? flavor.borderColor + ' bg-card' : 'border-dashed border-border bg-secondary/30'}`}
+                          className={`w-full p-4 rounded-2xl flex items-center justify-between gap-4 transition-all duration-300 border-2 ${mixCounts[flavor.id] > 0 ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-md border-transparent` : 'border-dashed border-border bg-secondary/30'}`}
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
                           <div className="flex items-center gap-4 flex-1">
                             {/* Icon */}
-                            <div className={`w-12 h-12 rounded-xl shrink-0 ${flavor.bgColor} flex items-center justify-center`}>
-                              {flavor.id === "lemon" && <Sparkles className={`w-6 h-6 ${flavor.textColor}`} />}
-                              {flavor.id === "red" && <Sparkles className={`w-6 h-6 ${flavor.textColor}`} />}
-                              {flavor.id === "silky" && <Droplet className={`w-6 h-6 ${flavor.textColor}`} />}
-                              {/* Using generic icon if specialized ones aren't imported or available, but utilizing colors */}
+                            <div className={`w-12 h-12 rounded-xl shrink-0 ${mixCounts[flavor.id] > 0 ? 'bg-white/20' : flavor.bgColor} flex items-center justify-center`}>
+                              {flavor.id === "lemon" && <Sparkles className={`w-6 h-6 ${mixCounts[flavor.id] > 0 ? 'text-white' : flavor.textColor}`} />}
+                              {flavor.id === "red" && <Sparkles className={`w-6 h-6 ${mixCounts[flavor.id] > 0 ? 'text-white' : flavor.textColor}`} />}
+                              {flavor.id === "silky" && <Droplet className={`w-6 h-6 ${mixCounts[flavor.id] > 0 ? 'text-white' : flavor.textColor}`} />}
                             </div>
 
                             {/* Text Info */}
                             <div className="text-left min-w-0 flex-1">
                               <div className="font-bold text-base leading-tight">{flavor.name}</div>
-                              <div className="text-xs text-muted-foreground leading-snug mt-0.5">
+                              <div className={`text-xs leading-snug mt-0.5 ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>
                                 {flavor.description}
                               </div>
                             </div>
@@ -279,17 +278,17 @@ const ProductSection = () => {
                             <div className="flex items-center gap-2 bg-background rounded-full border border-border px-1 py-1 shadow-sm">
                               <button
                                 onClick={() => handleMixChange(flavor.id, -1)}
-                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors disabled:opacity-50"
+                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors disabled:opacity-50 text-foreground"
                                 disabled={mixCounts[flavor.id] === 0}
                               >
                                 <Minus className="w-3.5 h-3.5" />
                               </button>
-                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm tabular-nums">
+                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm tabular-nums text-foreground">
                                 {mixCounts[flavor.id]} <span className="text-muted-foreground font-normal">/ {selectedPack}</span>
                               </span>
                               <button
                                 onClick={() => handleMixChange(flavor.id, 1)}
-                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors disabled:opacity-50"
+                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors disabled:opacity-50 text-foreground"
                                 disabled={currentMixCount >= selectedPack}
                               >
                                 <Plus className="w-3.5 h-3.5" />
@@ -302,7 +301,7 @@ const ProductSection = () => {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-8 w-8 rounded-full p-0 text-muted-foreground hover:text-foreground"
+                                  className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
                                   <Info className="w-4 h-4" />
                                 </Button>
@@ -342,23 +341,23 @@ const ProductSection = () => {
                             }`}
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
-                          <div className={`w-14 h-14 rounded-xl ${selectedFlavor === flavor.id ? 'bg-cream/20' : flavor.bgColor} flex items-center justify-center transition-transform duration-300 ${selectedFlavor === flavor.id ? 'scale-110' : ''}`}>
-                            {selectedFlavor === flavor.id ? (
-                              <Check className="w-7 h-7" />
-                            ) : (
-                              <div className="w-6 h-6 rounded-full bg-cream/50" />
-                            )}
+                          <div className={`w-12 h-12 rounded-xl shrink-0 ${selectedFlavor === flavor.id ? 'bg-cream/20' : flavor.bgColor} flex items-center justify-center transition-transform duration-300 ${selectedFlavor === flavor.id ? 'scale-110' : ''}`}>
+                            {flavor.id === "lemon" && <Sparkles className={`w-6 h-6 ${selectedFlavor === flavor.id ? 'text-white' : flavor.textColor}`} />}
+                            {flavor.id === "red" && <Sparkles className={`w-6 h-6 ${selectedFlavor === flavor.id ? 'text-white' : flavor.textColor}`} />}
+                            {flavor.id === "silky" && <Droplet className={`w-6 h-6 ${selectedFlavor === flavor.id ? 'text-white' : flavor.textColor}`} />}
                           </div>
-                          <div className="flex-1 text-left">
+
+                          {/* Text Info - Aligned with Mix Mode */}
+                          <div className="text-left min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-lg">{flavor.name}</span>
+                              <span className="font-bold text-base leading-tight">{flavor.name}</span>
                               {flavor.labels && flavor.labels.map(label => (
-                                <span key={label} className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
+                                <span key={label} className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
                                   {label}
                                 </span>
                               ))}
                             </div>
-                            <div className={`text-sm ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
+                            <div className={`text-xs leading-snug mt-0.5 ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
                               {flavor.description}
                             </div>
                           </div>
