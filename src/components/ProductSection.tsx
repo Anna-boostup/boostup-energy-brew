@@ -190,11 +190,15 @@ const ProductSection = () => {
                   <div className="relative">
                     <img
                       src={
-                        flavorMode === "mix"
-                          ? bottleSingle // Or a specific mix image if available
-                          : !selectedFlavor
-                            ? bottlesHero // Default image
-                            : bottleSingle // Flavor specific image (would normally be different per flavor)
+                        !flavorMode && !selectedFlavor
+                          ? bottlesHero
+                          : flavorMode === "mix"
+                            ? bottleSingle
+                            : !selectedFlavor
+                              ? bottlesHero
+                              : (selectedFlavor === 'silky' && selectedPack === 3)
+                                ? pack3Silky
+                                : bottleSingle
                       }
                       alt={flavorMode === "mix" ? "BoostUp Mix" : selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
                       className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
