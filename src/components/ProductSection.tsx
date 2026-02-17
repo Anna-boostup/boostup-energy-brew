@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
+import bottlesHero from "@/assets/bottles-hero-final.png"; // Import hero image
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
@@ -66,7 +67,7 @@ const getMixDescription = (pack: Pack): string => {
 
 const ProductSection = () => {
   const [flavorMode, setFlavorMode] = useState<FlavorMode>("single");
-  const [selectedFlavor, setSelectedFlavor] = useState<Flavor>("silky");
+  const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
   const [selectedPack, setSelectedPack] = useState<Pack>(12);
   const [quantity, setQuantity] = useState(1);
 
@@ -87,12 +88,13 @@ const ProductSection = () => {
     });
   }, [selectedPack]);
 
-  const currentFlavor = flavors.find(f => f.id === selectedFlavor)!;
+  const currentFlavor = selectedFlavor ? flavors.find(f => f.id === selectedFlavor)! : flavors[0]; // Fallback for mix/logic, but visual handles null
   const price = packPrices[selectedPack] * quantity;
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
   const isMixValid = currentMixCount === selectedPack;
 
   const handleMixChange = (flavorId: Flavor, change: number) => {
+    // ... (logic remains same)
     const newCounts = { ...mixCounts, [flavorId]: Math.max(0, mixCounts[flavorId] + change) };
     const newTotal = Object.values(newCounts).reduce((a, b) => a + b, 0);
 
@@ -103,6 +105,15 @@ const ProductSection = () => {
   };
 
   const handleAddToCart = () => {
+    if (flavorMode === "single" && !selectedFlavor) {
+      toast({
+        title: "Vyberte příchuť",
+        description: "Prosím zvolte jednu z příchutí pro pokračování.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (flavorMode === "mix" && !isMixValid) {
       toast({
         title: "Nelze přidat do košíku",
@@ -147,15 +158,26 @@ const ProductSection = () => {
             <div className="flex-1 flex items-center justify-center animate-fade-up animation-delay-200">
               <div className="relative">
                 {/* Glow effect */}
-                <div className={`absolute inset-0 ${flavorMode === "mix" ? "bg-gradient-to-br from-lime via-terracotta to-olive" : `bg-gradient-to-br ${currentFlavor.color}`} opacity-30 blur-3xl scale-125 transition-all duration-700 animate-pulse-glow`} />
+                <div className={`absolute inset-0 ${flavorMode === "mix"
+                  ? "bg-gradient-to-br from-lime via-terracotta to-olive"
+                  : !selectedFlavor
+                    ? "bg-gradient-to-br from-lime via-terracotta to-olive opacity-20" // Default glow
+                    : `bg-gradient-to-br ${currentFlavor.color}`
+                  } opacity-30 blur-3xl scale-125 transition-all duration-700 animate-pulse-glow`} />
 
                 {/* Main product with levitation */}
                 <div className="relative animate-float">
                   <div className="relative">
                     <img
-                      src={bottleSingle}
-                      alt={flavorMode === "mix" ? "BoostUp Mix" : currentFlavor.name}
-                      className="w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110"
+                      src={
+                        flavorMode === "mix"
+                          ? bottleSingle // Or a specific mix image if available
+                          : !selectedFlavor
+                            ? bottlesHero // Default image
+                            : bottleSingle // Flavor specific image (would normally be different per flavor)
+                      }
+                      alt={flavorMode === "mix" ? "BoostUp Mix" : selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
+                      className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
                       style={{
                         filter: 'drop-shadow(0 40px 40px rgba(61, 90, 47, 0.3))'
                       }}
@@ -163,10 +185,15 @@ const ProductSection = () => {
                   </div>
 
                   {/* Floating badge */}
-                  <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${flavorMode === "mix" ? "bg-gradient-to-r from-lime via-terracotta to-olive" : currentFlavor.bgColor} ${flavorMode === "mix" ? "text-cream" : currentFlavor.textColor} px-6 py-3 rounded-2xl font-bold shadow-lg animate-bounce-subtle`}>
-                    <span className="text-lg">{selectedPack}x</span>
-                    <span className="text-sm ml-1">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
-                  </div>
+                  {(selectedFlavor || flavorMode === "mix") && (
+                    <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${flavorMode === "mix"
+                      ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream"
+                      : `${currentFlavor.bgColor} ${currentFlavor.textColor}`
+                      } px-6 py-3 rounded-2xl font-bold shadow-lg animate-bounce-subtle`}>
+                      <span className="text-lg">{selectedPack}x</span>
+                      <span className="text-sm ml-1">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Shadow on ground */}
@@ -441,19 +468,21 @@ const ProductSection = () => {
                         <Button
                           variant="hero"
                           size="xl"
-                          className={`flex-1 group animate-energy-pulse transition-all duration-300 ${(flavorMode === "mix" && !isMixValid) || isOutOfStock
+                          className={`flex-1 group animate-energy-pulse transition-all duration-300 ${(flavorMode === "mix" && !isMixValid) || isOutOfStock || (flavorMode === "single" && !selectedFlavor)
                             ? "opacity-50 grayscale cursor-not-allowed"
                             : ""
                             }`}
                           onClick={handleAddToCart}
-                          disabled={(flavorMode === "mix" && !isMixValid) || isOutOfStock}
+                          disabled={(flavorMode === "mix" && !isMixValid) || isOutOfStock || (flavorMode === "single" && !selectedFlavor)}
                         >
                           <ShoppingBag className="w-5 h-5" />
                           {flavorMode === "mix" && !isMixValid
                             ? "Vyberte všechny příchutě"
-                            : isOutOfStock
-                              ? "Vyprodáno"
-                              : "Přidat do košíku"
+                            : flavorMode === "single" && !selectedFlavor
+                              ? "Vyberte příchuť"
+                              : isOutOfStock
+                                ? "Vyprodáno"
+                                : "Přidat do košíku"
                           }
                           {!isOutOfStock && (
                             <span className="font-bold ml-2">{price} Kč</span>
