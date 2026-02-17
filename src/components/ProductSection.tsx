@@ -438,27 +438,78 @@ const ProductSection = () => {
                     }
 
                     return (
-                      <Button
-                        variant="hero"
-                        size="xl"
-                        className={`flex-1 group animate-energy-pulse transition-all duration-300 ${(flavorMode === "mix" && !isMixValid) || isOutOfStock
-                          ? "opacity-50 grayscale cursor-not-allowed"
-                          : ""
-                          }`}
-                        onClick={handleAddToCart}
-                        disabled={(flavorMode === "mix" && !isMixValid) || isOutOfStock}
-                      >
-                        <ShoppingBag className="w-5 h-5" />
-                        {flavorMode === "mix" && !isMixValid
-                          ? "Vyberte všechny příchutě"
-                          : isOutOfStock
-                            ? "Vyprodáno"
-                            : "Přidat do košíku"
-                        }
-                        {!isOutOfStock && (
-                          <span className="font-bold ml-2">{price} Kč</span>
-                        )}
-                      </Button>
+                      <div className="flex flex-col gap-2 w-full">
+                        <Button
+                          variant="hero"
+                          size="xl"
+                          className={`flex-1 group animate-energy-pulse transition-all duration-300 ${(flavorMode === "mix" && !isMixValid) || isOutOfStock
+                            ? "opacity-50 grayscale cursor-not-allowed"
+                            : ""
+                            }`}
+                          onClick={handleAddToCart}
+                          disabled={(flavorMode === "mix" && !isMixValid) || isOutOfStock}
+                        >
+                          <ShoppingBag className="w-5 h-5" />
+                          {flavorMode === "mix" && !isMixValid
+                            ? "Vyberte všechny příchutě"
+                            : isOutOfStock
+                              ? "Vyprodáno"
+                              : "Přidat do košíku"
+                          }
+                          {!isOutOfStock && (
+                            <span className="font-bold ml-2">{price} Kč</span>
+                          )}
+                        </Button>
+
+                        {/* Stock Status Display */}
+                        {(() => {
+                          let maxAvailable = Infinity;
+
+                          if (flavorMode === 'mix') {
+                            // For Mix: Calculate how many full sets we can make based on the mix config
+                            // We care about sets of (quantity * mixCounts), but here we want "How many MORE can I add?"
+                            // Actually, the user wants "How many packs are in stock".
+                            // If I selected a 3-pack mix logic, does he mean "How many 3-packs in total"?
+                            // Yes: "packy 3, 12 a 21 se napojí na stejnojmené packy".
+                            // So we calculate available "packs" of the CURRENT mix configuration.
+
+                            // If clean mix (1,1,1 for 3-pack):
+                            // Lemon: 100 -> 100 sets
+                            // Red: 50 -> 50 sets
+                            // Result: 50 packs available.
+
+                            if (mixCounts.lemon > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('lemon') / mixCounts.lemon));
+                            if (mixCounts.red > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('red') / mixCounts.red));
+                            if (mixCounts.silky > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('silky') / mixCounts.silky));
+                          } else {
+                            // Single Flavor
+                            const packSize = selectedPack;
+                            if (selectedFlavor === 'lemon') maxAvailable = Math.floor(getStock('lemon') / packSize);
+                            else if (selectedFlavor === 'red') maxAvailable = Math.floor(getStock('red') / packSize);
+                            else if (selectedFlavor === 'silky') maxAvailable = Math.floor(getStock('silky') / packSize);
+                          }
+
+                          if (maxAvailable === Infinity) maxAvailable = 0; // Fallback
+
+                          if (maxAvailable > 10) {
+                            return (
+                              <div className="flex items-center justify-center gap-2 text-green-600 font-medium text-sm">
+                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                Skladem
+                              </div>
+                            );
+                          } else if (maxAvailable > 0) {
+                            return (
+                              <div className="flex items-center justify-center gap-2 text-orange-600 font-bold text-sm">
+                                <div className="w-2 h-2 rounded-full bg-orange-500" />
+                                Zbývá posledních {maxAvailable} kusů
+                              </div>
+                            );
+                          } else {
+                            return null; // Handle sold out in button text
+                          }
+                        })()}
+                      </div>
                     );
                   })()}
                 </div>
