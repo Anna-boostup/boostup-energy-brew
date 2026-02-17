@@ -1,4 +1,5 @@
 import { Instagram, Facebook, Linkedin, Zap, Mail, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import logoWhite from "@/assets/logo-white.png";
 
 const Footer = () => {
@@ -90,6 +91,7 @@ const Footer = () => {
           <div className="flex items-center gap-6 text-sm text-primary-foreground/50">
             <a href="#" className="hover:text-primary-foreground transition-colors">Ochrana soukromí</a>
             <a href="#" className="hover:text-primary-foreground transition-colors">Obchodní podmínky</a>
+            <Link to="/admin" className="hover:text-primary-foreground transition-colors opacity-0 hover:opacity-100">Admin</Link>
           </div>
         </div>
       </div>
