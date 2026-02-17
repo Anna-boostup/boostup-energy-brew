@@ -36,6 +36,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order }) => {
 
                 {/* Sticky Toolbar */}
                 <div className="flex justify-end gap-2 mb-4 no-print sticky top-0 bg-white/95 p-4 border-b backdrop-blur-sm z-50 shadow-sm -mx-6 -mt-6 px-6">
+                    <DialogTrigger asChild>
+                        <Button variant="outline">
+                            Zavřít
+                        </Button>
+                    </DialogTrigger>
                     <Button onClick={handlePrint} variant="default">
                         <Download className="w-4 h-4 mr-2" /> Uložit do PDF
                     </Button>

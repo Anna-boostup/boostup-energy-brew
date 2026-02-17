@@ -48,50 +48,51 @@ const Inventory = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {Object.entries(stock).map(([sku, qty]) => (
-                            <TableRow key={sku}>
-                                <TableCell className="font-mono font-medium">{sku}</TableCell>
-                                <TableCell>
-                                    {/* Simple mapping for demo purposes */}
-                                    {sku.includes('lemon') && "🍋 Lemon Blast"}
-                                    {sku.includes('red') && "🍓 Red Rush"}
-                                    {sku.includes('silky') && "🌿 Silky Leaf"}
-                                    {sku.includes('mix') && "🧪 Mix Pack"}
-                                    {" - "}
-                                    {sku.split('-')[1]} ks
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {editingSku === sku ? (
-                                        <Input
-                                            type="number"
-                                            value={editValue}
-                                            onChange={(e) => setEditValue(Number(e.target.value))}
-                                            className="w-24 text-right ml-auto"
-                                        />
-                                    ) : (
-                                        <span className={qty < 10 ? "text-red-600 font-bold" : ""}>
-                                            {qty} ks
-                                        </span>
-                                    )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {editingSku === sku ? (
-                                        <div className="flex justify-end gap-2">
-                                            <Button size="icon" variant="ghost" onClick={() => handleSave(sku)} className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-100">
-                                                <Save className="h-4 w-4" />
+                        {Object.entries(stock)
+                            .filter(([sku]) => !sku.includes('mix'))
+                            .map(([sku, qty]) => (
+                                <TableRow key={sku}>
+                                    <TableCell className="font-mono font-medium">{sku}</TableCell>
+                                    <TableCell>
+                                        {/* Simple mapping for demo purposes */}
+                                        {sku.includes('lemon') && "🍋 Lemon Blast"}
+                                        {sku.includes('red') && "🍓 Red Rush"}
+                                        {sku.includes('silky') && "🌿 Silky Leaf"}
+                                        {" - "}
+                                        {sku.split('-')[1]} ks
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {editingSku === sku ? (
+                                            <Input
+                                                type="number"
+                                                value={editValue}
+                                                onChange={(e) => setEditValue(Number(e.target.value))}
+                                                className="w-24 text-right ml-auto"
+                                            />
+                                        ) : (
+                                            <span className={qty < 10 ? "text-red-600 font-bold" : ""}>
+                                                {qty} ks
+                                            </span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {editingSku === sku ? (
+                                            <div className="flex justify-end gap-2">
+                                                <Button size="icon" variant="ghost" onClick={() => handleSave(sku)} className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-100">
+                                                    <Save className="h-4 w-4" />
+                                                </Button>
+                                                <Button size="icon" variant="ghost" onClick={handleCancel} className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-100">
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Button size="icon" variant="ghost" onClick={() => handleEdit(sku, qty)} className="h-8 w-8">
+                                                <Pencil className="h-4 w-4" />
                                             </Button>
-                                            <Button size="icon" variant="ghost" onClick={handleCancel} className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-100">
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <Button size="icon" variant="ghost" onClick={() => handleEdit(sku, qty)} className="h-8 w-8">
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </div>
