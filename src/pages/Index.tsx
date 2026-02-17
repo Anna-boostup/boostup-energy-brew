@@ -6,6 +6,7 @@ import ConceptSection from "@/components/ConceptSection";
 import CTASection from "@/components/CTASection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import DiscountModal from "@/components/DiscountModal";
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
         <ContactSection />
       </main>
       <Footer />
+      <DiscountModal />
     </div>
   );
 };

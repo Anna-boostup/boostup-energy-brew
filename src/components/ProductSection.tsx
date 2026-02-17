@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
 import { useCart } from "@/context/CartContext";
+import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -70,6 +71,7 @@ const ProductSection = () => {
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
+  const { getStock } = useInventory(); // Added access to getStock from useInventory
   const { toast } = useToast();
 
   const [mixCounts, setMixCounts] = useState({ lemon: 0, red: 0, silky: 0 });
@@ -407,17 +409,58 @@ const ProductSection = () => {
                     </button>
                   </div>
 
-                  <Button
-                    variant="hero"
-                    size="xl"
-                    className={`flex-1 group animate-energy-pulse transition-all duration-300 ${flavorMode === "mix" && !isMixValid ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
-                    onClick={handleAddToCart}
-                    disabled={flavorMode === "mix" && !isMixValid}
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                    {flavorMode === "mix" && !isMixValid ? "Vyberte všechny příchutě" : "Přidat do košíku"}
-                    <span className="font-bold ml-2">{price} Kč</span>
-                  </Button>
+
+                  {/* Stock Logic Calculation Helper */}
+                  {(() => {
+                    let isOutOfStock = false;
+                    let requiredLemon = 0;
+                    let requiredRed = 0;
+                    let requiredSilky = 0;
+
+                    if (flavorMode === 'mix') {
+                      requiredLemon = mixCounts.lemon * quantity;
+                      requiredRed = mixCounts.red * quantity;
+                      requiredSilky = mixCounts.silky * quantity;
+                    } else {
+                      // Single flavor
+                      const packSize = selectedPack; // 3, 12, 21
+                      if (selectedFlavor === 'lemon') requiredLemon = packSize * quantity;
+                      else if (selectedFlavor === 'red') requiredRed = packSize * quantity;
+                      else if (selectedFlavor === 'silky') requiredSilky = packSize * quantity;
+                    }
+
+                    if (
+                      (requiredLemon > 0 && getStock('lemon') < requiredLemon) ||
+                      (requiredRed > 0 && getStock('red') < requiredRed) ||
+                      (requiredSilky > 0 && getStock('silky') < requiredSilky)
+                    ) {
+                      isOutOfStock = true;
+                    }
+
+                    return (
+                      <Button
+                        variant="hero"
+                        size="xl"
+                        className={`flex-1 group animate-energy-pulse transition-all duration-300 ${(flavorMode === "mix" && !isMixValid) || isOutOfStock
+                          ? "opacity-50 grayscale cursor-not-allowed"
+                          : ""
+                          }`}
+                        onClick={handleAddToCart}
+                        disabled={(flavorMode === "mix" && !isMixValid) || isOutOfStock}
+                      >
+                        <ShoppingBag className="w-5 h-5" />
+                        {flavorMode === "mix" && !isMixValid
+                          ? "Vyberte všechny příchutě"
+                          : isOutOfStock
+                            ? "Vyprodáno"
+                            : "Přidat do košíku"
+                        }
+                        {!isOutOfStock && (
+                          <span className="font-bold ml-2">{price} Kč</span>
+                        )}
+                      </Button>
+                    );
+                  })()}
                 </div>
 
                 {/* Individual Offer Link */}

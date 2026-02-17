@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
-import { ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle, Loader2 } from 'lucide-react';
+import { useInventory, Order } from '@/context/InventoryContext';
+import { ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle, Loader2, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
 import mockPaymentService from '@/services/mockPayment';
 import { Button } from '@/components/ui/button';
+import PacketaWidget from '@/components/PacketaWidget';
+import { useToast } from '@/hooks/use-toast';
 
 const CheckoutPage = () => {
     const { cart, cartTotal, clearCart } = useCart();
+    const { addOrder, decrementStock, getStock } = useInventory();
+    const { toast } = useToast();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
+    const [selectedPoint, setSelectedPoint] = useState<any>(null);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -18,16 +24,78 @@ const CheckoutPage = () => {
         street: '',
         city: '',
         zip: '',
+        deliveryMethod: 'card',
+        packetaPointId: '',
         paymentMethod: 'card',
         subMethod: ''
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Calculate total required ingredients
+        const requiredStock = { lemon: 0, red: 0, silky: 0 };
+
+        cart.forEach(item => {
+            if (item.flavorMode === 'mix' && item.mixConfiguration) {
+                // For Mix: Multiply the mix config by the number of packs (quantity)
+                requiredStock.lemon += (item.mixConfiguration.lemon || 0) * item.quantity;
+                requiredStock.red += (item.mixConfiguration.red || 0) * item.quantity;
+                requiredStock.silky += (item.mixConfiguration.silky || 0) * item.quantity;
+            } else if (item.flavor) {
+                // For Single Flavor: Determine flavor key and add pack size * quantity
+                const flavorKey = item.flavor.toLowerCase().includes('lemon') ? 'lemon'
+                    : item.flavor.toLowerCase().includes('red') ? 'red'
+                        : item.flavor.toLowerCase().includes('silky') ? 'silky' : null;
+
+                if (flavorKey && flavorKey in requiredStock) {
+                    requiredStock[flavorKey as keyof typeof requiredStock] += (item.pack || 0) * item.quantity;
+                }
+            }
+        });
+
+        // 1. Stock Check
+        for (const [flavor, amount] of Object.entries(requiredStock)) {
+            if (amount > 0 && getStock(flavor) < amount) {
+                toast({
+                    title: "Chyba objednávky",
+                    description: `Nedostatek skladových zásob pro příchuť ${flavor.toUpperCase()}. Chybí ${(amount - getStock(flavor))} ks.`,
+                    variant: "destructive"
+                });
+                return;
+            }
+        }
+
         setIsProcessing(true);
 
         try {
             const orderNumber = `ORD-${Date.now()}`;
+
+            // 2. Decrement Stock
+            Object.entries(requiredStock).forEach(([flavor, amount]) => {
+                if (amount > 0) decrementStock(flavor, amount);
+            });
+
+            // 3. Create Order Record
+            const newOrder: Order = {
+                id: orderNumber,
+                date: new Date().toISOString(),
+                customer: {
+                    name: `${formData.firstName} ${formData.lastName}`,
+                    email: formData.email,
+                },
+                items: cart.map(item => ({
+                    // Keep detailed info for record
+                    sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0),
+                status: 'paid'
+            };
+            addOrder(newOrder);
+
             const paymentResult = await mockPaymentService.createPayment({
                 orderNumber: orderNumber,
                 total: cartTotal,
@@ -166,6 +234,67 @@ const CheckoutPage = () => {
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Shipping Method */}
+                            <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
+                                <h2 className="text-2xl font-display font-bold flex items-center gap-3 mb-8">
+                                    <Package className="w-6 h-6 text-primary" />
+                                    Způsob dopravy
+                                </h2>
+
+                                <div className="space-y-4">
+                                    <label className={`block border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.deliveryMethod === 'zasilkovna' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="deliveryMethod"
+                                                value="zasilkovna"
+                                                checked={formData.deliveryMethod === 'zasilkovna'}
+                                                onChange={handleChange}
+                                                className="w-4 h-4 text-primary"
+                                            />
+                                            <div className="flex-1">
+                                                <div className="font-bold flex justify-between">
+                                                    <span>Zásilkovna - Výdejní místo</span>
+                                                    <span>79 Kč</span>
+                                                </div>
+                                                <p className="text-sm text-muted-foreground">Doručení na vybrané výdejní místo v ČR/SR</p>
+                                            </div>
+                                        </div>
+
+                                        {formData.deliveryMethod === 'zasilkovna' && (
+                                            <div className="mt-4 pl-7 space-y-3">
+                                                {!selectedPoint ? (
+                                                    <PacketaWidget
+                                                        onPointSelected={(point) => {
+                                                            console.log("Selected point:", point);
+                                                            setSelectedPoint(point);
+                                                            setFormData(prev => ({ ...prev, packetaPointId: point.id }));
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <div className="bg-background rounded-lg p-3 border border-border flex justify-between items-center group">
+                                                        <div>
+                                                            <div className="font-bold text-sm">Zvolené místo:</div>
+                                                            <div className="text-primary font-bold">{selectedPoint.name}</div>
+                                                            <div className="text-xs text-muted-foreground">{selectedPoint.street}, {selectedPoint.city}</div>
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="text-muted-foreground hover:text-destructive"
+                                                            onClick={() => { setSelectedPoint(null); setFormData(prev => ({ ...prev, packetaPointId: '' })); }}
+                                                        >
+                                                            Změnit
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </label>
                                 </div>
                             </div>
 

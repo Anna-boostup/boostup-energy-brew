@@ -1,30 +1,45 @@
-import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import logoBlack from "@/assets/logo-black.png";
 import CartModal from "./CartModal";
 import { useCart } from "@/context/CartContext";
+import { supabase } from "@/lib/supabase";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <img src={logoBlack} alt="BoostUp" className="h-8 w-auto" />
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#mise" className="text-muted-foreground hover:text-foreground transition-colors">Naše mise</a>
-            <a href="#produkty" className="text-muted-foreground hover:text-foreground transition-colors">Produkty</a>
-            <a href="#3b" className="text-muted-foreground hover:text-foreground transition-colors">3B Koncept</a>
-            <a href="#kontakt" className="text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
+            <a href="/#mise" className="text-muted-foreground hover:text-foreground transition-colors">Naše mise</a>
+            <a href="/#produkty" className="text-muted-foreground hover:text-foreground transition-colors">Produkty</a>
+            <a href="/#3b" className="text-muted-foreground hover:text-foreground transition-colors">3B Koncept</a>
+            <a href="/#kontakt" className="text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
           </nav>
 
           {/* Social & Cart */}
@@ -40,6 +55,20 @@ const Header = () => {
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
+
+            {/* Auth Button */}
+            {user ? (
+              <Link to="/profile">
+                <Button variant="ghost" size="icon" title="Můj profil">
+                  <User className="w-5 h-5" />
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost" size="sm">Přihlásit se</Button>
+              </Link>
+            )}
+
             <Button
               variant="outline"
               size="sm"
