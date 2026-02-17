@@ -221,3 +221,11 @@ BEGIN
   RETURN jsonb_build_object('success', true, 'new_quantity', v_new_quantity);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 13. PHASE 6: PUBLIC ACCESS FIX
+-- Ensure products and inventory are readable by everyone (including anon and authenticated non-admins)
+DROP POLICY IF EXISTS "Public read products" ON products;
+CREATE POLICY "Public read products" ON products FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public read inventory" ON inventory;
+CREATE POLICY "Public read inventory" ON inventory FOR SELECT USING (true);
