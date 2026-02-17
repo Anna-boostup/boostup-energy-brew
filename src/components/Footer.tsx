@@ -89,8 +89,9 @@ const Footer = () => {
             © 2024 BoostUp. Všechna práva vyhrazena.
           </p>
           <div className="flex items-center gap-6 text-sm text-primary-foreground/50">
-            <a href="#" className="hover:text-primary-foreground transition-colors">Ochrana soukromí</a>
-            <a href="#" className="hover:text-primary-foreground transition-colors">Obchodní podmínky</a>
+            <Link to="/ochrana-osobnich-udaju" className="hover:text-primary-foreground transition-colors">Ochrana soukromí</Link>
+            <Link to="/obchodni-podminky" className="hover:text-primary-foreground transition-colors">Obchodní podmínky</Link>
+            <Link to="/reklamace" className="hover:text-primary-foreground transition-colors">Reklamace</Link>
             <Link to="/admin" className="hover:text-primary-foreground transition-colors opacity-0 hover:opacity-100">Admin</Link>
           </div>
         </div>

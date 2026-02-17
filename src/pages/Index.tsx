@@ -8,9 +8,15 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import DiscountModal from "@/components/DiscountModal";
 
+import { SEO } from "@/components/SEO";
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Přírodní energie na celý den"
+        description="BoostUp je revoluční energetický shot z přírodních extraktů. Získejte 6 hodin soustředění bez nervozity a crash efektu."
+      />
       <Header />
       <main>
         <HeroSection />
