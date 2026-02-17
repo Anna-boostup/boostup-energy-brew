@@ -14,7 +14,7 @@ interface StockHistoryDialogProps {
 export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogProps) => {
     const { movements } = useInventory();
 
-    if (!sku) return null;
+    // if (!sku) return null; // Removed to keep Dialog mounted
 
     const skuMovements = movements
         .filter((m) => m.sku === sku)
@@ -24,7 +24,7 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Historie pohybů: {sku}</DialogTitle>
+                    <DialogTitle>Historie pohybů: {sku || ''}</DialogTitle>
                 </DialogHeader>
                 <div className="py-4">
                     {skuMovements.length === 0 ? (
@@ -34,6 +34,7 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Datum</TableHead>
+                                    <TableHead>Uživatel</TableHead>
                                     <TableHead>Typ</TableHead>
                                     <TableHead className="text-right">Změna</TableHead>
                                     <TableHead>Poznámka</TableHead>
@@ -42,8 +43,18 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
                             <TableBody>
                                 {skuMovements.map((movement) => (
                                     <TableRow key={movement.id}>
-                                        <TableCell className="text-xs">
+                                        <TableCell className="text-xs text-muted-foreground">
                                             {format(new Date(movement.date), "d. M. yyyy HH:mm", { locale: cs })}
+                                        </TableCell>
+                                        <TableCell className="text-xs">
+                                            {movement.user ? (
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">{movement.user.full_name || 'Admin'}</span>
+                                                    <span className="text-[10px] text-muted-foreground">{movement.user.email}</span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-muted-foreground italic">Systém</span>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant={

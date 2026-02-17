@@ -34,13 +34,15 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock }: RestockDia
         onClose();
     };
 
-    if (!sku) return null;
+
+    // if (!sku) return null; // Removed to keep Dialog mounted
+
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && resetAndClose()}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Naskladnit: {sku}</DialogTitle>
+                    <DialogTitle>Naskladnit: {sku || ''}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">

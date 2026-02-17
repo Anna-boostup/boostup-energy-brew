@@ -6,29 +6,61 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 const AdminLogin = () => {
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
-        // Simple hardcoded check for demo purposes
-        if (password === "admin123") {
-            localStorage.setItem("adminAuth", "true");
-            toast({
-                title: "Vítejte v administraci",
-                description: "Přihlášení proběhlo úspěšně.",
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
             });
-            navigate("/admin");
-        } else {
+
+            if (error) throw error;
+
+            // Check if user is admin
+            // We need to fetch profile explicitly here because AuthContext might not have updated yet
+            // or we can just let the redirect happen and AdminLayout will catch it if not admin.
+            // But better UX is to check here.
+
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', data.user.id)
+                .single();
+
+            if (profile?.role !== 'admin') {
+                await supabase.auth.signOut();
+                toast({
+                    title: "Chyba oprávnění",
+                    description: "Tento účet nemá administrátorská práva.",
+                    variant: "destructive",
+                });
+            } else {
+                toast({
+                    title: "Vítejte v administraci",
+                    description: "Přihlášení proběhlo úspěšně.",
+                });
+                navigate("/admin");
+            }
+
+        } catch (error: any) {
             toast({
                 title: "Chyba přihlášení",
-                description: "Nesprávné heslo.",
+                description: error.message,
                 variant: "destructive",
             });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -45,6 +77,17 @@ const AdminLogin = () => {
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="vas@email.cz"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="space-y-2">
                         <Label htmlFor="password">Heslo</Label>
                         <Input
                             id="password"
@@ -52,7 +95,6 @@ const AdminLogin = () => {
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="text-center text-lg tracking-widest"
                         />
                     </div>
                     <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">

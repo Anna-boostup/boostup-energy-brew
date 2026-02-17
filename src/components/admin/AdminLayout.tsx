@@ -1,29 +1,38 @@
-
 import { useState, useEffect } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Package, ShoppingCart, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const auth = localStorage.getItem("adminAuth");
-        if (auth !== "true") {
-            navigate("/admin/login");
-        } else {
-            setIsAuthenticated(true);
-        }
-    }, [navigate]);
+    const { user, profile, loading } = useAuth();
+
+    if (loading) {
+        return <div className="p-8">Ověřuji oprávnění...</div>;
+    }
+
+    if (!user) {
+        return <Navigate to="/admin/login" replace />;
+    }
+
+    if (profile?.role !== 'admin') {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                <p className="text-red-500 font-bold">Nemáte oprávnění pro přístup do administrace.</p>
+                <Link to="/">
+                    <Button>Zpět na hlavní stránku</Button>
+                </Link>
+            </div>
+        );
+    }
 
     const handleLogout = () => {
         localStorage.removeItem("adminAuth");
         navigate("/admin/login");
     };
-
-    if (!isAuthenticated) return null;
 
     const navItems = [
         { icon: LayoutDashboard, label: "Přehled", path: "/admin" },
@@ -49,8 +58,8 @@ const AdminLayout = () => {
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                                        ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                    ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />

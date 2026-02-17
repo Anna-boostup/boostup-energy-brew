@@ -18,7 +18,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
@@ -34,6 +34,8 @@ const Login = () => {
                 title: "Úspěšně přihlášeno",
                 description: "Vítejte zpět!",
             });
+            // Redirect based on role not possible immediately without context/profile fetch
+            // Basic redirect to home for now
             navigate("/");
         }
         setLoading(false);

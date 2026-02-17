@@ -1,5 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export type SKU = string;
 
@@ -27,15 +27,19 @@ export interface StockMovement {
     amount: number;
     date: string;
     note?: string;
+    user?: {
+        email: string;
+        full_name: string;
+    };
 }
 
 interface InventoryContextType {
     stock: Record<SKU, number>;
     orders: Order[];
     movements: StockMovement[];
-    addMovement: (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => void;
-    updateStock: (sku: SKU, quantity: number) => void; // Deprecated but kept for compatibility
-    decrementStock: (sku: SKU, amount: number) => boolean;
+    addMovement: (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => Promise<void>;
+    updateStock: (sku: SKU, quantity: number) => void;
+    decrementStock: (sku: SKU, amount: number) => Promise<boolean>;
     getStock: (sku: SKU) => number;
     addOrder: (order: Order) => void;
     updateOrderStatus: (orderId: string, status: Order['status']) => void;
@@ -43,84 +47,125 @@ interface InventoryContextType {
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
-// Initial mock stock data (Hybrid System)
-const INITIAL_STOCK: Record<SKU, number> = {
-    // Single Bottles (for Mixes)
-    "lemon": 200,
-    "red": 200,
-    "silky": 200,
-
-    // Pre-packed SKUs (for Single Packs)
-    "lemon-3": 50, "lemon-12": 30, "lemon-21": 15,
-    "red-3": 50, "red-12": 30, "red-21": 20,
-    "silky-3": 50, "silky-12": 30, "silky-21": 20,
-};
-
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [stock, setStock] = useState<Record<SKU, number>>(() => {
-        const saved = localStorage.getItem("inventory_stock");
-        return saved ? { ...INITIAL_STOCK, ...JSON.parse(saved) } : INITIAL_STOCK;
-    });
+    const [stock, setStock] = useState<Record<SKU, number>>({});
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [movements, setMovements] = useState<StockMovement[]>([]);
 
-    const [orders, setOrders] = useState<Order[]>(() => {
-        const saved = localStorage.getItem("inventory_orders");
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    const [movements, setMovements] = useState<StockMovement[]>(() => {
-        const saved = localStorage.getItem("inventory_movements");
-        return saved ? JSON.parse(saved) : [];
-    });
-
+    // 1. Initial Fetch
     useEffect(() => {
-        localStorage.setItem("inventory_stock", JSON.stringify(stock));
-    }, [stock]);
+        fetchInventory();
+        fetchMovements();
+        fetchOrders(); // We can migrate orders later, but let's keep it here
+    }, []);
 
+    // 2. Realtime Subscriptions
     useEffect(() => {
-        localStorage.setItem("inventory_orders", JSON.stringify(orders));
-    }, [orders]);
+        const inventorySubscription = supabase
+            .channel('inventory_channel')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload) => {
+                const { sku, quantity } = payload.new as { sku: string; quantity: number };
+                setStock(prev => ({ ...prev, [sku]: quantity }));
+            })
+            .subscribe();
 
-    useEffect(() => {
-        localStorage.setItem("inventory_movements", JSON.stringify(movements));
-    }, [movements]);
+        const movementsSubscription = supabase
+            .channel('movements_channel')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'stock_movements' }, (payload) => {
+                const newMovement = payload.new as any;
+                setMovements(prev => [newMovement, ...prev]);
+            })
+            .subscribe();
 
-    const addMovement = (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
-        const movement: StockMovement = {
-            id: Math.random().toString(36).substr(2, 9),
-            sku,
-            type,
-            amount,
-            date: new Date().toISOString(),
-            note
+        const ordersSubscription = supabase
+            .channel('orders_channel')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+                if (payload.eventType === 'INSERT') {
+                    setOrders(prev => [payload.new as any, ...prev]);
+                } else if (payload.eventType === 'UPDATE') {
+                    setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+                }
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(inventorySubscription);
+            supabase.removeChannel(movementsSubscription);
+            supabase.removeChannel(ordersSubscription);
         };
+    }, []);
 
-        setMovements(prev => [movement, ...prev]);
+    const fetchInventory = async () => {
+        const { data, error } = await supabase.from('inventory').select('*');
+        if (error) console.error('Error fetching inventory:', error);
+        if (data) {
+            const stockMap: Record<SKU, number> = {};
+            data.forEach((item: any) => {
+                stockMap[item.sku] = item.quantity;
+            });
+            setStock(stockMap);
+        }
+    };
 
-        setStock(prev => {
-            const current = prev[sku] || 0;
-            let newAmount = current;
+    const fetchMovements = async () => {
+        const { data, error } = await supabase
+            .from('stock_movements')
+            .select('*, profiles(email, full_name)')
+            .order('created_at', { ascending: false });
 
-            if (type === 'correction') {
-                newAmount = amount;
-            } else {
-                // For restock (positive amount) and sale (negative amount passed logic? or handled here?)
-                // Usually restock is +amount, sale is -amount.
-                // Let's assume 'amount' passed is the delta.
-                newAmount = current + amount;
-            }
+        if (error) console.error('Error fetching movements:', error);
+        if (data) {
+            const mappedMovements = data.map((m: any) => ({
+                ...m,
+                date: m.created_at,
+                user: m.profiles // Map the joined profile data
+            }));
+            setMovements(mappedMovements);
+        }
+    };
 
-            return { ...prev, [sku]: Math.max(0, newAmount) };
+    const fetchOrders = async () => {
+        const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+        if (error) console.error('Error fetching orders:', error);
+        if (data) {
+            const mappedOrders = data.map((o: any) => ({
+                ...o,
+                date: o.created_at,
+                // Ensure customer object is reconstructed from flattened columns if needed
+                // But we stored it as columns customer_name, customer_email
+                customer: {
+                    name: o.customer_name,
+                    email: o.customer_email
+                }
+            }));
+            setOrders(mappedOrders);
+        }
+    };
+
+    const addMovement = async (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
+        const { error } = await supabase.rpc('handle_stock_movement', {
+            p_sku: sku,
+            p_type: type,
+            p_amount: amount,
+            p_note: note
         });
+
+        if (error) {
+            console.error("Error adding movement:", error);
+            alert("Chyba při aktualizaci skladu: " + error.message);
+        }
     };
 
-    // Legacy support - wraps addMovement as correction
+    // Legacy support
     const updateStock = (sku: SKU, quantity: number) => {
-        addMovement(sku, quantity, 'correction', 'Manual update via legacy edit');
+        addMovement(sku, quantity, 'correction', 'Manual override');
     };
 
-    const decrementStock = (sku: SKU, amount: number) => {
-        if ((stock[sku] || 0) < amount) return false;
-        addMovement(sku, -amount, 'sale', 'E-shop purchase');
+    const decrementStock = async (sku: SKU, amount: number) => {
+        const currentQty = stock[sku] || 0;
+        if (currentQty < amount) return false;
+
+        await addMovement(sku, -amount, 'sale', 'Online Order');
         return true;
     };
 
@@ -128,12 +173,31 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return stock[sku] || 0;
     };
 
-    const addOrder = (order: Order) => {
-        setOrders((prev) => [order, ...prev]);
+    const addOrder = async (order: Order) => {
+        // We need to map our frontend Order object to DB columns
+        const { error } = await supabase.from('orders').insert({
+            id: order.id,
+            customer_email: order.customer.email,
+            customer_name: order.customer.name,
+            total: order.total,
+            status: order.status,
+            items: order.items,
+            // delivery_info: ... (if we had it in Order interface, we would add it here)
+        });
+
+        if (error) {
+            console.error('Error adding order:', error);
+            alert("Chyba při vytváření objednávky: " + error.message);
+        }
     };
 
-    const updateOrderStatus = (orderId: string, status: Order['status']) => {
-        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+    const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+        const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+
+        if (error) {
+            console.error('Error updating order status:', error);
+            alert("Chyba při aktualizaci stavu: " + error.message);
+        }
     };
 
     return (

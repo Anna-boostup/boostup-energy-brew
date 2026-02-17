@@ -66,7 +66,7 @@ const Register = () => {
 
                 toast({
                     title: "Registrace úspěšná",
-                    description: "Zkontrolujte svůj email pro potvrzení registrace.",
+                    description: "Váš účet byl vytvořen. Nyní se můžete přihlásit.",
                 });
                 navigate("/login");
             }
