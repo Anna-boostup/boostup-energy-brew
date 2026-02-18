@@ -198,7 +198,7 @@ const ProductSection = () => {
 
   return (
     <TooltipProvider>
-      <section id="produkty" className="py-28 bg-secondary/30 relative overflow-hidden border-t-8 border-red-600">
+      <section id="produkty" className="py-28 bg-secondary/30 relative overflow-hidden">
         {/* Animated background elements */}
         {/* ... (SVG background elements omitted for brevity, but they're usually at the top of the section) ... */}
 
