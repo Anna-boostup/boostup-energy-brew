@@ -202,7 +202,8 @@ const ProductSection = () => {
         {/* Animated background elements */}
         {/* ... (SVG background elements omitted for brevity, but they're usually at the top of the section) ... */}
 
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 overflow-x-hidden">
+          Riverside
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
             {/* Image section */}
             <div className="flex-1 flex items-center justify-center animate-fade-up animation-delay-200">
@@ -242,30 +243,32 @@ const ProductSection = () => {
               {/* Pack Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE BALENÍ</h3>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {packs.map((pack, index) => (
                     <button
                       key={pack}
                       onClick={() => setSelectedPack(pack)}
-                      className={`py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
+                      className={`py-4 sm:py-5 px-4 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
                         ? "bg-primary text-primary-foreground shadow-button"
                         : "bg-card text-foreground border-2 border-border hover:border-primary"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
                       {pack}x
-                      <span className="block text-[10px] sm:text-xs font-semibold opacity-80">
+                      <span className="block text-xs sm:text-sm font-semibold opacity-80">
                         {packPrices[pack]} Kč
                       </span>
                     </button>
                   ))}
                 </div>
+                Riverside
               </div>
 
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+                  Riverside
                   <button
                     onClick={() => setSubscriptionMode(null)}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${!subscriptionMode
@@ -310,7 +313,8 @@ const ProductSection = () => {
               {/* Flavor Mode Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+                  Riverside
                   <button
                     onClick={() => setFlavorMode("single")}
                     className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
