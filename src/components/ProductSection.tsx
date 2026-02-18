@@ -372,14 +372,14 @@ const ProductSection = () => {
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
-                            <div className="flex items-center gap-2 !bg-white rounded-full border border-border px-1 py-1 shadow-sm" style={{ backgroundColor: 'white' }}>
+                            <div className="flex items-center gap-2 !bg-white rounded-full border border-border px-1 py-1 shadow-sm !text-black z-10 relative" style={{ backgroundColor: 'white', color: 'black' }}>
                               <button
                                 onClick={() => handleMixChange(flavor.id, -1)}
                                 className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center !text-black"
                                 style={{ color: 'black' }}
                                 disabled={mixCounts[flavor.id] === 0}
                               >
-                                <Minus className="w-3.5 h-3.5" style={{ color: 'black' }} />
+                                <Minus className="w-3.5 h-3.5 text-black !fill-black" style={{ color: 'black', stroke: 'black' }} />
                               </button>
                               <span className="min-w-[3rem] px-2 text-center font-bold text-sm !text-black" style={{ color: 'black' }}>
                                 {mixCounts[flavor.id]}
@@ -390,9 +390,10 @@ const ProductSection = () => {
                                 style={{ color: 'black' }}
                                 disabled={currentMixCount >= (selectedPack || 0)}
                               >
-                                <Plus className="w-3.5 h-3.5" style={{ color: 'black' }} />
+                                <Plus className="w-3.5 h-3.5 text-black !fill-black" style={{ color: 'black', stroke: 'black' }} />
                               </button>
                             </div>
+
 
 
 
