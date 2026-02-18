@@ -25,7 +25,7 @@ const HeroSection = () => {
 
         {/* Centered Text Content */}
         <div className="text-center animate-fade-up z-10 mb-12">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
             <span className="block animate-slide-in-left">ENERGIE</span>
             <span className="block text-gradient-energy animate-slide-in-left animation-delay-200">NA CELÝ DEN</span>
             <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-muted-foreground mt-4 animate-slide-in-left animation-delay-400">
@@ -82,20 +82,20 @@ const HeroSection = () => {
         </div>
 
         {/* Trust Badges - Below image */}
-        <div className="flex flex-wrap gap-6 justify-center items-center animate-fade-up animation-delay-800">
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-4 sm:gap-6 justify-center items-center animate-fade-up animation-delay-800">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-olive animate-pulse" />
             <span className="text-sm font-bold text-foreground">Přírodní stimulanty</span>
           </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-lime animate-pulse animation-delay-200" />
             <span className="text-sm font-bold text-foreground">Elektrolyty</span>
           </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-terracotta animate-pulse animation-delay-400" />
             <span className="text-sm font-bold text-foreground">Adaptogeny</span>
           </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-full shadow-card">
+          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
             <div className="w-4 h-4 rounded-full bg-orange animate-pulse animation-delay-600" />
             <span className="text-sm font-bold text-foreground">Vitamíny</span>
           </div>

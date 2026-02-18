@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import logoBlack from "@/assets/logo-black.png";
+import logoWhite from "@/assets/logo-white.png";
 import CartModal from "./CartModal";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
@@ -22,7 +23,8 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src={logoBlack} alt="BoostUp" className="h-8 w-auto" />
+            <img src={logoBlack} alt="BoostUp" className="h-8 w-auto dark:hidden" />
+            <img src={logoWhite} alt="BoostUp" className="h-8 w-auto hidden dark:block" />
           </Link>
 
           {/* Desktop Navigation */}
