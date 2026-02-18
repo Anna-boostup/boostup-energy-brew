@@ -18,7 +18,7 @@ const CTASection = () => {
 
       {/* Animated grid pattern */}
       <div className="absolute inset-0 opacity-[0.07]">
-        <div className="absolute inset-0" 
+        <div className="absolute inset-0"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), 
                              linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)`,
@@ -43,17 +43,17 @@ const CTASection = () => {
           </h2>
 
           <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto animate-fade-up animation-delay-200">
-            Přihlaš se k odběru a získej exkluzivní přístup k testerům, slevám a novinkám. 
+            Přihlaš se k odběru a získej exkluzivní přístup k testerům, slevám a novinkám.
             Buď součástí komunity BoostUp.
           </p>
 
           {/* Email signup */}
-          <div 
+          <div
             className="max-w-xl mx-auto mb-14 animate-fade-up animation-delay-400"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className={`flex flex-col sm:flex-row gap-4 p-2 rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
+            <div className={`flex flex-col sm:flex-row gap-4 p-2 rounded-2xl sm:rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
               <div className="flex-1 flex items-center gap-3 px-5">
                 <Mail className={`w-6 h-6 transition-colors duration-300 ${isHovered ? 'text-lime' : 'text-primary-foreground/60'}`} />
                 <input
@@ -64,9 +64,9 @@ const CTASection = () => {
                   className="w-full py-4 bg-transparent text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none text-lg font-medium"
                 />
               </div>
-              <Button 
-                variant="default" 
-                size="lg" 
+              <Button
+                variant="default"
+                size="lg"
                 className="bg-lime hover:bg-lime-dark text-foreground font-black rounded-full px-10 py-6 group shadow-button"
               >
                 Přihlásit se
@@ -80,8 +80,8 @@ const CTASection = () => {
             <div className="flex items-center gap-3">
               <div className="flex -space-x-3">
                 {[...Array(4)].map((_, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className="w-10 h-10 rounded-full bg-gradient-to-br from-lime via-olive to-terracotta border-2 border-foreground animate-pulse-soft"
                     style={{ animationDelay: `${i * 200}ms` }}
                   />

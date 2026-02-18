@@ -45,7 +45,7 @@ const ContactSection = () => {
         </div>
 
         {/* Contact Form */}
-        <div className="max-w-xl mx-auto bg-background rounded-2xl p-8 shadow-xl">
+        <div className="max-w-xl mx-auto bg-background rounded-2xl p-6 sm:p-8 shadow-xl">
           <h3 className="text-foreground font-display font-semibold text-xl mb-2 text-center">
             Rádi uslyšíme vaše názory a zodpovíme dotazy
           </h3>

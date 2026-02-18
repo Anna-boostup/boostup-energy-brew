@@ -32,7 +32,7 @@ const LegalLayout = ({ children, title, lastUpdated, seoTitle }: LegalLayoutProp
                     </div>
 
                     {/* Content Card */}
-                    <div className="bg-card/50 backdrop-blur-sm border border-border p-8 md:p-12 rounded-2xl shadow-sm relative">
+                    <div className="bg-card/50 backdrop-blur-sm border border-border p-6 md:p-12 rounded-2xl shadow-sm relative">
                         <div className="legal-content text-foreground
               [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:mt-12 [&_h2]:mb-6 [&_h2]:uppercase [&_h2]:tracking-tight [&_h2]:text-lime [&_h2]:font-display [&_h2]:font-bold
               [&_h3]:text-xl [&_h3]:md:text-2xl [&_h3]:mt-8 [&_h3]:mb-4 [&_h3]:text-foreground [&_h3]:font-semibold
