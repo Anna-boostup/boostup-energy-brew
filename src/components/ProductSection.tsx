@@ -368,11 +368,11 @@ const ProductSection = () => {
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
                             <div className="flex items-center gap-2 bg-background rounded-full border border-border px-1 py-1 shadow-sm">
-                              <button onClick={() => handleMixChange(flavor.id, -1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center" disabled={mixCounts[flavor.id] === 0}>
+                              <button onClick={() => handleMixChange(flavor.id, -1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground" disabled={mixCounts[flavor.id] === 0}>
                                 <Minus className="w-3.5 h-3.5" />
                               </button>
-                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm">{mixCounts[flavor.id]}</span>
-                              <button onClick={() => handleMixChange(flavor.id, 1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center" disabled={currentMixCount >= (selectedPack || 0)}>
+                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm text-foreground">{mixCounts[flavor.id]}</span>
+                              <button onClick={() => handleMixChange(flavor.id, 1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground" disabled={currentMixCount >= (selectedPack || 0)}>
                                 <Plus className="w-3.5 h-3.5" />
                               </button>
                             </div>
