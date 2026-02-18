@@ -310,7 +310,7 @@ const ProductSection = () => {
               {/* Flavor Mode Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => setFlavorMode("single")}
                     className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
@@ -466,8 +466,8 @@ const ProductSection = () => {
 
               {/* Quantity & Add to cart */}
               <div className="space-y-4 pt-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-4 bg-card rounded-full px-5 py-3 border-2 border-border shadow-card">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                  <div className="flex items-center justify-between sm:justify-center gap-4 bg-card rounded-3xl px-5 py-3 border-2 border-border shadow-card">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"

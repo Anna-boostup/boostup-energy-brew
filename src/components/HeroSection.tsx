@@ -25,10 +25,10 @@ const HeroSection = () => {
 
         {/* Centered Text Content */}
         <div className="text-center animate-fade-up z-10 mb-12">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
             <span className="block animate-slide-in-left">ENERGIE</span>
             <span className="block text-gradient-energy animate-slide-in-left animation-delay-200">NA CELÝ DEN</span>
-            <span className="block text-3xl md:text-4xl lg:text-5xl font-semibold text-muted-foreground mt-4 animate-slide-in-left animation-delay-400">
+            <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-muted-foreground mt-4 animate-slide-in-left animation-delay-400">
               přirozeně.
             </span>
           </h1>

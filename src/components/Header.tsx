@@ -76,17 +76,95 @@ const Header = () => {
             </Button>
           </div>
 
-          {/* ... mobile menu toggle unchanged ... */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Social & Cart links... Desktop only */}
+          {/* ... */}
+
+          {/* Mobile Right Icons */}
+          <div className="flex md:hidden items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full"
+              onClick={() => setIsCartOpen(true)}
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 bg-primary text-primary-foreground text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+
+            <button
+              className="p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
-        {/* ... mobile menu unchanged ... */}
-        {/* ... */}
+        {/* Mobile Navigation Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden mt-4 pb-6 animate-in slide-in-from-top duration-300">
+            <nav className="flex flex-col gap-4 mb-6">
+              <a
+                href="/#mise"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium py-2 border-b border-border/50"
+              >
+                Naše mise
+              </a>
+              <a
+                href="/#produkty"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium py-2 border-b border-border/50"
+              >
+                Produkty
+              </a>
+              <a
+                href="/#3b"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium py-2 border-b border-border/50"
+              >
+                3B Koncept
+              </a>
+              <a
+                href="/#kontakt"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-lg font-medium py-2 border-b border-border/50"
+              >
+                Kontakt
+              </a>
+
+              {/* Added mobile specific links */}
+              <Link
+                to={user ? (profile?.account_type === 'company' ? "/company-account" : "/account") : "/login"}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-primary"
+              >
+                <User className="w-5 h-5" />
+                {user ? "Můj profil" : "Přihlásit se"}
+              </Link>
+              <button
+                onClick={() => {
+                  setIsCartOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className="flex items-center gap-2 text-lg font-medium py-2 text-primary"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Košík ({cartCount})
+              </button>
+            </nav>
+
+            <div className="flex gap-4">
+              <a href="#" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
+              <a href="#" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
+              <a href="#" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
+            </div>
+          </div>
+        )}
       </div>
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
