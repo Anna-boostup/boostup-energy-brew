@@ -367,13 +367,13 @@ const ProductSection = () => {
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
-                            <div className="flex items-center gap-2 bg-white rounded-full border border-border px-1 py-1 shadow-sm">
-                              <button onClick={() => handleMixChange(flavor.id, -1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-slate-900" disabled={mixCounts[flavor.id] === 0}>
-                                <Minus className="w-3.5 h-3.5" />
+                            <div className="flex items-center gap-2 !bg-white rounded-full border border-border px-1 py-1 shadow-sm">
+                              <button onClick={() => handleMixChange(flavor.id, -1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center !text-black" disabled={mixCounts[flavor.id] === 0}>
+                                <Minus className="w-3.5 h-3.5 !text-black" />
                               </button>
-                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm text-slate-900">{mixCounts[flavor.id]}</span>
-                              <button onClick={() => handleMixChange(flavor.id, 1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-slate-900" disabled={currentMixCount >= (selectedPack || 0)}>
-                                <Plus className="w-3.5 h-3.5" />
+                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm !text-black">{mixCounts[flavor.id]}</span>
+                              <button onClick={() => handleMixChange(flavor.id, 1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center !text-black" disabled={currentMixCount >= (selectedPack || 0)}>
+                                <Plus className="w-3.5 h-3.5 !text-black" />
                               </button>
                             </div>
                             {/* Info Tooltip */}
@@ -472,14 +472,14 @@ const ProductSection = () => {
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
                     >
-                      <Minus className="w-5 h-5" />
+                      <Minus className="w-5 h-5 !text-black" />
                     </button>
-                    <span className="w-10 text-center font-bold text-2xl">{quantity}</span>
+                    <span className="w-10 text-center font-bold text-2xl !text-black">{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
                     >
-                      <Plus className="w-5 h-5" />
+                      <Plus className="w-5 h-5 !text-black" />
                     </button>
                   </div>
 
