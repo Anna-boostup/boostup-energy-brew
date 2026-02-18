@@ -242,13 +242,13 @@ const ProductSection = () => {
               {/* Pack Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE BALENÍ</h3>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   {packs.map((pack, index) => (
                     <button
                       key={pack}
                       onClick={() => setSelectedPack(pack)}
-                      className={`py-5 rounded-2xl font-bold text-lg sm:text-xl transition-all duration-300 hover-lift ${selectedPack === pack
-                        ? "bg-primary text-primary-foreground shadow-button scale-105"
+                      className={`py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-xl transition-all duration-300 hover-lift ${selectedPack === pack
+                        ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
                         : "bg-card text-foreground border-2 border-border hover:border-primary"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
@@ -265,7 +265,7 @@ const ProductSection = () => {
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <button
                     onClick={() => setSubscriptionMode(null)}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${!subscriptionMode
@@ -278,8 +278,8 @@ const ProductSection = () => {
                         {!subscriptionMode && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                       </div>
                       <div className="text-left">
-                        <div className="font-bold">Jednorázový nákup</div>
-                        <div className="text-xs text-muted-foreground">Standardní cena</div>
+                        <div className="font-bold text-sm sm:text-base">Jednorázový nákup</div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground">Standardní cena</div>
                       </div>
                     </div>
                   </button>
@@ -299,8 +299,8 @@ const ProductSection = () => {
                         {subscriptionMode === "monthly" && <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />}
                       </div>
                       <div className="text-left">
-                        <div className="font-bold text-amber-600">Předplatné</div>
-                        <div className="text-xs text-muted-foreground">Každý měsíc <span className="text-amber-600 font-bold">-15%</span></div>
+                        <div className="font-bold text-sm sm:text-base text-amber-600">Předplatné</div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground">Každý měsíc <span className="text-amber-600 font-bold">-15%</span></div>
                       </div>
                     </div>
                   </button>
@@ -310,7 +310,7 @@ const ProductSection = () => {
               {/* Flavor Mode Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <button
                     onClick={() => setFlavorMode("single")}
                     className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
@@ -320,8 +320,8 @@ const ProductSection = () => {
                   >
                     <Droplet className="w-5 h-5" />
                     <div className="text-left">
-                      <div className="font-bold">Jednu příchuť</div>
-                      <div className={`text-xs ${flavorMode === "single" ? "opacity-80" : "text-muted-foreground"}`}>Vyberu si níže</div>
+                      <div className="font-bold text-sm sm:text-base">Jednu příchuť</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "opacity-80" : "text-muted-foreground"}`}>Vyberu si níže</div>
                     </div>
                   </button>
 
@@ -334,8 +334,8 @@ const ProductSection = () => {
                   >
                     <Blend className="w-5 h-5" />
                     <div className="text-left">
-                      <div className="font-bold">Mix příchutí</div>
-                      <div className={`text-xs ${flavorMode === "mix" ? "opacity-90" : "text-muted-foreground"}`}>Všechny 3 najednou</div>
+                      <div className="font-bold text-sm sm:text-base">Mix příchutí</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "opacity-90" : "text-muted-foreground"}`}>Všechny 3 najednou</div>
                     </div>
                   </button>
                 </div>
@@ -466,7 +466,7 @@ const ProductSection = () => {
 
               {/* Quantity & Add to cart */}
               <div className="space-y-4 pt-6">
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
                   <div className="flex items-center justify-between sm:justify-center gap-4 bg-card rounded-3xl px-5 py-3 border-2 border-border shadow-card">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
