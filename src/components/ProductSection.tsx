@@ -242,19 +242,19 @@ const ProductSection = () => {
               {/* Pack Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE BALENÍ</h3>
-                <div className="flex gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {packs.map((pack, index) => (
                     <button
                       key={pack}
                       onClick={() => setSelectedPack(pack)}
-                      className={`flex-1 py-5 rounded-2xl font-bold text-xl transition-all duration-300 hover-lift ${selectedPack === pack
+                      className={`py-5 rounded-2xl font-bold text-lg sm:text-xl transition-all duration-300 hover-lift ${selectedPack === pack
                         ? "bg-primary text-primary-foreground shadow-button scale-105"
                         : "bg-card text-foreground border-2 border-border hover:border-primary"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
                       {pack}x
-                      <span className="block text-sm font-semibold opacity-80">
+                      <span className="block text-[10px] sm:text-sm font-semibold opacity-80">
                         {packPrices[pack]} Kč
                       </span>
                     </button>
@@ -265,7 +265,7 @@ const ProductSection = () => {
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     onClick={() => setSubscriptionMode(null)}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${!subscriptionMode
@@ -310,10 +310,10 @@ const ProductSection = () => {
               {/* Flavor Mode Selection */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     onClick={() => setFlavorMode("single")}
-                    className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
+                    className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
                       ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
                       : "bg-card text-foreground border-2 border-border hover:border-primary"
                       }`}
@@ -327,7 +327,7 @@ const ProductSection = () => {
 
                   <button
                     onClick={() => setFlavorMode("mix")}
-                    className={`flex-1 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "mix"
+                    className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "mix"
                       ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream shadow-button scale-[1.02]"
                       : "bg-card text-foreground border-2 border-border hover:border-primary"
                       }`}
