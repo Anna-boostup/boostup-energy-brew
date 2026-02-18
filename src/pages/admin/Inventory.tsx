@@ -32,6 +32,23 @@ const Inventory = () => {
                     <TableBody>
                         {Object.entries(stock)
                             .filter(([sku]) => !sku.includes('mix'))
+                            .sort(([skuA], [skuB]) => {
+                                const parseSku = (sku: string) => {
+                                    const parts = sku.split('-');
+                                    const flavor = parts[0];
+                                    // If no number, treat as size 1 (single)
+                                    const size = parts.length > 1 ? parseInt(parts[1]) : 1;
+                                    return { flavor, size };
+                                };
+                                const a = parseSku(skuA);
+                                const b = parseSku(skuB);
+
+                                // Sort by Flavor (Lemon, Red, Silky)
+                                if (a.flavor !== b.flavor) return a.flavor.localeCompare(b.flavor);
+
+                                // Sort by Size (1, 3, 12, 21)
+                                return a.size - b.size;
+                            })
                             .map(([sku, qty]) => (
                                 <TableRow key={sku}>
                                     <TableCell className="font-mono font-medium">{sku}</TableCell>
