@@ -247,14 +247,14 @@ const ProductSection = () => {
                     <button
                       key={pack}
                       onClick={() => setSelectedPack(pack)}
-                      className={`py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-xl transition-all duration-300 hover-lift ${selectedPack === pack
-                        ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
+                      className={`py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
+                        ? "bg-primary text-primary-foreground shadow-button"
                         : "bg-card text-foreground border-2 border-border hover:border-primary"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
                       {pack}x
-                      <span className="block text-[10px] sm:text-sm font-semibold opacity-80">
+                      <span className="block text-[10px] sm:text-xs font-semibold opacity-80">
                         {packPrices[pack]} Kč
                       </span>
                     </button>
@@ -368,11 +368,11 @@ const ProductSection = () => {
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
                             <div className="flex items-center gap-2 bg-background rounded-full border border-border px-1 py-1 shadow-sm">
-                              <button onClick={() => handleMixChange(flavor.id, -1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground" disabled={mixCounts[flavor.id] === 0}>
+                              <button onClick={() => handleMixChange(flavor.id, -1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-slate-900" disabled={mixCounts[flavor.id] === 0}>
                                 <Minus className="w-3.5 h-3.5" />
                               </button>
-                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm text-foreground">{mixCounts[flavor.id]}</span>
-                              <button onClick={() => handleMixChange(flavor.id, 1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground" disabled={currentMixCount >= (selectedPack || 0)}>
+                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm text-slate-900">{mixCounts[flavor.id]}</span>
+                              <button onClick={() => handleMixChange(flavor.id, 1)} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-slate-900" disabled={currentMixCount >= (selectedPack || 0)}>
                                 <Plus className="w-3.5 h-3.5" />
                               </button>
                             </div>
@@ -466,7 +466,7 @@ const ProductSection = () => {
 
               {/* Quantity & Add to cart */}
               <div className="space-y-4 pt-6">
-                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                   <div className="flex items-center justify-between sm:justify-center gap-4 bg-card rounded-3xl px-5 py-3 border-2 border-border shadow-card">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
