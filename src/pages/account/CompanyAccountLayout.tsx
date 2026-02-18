@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { User, Package, LogOut, Building2 } from "lucide-react";
+import { User, Package, LogOut, Building2, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ const CompanyAccountLayout = () => {
     const navigation = [
         { name: "Firemní profil", href: "/company-account/profile", icon: Building2 },
         { name: "Firemní objednávky", href: "/company-account/orders", icon: Package },
+        { name: "Firemní předplatné", href: "/company-account/subscriptions", icon: RefreshCw },
     ];
 
     return (

@@ -182,7 +182,8 @@ const CheckoutPage = () => {
                     price: item.price
                 })),
                 total: cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0),
-                status: 'paid' // Initial status, maybe should be pending if payment fails/is transfer
+                status: 'paid', // Initial status, maybe should be pending if payment fails/is transfer
+                is_subscription_order: cart.some(item => !!item.subscriptionInterval)
             };
 
             // Adjust initial status based on payment method
@@ -200,6 +201,21 @@ const CheckoutPage = () => {
             });
 
             if (paymentResult.success) {
+                // Create subscription records if any
+                const subscriptionItems = cart.filter(item => !!item.subscriptionInterval);
+                if (subscriptionItems.length > 0 && user) {
+                    const subsToInsert = subscriptionItems.map(item => ({
+                        user_id: user.id,
+                        status: 'active',
+                        interval: item.subscriptionInterval,
+                        product_handle: item.flavorMode === 'mix' ? 'mix-pack' : `${item.flavor}-pack`,
+                        quantity: item.quantity,
+                        next_delivery_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+                    }));
+
+                    await supabase.from('subscriptions').insert(subsToInsert);
+                }
+
                 clearCart();
                 navigate(`/payment/success?paymentId=${paymentResult.paymentId}&orderNumber=${orderNumber}&amount=${cartTotal}`);
             } else {

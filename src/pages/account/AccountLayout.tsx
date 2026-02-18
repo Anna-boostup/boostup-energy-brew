@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { User, Package, LogOut } from "lucide-react";
+import { User, Package, LogOut, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ const AccountLayout = () => {
     const navigation = [
         { name: "Můj profil", href: "/account/profile", icon: User },
         { name: "Moje objednávky", href: "/account/orders", icon: Package },
+        { name: "Moje předplatné", href: "/account/subscriptions", icon: RefreshCw },
     ];
 
     return (

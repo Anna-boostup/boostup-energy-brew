@@ -14,6 +14,7 @@ export interface CartItem {
         red: number;
         silky: number;
     };
+    subscriptionInterval?: 'monthly' | 'bimonthly';
 }
 
 interface CartState {
@@ -41,14 +42,20 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const cartReducer = (state: CartState, action: CartAction): CartState => {
     switch (action.type) {
         case 'ADD_TO_CART':
-            // Create a unique key for comparison including mix config
-            const newItemKey = JSON.stringify(action.payload.mixConfiguration || {});
+            // Create a unique key for comparison including mix config AND subscription
+            const newItemKey = JSON.stringify({
+                mix: action.payload.mixConfiguration || {},
+                sub: action.payload.subscriptionInterval || null
+            });
 
             const existingItemIndex = state.items.findIndex(
                 item => item.id === action.payload.id &&
                     item.flavor === action.payload.flavor &&
                     item.pack === action.payload.pack &&
-                    JSON.stringify(item.mixConfiguration || {}) === newItemKey
+                    JSON.stringify({
+                        mix: item.mixConfiguration || {},
+                        sub: item.subscriptionInterval || null
+                    }) === newItemKey
             );
             if (existingItemIndex > -1) {
                 const newItems = [...state.items];
@@ -102,7 +109,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dispatch({ type: 'CLEAR_CART' });
     };
 
-    const cartTotal = state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const cartTotal = state.items.reduce((total, item) => {
+        // Apply 15% discount for subscriptions
+        const price = item.subscriptionInterval ? item.price * 0.85 : item.price;
+        return total + (price * item.quantity);
+    }, 0);
     const cartCount = state.items.reduce((count, item) => count + item.quantity, 0);
 
     return (

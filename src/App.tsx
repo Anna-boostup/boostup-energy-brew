@@ -18,6 +18,7 @@ import AccountLayout from "./pages/account/AccountLayout";
 import AccountOrders from "./pages/account/Orders";
 import AccountProfile from "./pages/account/Profile";
 import CompanyProfile from "./pages/account/CompanyProfile";
+import Subscriptions from "./pages/account/Subscriptions";
 import CompanyAccountLayout from "./pages/account/CompanyAccountLayout";
 import { useAuth } from "./context/AuthContext";
 import { Loader2 } from "lucide-react";
@@ -87,6 +88,7 @@ const App = () => (
                     <Route index element={<Navigate to="/account/profile" replace />} />
                     <Route path="profile" element={<AccountProfile />} />
                     <Route path="orders" element={<AccountOrders />} />
+                    <Route path="subscriptions" element={<Subscriptions />} />
                   </Route>
 
                   {/* Company Account Routes */}
@@ -101,6 +103,7 @@ const App = () => (
                     <Route path="profile" element={<CompanyProfile />} />
                     {/* Reusing Orders component but it will need to context aware or just show same orders */}
                     <Route path="orders" element={<AccountOrders />} />
+                    <Route path="subscriptions" element={<Subscriptions />} />
                   </Route>
 
                   <Route path="/checkout" element={<CheckoutPage />} />

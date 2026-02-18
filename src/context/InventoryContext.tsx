@@ -38,6 +38,7 @@ export interface Order {
     }[];
     total: number;
     status: 'pending' | 'paid' | 'shipped';
+    is_subscription_order?: boolean;
 }
 
 export interface StockMovement {
@@ -203,6 +204,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             status: order.status,
             items: order.items,
             delivery_info: order.delivery_info,
+            is_subscription_order: order.is_subscription_order || false,
         });
 
         if (error) {
