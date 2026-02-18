@@ -4,68 +4,68 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 
 interface OrderWebhookPayload {
-    type: string;
-    table: string;
-    record: {
-        id: string;
-        customer_email: string;
-        customer_name: string;
-        total: number;
-        items: any[];
-        delivery_info: {
-            firstName: string;
-            lastName: string;
-            phone: string;
-            street: string;
-            city: string;
-            zip: string;
-            deliveryMethod: string;
-            paymentMethod: string;
-            packetaPointId?: string;
-        };
-        created_at: string;
+  type: string;
+  table: string;
+  record: {
+    id: string;
+    customer_email: string;
+    customer_name: string;
+    total: number;
+    items: any[];
+    delivery_info: {
+      firstName: string;
+      lastName: string;
+      phone: string;
+      street: string;
+      city: string;
+      zip: string;
+      deliveryMethod: string;
+      paymentMethod: string;
+      packetaPointId?: string;
     };
-    schema: string;
-    old_record: null | any;
+    created_at: string;
+  };
+  schema: string;
+  old_record: null | any;
 }
 
 const handler = async (req: Request): Promise<Response> => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+  }
+
+  try {
+    const payload: OrderWebhookPayload = await req.json();
+    const order = payload.record;
+
+    if (!order || !order.customer_email) {
+      return new Response(JSON.stringify({ error: 'Invalid payload' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    try {
-        const payload: OrderWebhookPayload = await req.json();
-        const order = payload.record;
+    // Only process new inserts
+    if (payload.type !== 'INSERT') {
+      return new Response(JSON.stringify({ message: 'Not an INSERT event' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-        if (!order || !order.customer_email) {
-            return new Response(JSON.stringify({ error: 'Invalid payload' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' },
-            });
-        }
+    console.log(`Sending email for order ${order.id} to ${order.customer_email}`);
 
-        // Only process new inserts
-        if (payload.type !== 'INSERT') {
-            return new Response(JSON.stringify({ message: 'Not an INSERT event' }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' },
-            });
-        }
-
-        console.log(`Sending email for order ${order.id} to ${order.customer_email}`);
-
-        const res = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-            },
-            body: JSON.stringify({
-                from: 'objednavky@drinkboostup.cz',
-                to: order.customer_email,
-                subject: `Potvrzení objednávky #${order.id} - BoostUp Energy`,
-                html: `
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'objednavky@drinkboostup.cz',
+        to: order.customer_email,
+        subject: `Potvrzení objednávky #${order.id} - BoostUp Energy`,
+        html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <h1>Děkujeme za objednávku! 🚀</h1>
             <p>Dobrý den, ${order.delivery_info?.firstName || order.customer_name},</p>
@@ -115,6 +115,12 @@ const handler = async (req: Request): Promise<Response> => {
                     <p>Číslo účtu: <strong>2102766861/2010</strong> (Fio banka)<br>
                     Variabilní symbol: <strong>${order.id.replace(/\D/g, '')}</strong> (nebo číslo objednávky bez ORD-)<br>
                     Částka: <strong>${order.total} Kč</strong></p>
+                    
+                    <div style="margin-top: 15px; text-align: center;">
+                        <img src="http://api.paylibo.com/paylibo/generator/image?accountNumber=2102766861&bankCode=2010&amount=${order.total}&currency=CZK&vs=${order.id.replace(/\D/g, '')}" alt="QR Platba" style="max-width: 200px; border-radius: 8px; border: 4px solid white;">
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Naskenujte QR kód ve svém bankovnictví</p>
+                    </div>
+
                     <p>Zboží odešleme ihned po připsání platby.</p>
                 </div>
             ` : ''}
@@ -126,21 +132,21 @@ const handler = async (req: Request): Promise<Response> => {
             <p>S pozdravem,<br>Tým BoostUp Energy</p>
           </div>
         `,
-            }),
-        });
+      }),
+    });
 
-        const data = await res.json();
+    const data = await res.json();
 
-        return new Response(JSON.stringify(data), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    }
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 };
 
 serve(handler);

@@ -6,24 +6,15 @@ import logoBlack from "@/assets/logo-black.png";
 import CartModal from "./CartModal";
 import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
-  const [user, setUser] = useState<any>(null);
+  const { user, profile } = useAuth();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
@@ -58,8 +49,8 @@ const Header = () => {
 
             {/* Auth Button */}
             {user ? (
-              <Link to="/profile">
-                <Button variant="ghost" size="icon" title="Můj profil">
+              <Link to={profile?.account_type === 'company' ? "/company-account" : "/account"}>
+                <Button variant="ghost" size="icon" title={profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
                   <User className="w-5 h-5" />
                 </Button>
               </Link>

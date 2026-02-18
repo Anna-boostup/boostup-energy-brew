@@ -20,6 +20,15 @@ export interface Order {
         deliveryMethod: string;
         paymentMethod: string;
         packetaPointId?: string;
+
+        isCompany?: boolean;
+        billingSameAsDelivery?: boolean;
+        companyName?: string;
+        ico?: string;
+        dic?: string;
+        billingStreet?: string;
+        billingCity?: string;
+        billingZip?: string;
     };
     items: {
         sku: string;

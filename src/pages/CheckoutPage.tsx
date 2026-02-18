@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 import { useCart } from '@/context/CartContext';
 import { useInventory, Order } from '@/context/InventoryContext';
-import { ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle, Loader2, Package } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle, Loader2, Package, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import mockPaymentService from '@/services/mockPayment';
 import { Button } from '@/components/ui/button';
 import PacketaWidget from '@/components/PacketaWidget';
 import { useToast } from '@/hooks/use-toast';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const CheckoutPage = () => {
     const { cart, cartTotal, clearCart } = useCart();
     const { addOrder, decrementStock, getStock } = useInventory();
+    const { user } = useAuth();
     const { toast } = useToast();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedPoint, setSelectedPoint] = useState<any>(null);
+
+    // Billing Address State
+    const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -24,11 +33,69 @@ const CheckoutPage = () => {
         street: '',
         city: '',
         zip: '',
+        // Billing fields
+        isCompany: false,
+        companyName: '',
+        ico: '',
+        dic: '',
+        billingStreet: '',
+        billingCity: '',
+        billingZip: '',
+
         deliveryMethod: 'card',
         packetaPointId: '',
         paymentMethod: 'card',
         subMethod: ''
     });
+
+    // Pre-fill data from profile
+    useEffect(() => {
+        if (!user) return;
+
+        const fetchProfile = async () => {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (!error && data) {
+                // Parse full name
+                const names = (data.full_name || '').split(' ');
+                const firstName = names[0] || '';
+                const lastName = names.slice(1).join(' ') || '';
+
+                const addr = data.address || {};
+                const delivery = addr.delivery || {};
+                const billing = addr.billing || {};
+
+                setFormData(prev => ({
+                    ...prev,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: data.email || prev.email,
+                    phone: delivery.phone || prev.phone,
+                    street: delivery.street || '',
+                    city: delivery.city || '',
+                    zip: delivery.zip || '',
+
+                    isCompany: billing.isCompany === true,
+                    companyName: billing.company || '',
+                    ico: billing.ico || '',
+                    dic: billing.dic || '',
+                    billingStreet: billing.street || '',
+                    billingCity: billing.city || '',
+                    billingZip: billing.zip || ''
+                }));
+
+                if (billing.isSame !== undefined) {
+                    setBillingSameAsDelivery(billing.isSame);
+                }
+            }
+        };
+
+        fetchProfile();
+    }, [user]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -92,6 +159,17 @@ const CheckoutPage = () => {
                     street: formData.street,
                     city: formData.city,
                     zip: formData.zip,
+                    // Add Billing Info to delivery_info or separate field? 
+                    // The DB schema has delivery_info JSONB. I'll add billing fields there.
+                    billingSameAsDelivery: billingSameAsDelivery,
+                    isCompany: formData.isCompany,
+                    companyName: formData.companyName,
+                    ico: formData.ico,
+                    dic: formData.dic,
+                    billingStreet: billingSameAsDelivery ? formData.street : formData.billingStreet,
+                    billingCity: billingSameAsDelivery ? formData.city : formData.billingCity,
+                    billingZip: billingSameAsDelivery ? formData.zip : formData.billingZip,
+
                     deliveryMethod: formData.deliveryMethod,
                     paymentMethod: formData.paymentMethod,
                     packetaPointId: formData.packetaPointId,
@@ -104,8 +182,14 @@ const CheckoutPage = () => {
                     price: item.price
                 })),
                 total: cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0),
-                status: 'paid'
+                status: 'paid' // Initial status, maybe should be pending if payment fails/is transfer
             };
+
+            // Adjust initial status based on payment method
+            if (formData.paymentMethod === 'transfer') {
+                newOrder.status = 'pending';
+            }
+
             addOrder(newOrder);
 
             const paymentResult = await mockPaymentService.createPayment({
@@ -247,6 +331,147 @@ const CheckoutPage = () => {
                                         />
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Billing Address Section */}
+                            <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-2xl font-display font-bold flex items-center gap-3">
+                                        <FileText className="w-6 h-6 text-primary" />
+                                        Fakturační údaje
+                                    </h2>
+
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="billingSame"
+                                            checked={billingSameAsDelivery}
+                                            onCheckedChange={(checked) => setBillingSameAsDelivery(checked as boolean)}
+                                        />
+                                        <Label htmlFor="billingSame" className="font-bold cursor-pointer">Stejné jako doručovací</Label>
+                                    </div>
+                                </div>
+
+                                {!billingSameAsDelivery && (
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            {/* Company Fields */}
+                                            {formData.isCompany && (
+                                                <>
+                                                    <div className="space-y-2 md:col-span-2">
+                                                        <label className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
+                                                        <input
+                                                            name="companyName"
+                                                            value={formData.companyName}
+                                                            onChange={handleChange}
+                                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
+                                                        <input
+                                                            name="dic"
+                                                            value={formData.dic}
+                                                            onChange={handleChange}
+                                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {/* Personal Fields (ICO option) */}
+                                            {!formData.isCompany && (
+                                                <div className="space-y-2 md:col-span-2">
+                                                    <label className="text-sm font-bold text-muted-foreground ml-1">IČO (VOLITELNÉ)</label>
+                                                    <input
+                                                        name="ico"
+                                                        value={formData.ico}
+                                                        onChange={handleChange}
+                                                        placeholder="Pro podnikající fyzické osoby"
+                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            <div className="md:col-span-2 space-y-2 pt-2 border-t">
+                                                <label className="text-sm font-bold text-muted-foreground ml-1">ULICE A ČÍSLO POPISNÉ (FAKTURAČNÍ)</label>
+                                                <input
+                                                    name="billingStreet"
+                                                    value={formData.billingStreet}
+                                                    onChange={handleChange}
+                                                    required={!billingSameAsDelivery}
+                                                    className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ)</label>
+                                                <input
+                                                    name="billingCity"
+                                                    value={formData.billingCity}
+                                                    onChange={handleChange}
+                                                    required={!billingSameAsDelivery}
+                                                    className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-muted-foreground ml-1">PSČ (FAKTURAČNÍ)</label>
+                                                <input
+                                                    name="billingZip"
+                                                    value={formData.billingZip}
+                                                    onChange={handleChange}
+                                                    required={!billingSameAsDelivery}
+                                                    className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {billingSameAsDelivery && (
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            {/* Company Fields */}
+                                            {formData.isCompany && (
+                                                <>
+                                                    <div className="space-y-2 md:col-span-2">
+                                                        <label className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
+                                                        <input
+                                                            name="companyName"
+                                                            value={formData.companyName}
+                                                            onChange={handleChange}
+                                                            placeholder="Např. BoostUp s.r.o."
+                                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2 md:col-span-2">
+                                                        <label className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
+                                                        <input
+                                                            name="dic"
+                                                            value={formData.dic}
+                                                            onChange={handleChange}
+                                                            placeholder="CZ..."
+                                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {/* Personal Fields (ICO option) */}
+                                            {!formData.isCompany && (
+                                                <div className="space-y-2 md:col-span-2">
+                                                    <label className="text-sm font-bold text-muted-foreground ml-1">IČO (VOLITELNÉ)</label>
+                                                    <input
+                                                        name="ico"
+                                                        value={formData.ico}
+                                                        onChange={handleChange}
+                                                        placeholder="Pro podnikající fyzické osoby"
+                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
                             </div>
 
                             {/* Shipping Method */}

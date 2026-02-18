@@ -49,9 +49,16 @@ const Register = () => {
                     email: email,
                     full_name: fullName,
                     account_type: accountType,
-                    company_name: accountType === "company" ? companyName : null,
-                    ico: accountType === "company" ? ico : null,
-                    dic: accountType === "company" ? dic : null,
+                    // Store company details in address.billing structure to match CompanyProfile logic
+                    // and avoid needing new columns for now
+                    address: {
+                        billing: {
+                            isCompany: accountType === "company",
+                            companyName: accountType === "company" ? companyName : "",
+                            ico: accountType === "company" ? ico : "",
+                            dic: accountType === "company" ? dic : "",
+                        }
+                    }
                 };
 
                 const { error: profileError } = await supabase
@@ -170,6 +177,7 @@ const Register = () => {
                                         placeholder="CZ12345678"
                                         value={dic}
                                         onChange={(e) => setDic(e.target.value)}
+                                        required={accountType === "company"}
                                     />
                                 </div>
                             </div>

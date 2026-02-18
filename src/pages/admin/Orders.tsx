@@ -4,8 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+    Dialog,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
+
 
 const Orders = () => {
     const { orders, updateOrderStatus } = useInventory();
@@ -21,6 +27,7 @@ const Orders = () => {
 
     const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'paid');
     const shippedOrders = orders.filter(o => o.status === 'shipped');
+
 
     const OrderTable = ({ data }: { data: typeof orders }) => (
         <Table>
@@ -76,16 +83,27 @@ const Orders = () => {
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
-                                {order.status !== 'shipped' && (
-                                    <Button
-                                        size="sm"
-                                        onClick={() => handleStatusChange(order.id, 'shipped')}
-                                        className="bg-primary hover:bg-primary/90"
-                                    >
-                                        <Truck className="w-4 h-4 mr-2" />
-                                        Odeslat
-                                    </Button>
-                                )}
+                                <div className="flex justify-end gap-2">
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button size="sm" variant="outline">
+                                                <Eye className="w-4 h-4 mr-2" />
+                                                Detail
+                                            </Button>
+                                        </DialogTrigger>
+                                        <OrderDetailDialog order={order} />
+                                    </Dialog>
+
+                                    {order.status !== 'shipped' && (
+                                        <Button
+                                            size="sm"
+                                            onClick={() => handleStatusChange(order.id, 'shipped')}
+                                            className="bg-primary hover:bg-primary/90"
+                                        >
+                                            <Truck className="w-4 h-4" />
+                                        </Button>
+                                    )}
+                                </div>
                             </TableCell>
                         </TableRow>
                     ))

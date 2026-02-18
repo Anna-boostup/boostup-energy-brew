@@ -34,9 +34,23 @@ const Login = () => {
                 title: "Úspěšně přihlášeno",
                 description: "Vítejte zpět!",
             });
-            // Redirect based on role not possible immediately without context/profile fetch
-            // Basic redirect to home for now
-            navigate("/");
+
+            // Fetch profile to determine redirect
+            if (data.user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('account_type')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profile?.account_type === 'company') {
+                    navigate("/company-account");
+                } else {
+                    navigate("/account");
+                }
+            } else {
+                navigate("/");
+            }
         }
         setLoading(false);
     };
@@ -76,6 +90,55 @@ const Login = () => {
                         {loading ? "Přihlašování..." : "Přihlásit se"}
                     </Button>
                 </form>
+
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-muted-foreground">Nebo</span>
+                    </div>
+                </div>
+
+                <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={async () => {
+                        if (!email) {
+                            toast({
+                                title: "Zadejte email",
+                                description: "Pro odeslání magického odkazu musíte vyplnit email.",
+                                variant: "destructive",
+                            });
+                            return;
+                        }
+                        setLoading(true);
+                        const { error } = await supabase.auth.signInWithOtp({
+                            email,
+                            options: {
+                                emailRedirectTo: window.location.origin,
+                            },
+                        });
+                        setLoading(false);
+
+                        if (error) {
+                            toast({
+                                title: "Chyba",
+                                description: error.message,
+                                variant: "destructive",
+                            });
+                        } else {
+                            toast({
+                                title: "Odkaz odeslán! 🚀",
+                                description: "Zkontrolujte si emailovou schránku.",
+                            });
+                        }
+                    }}
+                    disabled={loading}
+                >
+                    ⚡ Poslat přihlašovací odkaz (Magic Link)
+                </Button>
 
                 <div className="text-center text-sm text-muted-foreground">
                     Nemáte účet?{" "}
