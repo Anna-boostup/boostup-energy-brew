@@ -203,7 +203,7 @@ const ProductSection = () => {
         {/* ... (SVG background elements omitted for brevity, but they're usually at the top of the section) ... */}
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 overflow-x-hidden">
-          Riverside
+
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
             {/* Image section */}
             <div className="flex-1 flex items-center justify-center animate-fade-up animation-delay-200">
@@ -244,6 +244,7 @@ const ProductSection = () => {
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE BALENÍ</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
                   {packs.map((pack, index) => (
                     <button
                       key={pack}
@@ -261,14 +262,14 @@ const ProductSection = () => {
                     </button>
                   ))}
                 </div>
-                Riverside
+
               </div>
 
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
-                  Riverside
+
                   <button
                     onClick={() => setSubscriptionMode(null)}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${!subscriptionMode
@@ -314,7 +315,7 @@ const ProductSection = () => {
               <div>
                 <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
-                  Riverside
+
                   <button
                     onClick={() => setFlavorMode("single")}
                     className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
@@ -374,24 +375,25 @@ const ProductSection = () => {
                             <div className="flex items-center gap-2 !bg-white rounded-full border border-border px-1 py-1 shadow-sm" style={{ backgroundColor: 'white' }}>
                               <button
                                 onClick={() => handleMixChange(flavor.id, -1)}
-                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-black"
-                                style={{ color: 'black' }}
+                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground"
+                                style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={mixCounts[flavor.id] === 0}
                               >
-                                <Minus className="w-3.5 h-3.5" style={{ color: 'black' }} />
+                                <Minus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
-                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm text-black" style={{ color: 'black' }}>
+                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm text-foreground" style={{ color: 'hsl(var(--foreground))' }}>
                                 {mixCounts[flavor.id]}
                               </span>
                               <button
                                 onClick={() => handleMixChange(flavor.id, 1)}
-                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-black"
-                                style={{ color: 'black' }}
+                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground"
+                                style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={currentMixCount >= (selectedPack || 0)}
                               >
-                                <Plus className="w-3.5 h-3.5" style={{ color: 'black' }} />
+                                <Plus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
                             </div>
+
 
                             {/* Info Tooltip */}
                             <Tooltip>
@@ -489,16 +491,17 @@ const ProductSection = () => {
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
                     >
-                      <Minus className="w-5 h-5" style={{ color: 'black' }} />
+                      <Minus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>
-                    <span className="w-10 text-center font-bold text-2xl" style={{ color: 'black' }}>{quantity}</span>
+                    <span className="w-10 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
                     >
-                      <Plus className="w-5 h-5" style={{ color: 'black' }} />
+                      <Plus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>
                   </div>
+
 
 
                   {/* Stock Logic Calculation Helper */}
