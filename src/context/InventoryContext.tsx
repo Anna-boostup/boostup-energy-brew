@@ -10,6 +10,17 @@ export interface Order {
         name: string;
         email: string;
     };
+    delivery_info?: {
+        firstName: string;
+        lastName: string;
+        phone: string;
+        street: string;
+        city: string;
+        zip: string;
+        deliveryMethod: string;
+        paymentMethod: string;
+        packetaPointId?: string;
+    };
     items: {
         sku: string;
         name: string;
@@ -182,7 +193,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             total: order.total,
             status: order.status,
             items: order.items,
-            // delivery_info: ... (if we had it in Order interface, we would add it here)
+            delivery_info: order.delivery_info,
         });
 
         if (error) {

@@ -85,6 +85,17 @@ const CheckoutPage = () => {
                     name: `${formData.firstName} ${formData.lastName}`,
                     email: formData.email,
                 },
+                delivery_info: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    phone: formData.phone,
+                    street: formData.street,
+                    city: formData.city,
+                    zip: formData.zip,
+                    deliveryMethod: formData.deliveryMethod,
+                    paymentMethod: formData.paymentMethod,
+                    packetaPointId: formData.packetaPointId,
+                },
                 items: cart.map(item => ({
                     // Keep detailed info for record
                     sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
