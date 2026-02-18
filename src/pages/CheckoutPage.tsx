@@ -428,7 +428,21 @@ const CheckoutPage = () => {
                             </div>
 
                             <div className="pt-6 border-t border-border space-y-3">
-                                <div className="flex justify-between text-sm">
+                                {/* Discount Code Field */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-muted-foreground ml-1 uppercase">Slevový kód</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            placeholder="Vložte kód"
+                                            className="flex-1 bg-background border-2 border-border rounded-xl px-3 py-2 text-sm focus:border-primary outline-none transition-all"
+                                        />
+                                        <Button variant="outline" size="sm" type="button" className="rounded-xl font-bold">
+                                            Použít
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between text-sm pt-2">
                                     <span className="text-muted-foreground uppercase font-bold text-[10px]">Mezisoučet</span>
                                     <span className="font-bold">{cartTotal} Kč</span>
                                 </div>

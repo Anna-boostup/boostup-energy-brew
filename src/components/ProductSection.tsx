@@ -185,6 +185,7 @@ const ProductSection = () => {
     toast({
       title: "Přidáno do košíku",
       description: `${quantity}x ${flavorMode === "mix" ? "MIX" : currentFlavor.name} (${selectedPack} ks)`,
+      duration: 3000,
     });
   };
 
