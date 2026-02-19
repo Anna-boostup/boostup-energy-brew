@@ -525,9 +525,8 @@ const ProductSection = () => {
                       return (
                         <Button
                           variant="outline"
-                          size="xl"
                           disabled
-                          className="flex-1 h-full min-h-[76px] rounded-3xl border-2 border-dashed border-border text-muted-foreground font-medium text-sm bg-secondary/20"
+                          className="flex-1 h-full min-h-[76px] px-8 rounded-3xl border-2 border-dashed border-border text-muted-foreground font-medium text-sm bg-secondary/20"
                         >
                           Dokončete výběr pro nákup
                         </Button>
@@ -562,8 +561,7 @@ const ProductSection = () => {
                     return (
                       <Button
                         variant="hero"
-                        size="xl"
-                        className={`flex-1 h-full min-h-[76px] group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
+                        className={`flex-1 h-full min-h-[76px] px-8 group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
                           ? "opacity-50 grayscale cursor-not-allowed"
                           : ""
                           }`}
