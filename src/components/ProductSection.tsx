@@ -76,7 +76,7 @@ const ProductSection = () => {
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [flavorMode, setFlavorMode] = useState<FlavorMode | null>(null);
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
-  const [subscriptionMode, setSubscriptionMode] = useState<'monthly' | null>(null);
+  const [purchaseType, setPurchaseType] = useState<'onetime' | 'subscription' | null>(null);
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
@@ -119,7 +119,7 @@ const ProductSection = () => {
 
   // Calculate price with potential subscription discount
   const basePrice = selectedPack ? packPrices[selectedPack] * quantity : 0;
-  const price = subscriptionMode ? Math.round(basePrice * 0.85) : basePrice;
+  const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.85) : basePrice;
 
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
   const isMixValid = selectedPack ? currentMixCount === selectedPack : false;
@@ -140,6 +140,15 @@ const ProductSection = () => {
       toast({
         title: "Vyberte balení",
         description: "Prosím zvolte velikost balení (počet kusů).",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!purchaseType) {
+      toast({
+        title: "Vyberte typ nákupu",
+        description: "Zvolte zda chcete jednorázový nákup nebo předplatné.",
         variant: "destructive"
       });
       return;
@@ -185,14 +194,15 @@ const ProductSection = () => {
       flavorMode: flavorMode,
       image: bottleSingle,
       mixConfiguration: mixConfig,
-      subscriptionInterval: subscriptionMode || undefined
+      mixConfiguration: mixConfig,
+      subscriptionInterval: purchaseType === 'subscription' ? 'monthly' : undefined
     });
 
     toast({
-      title: subscriptionMode ? "Předplatné přidáno!" : "Přidáno do košíku",
-      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : currentFlavor.name} (${selectedPack} ks)${subscriptionMode ? " - Měsíčně (-15%)" : ""}`,
+      title: purchaseType === 'subscription' ? "Předplatné přidáno!" : "Přidáno do košíku",
+      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : currentFlavor.name} (${selectedPack} ks)${purchaseType === 'subscription' ? " - Měsíčně (-15%)" : ""}`,
       duration: 3000,
-      className: subscriptionMode ? "border-amber-500 bg-amber-50" : ""
+      className: purchaseType === 'subscription' ? "border-amber-500 bg-amber-50" : ""
     });
   };
 
@@ -271,15 +281,15 @@ const ProductSection = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
-                    onClick={() => setSubscriptionMode(null)}
-                    className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${!subscriptionMode
+                    onClick={() => setPurchaseType('onetime')}
+                    className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${purchaseType === 'onetime'
                       ? "border-primary bg-primary/5 shadow-md"
                       : "border-border bg-card hover:border-primary/50"
                       }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${!subscriptionMode ? "border-primary" : "border-muted-foreground"}`}>
-                        {!subscriptionMode && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'onetime' ? "border-primary" : "border-muted-foreground"}`}>
+                        {purchaseType === 'onetime' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Jednorázový nákup</div>
@@ -289,8 +299,8 @@ const ProductSection = () => {
                   </button>
 
                   <button
-                    onClick={() => setSubscriptionMode("monthly")}
-                    className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${subscriptionMode === "monthly"
+                    onClick={() => setPurchaseType('subscription')}
+                    className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${purchaseType === 'subscription'
                       ? "border-amber-500 bg-amber-500/5 shadow-md"
                       : "border-border bg-card hover:border-amber-500/50"
                       }`}
@@ -299,8 +309,8 @@ const ProductSection = () => {
                       -15% SLEVA
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${subscriptionMode === "monthly" ? "border-amber-500" : "border-muted-foreground"}`}>
-                        {subscriptionMode === "monthly" && <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'subscription' ? "border-amber-500" : "border-muted-foreground"}`}>
+                        {purchaseType === 'subscription' && <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />}
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base text-amber-600">Předplatné</div>
@@ -368,7 +378,8 @@ const ProductSection = () => {
                             </div>
                             <div className="text-left min-w-0 flex-1">
                               <div className="font-bold text-base leading-tight">{flavor.name}</div>
-                              <div className={`text-xs leading-snug mt-0.5 ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>{flavor.description}</div>
+                              <div className="font-bold text-base leading-tight">{flavor.name}</div>
+                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>{flavor.description}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
@@ -455,7 +466,7 @@ const ProductSection = () => {
                                 </span>
                               ))}
                             </div>
-                            <div className={`text-xs leading-snug mt-0.5 ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
+                            <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
                               {flavor.description}
                             </div>
                           </div>
@@ -508,6 +519,11 @@ const ProductSection = () => {
 
                   {/* Stock Logic Calculation Helper */}
                   {(() => {
+                    // Only render button if ALL selections are made
+                    if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
+                      return null;
+                    }
+
                     let isOutOfStock = false;
                     let requiredLemon = 0;
                     let requiredRed = 0;
@@ -534,25 +550,21 @@ const ProductSection = () => {
                     }
 
                     return (
-                      <div className="flex flex-col gap-2 w-full">
+                      <div className="flex flex-col gap-2 w-full animate-fade-up">
                         <Button
                           variant="hero"
                           size="xl"
-                          className={`flex-1 group animate-energy-pulse transition-all duration-300 ${(flavorMode === "mix" && !isMixValid) || isOutOfStock || (flavorMode === "single" && !selectedFlavor)
+                          className={`flex-1 group animate-energy-pulse transition-all duration-300 ${isOutOfStock
                             ? "opacity-50 grayscale cursor-not-allowed"
                             : ""
                             }`}
                           onClick={handleAddToCart}
-                          disabled={(flavorMode === "mix" && !isMixValid) || isOutOfStock || (flavorMode === "single" && !selectedFlavor)}
+                          disabled={isOutOfStock}
                         >
                           <ShoppingBag className="w-5 h-5" />
-                          {flavorMode === "mix" && !isMixValid
-                            ? "Vyberte všechny příchutě"
-                            : flavorMode === "single" && !selectedFlavor
-                              ? "Vyberte příchuť"
-                              : isOutOfStock
-                                ? "Vyprodáno"
-                                : "Přidat do košíku"
+                          {isOutOfStock
+                            ? "Vyprodáno"
+                            : "Přidat do košíku"
                           }
                           {!isOutOfStock && (
                             <span className="font-bold ml-2">{price} Kč</span>

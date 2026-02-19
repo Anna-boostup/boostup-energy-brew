@@ -67,7 +67,7 @@ const CTASection = () => {
               <Button
                 variant="default"
                 size="lg"
-                className="bg-lime hover:bg-lime-dark text-foreground font-black rounded-full px-10 py-6 group shadow-button"
+                className="w-full sm:w-auto bg-lime hover:bg-lime-dark text-foreground font-black rounded-full px-10 py-6 group shadow-button flex items-center justify-center"
               >
                 Přihlásit se
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
