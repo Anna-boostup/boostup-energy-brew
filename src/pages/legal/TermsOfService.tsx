@@ -5,8 +5,8 @@ const TermsOfService = () => {
         <LegalLayout title="Všeobecné obchodní podmínky" lastUpdated="17. února 2026">
             <h2>1. Úvodní ustanovení</h2>
             <p>
-                Tyto obchodní podmínky (dále jen „obchodní podmínky“) obchodní společnosti <strong>BoostUp s.r.o.</strong>,
-                se sídlem [Vaše Adresa], identifikační číslo: [Vaše IČO], zapsané v obchodním rejstříku (dále jen „prodávající“)
+                Tyto obchodní podmínky (dále jen „obchodní podmínky“) obchodní společnosti <strong>BoostUp Supplements s.r.o.</strong>,
+                se sídlem Chaloupkova 3002/1a, Královo Pole, 612 00 Brno, identifikační číslo: 24045560, zapsané v obchodním rejstříku vedeném u Krajského soudu v Brně, oddíl C, vložka 148762 (dále jen „prodávající“)
                 upravují v souladu s ustanovením § 1751 odst. 1 zákona č. 89/2012 Sb., občanský zákoník (dále jen „občanský zákoník“)
                 vzájemná práva a povinnosti smluvních stran vzniklé v souvislosti nebo na základě kupní smlouvy (dále jen „kupní smlouva“)
                 uzavírané mezi prodávajícím a jinou fyzickou osobou (dále jen „kupující“) prostřednictvím internetového obchodu prodávajícího.

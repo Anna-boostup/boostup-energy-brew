@@ -6,7 +6,7 @@ const PrivacyPolicy = () => {
             <h2>1. Správce osobních údajů</h2>
             <p>
                 Správcem osobních údajů podle čl. 4 bod 7 nařízení Evropského parlamentu a Rady (EU) 2016/679 o ochraně fyzických osob
-                v souvislosti se zpracováním osobních údajů a o volném pohybu těchto údajů (dále jen: „GDPR”) je <strong>BoostUp s.r.o.</strong>
+                v souvislosti se zpracováním osobních údajů a o volném pohybu těchto údajů (dále jen: „GDPR”) je <strong>BoostUp Supplements s.r.o.</strong>
                 (dále jen: „správce“).
             </p>
 
