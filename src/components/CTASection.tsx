@@ -53,7 +53,7 @@ const CTASection = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className={`flex flex-col sm:flex-row gap-4 p-2 rounded-2xl sm:rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
+            <div className={`flex flex-col sm:flex-row items-center gap-4 p-2 rounded-2xl sm:rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
               <div className="flex-1 flex items-center gap-3 px-5">
                 <Mail className={`w-6 h-6 transition-colors duration-300 ${isHovered ? 'text-lime' : 'text-primary-foreground/60'}`} />
                 <input

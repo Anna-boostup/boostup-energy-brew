@@ -499,7 +499,7 @@ const ProductSection = () => {
               {/* Quantity & Add to cart */}
               <div className="space-y-4 pt-6">
                 {/* Container for Quantity and Button in one row */}
-                <div className="flex flex-col sm:flex-row gap-4 h-auto sm:h-[76px] items-stretch">
+                <div className="flex flex-col sm:flex-row gap-4 h-auto sm:h-[76px] items-stretch w-full">
 
                   {/* Quantity Selector - Fixed height matching button */}
                   <div className="flex items-center justify-between gap-4 bg-card rounded-3xl px-6 py-4 border-2 border-border shadow-card h-full min-h-[76px]">
