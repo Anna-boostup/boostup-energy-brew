@@ -33,6 +33,11 @@ const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allow
 
   const currentType = profile.account_type || 'personal';
 
+  // Admin should have access to everything or be redirected to admin
+  if (currentType === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
+
   if (currentType !== allowedType) {
     // Redirect to the correct dashboard
     return <Navigate to={currentType === 'company' ? "/company-account" : "/account"} replace />;

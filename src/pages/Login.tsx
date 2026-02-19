@@ -18,43 +18,59 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-
-        if (error) {
-            toast({
-                title: "Chyba přihlášení",
-                description: error.message,
-                variant: "destructive",
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
             });
-        } else {
+
+            if (error) throw error;
+
             toast({
                 title: "Úspěšně přihlášeno",
                 description: "Vítejte zpět!",
             });
 
-            // Fetch profile to determine redirect
+            // Immediate fetch of profile to determine redirect
             if (data.user) {
-                const { data: profile } = await supabase
+                console.log("User authenticated:", data.user.id);
+
+                const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('account_type')
                     .eq('id', data.user.id)
                     .single();
 
-                if (profile?.account_type === 'admin') {
-                    navigate("/admin");
-                } else if (profile?.account_type === 'company') {
-                    navigate("/company-account");
-                } else {
+                if (profileError) {
+                    console.error("Error fetching profile:", profileError);
+                    // Fallback if profile fetch fails
                     navigate("/account");
+                    return;
                 }
-            } else {
-                navigate("/");
+
+                console.log("Profile fetched:", profile);
+
+                if (profile?.account_type === 'admin') {
+                    console.log("Redirecting to /admin");
+                    navigate("/admin", { replace: true });
+                } else if (profile?.account_type === 'company') {
+                    console.log("Redirecting to /company-account");
+                    navigate("/company-account", { replace: true });
+                } else {
+                    console.log("Redirecting to /account");
+                    navigate("/account", { replace: true });
+                }
             }
+        } catch (error: any) {
+            console.error("Login error:", error);
+            toast({
+                title: "Chyba přihlášení",
+                description: error.message || "Nastala neočekávaná chyba",
+                variant: "destructive",
+            });
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
