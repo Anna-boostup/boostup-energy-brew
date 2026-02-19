@@ -579,6 +579,7 @@ const ProductSection = () => {
                         </div>
                       </Button>
                     );
+                  })()}
                 </div>
 
                 {/* Stock Status Display - Full Width Below */}
