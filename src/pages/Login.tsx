@@ -43,7 +43,9 @@ const Login = () => {
                     .eq('id', data.user.id)
                     .single();
 
-                if (profile?.account_type === 'company') {
+                if (profile?.account_type === 'admin') {
+                    navigate("/admin");
+                } else if (profile?.account_type === 'company') {
                     navigate("/company-account");
                 } else {
                     navigate("/account");
