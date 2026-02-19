@@ -194,7 +194,6 @@ const ProductSection = () => {
       flavorMode: flavorMode,
       image: bottleSingle,
       mixConfiguration: mixConfig,
-      mixConfiguration: mixConfig,
       subscriptionInterval: purchaseType === 'subscription' ? 'monthly' : undefined
     });
 
