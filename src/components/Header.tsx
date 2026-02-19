@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User } from "lucide-react";
+import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User, Package, CreditCard } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -150,14 +150,44 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
               )}
 
               {/* Added mobile specific links */}
-              <Link
-                to={user ? (profile?.account_type === 'company' ? "/company-account" : "/account") : "/login"}
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-primary"
-              >
-                <User className="w-5 h-5" />
-                {user ? "Můj profil" : "Přihlásit se"}
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to={profile?.account_type === 'company' ? "/company-account/profile" : "/account/profile"}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  >
+                    <User className="w-5 h-5" />
+                    Můj profil
+                  </Link>
+                  <Link
+                    to={profile?.account_type === 'company' ? "/company-account/orders" : "/account/orders"}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  >
+                    <Package className="w-5 h-5" />
+                    Moje objednávky
+                  </Link>
+                  <Link
+                    to={profile?.account_type === 'company' ? "/company-account/subscriptions" : "/account/subscriptions"}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  >
+                    <CreditCard className="w-5 h-5" />
+                    Moje předplatné
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-primary"
+                >
+                  <User className="w-5 h-5" />
+                  Přihlásit se
+                </Link>
+              )}
+
               <button
                 onClick={() => {
                   setIsCartOpen(true);
