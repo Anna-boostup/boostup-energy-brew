@@ -73,14 +73,14 @@ const AdminDashboard = () => {
                         ) : (
                             <div className="space-y-4">
                                 {orders.slice(0, 10).map((order) => (
-                                    <div key={order.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                                    <div key={order.id} className="flex flex-col md:flex-row md:items-center justify-between border-b pb-4 last:border-0 last:pb-0 gap-4">
                                         <div className="grid gap-1">
                                             <p className="font-bold text-sm">#{order.id}</p>
                                             <p className="text-xs text-muted-foreground">{order.customer.name} ({order.customer.email})</p>
                                             <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleString()}</p>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right">
+                                        <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
+                                            <div className="text-left md:text-right">
                                                 <p className="font-bold text-sm">{order.total} Kč</p>
                                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                     Zaplaceno

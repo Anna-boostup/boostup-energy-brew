@@ -13,6 +13,55 @@ import {
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 
 
+const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: 'shipped' | 'paid') => void }) => (
+    <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white shadow-sm">
+        <div className="flex justify-between items-start">
+            <div>
+                <p className="font-bold">#{order.id.slice(0, 8)}</p>
+                <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleDateString()}</p>
+            </div>
+            <Badge variant={
+                order.status === 'pending' ? 'outline' :
+                    order.status === 'paid' ? 'secondary' : 'default'
+            }>
+                {order.status === 'pending' ? 'Čeká na platbu' :
+                    order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+            </Badge>
+        </div>
+
+        <div className="space-y-1">
+            <p className="text-sm font-medium">{order.customer.name}</p>
+            <p className="text-xs text-slate-500">{order.customer.email}</p>
+        </div>
+
+        <div className="border-t pt-2">
+            <p className="text-xs font-semibold mb-1 text-muted-foreground">Položky:</p>
+            {order.items.map((item: any, idx: number) => (
+                <div key={idx} className="text-sm flex justify-between">
+                    <span>{item.quantity}x {item.name}</span>
+                </div>
+            ))}
+        </div>
+
+        <div className="flex justify-between items-center pt-2 border-t">
+            <span className="font-bold">{order.total} Kč</span>
+            <div className="flex gap-2">
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button size="sm" variant="outline">Detail</Button>
+                    </DialogTrigger>
+                    <OrderDetailDialog order={order} />
+                </Dialog>
+                {order.status !== 'shipped' && (
+                    <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')}>
+                        <Truck className="w-4 h-4" />
+                    </Button>
+                )}
+            </div>
+        </div>
+    </div>
+);
+
 const Orders = () => {
     const { orders, updateOrderStatus } = useInventory();
     const { toast } = useToast();
@@ -28,88 +77,103 @@ const Orders = () => {
     const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'paid');
     const shippedOrders = orders.filter(o => o.status === 'shipped');
 
-
     const OrderTable = ({ data }: { data: typeof orders }) => (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Datum</TableHead>
-                    <TableHead>Zákazník</TableHead>
-                    <TableHead>Položky</TableHead>
-                    <TableHead>Cena celkem</TableHead>
-                    <TableHead>Stav</TableHead>
-                    <TableHead className="text-right">Akce</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
+        <>
+            {/* Desktop View */}
+            <div className="hidden md:block">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Datum</TableHead>
+                            <TableHead>Zákazník</TableHead>
+                            <TableHead>Položky</TableHead>
+                            <TableHead>Cena celkem</TableHead>
+                            <TableHead>Stav</TableHead>
+                            <TableHead className="text-right">Akce</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                    Žádné objednávky v této kategorii.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            data.map((order) => (
+                                <TableRow key={order.id}>
+                                    <TableCell className="font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
+                                    <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <span className="font-medium">{order.customer.name}</span>
+                                            <span className="text-xs text-muted-foreground">{order.customer.email}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1">
+                                            {order.items.map((item, idx) => (
+                                                <div key={idx} className="text-sm">
+                                                    {item.quantity}x <span className="font-medium">{item.name}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="font-bold">{order.total} Kč</TableCell>
+                                    <TableCell>
+                                        <Badge variant={
+                                            order.status === 'pending' ? 'outline' :
+                                                order.status === 'paid' ? 'secondary' : 'default'
+                                        }>
+                                            {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
+                                            {order.status === 'paid' && <CheckCircle className="w-3 h-3 mr-1" />}
+                                            {order.status === 'shipped' && <Truck className="w-3 h-3 mr-1" />}
+                                            {order.status === 'pending' ? 'Čeká na platbu' :
+                                                order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button size="sm" variant="outline">
+                                                        <Eye className="w-4 h-4 mr-2" />
+                                                        Detail
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <OrderDetailDialog order={order} />
+                                            </Dialog>
+
+                                            {order.status !== 'shipped' && (
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleStatusChange(order.id, 'shipped')}
+                                                    className="bg-primary hover:bg-primary/90"
+                                                >
+                                                    <Truck className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+
+            {/* Mobile View */}
+            <div className="md:hidden">
                 {data.length === 0 ? (
-                    <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                            Žádné objednávky v této kategorii.
-                        </TableCell>
-                    </TableRow>
+                    <p className="text-center py-8 text-muted-foreground">Žádné objednávky.</p>
                 ) : (
                     data.map((order) => (
-                        <TableRow key={order.id}>
-                            <TableCell className="font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
-                            <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                                <div className="flex flex-col">
-                                    <span className="font-medium">{order.customer.name}</span>
-                                    <span className="text-xs text-muted-foreground">{order.customer.email}</span>
-                                </div>
-                            </TableCell>
-                            <TableCell>
-                                <div className="flex flex-col gap-1">
-                                    {order.items.map((item, idx) => (
-                                        <div key={idx} className="text-sm">
-                                            {item.quantity}x <span className="font-medium">{item.name}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </TableCell>
-                            <TableCell className="font-bold">{order.total} Kč</TableCell>
-                            <TableCell>
-                                <Badge variant={
-                                    order.status === 'pending' ? 'outline' :
-                                        order.status === 'paid' ? 'secondary' : 'default'
-                                }>
-                                    {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
-                                    {order.status === 'paid' && <CheckCircle className="w-3 h-3 mr-1" />}
-                                    {order.status === 'shipped' && <Truck className="w-3 h-3 mr-1" />}
-                                    {order.status === 'pending' ? 'Čeká na platbu' :
-                                        order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
-                                </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button size="sm" variant="outline">
-                                                <Eye className="w-4 h-4 mr-2" />
-                                                Detail
-                                            </Button>
-                                        </DialogTrigger>
-                                        <OrderDetailDialog order={order} />
-                                    </Dialog>
-
-                                    {order.status !== 'shipped' && (
-                                        <Button
-                                            size="sm"
-                                            onClick={() => handleStatusChange(order.id, 'shipped')}
-                                            className="bg-primary hover:bg-primary/90"
-                                        >
-                                            <Truck className="w-4 h-4" />
-                                        </Button>
-                                    )}
-                                </div>
-                            </TableCell>
-                        </TableRow>
+                        <MobileOrderCard key={order.id} order={order} onStatusChange={handleStatusChange} />
                     ))
                 )}
-            </TableBody>
-        </Table>
+            </div>
+        </>
     );
 
     return (
@@ -124,21 +188,22 @@ const Orders = () => {
                     <TabsTrigger value="shipped">Vyřízené ({shippedOrders.length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="pending" className="mt-6">
+                    <p className="text-muted-foreground mb-4 md:hidden text-sm px-1">Tip: Posunutím karty zobrazíte více detailů.</p>
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="hidden md:flex">
                             <CardTitle>Čekající a zaplacené objednávky</CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 md:p-6">
                             <OrderTable data={pendingOrders} />
                         </CardContent>
                     </Card>
                 </TabsContent>
                 <TabsContent value="shipped" className="mt-6">
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="hidden md:flex">
                             <CardTitle>Odeslané a dokončené objednávky</CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 md:p-6">
                             <OrderTable data={shippedOrders} />
                         </CardContent>
                     </Card>
