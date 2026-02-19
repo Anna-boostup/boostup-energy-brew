@@ -9,7 +9,11 @@ import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 
-const Header = () => {
+interface HeaderProps {
+  variant?: 'default' | 'simple';
+}
+
+const Header = ({ variant = 'default' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
@@ -28,26 +32,30 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="/#mise" className="text-muted-foreground hover:text-foreground transition-colors">Naše mise</a>
-            <a href="/#produkty" className="text-muted-foreground hover:text-foreground transition-colors">Produkty</a>
-            <a href="/#3b" className="text-muted-foreground hover:text-foreground transition-colors">3B Koncept</a>
-            <a href="/#kontakt" className="text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
-          </nav>
+          {variant === 'default' && (
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="/#mise" className="text-muted-foreground hover:text-foreground transition-colors">Naše mise</a>
+              <a href="/#produkty" className="text-muted-foreground hover:text-foreground transition-colors">Produkty</a>
+              <a href="/#3b" className="text-muted-foreground hover:text-foreground transition-colors">3B Koncept</a>
+              <a href="/#kontakt" className="text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
+            </nav>
+          )}
 
           {/* Social & Cart */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-            </div>
+            {variant === 'default' && (
+              <div className="flex items-center gap-3">
+                <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </div>
+            )}
 
             {/* Auth Button */}
             {user ? (
@@ -108,34 +116,38 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-6 animate-in slide-in-from-top duration-300">
             <nav className="flex flex-col gap-4 mb-6">
-              <a
-                href="/#mise"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium py-2 border-b border-border/50"
-              >
-                Naše mise
-              </a>
-              <a
-                href="/#produkty"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium py-2 border-b border-border/50"
-              >
-                Produkty
-              </a>
-              <a
-                href="/#3b"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium py-2 border-b border-border/50"
-              >
-                3B Koncept
-              </a>
-              <a
-                href="/#kontakt"
-                onClick={() => setIsMenuOpen(false)}
-                className="text-lg font-medium py-2 border-b border-border/50"
-              >
-                Kontakt
-              </a>
+              {variant === 'default' && (
+                <>
+                  <a
+                    href="/#mise"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-lg font-medium py-2 border-b border-border/50"
+                  >
+                    Naše mise
+                  </a>
+                  <a
+                    href="/#produkty"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-lg font-medium py-2 border-b border-border/50"
+                  >
+                    Produkty
+                  </a>
+                  <a
+                    href="/#3b"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-lg font-medium py-2 border-b border-border/50"
+                  >
+                    3B Koncept
+                  </a>
+                  <a
+                    href="/#kontakt"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-lg font-medium py-2 border-b border-border/50"
+                  >
+                    Kontakt
+                  </a>
+                </>
+              )}
 
               {/* Added mobile specific links */}
               <Link

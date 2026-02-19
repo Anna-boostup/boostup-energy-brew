@@ -17,7 +17,7 @@ const CompanyAccountLayout = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
+            <Header variant="simple" />
             <div className="container mx-auto px-4 pt-24 pb-8 max-w-7xl">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="bg-primary/10 p-2 rounded-lg">

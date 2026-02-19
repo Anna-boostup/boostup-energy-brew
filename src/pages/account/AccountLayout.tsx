@@ -17,7 +17,7 @@ const AccountLayout = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
+            <Header variant="simple" />
             <div className="container mx-auto px-4 pt-24 pb-8 max-w-7xl">
                 <h1 className="text-3xl font-bold font-display mb-8">Můj účet</h1>
 
