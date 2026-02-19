@@ -57,57 +57,99 @@ const AccountOrders = () => {
                 <CardTitle>Moje objednávky</CardTitle>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Číslo</TableHead>
-                            <TableHead>Datum</TableHead>
-                            <TableHead>Cena</TableHead>
-                            <TableHead>Stav</TableHead>
-                            <TableHead className="text-right">Detail</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {orders.length === 0 ? (
+                {/* Desktop View */}
+                <div className="hidden md:block">
+                    <Table>
+                        <TableHeader>
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                                    Zatím nemáte žádné objednávky.
-                                </TableCell>
+                                <TableHead>Číslo</TableHead>
+                                <TableHead>Datum</TableHead>
+                                <TableHead>Cena</TableHead>
+                                <TableHead>Stav</TableHead>
+                                <TableHead className="text-right">Detail</TableHead>
                             </TableRow>
-                        ) : (
-                            orders.map((order) => (
-                                <TableRow key={order.id}>
-                                    <TableCell className="font-mono">{order.id.slice(0, 8)}...</TableCell>
-                                    <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-                                    <TableCell className="font-bold">{formatPrice(order.total)}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={
-                                            order.status === 'pending' ? 'outline' :
-                                                order.status === 'paid' ? 'secondary' : 'default'
-                                        }>
-                                            {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
-                                            {order.status === 'paid' && <CheckCircle className="w-3 h-3 mr-1" />}
-                                            {order.status === 'shipped' && <Truck className="w-3 h-3 mr-1" />}
-                                            {order.status === 'pending' ? 'Čeká na platbu' :
-                                                order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline">
-                                                    <Eye className="w-4 h-4 mr-2" />
-                                                    Zobrazit
-                                                </Button>
-                                            </DialogTrigger>
-                                            <OrderDetailDialog order={order} />
-                                        </Dialog>
+                        </TableHeader>
+                        <TableBody>
+                            {orders.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                                        Zatím nemáte žádné objednávky.
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
+                            ) : (
+                                orders.map((order) => (
+                                    <TableRow key={order.id}>
+                                        <TableCell className="font-mono">{order.id.slice(0, 8)}...</TableCell>
+                                        <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
+                                        <TableCell className="font-bold">{formatPrice(order.total)}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={
+                                                order.status === 'pending' ? 'outline' :
+                                                    order.status === 'paid' ? 'secondary' : 'default'
+                                            }>
+                                                {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
+                                                {order.status === 'paid' && <CheckCircle className="w-3 h-3 mr-1" />}
+                                                {order.status === 'shipped' && <Truck className="w-3 h-3 mr-1" />}
+                                                {order.status === 'pending' ? 'Čeká na platbu' :
+                                                    order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button size="sm" variant="outline">
+                                                        <Eye className="w-4 h-4 mr-2" />
+                                                        Zobrazit
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <OrderDetailDialog order={order} />
+                                            </Dialog>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="md:hidden space-y-4">
+                    {orders.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                            Zatím nemáte žádné objednávky.
+                        </div>
+                    ) : (
+                        orders.map((order) => (
+                            <div key={order.id} className="border rounded-lg p-4 space-y-3">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <div className="font-mono text-sm text-muted-foreground">#{order.id.slice(0, 8)}</div>
+                                        <div className="text-sm font-medium">{new Date(order.date).toLocaleDateString()}</div>
+                                    </div>
+                                    <Badge variant={
+                                        order.status === 'pending' ? 'outline' :
+                                            order.status === 'paid' ? 'secondary' : 'default'
+                                    }>
+                                        {order.status === 'pending' ? 'Čeká na platbu' :
+                                            order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+                                    </Badge>
+                                </div>
+
+                                <div className="flex justify-between items-center pt-2 border-t">
+                                    <span className="font-bold text-lg">{formatPrice(order.total)}</span>
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button size="sm" variant="outline">
+                                                Detail
+                                            </Button>
+                                        </DialogTrigger>
+                                        <OrderDetailDialog order={order} />
+                                    </Dialog>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </CardContent>
         </Card>
     );
