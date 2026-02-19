@@ -38,13 +38,13 @@ const Header = () => {
           {/* Social & Cart */}
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
@@ -52,7 +52,7 @@ const Header = () => {
             {/* Auth Button */}
             {user ? (
               <Link to={profile?.account_type === 'company' ? "/company-account" : "/account"}>
-                <Button variant="ghost" size="icon" title={profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
+                <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-accent hover:text-accent-foreground" title={profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
                   <User className="w-5 h-5" />
                 </Button>
               </Link>
@@ -62,10 +62,8 @@ const Header = () => {
               </Link>
             )}
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 relative rounded-full"
+            <button
+              className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground h-9 px-3 gap-2 relative rounded-full"
               onClick={() => setIsCartOpen(true)}
             >
               <ShoppingCart className="w-4 h-4" />
@@ -75,7 +73,7 @@ const Header = () => {
                   {cartCount}
                 </span>
               )}
-            </Button>
+            </button>
           </div>
 
           {/* Social & Cart links... Desktop only */}
