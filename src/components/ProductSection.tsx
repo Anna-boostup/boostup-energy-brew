@@ -560,28 +560,25 @@ const ProductSection = () => {
 
                     return (
                       <Button
-                        return (
-                          <Button
-                            variant="hero"
-                            className={`flex-1 h-full min-h-[76px] px-6 py-2 border-2 border-transparent group animate-energy-pulse transition-all duration-300 rounded-3xl whitespace-normal leading-tight text-center ${isOutOfStock
-                              ? "opacity-50 grayscale cursor-not-allowed"
-                              : ""
-                              }`}
-                            onClick={handleAddToCart}
-                            disabled={isOutOfStock}
-                          >
-                            <div className="flex flex-col items-center justify-center gap-0.5 w-full">
-                              <div className="flex items-center justify-center gap-2">
-                                <ShoppingBag className="w-5 h-5 shrink-0" />
-                                <span className="font-semibold text-sm sm:text-base">{isOutOfStock ? "Vyprodáno" : "Přidat do košíku"}</span>
-                              </div>
-                              {!isOutOfStock && (
-                                <span className="font-bold text-base opacity-90">{price} Kč</span>
-                              )}
-                            </div>
-                          </Button>
-                        );
-                  }
+                        variant="hero"
+                        className={`flex-1 h-full min-h-[76px] px-6 py-2 border-2 border-transparent group animate-energy-pulse transition-all duration-300 rounded-3xl whitespace-normal leading-tight text-center ${isOutOfStock
+                          ? "opacity-50 grayscale cursor-not-allowed"
+                          : ""
+                          }`}
+                        onClick={handleAddToCart}
+                        disabled={isOutOfStock}
+                      >
+                        <div className="flex flex-col items-center justify-center gap-0.5 w-full">
+                          <div className="flex items-center justify-center gap-2">
+                            <ShoppingBag className="w-5 h-5 shrink-0" />
+                            <span className="font-semibold text-sm sm:text-base">{isOutOfStock ? "Vyprodáno" : "Přidat do košíku"}</span>
+                          </div>
+                          {!isOutOfStock && (
+                            <span className="font-bold text-base opacity-90">{price} Kč</span>
+                          )}
+                        </div>
+                      </Button>
+                    );
                 </div>
 
                 {/* Stock Status Display - Full Width Below */}
