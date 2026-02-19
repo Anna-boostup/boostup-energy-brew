@@ -37,7 +37,7 @@ const Login = () => {
 
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
-                    .select('account_type')
+                    .select('account_type, role')
                     .eq('id', data.user.id)
                     .single();
 
@@ -50,7 +50,8 @@ const Login = () => {
 
                 console.log("Profile fetched:", profile);
 
-                if (profile?.account_type === 'admin') {
+                // Check for admin role OR admin account_type
+                if (profile?.account_type === 'admin' || profile?.role === 'admin') {
                     console.log("Redirecting to /admin");
                     navigate("/admin", { replace: true });
                 } else if (profile?.account_type === 'company') {
