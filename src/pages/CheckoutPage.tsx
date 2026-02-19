@@ -45,7 +45,9 @@ const CheckoutPage = () => {
         deliveryMethod: 'card',
         packetaPointId: '',
         paymentMethod: 'card',
-        subMethod: ''
+        subMethod: '',
+        createAccount: false,
+        password: ''
     });
 
     // Pre-fill data from profile
@@ -135,8 +137,51 @@ const CheckoutPage = () => {
         }
 
         setIsProcessing(true);
+        let currentUser = user;
 
         try {
+            // 2. Optional Account Creation
+            if (formData.createAccount && !user) {
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: formData.email,
+                    password: formData.password as string,
+                    options: {
+                        data: {
+                            full_name: `${formData.firstName} ${formData.lastName}`,
+                            account_type: formData.isCompany ? 'company' : 'personal',
+                        },
+                    },
+                });
+
+                if (authError) throw authError;
+
+                if (authData.user) {
+                    currentUser = authData.user;
+                    // Create profile record
+                    const profileData = {
+                        id: authData.user.id,
+                        email: formData.email,
+                        full_name: `${formData.firstName} ${formData.lastName}`,
+                        account_type: formData.isCompany ? 'company' : 'personal',
+                        address: {
+                            delivery: {
+                                phone: formData.phone,
+                                street: formData.street,
+                                city: formData.city,
+                                zip: formData.zip,
+                            },
+                        }
+                    };
+
+                    await supabase.from("profiles").upsert(profileData);
+
+                    toast({
+                        title: "Účet vytvořen",
+                        description: "Váš účet byl úspěšně vytvořen a objednávka pokračuje.",
+                    });
+                }
+            }
+
             const orderNumber = `ORD-${Date.now()}`;
 
             // 2. Decrement Stock
@@ -203,9 +248,9 @@ const CheckoutPage = () => {
             if (paymentResult.success) {
                 // Create subscription records if any
                 const subscriptionItems = cart.filter(item => !!item.subscriptionInterval);
-                if (subscriptionItems.length > 0 && user) {
+                if (subscriptionItems.length > 0 && currentUser) {
                     const subsToInsert = subscriptionItems.map(item => ({
-                        user_id: user.id,
+                        user_id: currentUser.id,
                         status: 'active',
                         interval: item.subscriptionInterval,
                         product_handle: item.flavorMode === 'mix' ? 'mix-pack' : `${item.flavor}-pack`,
@@ -217,7 +262,8 @@ const CheckoutPage = () => {
                 }
 
                 clearCart();
-                navigate(`/payment/success?paymentId=${paymentResult.paymentId}&orderNumber=${orderNumber}&amount=${cartTotal}`);
+                const totalWithShipping = cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0);
+                navigate(`/payment/success?paymentId=${paymentResult.paymentId}&orderNumber=${orderNumber}&amount=${totalWithShipping}${formData.paymentMethod === 'transfer' ? '&status=pending' : ''}`);
             } else {
                 navigate(`/payment/error?message=${encodeURIComponent(paymentResult.message)}`);
             }
@@ -268,38 +314,97 @@ const CheckoutPage = () => {
                                         <Truck className="w-6 h-6 text-primary" />
                                         Doprava a kontakt
                                     </h2>
-                                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">* Povinné</span>
+
+                                    <div className="flex bg-secondary/30 p-1 rounded-2xl border border-border/50">
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, isCompany: false }))}
+                                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${!formData.isCompany ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                                        >
+                                            Fyzická osoba
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, isCompany: true }))}
+                                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${formData.isCompany ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                                        >
+                                            Firma
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-6">
+                                    {formData.isCompany && (
+                                        <div className="md:col-span-2 space-y-4 animate-in fade-in slide-in-from-top-2">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-muted-foreground ml-1 text-primary">NÁZEV FIRMY *</label>
+                                                <input
+                                                    name="companyName"
+                                                    value={formData.companyName}
+                                                    onChange={handleChange}
+                                                    required={formData.isCompany}
+                                                    placeholder="Např. BoostUp s.r.o."
+                                                    className="w-full bg-background border-2 border-primary/30 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-muted-foreground ml-1">IČO *</label>
+                                                    <input
+                                                        name="ico"
+                                                        value={formData.ico}
+                                                        onChange={handleChange}
+                                                        required={formData.isCompany}
+                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-muted-foreground ml-1">DIČ</label>
+                                                    <input
+                                                        name="dic"
+                                                        value={formData.dic}
+                                                        onChange={handleChange}
+                                                        placeholder="CZ..."
+                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">JMÉNO *</label>
+                                        <label htmlFor="firstName" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Jméno *</label>
                                         <input
+                                            id="firstName"
                                             name="firstName"
                                             value={formData.firstName}
                                             onChange={handleChange}
                                             required
+                                            placeholder="Jan"
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">PŘÍJMENÍ *</label>
+                                        <label htmlFor="lastName" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Příjmení *</label>
                                         <input
+                                            id="lastName"
                                             name="lastName"
                                             value={formData.lastName}
                                             onChange={handleChange}
                                             required
+                                            placeholder="Novák"
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">EMAIL *</label>
+                                        <label htmlFor="email" className="text-sm font-bold text-muted-foreground ml-1">EMAIL *</label>
                                         <input
+                                            id="email"
                                             type="email"
                                             name="email"
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
+                                            placeholder="jan.novak@email.cz"
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
@@ -317,35 +422,69 @@ const CheckoutPage = () => {
                                         <p className="text-[10px] text-muted-foreground italic ml-1">Včetně předvolby (např. +420)</p>
                                     </div>
                                     <div className="md:col-span-2 space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">ULICE A ČÍSLO POPISNÉ *</label>
+                                        <label htmlFor="street" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Ulice a číslo popisné *</label>
                                         <input
+                                            id="street"
                                             name="street"
                                             value={formData.street}
                                             onChange={handleChange}
                                             required
+                                            placeholder="Lidická 123"
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">MĚSTO *</label>
+                                        <label htmlFor="city" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Město *</label>
                                         <input
+                                            id="city"
                                             name="city"
                                             value={formData.city}
                                             onChange={handleChange}
                                             required
+                                            placeholder="Brno"
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">PSČ *</label>
+                                        <label htmlFor="zip" className="text-sm font-bold text-muted-foreground ml-1">PSČ *</label>
                                         <input
+                                            id="zip"
                                             name="zip"
                                             value={formData.zip}
                                             onChange={handleChange}
                                             required
+                                            placeholder="602 00"
                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                         />
                                     </div>
+
+                                    {!user && (
+                                        <div className="md:col-span-2 space-y-4 pt-4 border-t border-border/50">
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="createAccount"
+                                                    checked={formData.createAccount}
+                                                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, createAccount: checked as boolean }))}
+                                                />
+                                                <Label htmlFor="createAccount" className="font-bold cursor-pointer text-sm">Chci si vytvořit účet pro příští nákupy</Label>
+                                            </div>
+
+                                            {formData.createAccount && (
+                                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                                    <label className="text-sm font-bold text-muted-foreground ml-1">HESLO *</label>
+                                                    <input
+                                                        type="password"
+                                                        name="password"
+                                                        value={formData.password}
+                                                        onChange={handleChange}
+                                                        required={formData.createAccount}
+                                                        placeholder="Minimálně 6 znaků"
+                                                        className="w-full bg-background border-2 border-primary/30 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -610,8 +749,8 @@ const CheckoutPage = () => {
                                         >
                                             <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-primary italic font-black text-xs">CZ</div>
                                             <div className="flex-1 text-left">
-                                                <p className="font-bold">Bankovní převod (české banky)</p>
-                                                <p className="text-xs text-muted-foreground">Rychlá platba přes bankovní bránu</p>
+                                                <p className="font-bold">Bankovní převod - QR kód</p>
+                                                <p className="text-xs text-muted-foreground">Pohodlná platba mobilem po dokončení</p>
                                             </div>
                                         </button>
 
@@ -714,7 +853,7 @@ const CheckoutPage = () => {
                             </Button>
 
                             <p className="text-[10px] text-center text-muted-foreground leading-relaxed">
-                                Kliknutím na tlačítko souhlasíte s <a href="#" className="underline hover:text-primary">obchodními podmínkami</a> a <a href="#" className="underline hover:text-primary">zpracováním osobních údajů</a>.
+                                Kliknutím na tlačítko souhlasíte s <a href="/obchodni-podminky" className="underline hover:text-primary">obchodními podmínkami</a> a <a href="/ochrana-osobnich-udaju" className="underline hover:text-primary">zpracováním osobních údajů</a>.
                             </p>
                         </div>
                     </div>
