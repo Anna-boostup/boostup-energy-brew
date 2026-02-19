@@ -33,7 +33,7 @@ const CompanyAccountLayout = () => {
 
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* Sidebar */}
-                    <aside className="w-full md:w-64 shrink-0 space-y-4">
+                    <aside className="hidden md:block w-64 shrink-0 space-y-4">
                         <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
                             {navigation.map((item) => {
                                 const Icon = item.icon;
