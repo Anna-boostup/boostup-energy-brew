@@ -32,6 +32,24 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
+
+# 🚀 BoostUp Eshop
+
+> **Status**: Mobile Optimization & Deployment Fixes Live ✅
+
+Modern e-commerce platform for BoostUp Energy, built with React, Vite, Tailwind CSS, and Supabase.
+
+## 📱 Recent Updates
+- Mobile-first responsive layout (iPhone 12/Pro optimized)
+- Unified color system for high-contrast accessibility
+- Production build configuration fixes (Linting & Tailwind)
+
+## 🛠️ Tech Stack
+- React: A JavaScript library for building user interfaces.
+- Vite: A fast build tool that provides an instant development server.
+- Tailwind CSS: A utility-first CSS framework for rapidly styling applications.
+- Supabase: An open-source Firebase alternative for backend services (database, authentication, storage).
+
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
