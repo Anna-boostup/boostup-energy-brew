@@ -31,7 +31,7 @@ const CompanyAccountLayout = () => {
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Sidebar */}
                 <aside className="w-full md:w-64 shrink-0 space-y-4">
-                    <nav className="flex flex-col gap-2">
+                    <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
                         {navigation.map((item) => {
                             const Icon = item.icon;
                             const isActive = location.pathname === item.href;
@@ -41,7 +41,7 @@ const CompanyAccountLayout = () => {
                                     key={item.name}
                                     to={item.href}
                                     className={cn(
-                                        "flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                                        "flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap shrink-0",
                                         isActive
                                             ? "bg-primary text-primary-foreground"
                                             : "hover:bg-muted text-muted-foreground hover:text-foreground"
@@ -55,11 +55,19 @@ const CompanyAccountLayout = () => {
 
                         <Button
                             variant="ghost"
-                            className="justify-start gap-3 px-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 mt-4"
+                            className="justify-start gap-3 px-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 mt-4 hidden md:flex"
                             onClick={() => signOut()}
                         >
                             <LogOut className="w-4 h-4" />
                             Odhlásit se
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="md:hidden shrink-0 text-muted-foreground hover:text-destructive"
+                            onClick={() => signOut()}
+                        >
+                            <LogOut className="w-4 h-4" />
                         </Button>
                     </nav>
                 </aside>
