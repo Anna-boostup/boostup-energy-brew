@@ -379,7 +379,7 @@ const ProductSection = () => {
                             <div className="text-left min-w-0 flex-1">
                               <div className="font-bold text-base leading-tight">{flavor.name}</div>
                               <div className="font-bold text-base leading-tight">{flavor.name}</div>
-                              <div className={`text-[11px] leading-tight mt-0.5 min-h-[2em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>{flavor.description}</div>
+                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>{flavor.description}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
@@ -466,168 +466,176 @@ const ProductSection = () => {
                                 </span>
                               ))}
                             </div>
-                            <div className={`text-[11px] leading-tight mt-0.5 min-h-[2em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
-                              {flavor.description}
-                            </div>
                           </div>
-                        </button>
-                        {/* Info Tooltip */}
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`h-8 w-8 rounded-full ${selectedFlavor === flavor.id ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Info className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="left" className="max-w-xs">
-                              <p className="font-bold mb-1">Složení ({flavor.name}):</p>
-                              <p>{flavor.ingredients}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
+                          <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
+                            {flavor.description}
+                          </div>
                       </div>
-                    ))}
+                        </button>
+                  {/* Info Tooltip */}
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={`h-8 w-8 rounded-full ${selectedFlavor === flavor.id ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Info className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="left" className="max-w-xs">
+                        <p className="font-bold mb-1">Složení ({flavor.name}):</p>
+                        <p>{flavor.ingredients}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
               )}
 
-              {/* Quantity & Add to cart */}
-              <div className="space-y-4 pt-6">
-                {/* Container for Quantity and Button in one row */}
-                <div className="flex flex-col sm:flex-row gap-4 h-auto sm:h-[76px] items-stretch w-full">
+          {/* Quantity & Add to cart */}
+          <div className="space-y-4 pt-6">
+            {/* Container for Quantity and Button in one row */}
+            <div className="flex flex-col sm:flex-row gap-4 h-auto sm:h-[76px] items-stretch w-full">
 
-                  {/* Quantity Selector - Fixed height matching button */}
-                  <div className="flex items-center justify-between gap-4 bg-card rounded-3xl px-6 py-4 border-2 border-border shadow-card h-full min-h-[76px]">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
-                    >
-                      <Minus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
-                    </button>
-                    <span className="w-8 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
-                    >
-                      <Plus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
-                    </button>
-                  </div>
-
-                  {/* Add to Cart Button Logic - Flex 1 to take remaining space */}
-                  {(() => {
-                    // Only render button if ALL selections are made
-                    if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
-                      return <div className="flex-1 bg-secondary/20 rounded-3xl border-2 border-dashed border-border flex items-center justify-center text-muted-foreground font-medium text-sm p-4 text-center min-h-[76px]">
-                        Dokončete výběr pro nákup
-                      </div>;
-                    }
-
-                    let isOutOfStock = false;
-                    let requiredLemon = 0;
-                    let requiredRed = 0;
-                    let requiredSilky = 0;
-
-                    if (flavorMode === 'mix') {
-                      requiredLemon = mixCounts.lemon * quantity;
-                      requiredRed = mixCounts.red * quantity;
-                      requiredSilky = mixCounts.silky * quantity;
-
-                      if (
-                        (requiredLemon > 0 && getStock('lemon') < requiredLemon) ||
-                        (requiredRed > 0 && getStock('red') < requiredRed) ||
-                        (requiredSilky > 0 && getStock('silky') < requiredSilky)
-                      ) {
-                        isOutOfStock = true;
-                      }
-                    } else {
-                      // Single flavor: Check specific PACK SKU
-                      const sku = `${selectedFlavor}-${selectedPack}`;
-                      if (getStock(sku) < quantity) {
-                        isOutOfStock = true;
-                      }
-                    }
-
-                    return (
-                      <Button
-                        variant="hero"
-                        size="xl"
-                        className={`flex-1 h-full min-h-[76px] group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
-                          ? "opacity-50 grayscale cursor-not-allowed"
-                          : ""
-                          }`}
-                        onClick={handleAddToCart}
-                        disabled={isOutOfStock}
-                      >
-                        <ShoppingBag className="w-6 h-6 mr-2" />
-                        {isOutOfStock
-                          ? "Vyprodáno"
-                          : "Přidat do košíku"
-                        }
-                        {!isOutOfStock && (
-                          <span className="font-bold ml-2">{price} Kč</span>
-                        )}
-                      </Button>
-                    );
-                  })()}
-                </div>
-
-                {/* Stock Status Display - Full Width Below */}
-                <div className="w-full text-center">
-                  {(() => {
-                    // Only show stock if selections valid
-                    if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
-                      return null;
-                    }
-
-                    let maxAvailable = Infinity;
-
-                    if (flavorMode === 'mix') {
-                      if (mixCounts.lemon > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('lemon') / mixCounts.lemon));
-                      if (mixCounts.red > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('red') / mixCounts.red));
-                      if (mixCounts.silky > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('silky') / mixCounts.silky));
-                    } else {
-                      const sku = `${selectedFlavor}-${selectedPack}`;
-                      maxAvailable = getStock(sku);
-                    }
-
-                    if (maxAvailable === Infinity) maxAvailable = 0;
-
-                    if (maxAvailable > 10) {
-                      return (
-                        <div className="flex items-center justify-center gap-2 text-green-600 font-medium text-sm animate-fade-up">
-                          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                          Skladem (ihned k odeslání)
-                        </div>
-                      );
-                    } else if (maxAvailable > 0) {
-                      return (
-                        <div className="flex items-center justify-center gap-2 text-orange-600 font-bold text-sm animate-fade-up">
-                          <div className="w-2 h-2 rounded-full bg-orange-500" />
-                          Zbývá posledních {maxAvailable} kusů
-                        </div>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })()}
-                </div>
-
-                {/* Individual Offer Link */}
-                <div className="text-center">
-                  <a href="#kontakt" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors border-b border-transparent hover:border-primary/50 pb-0.5">
-                    <Mail className="w-3.5 h-3.5" />
-                    Máte zájem o větší odběr? Individuální nabídka
-                  </a>
-                </div>
+              {/* Quantity Selector - Fixed height matching button */}
+              <div className="flex items-center justify-between gap-4 bg-card rounded-3xl px-6 py-4 border-2 border-border shadow-card h-full min-h-[76px]">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                >
+                  <Minus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
+                </button>
+                <span className="w-8 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                >
+                  <Plus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
+                </button>
               </div>
+
+              {/* Add to Cart Button Logic - Flex 1 to take remaining space */}
+              {(() => {
+                // Only render button if ALL selections are made
+                if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
+                  return (
+                    <Button
+                      variant="outline"
+                      size="xl"
+                      disabled
+                      className="flex-1 h-full min-h-[76px] rounded-3xl border-2 border-dashed border-border text-muted-foreground font-medium text-sm bg-secondary/20"
+                    >
+                      Dokončete výběr pro nákup
+                    </Button>
+                  );
+                }
+
+                let isOutOfStock = false;
+                let requiredLemon = 0;
+                let requiredRed = 0;
+                let requiredSilky = 0;
+
+                if (flavorMode === 'mix') {
+                  requiredLemon = mixCounts.lemon * quantity;
+                  requiredRed = mixCounts.red * quantity;
+                  requiredSilky = mixCounts.silky * quantity;
+
+                  if (
+                    (requiredLemon > 0 && getStock('lemon') < requiredLemon) ||
+                    (requiredRed > 0 && getStock('red') < requiredRed) ||
+                    (requiredSilky > 0 && getStock('silky') < requiredSilky)
+                  ) {
+                    isOutOfStock = true;
+                  }
+                } else {
+                  // Single flavor: Check specific PACK SKU
+                  const sku = `${selectedFlavor}-${selectedPack}`;
+                  if (getStock(sku) < quantity) {
+                    isOutOfStock = true;
+                  }
+                }
+
+                return (
+                  <Button
+                    variant="hero"
+                    size="xl"
+                    className={`flex-1 h-full min-h-[76px] group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
+                      ? "opacity-50 grayscale cursor-not-allowed"
+                      : ""
+                      }`}
+                    onClick={handleAddToCart}
+                    disabled={isOutOfStock}
+                  >
+                    <ShoppingBag className="w-6 h-6 mr-2" />
+                    {isOutOfStock
+                      ? "Vyprodáno"
+                      : "Přidat do košíku"
+                    }
+                    {!isOutOfStock && (
+                      <span className="font-bold ml-2">{price} Kč</span>
+                    )}
+                  </Button>
+                );
+              })()}
+            </div>
+
+            {/* Stock Status Display - Full Width Below */}
+            <div className="w-full text-center">
+              {(() => {
+                // Only show stock if selections valid
+                if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
+                  return null;
+                }
+
+                let maxAvailable = Infinity;
+
+                if (flavorMode === 'mix') {
+                  if (mixCounts.lemon > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('lemon') / mixCounts.lemon));
+                  if (mixCounts.red > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('red') / mixCounts.red));
+                  if (mixCounts.silky > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('silky') / mixCounts.silky));
+                } else {
+                  const sku = `${selectedFlavor}-${selectedPack}`;
+                  maxAvailable = getStock(sku);
+                }
+
+                if (maxAvailable === Infinity) maxAvailable = 0;
+
+                if (maxAvailable > 10) {
+                  return (
+                    <div className="flex items-center justify-center gap-2 text-green-600 font-medium text-sm animate-fade-up">
+                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      Skladem (ihned k odeslání)
+                    </div>
+                  );
+                } else if (maxAvailable > 0) {
+                  return (
+                    <div className="flex items-center justify-center gap-2 text-orange-600 font-bold text-sm animate-fade-up">
+                      <div className="w-2 h-2 rounded-full bg-orange-500" />
+                      Zbývá posledních {maxAvailable} kusů
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
+              })()}
+            </div>
+
+            {/* Individual Offer Link */}
+            <div className="text-center">
+              <a href="#kontakt" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors border-b border-transparent hover:border-primary/50 pb-0.5">
+                <Mail className="w-3.5 h-3.5" />
+                Máte zájem o větší odběr? Individuální nabídka
+              </a>
             </div>
           </div>
         </div>
+      </div>
+    </div>
       </section >
     </TooltipProvider >
   );
