@@ -372,25 +372,25 @@ const ProductSection = () => {
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
-                            <div className="flex items-center gap-2 !bg-white rounded-full border border-border px-1 py-1 shadow-sm !text-black z-10 relative" style={{ backgroundColor: 'white', color: 'black' }}>
+                            <div className="flex items-center gap-2 !bg-white rounded-full border border-border px-1 py-1 shadow-sm z-10 relative" style={{ backgroundColor: 'white', color: 'hsl(var(--foreground))' }}>
                               <button
                                 onClick={() => handleMixChange(flavor.id, -1)}
-                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center !text-black"
-                                style={{ color: 'black' }}
+                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                                style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={mixCounts[flavor.id] === 0}
                               >
-                                <Minus className="w-3.5 h-3.5 text-black !fill-black" style={{ color: 'black', stroke: 'black' }} />
+                                <Minus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
-                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm !text-black" style={{ color: 'black' }}>
+                              <span className="min-w-[3rem] px-2 text-center font-bold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                                 {mixCounts[flavor.id]}
                               </span>
                               <button
                                 onClick={() => handleMixChange(flavor.id, 1)}
-                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center !text-black"
-                                style={{ color: 'black' }}
+                                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                                style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={currentMixCount >= (selectedPack || 0)}
                               >
-                                <Plus className="w-3.5 h-3.5 text-black !fill-black" style={{ color: 'black', stroke: 'black' }} />
+                                <Plus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
                             </div>
 
