@@ -283,17 +283,17 @@ const ProductSection = () => {
                   <button
                     onClick={() => setPurchaseType('onetime')}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${purchaseType === 'onetime'
-                      ? "border-primary bg-primary/5 shadow-md"
-                      : "border-border bg-card hover:border-primary/50"
+                      ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
+                      : "border-border bg-card text-foreground hover:border-primary/50"
                       }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'onetime' ? "border-primary" : "border-muted-foreground"}`}>
-                        {purchaseType === 'onetime' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'onetime' ? "border-primary-foreground" : "border-muted-foreground"}`}>
+                        {purchaseType === 'onetime' && <div className="w-2.5 h-2.5 rounded-full bg-primary-foreground" />}
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Jednorázový nákup</div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground">Standardní cena</div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground/80" : "text-muted-foreground"}`}>Standardní cena</div>
                       </div>
                     </div>
                   </button>
@@ -301,20 +301,20 @@ const ProductSection = () => {
                   <button
                     onClick={() => setPurchaseType('subscription')}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${purchaseType === 'subscription'
-                      ? "border-amber-500 bg-amber-500/5 shadow-md"
+                      ? "bg-amber-500 text-white shadow-button scale-[1.02] border-amber-500"
                       : "border-border bg-card hover:border-amber-500/50"
                       }`}
                   >
-                    <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl">
+                    <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
                       -15% SLEVA
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'subscription' ? "border-amber-500" : "border-muted-foreground"}`}>
-                        {purchaseType === 'subscription' && <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'subscription' ? "border-white" : "border-muted-foreground"}`}>
+                        {purchaseType === 'subscription' && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                       </div>
                       <div className="text-left">
-                        <div className="font-bold text-sm sm:text-base text-amber-600">Předplatné</div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground">Každý měsíc <span className="text-amber-600 font-bold">-15%</span></div>
+                        <div className="font-bold text-sm sm:text-base">Předplatné</div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white/80" : "text-muted-foreground"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
                       </div>
                     </div>
                   </button>
@@ -498,30 +498,33 @@ const ProductSection = () => {
 
               {/* Quantity & Add to cart */}
               <div className="space-y-4 pt-6">
-                <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
-                  <div className="flex items-center justify-between lg:justify-center gap-4 bg-card rounded-3xl px-5 py-3 border-2 border-border shadow-card">
+                {/* Container for Quantity and Button in one row */}
+                <div className="flex flex-col sm:flex-row gap-4 h-auto sm:h-[76px] items-stretch">
+
+                  {/* Quantity Selector - Fixed height matching button */}
+                  <div className="flex items-center justify-between gap-4 bg-card rounded-3xl px-6 py-4 border-2 border-border shadow-card h-full min-h-[76px]">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                      className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
                     >
                       <Minus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>
-                    <span className="w-10 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
+                    <span className="w-8 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-12 h-12 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                      className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
                     >
                       <Plus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>
                   </div>
 
-
-
-                  {/* Stock Logic Calculation Helper */}
+                  {/* Add to Cart Button Logic - Flex 1 to take remaining space */}
                   {(() => {
                     // Only render button if ALL selections are made
                     if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
-                      return null;
+                      return <div className="flex-1 bg-secondary/20 rounded-3xl border-2 border-dashed border-border flex items-center justify-center text-muted-foreground font-medium text-sm p-4 text-center min-h-[76px]">
+                        Dokončete výběr pro nákup
+                      </div>;
                     }
 
                     let isOutOfStock = false;
@@ -550,64 +553,67 @@ const ProductSection = () => {
                     }
 
                     return (
-                      <div className="flex flex-col gap-2 w-full animate-fade-up">
-                        <Button
-                          variant="hero"
-                          size="xl"
-                          className={`flex-1 group animate-energy-pulse transition-all duration-300 ${isOutOfStock
-                            ? "opacity-50 grayscale cursor-not-allowed"
-                            : ""
-                            }`}
-                          onClick={handleAddToCart}
-                          disabled={isOutOfStock}
-                        >
-                          <ShoppingBag className="w-5 h-5" />
-                          {isOutOfStock
-                            ? "Vyprodáno"
-                            : "Přidat do košíku"
-                          }
-                          {!isOutOfStock && (
-                            <span className="font-bold ml-2">{price} Kč</span>
-                          )}
-                        </Button>
-
-                        {/* Stock Status Display */}
-                        {(() => {
-                          let maxAvailable = Infinity;
-
-                          if (flavorMode === 'mix') {
-                            // For Mix: Calculate how many packs can be made from loose bottles
-                            if (mixCounts.lemon > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('lemon') / mixCounts.lemon));
-                            if (mixCounts.red > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('red') / mixCounts.red));
-                            if (mixCounts.silky > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('silky') / mixCounts.silky));
-                          } else {
-                            // Single Flavor: Check specific PACK SKU directly
-                            const sku = `${selectedFlavor}-${selectedPack}`;
-                            maxAvailable = getStock(sku);
-                          }
-
-                          if (maxAvailable === Infinity) maxAvailable = 0; // Fallback
-
-                          if (maxAvailable > 10) {
-                            return (
-                              <div className="flex items-center justify-center gap-2 text-green-600 font-medium text-sm">
-                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                Skladem
-                              </div>
-                            );
-                          } else if (maxAvailable > 0) {
-                            return (
-                              <div className="flex items-center justify-center gap-2 text-orange-600 font-bold text-sm">
-                                <div className="w-2 h-2 rounded-full bg-orange-500" />
-                                Zbývá posledních {maxAvailable} kusů
-                              </div>
-                            );
-                          } else {
-                            return null; // Handle sold out in button text
-                          }
-                        })()}
-                      </div>
+                      <Button
+                        variant="hero"
+                        size="xl"
+                        className={`flex-1 h-full min-h-[76px] group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
+                          ? "opacity-50 grayscale cursor-not-allowed"
+                          : ""
+                          }`}
+                        onClick={handleAddToCart}
+                        disabled={isOutOfStock}
+                      >
+                        <ShoppingBag className="w-6 h-6 mr-2" />
+                        {isOutOfStock
+                          ? "Vyprodáno"
+                          : "Přidat do košíku"
+                        }
+                        {!isOutOfStock && (
+                          <span className="font-bold ml-2">{price} Kč</span>
+                        )}
+                      </Button>
                     );
+                  })()}
+                </div>
+
+                {/* Stock Status Display - Full Width Below */}
+                <div className="w-full text-center">
+                  {(() => {
+                    // Only show stock if selections valid
+                    if (!selectedPack || !purchaseType || !flavorMode || (flavorMode === 'mix' && !isMixValid) || (flavorMode === 'single' && !selectedFlavor)) {
+                      return null;
+                    }
+
+                    let maxAvailable = Infinity;
+
+                    if (flavorMode === 'mix') {
+                      if (mixCounts.lemon > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('lemon') / mixCounts.lemon));
+                      if (mixCounts.red > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('red') / mixCounts.red));
+                      if (mixCounts.silky > 0) maxAvailable = Math.min(maxAvailable, Math.floor(getStock('silky') / mixCounts.silky));
+                    } else {
+                      const sku = `${selectedFlavor}-${selectedPack}`;
+                      maxAvailable = getStock(sku);
+                    }
+
+                    if (maxAvailable === Infinity) maxAvailable = 0;
+
+                    if (maxAvailable > 10) {
+                      return (
+                        <div className="flex items-center justify-center gap-2 text-green-600 font-medium text-sm animate-fade-up">
+                          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                          Skladem (ihned k odeslání)
+                        </div>
+                      );
+                    } else if (maxAvailable > 0) {
+                      return (
+                        <div className="flex items-center justify-center gap-2 text-orange-600 font-bold text-sm animate-fade-up">
+                          <div className="w-2 h-2 rounded-full bg-orange-500" />
+                          Zbývá posledních {maxAvailable} kusů
+                        </div>
+                      );
+                    } else {
+                      return null;
+                    }
                   })()}
                 </div>
 
