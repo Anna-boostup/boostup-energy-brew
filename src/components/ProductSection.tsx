@@ -561,7 +561,7 @@ const ProductSection = () => {
                     return (
                       <Button
                         variant="hero"
-                        className={`flex-1 h-full min-h-[76px] px-8 group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
+                        className={`flex-1 h-full min-h-[76px] px-8 py-2 border-2 border-transparent group animate-energy-pulse transition-all duration-300 !text-xl rounded-3xl ${isOutOfStock
                           ? "opacity-50 grayscale cursor-not-allowed"
                           : ""
                           }`}
