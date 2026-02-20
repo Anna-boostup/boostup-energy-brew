@@ -41,7 +41,7 @@ const HeroSection = () => {
             {content.description}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center relative z-20">
             <Button
               variant="default"
               size="xl"
@@ -91,8 +91,8 @@ const HeroSection = () => {
         <div className="relative animate-fade-up animation-delay-300 mb-16">
           <div className="relative max-w-3xl mx-auto">
             {/* Multiple glow layers for depth */}
-            <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 animate-pulse-glow" />
-            <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 animate-pulse-glow animation-delay-200" />
+            <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 animate-pulse-glow pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 animate-pulse-glow animation-delay-200 pointer-events-none" />
 
             <img
               src={bottlesHero}
