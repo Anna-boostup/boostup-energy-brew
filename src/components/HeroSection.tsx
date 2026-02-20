@@ -42,24 +42,24 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center">
-            <a href="#produkty">
-              <Button variant="hero" size="xl" className="group min-w-[200px] shadow-lg hover:shadow-xl transition-all">
+            <Button asChild variant="hero" size="xl" className="group min-w-[200px] shadow-lg hover:shadow-xl transition-all">
+              <a href="#produkty">
                 {content.cta.primary}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
-              </Button>
-            </a>
+              </a>
+            </Button>
 
-            <a href="#mise">
-              <Button variant="outline" size="xl" className="rounded-full border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md">
+            <Button asChild variant="outline" size="xl" className="rounded-full border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md">
+              <a href="#mise">
                 {content.cta.secondary}
-              </Button>
-            </a>
+              </a>
+            </Button>
 
-            <a href="#3b">
-              <Button variant="outline" size="xl" className="rounded-full border-2 border-terracotta text-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md">
+            <Button asChild variant="outline" size="xl" className="rounded-full border-2 border-terracotta text-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md">
+              <a href="#3b">
                 {content.cta.concept3b}
-              </Button>
-            </a>
+              </a>
+            </Button>
           </div>
         </div>
 

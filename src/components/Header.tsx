@@ -60,15 +60,15 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
 
             {/* Auth Button */}
             {user ? (
-              <Link to={profile?.account_type === 'company' ? "/company-account" : "/account"}>
-                <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-accent hover:text-accent-foreground" title={profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
+              <Button asChild variant="ghost" size="icon" className="h-10 w-10 hover:bg-accent hover:text-accent-foreground" title={profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
+                <Link to={profile?.account_type === 'company' ? "/company-account" : "/account"}>
                   <User className="w-5 h-5" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : (
-              <Link to="/login">
-                <Button variant="ghost" size="sm">Přihlásit se</Button>
-              </Link>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/login">Přihlásit se</Link>
+              </Button>
             )}
 
             <button
