@@ -232,7 +232,7 @@ const CheckoutPage = () => {
             };
 
             // Adjust initial status based on payment method
-            if (formData.paymentMethod === 'transfer') {
+            if (formData.paymentMethod === 'transfer_fast' || formData.paymentMethod === 'transfer_manual') {
                 newOrder.status = 'pending';
             }
 
@@ -263,7 +263,8 @@ const CheckoutPage = () => {
 
                 clearCart();
                 const totalWithShipping = cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0);
-                navigate(`/payment/success?paymentId=${paymentResult.paymentId}&orderNumber=${orderNumber}&amount=${totalWithShipping}${formData.paymentMethod === 'transfer' ? '&status=pending' : ''}`);
+                const isBankTransfer = formData.paymentMethod === 'transfer_fast' || formData.paymentMethod === 'transfer_manual';
+                navigate(`/payment/success?paymentId=${paymentResult.paymentId}&orderNumber=${orderNumber}&amount=${totalWithShipping}${isBankTransfer ? '&status=pending' : ''}`);
             } else {
                 navigate(`/payment/error?message=${encodeURIComponent(paymentResult.message)}`);
             }
@@ -740,21 +741,21 @@ const CheckoutPage = () => {
                                         </div>
                                     </button>
 
-                                    {/* Bank Transfer */}
-                                    <div className={`p-4 rounded-2xl border-2 transition-all ${formData.paymentMethod === 'transfer' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}>
+                                    {/* Fast Bank Transfer */}
+                                    <div className={`p-4 rounded-2xl border-2 transition-all ${formData.paymentMethod === 'transfer_fast' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}>
                                         <button
                                             type="button"
-                                            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer' }))}
+                                            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_fast' }))}
                                             className="w-full flex items-center gap-4 mb-4"
                                         >
-                                            <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-primary italic font-black text-xs">CZ</div>
+                                            <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-primary italic font-black text-xs">⚡</div>
                                             <div className="flex-1 text-left">
-                                                <p className="font-bold">Bankovní převod - QR kód</p>
-                                                <p className="text-xs text-muted-foreground">Pohodlná platba mobilem po dokončení</p>
+                                                <p className="font-bold">Rychlá bankovní platba</p>
+                                                <p className="text-xs text-muted-foreground">Okamžitý převod přes vaše bankovnictví</p>
                                             </div>
                                         </button>
 
-                                        {formData.paymentMethod === 'transfer' && (
+                                        {formData.paymentMethod === 'transfer_fast' && (
                                             <div className="grid grid-cols-4 gap-2 animate-in fade-in slide-in-from-top-2">
                                                 {[
                                                     { id: 'csas', name: 'Spořitelna', domain: 'csas.cz' },
@@ -779,6 +780,19 @@ const CheckoutPage = () => {
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Manual Bank Transfer (QR Code) */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_manual', subMethod: '' }))}
+                                        className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${formData.paymentMethod === 'transfer_manual' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
+                                    >
+                                        <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-primary italic font-black text-xs">QR</div>
+                                        <div className="flex-1 text-left">
+                                            <p className="font-bold">Bankovní převod - QR kód</p>
+                                            <p className="text-xs text-muted-foreground">Zobrazení údajů a QR kódu po dokončení</p>
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         </form>
