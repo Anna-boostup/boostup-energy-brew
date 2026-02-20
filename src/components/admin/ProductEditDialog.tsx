@@ -169,33 +169,35 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label>Fotka produktu</Label>
-                        <div className="flex flex-col gap-4">
-                            {formData.image_url && (
-                                <div className="relative w-full aspect-square max-w-[200px] border rounded-lg overflow-hidden bg-muted">
-                                    <img
-                                        src={formData.image_url}
-                                        alt="Náhled"
-                                        className="w-full h-full object-contain"
+                    {!product.sku.startsWith('mix-') && (
+                        <div className="space-y-2">
+                            <Label>Fotka produktu</Label>
+                            <div className="flex flex-col gap-4">
+                                {formData.image_url && (
+                                    <div className="relative w-full aspect-square max-w-[200px] border rounded-lg overflow-hidden bg-muted">
+                                        <img
+                                            src={formData.image_url}
+                                            alt="Náhled"
+                                            className="w-full h-full object-contain"
+                                        />
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        id="image_upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={isUploading || isLoading}
                                     />
+                                    {isUploading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
                                 </div>
-                            )}
-                            <div className="flex items-center gap-2">
-                                <Input
-                                    id="image_upload"
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    disabled={isUploading || isLoading}
-                                />
-                                {isUploading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
+                                <p className="text-xs text-muted-foreground">
+                                    Nahrajte čtvercový obrázek (PNG s průhledností je ideální).
+                                </p>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                Nahrajte čtvercový obrázek (PNG s průhledností je ideální).
-                            </p>
                         </div>
-                    </div>
+                    )}
 
                     <DialogFooter className="pt-4">
                         <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>

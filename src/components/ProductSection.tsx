@@ -16,9 +16,31 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// ... (existing code)
-
-
+// Dynamic component for the "Mix" display
+const MixStack = ({ images, className }: { images: string[], className?: string }) => {
+  return (
+    <div className={`relative flex items-center justify-center ${className}`}>
+      {/* Right Bottle (Silky) */}
+      <img
+        src={images[2]}
+        alt="Mix Right"
+        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90 transition-all duration-500"
+      />
+      {/* Left Bottle (Red) */}
+      <img
+        src={images[1]}
+        alt="Mix Left"
+        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 transition-all duration-500 absolute"
+      />
+      {/* Middle Bottle (Lemon) - Front */}
+      <img
+        src={images[0]}
+        alt="Mix Middle"
+        className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 transition-all duration-500 hover:scale-105 absolute"
+      />
+    </div>
+  );
+};
 
 import { FLAVORS, PACK_PRICES, PACK_SIZES, type FlavorType } from "@/config/product-data";
 
@@ -253,11 +275,22 @@ const ProductSection = () => {
 
                 <div className="relative animate-float">
                   <div className="relative">
-                    <img
-                      src={productImageSrc}
-                      alt={flavorMode === "mix" ? "BoostUp Mix" : selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
-                      className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
-                    />
+                    {flavorMode === "mix" ? (
+                      <MixStack
+                        images={[
+                          getEffectiveProduct('lemon')?.image_url || bottleSingle,
+                          getEffectiveProduct('red')?.image_url || bottleSingle,
+                          getEffectiveProduct('silky')?.image_url || bottleSingle
+                        ]}
+                        className="scale-90 md:scale-100"
+                      />
+                    ) : (
+                      <img
+                        src={productImageSrc}
+                        alt={selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
+                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
+                      />
+                    )}
                   </div>
 
                   {(selectedFlavor || flavorMode === "mix") && (
