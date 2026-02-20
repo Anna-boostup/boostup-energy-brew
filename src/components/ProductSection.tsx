@@ -72,6 +72,32 @@ const ProductSection = () => {
   const { getStock, products } = useInventory();
   const { toast } = useToast();
 
+  const getEffectiveProduct = (sku: string) => {
+    const direct = products.find(p => p.sku === sku);
+    const baseSku = sku.includes('-') ? sku.split('-')[0] : sku;
+    const base = products.find(p => p.sku === baseSku);
+
+    if (!direct && !base) return null;
+
+    return {
+      sku,
+      name: direct?.name || base?.name || "",
+      price: direct?.price || base?.price || 0,
+      description: direct?.description || base?.description || "",
+      tooltip: direct?.tooltip || base?.tooltip || "",
+      is_on_sale: direct?.is_on_sale || base?.is_on_sale || false,
+      image_url: direct?.image_url || base?.image_url || null,
+    };
+  };
+
+  const cleanName = (name: string) => {
+    // Remove text in parentheses and strip emojis from the start/content
+    return name
+      .replace(/\s*\(.*?\)\s*/g, '')
+      .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '')
+      .trim();
+  };
+
   const getProductImage = () => {
     if (!flavorMode && !selectedFlavor) return bottlesHero;
 
@@ -146,31 +172,7 @@ const ProductSection = () => {
     setMixCounts(newCounts);
   };
 
-  const getEffectiveProduct = (sku: string) => {
-    const direct = products.find(p => p.sku === sku);
-    const baseSku = sku.includes('-') ? sku.split('-')[0] : sku;
-    const base = products.find(p => p.sku === baseSku);
-
-    if (!direct && !base) return null;
-
-    return {
-      sku,
-      name: direct?.name || base?.name || "",
-      price: direct?.price || base?.price || 0,
-      description: direct?.description || base?.description || "",
-      tooltip: direct?.tooltip || base?.tooltip || "",
-      is_on_sale: direct?.is_on_sale || base?.is_on_sale || false,
-      image_url: direct?.image_url || base?.image_url || null,
-    };
-  };
-
-  const cleanName = (name: string) => {
-    // Remove text in parentheses and strip emojis from the start/content
-    return name
-      .replace(/\s*\(.*?\)\s*/g, '')
-      .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '')
-      .trim();
-  };
+  // Placeholder if needed
 
   const handleAddToCart = () => {
     if (!selectedPack) {
@@ -642,7 +644,13 @@ const ProductSection = () => {
                         <div className="flex flex-col items-center justify-center gap-0.5 w-full">
                           <div className="flex items-center justify-center gap-2">
                             <ShoppingBag className="w-5 h-5 shrink-0" />
-                            <span className="font-semibold text-sm sm:text-base">{isOutOfStock ? "Vyprodáno" : "Přidat do košíku"}</span>
+                            <span className="font-semibold text-sm sm:text-base">
+                              {isOutOfStock
+                                ? "Vyprodáno"
+                                : flavorMode === "mix"
+                                  ? `Přidat MIX do košíku`
+                                  : `Přidat ${cleanName(currentFlavor.name)} do košíku`}
+                            </span>
                           </div>
                           {!isOutOfStock && (
                             <span className="font-bold text-base opacity-90">{price} Kč</span>
