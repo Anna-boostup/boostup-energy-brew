@@ -2,10 +2,11 @@ import { Button } from "./ui/button";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
 import bottlesHero from "@/assets/bottles-hero-final.png";
 
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 
 const HeroSection = () => {
-  const content = SITE_CONTENT.hero;
+  const { content: siteContent } = useContent();
+  const content = siteContent.hero;
 
   return (
     <section className="min-h-screen pt-20 relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary/30">
