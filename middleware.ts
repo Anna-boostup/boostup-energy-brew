@@ -6,6 +6,7 @@ import type { NextRequest } from 'next/server';
  * 
  * This middleware secures non-production deployments (Preview and Development)
  * while allowing public access to the production domain.
+ * Triggering redeploy.
  */
 
 export const config = {
