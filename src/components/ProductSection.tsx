@@ -591,7 +591,14 @@ const ProductSection = () => {
 
                 {/* Individual Offer Link */}
                 <div className="text-center">
-                  <a href="#kontakt" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors border-b border-transparent hover:border-primary/50 pb-0.5">
+                  <a
+                    href="#kontakt"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors border-b border-transparent hover:border-primary/50 pb-0.5"
+                  >
                     <Mail className="w-3.5 h-3.5" />
                     Máte zájem o větší odběr? Individuální nabídka
                   </a>

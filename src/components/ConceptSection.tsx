@@ -104,7 +104,12 @@ const ConceptSection = () => {
 
         {/* CTA */}
         <div className="text-center animate-fade-up animation-delay-800">
-          <Button variant="hero" size="xl" className="group animate-energy-pulse">
+          <Button
+            variant="hero"
+            size="xl"
+            className="group animate-energy-pulse"
+            onClick={() => document.getElementById('produkty')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             {content.cta}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
           </Button>

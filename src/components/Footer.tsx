@@ -38,7 +38,17 @@ const Footer = () => {
               <ul className="space-y-4">
                 {group.items.map((item) => (
                   <li key={item.label}>
-                    <a href={item.href} className="text-primary-foreground/60 hover:text-lime transition-colors text-lg">
+                    <a
+                      href={item.href}
+                      onClick={(e) => {
+                        if (window.location.pathname === '/' && item.href.includes('#')) {
+                          e.preventDefault();
+                          const id = item.href.split('#')[1];
+                          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="text-primary-foreground/60 hover:text-lime transition-colors text-lg"
+                    >
                       {item.label}
                     </a>
                   </li>

@@ -35,7 +35,18 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
           {variant === 'default' && (
             <nav className="hidden md:flex items-center gap-8">
               {SITE_CONTENT.navigation.map((link) => (
-                <a key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    if (window.location.pathname === '/') {
+                      e.preventDefault();
+                      const id = link.href.split('#')[1];
+                      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
                   {link.label}
                 </a>
               ))}
@@ -123,7 +134,14 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                     <a
                       key={link.href}
                       href={link.href}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={(e) => {
+                        if (window.location.pathname === '/') {
+                          e.preventDefault();
+                          const id = link.href.split('#')[1];
+                          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                        setIsMenuOpen(false);
+                      }}
                       className="text-lg font-medium py-2 border-b border-border/50"
                     >
                       {link.label}
