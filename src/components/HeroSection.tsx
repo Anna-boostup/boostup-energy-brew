@@ -43,29 +43,44 @@ const HeroSection = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center">
             <Button
-              variant="hero"
+              variant="default"
               size="xl"
-              className="group min-w-[200px] shadow-lg hover:shadow-xl transition-all"
-              onClick={() => document.getElementById('produkty')?.scrollIntoView({ behavior: 'smooth' })}
+              className="group min-w-[200px] shadow-button hover:shadow-lg transition-all animate-energy-pulse"
+              onClick={() => {
+                const element = document.getElementById('produkty');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
             >
               {content.cta.primary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
             </Button>
 
             <Button
-              variant="outline"
+              variant="default"
               size="xl"
-              className="rounded-full border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md"
-              onClick={() => document.getElementById('mise')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse"
+              onClick={() => {
+                const element = document.getElementById('mise');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
             >
               {content.cta.secondary}
             </Button>
 
             <Button
-              variant="outline"
+              variant="default"
               size="xl"
-              className="rounded-full border-2 border-terracotta text-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md"
-              onClick={() => document.getElementById('3b')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-secondary text-terracotta border-2 border-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse"
+              onClick={() => {
+                const element = document.getElementById('3b');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
             >
               {content.cta.concept3b}
             </Button>

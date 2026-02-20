@@ -105,10 +105,15 @@ const ConceptSection = () => {
         {/* CTA */}
         <div className="text-center animate-fade-up animation-delay-800">
           <Button
-            variant="hero"
+            variant="default"
             size="xl"
-            className="group animate-energy-pulse"
-            onClick={() => document.getElementById('produkty')?.scrollIntoView({ behavior: 'smooth' })}
+            className="group animate-energy-pulse shadow-button hover:shadow-lg"
+            onClick={() => {
+              const element = document.getElementById('produkty');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
           >
             {content.cta}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
