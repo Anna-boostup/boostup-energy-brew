@@ -11,6 +11,8 @@ export interface Product {
     image_url?: string;
     description?: string;
     ingredients?: string;
+    tooltip?: string;
+    is_on_sale?: boolean;
 }
 
 export interface Order {

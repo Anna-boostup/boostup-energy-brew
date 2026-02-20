@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { useInventory, Product } from "@/context/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -24,6 +25,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         price: 0,
         description: "",
         ingredients: "",
+        tooltip: "",
+        is_on_sale: false,
         image_url: ""
     });
 
@@ -34,6 +37,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                 price: product.price || 0,
                 description: product.description || "",
                 ingredients: product.ingredients || "",
+                tooltip: product.tooltip || "",
+                is_on_sale: product.is_on_sale || false,
                 image_url: product.image_url || ""
             });
         }
@@ -81,6 +86,18 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                         />
                     </div>
 
+                    <div className="flex items-center justify-between space-x-2 border p-3 rounded-md bg-muted/30">
+                        <div className="space-y-0.5">
+                            <Label htmlFor="is_on_sale">Akce</Label>
+                            <p className="text-xs text-muted-foreground">Zobrazí štítek AKCE u produktu</p>
+                        </div>
+                        <Switch
+                            id="is_on_sale"
+                            checked={formData.is_on_sale}
+                            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_on_sale: checked }))}
+                        />
+                    </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="price">Cena (Kč)</Label>
                         <Input
@@ -93,31 +110,43 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                     </div>
 
                     <div className="space-y-2">
+                        <Label htmlFor="description">Popis (pod názvem na hlavní straně)</Label>
+                        <Textarea
+                            id="description"
+                            value={formData.description}
+                            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                            placeholder="Např. Citrusová svěžest a energie..."
+                            rows={2}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="tooltip">Tooltip (text v bublině "i")</Label>
+                        <Textarea
+                            id="tooltip"
+                            value={formData.tooltip}
+                            onChange={(e) => setFormData(prev => ({ ...prev, tooltip: e.target.value }))}
+                            placeholder="Text, který se zobrazí v bublině..."
+                            rows={2}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="ingredients">Složení (Vyskakovací okno)</Label>
+                        <Textarea
+                            id="ingredients"
+                            value={formData.ingredients}
+                            onChange={(e) => setFormData(prev => ({ ...prev, ingredients: e.target.value }))}
+                            rows={2}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
                         <Label htmlFor="image_url">URL Obrázku</Label>
                         <Input
                             id="image_url"
                             value={formData.image_url}
                             onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Popis (Tooltip)</Label>
-                        <Textarea
-                            id="description"
-                            value={formData.description}
-                            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                            rows={3}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="ingredients">Složení (Info)</Label>
-                        <Textarea
-                            id="ingredients"
-                            value={formData.ingredients}
-                            onChange={(e) => setFormData(prev => ({ ...prev, ingredients: e.target.value }))}
-                            rows={3}
                         />
                     </div>
 

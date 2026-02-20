@@ -112,6 +112,28 @@ const ProductSection = () => {
     setMixCounts(newCounts);
   };
 
+  const getEffectiveProduct = (sku: string) => {
+    const direct = products.find(p => p.sku === sku);
+    const baseSku = sku.includes('-') ? sku.split('-')[0] : sku;
+    const base = products.find(p => p.sku === baseSku);
+
+    if (!direct && !base) return null;
+
+    return {
+      sku,
+      name: direct?.name || base?.name || "",
+      price: direct?.price || base?.price || 0,
+      description: direct?.description || base?.description || "",
+      tooltip: direct?.tooltip || base?.tooltip || "",
+      ingredients: direct?.ingredients || base?.ingredients || "",
+      is_on_sale: direct?.is_on_sale || base?.is_on_sale || false,
+    };
+  };
+
+  const cleanName = (name: string) => {
+    return name.replace(/\s*\(.*?\)\s*/g, '').trim();
+  };
+
   const handleAddToCart = () => {
     if (!selectedPack) {
       toast({
@@ -166,10 +188,10 @@ const ProductSection = () => {
 
     if (flavorMode === "single" && selectedFlavor) {
       const sku = `${selectedFlavor}-${selectedPack}`;
-      const product = products.find(p => p.sku === sku);
-      if (product) {
-        displayName = product.name;
-        displayPrice = product.price;
+      const effProduct = getEffectiveProduct(sku);
+      if (effProduct) {
+        displayName = effProduct.name;
+        displayPrice = effProduct.price;
       }
     }
 
@@ -359,17 +381,19 @@ const ProductSection = () => {
                           className={`w-full p-4 rounded-2xl flex items-center justify-between gap-4 transition-all duration-300 border-2 ${mixCounts[flavor.id] > 0 ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-md border-transparent` : 'border-dashed border-border bg-secondary/30'}`}
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
-                          <div className="flex items-center gap-4 flex-1">
-                            <div className={`w-12 h-12 rounded-xl shrink-0 ${mixCounts[flavor.id] > 0 ? 'bg-white/20' : flavor.bgColor} flex items-center justify-center`}>
-                              {/* Using Sparkles for all for brevity, original had Droplet for silky */}
-                              <Sparkles className={`w-6 h-6 ${mixCounts[flavor.id] > 0 ? 'text-white' : flavor.textColor}`} />
-                            </div>
+                          <div className="flex items-center gap-4 min-w-0 flex-1">
                             <div className="text-left min-w-0 flex-1">
                               <div className="font-bold text-base leading-tight">
-                                {products.find(p => p.sku === flavor.id)?.name || flavor.name}
+                                {(() => {
+                                  const eff = getEffectiveProduct(flavor.id);
+                                  return eff ? cleanName(eff.name) : flavor.name;
+                                })()}
                               </div>
                               <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>
-                                {products.find(p => p.sku === flavor.id)?.description || flavor.description}
+                                {(() => {
+                                  const eff = getEffectiveProduct(flavor.id);
+                                  return eff?.description || flavor.description;
+                                })()}
                               </div>
                             </div>
                           </div>
@@ -411,8 +435,8 @@ const ProductSection = () => {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="left" className="max-w-xs">
-                                <p className="font-bold mb-1">Složení ({products.find(p => p.sku === flavor.id)?.name || flavor.name}):</p>
-                                <p>{products.find(p => p.sku === flavor.id)?.ingredients || flavor.ingredients}</p>
+                                <p className="font-bold mb-1">Popis ({cleanName(getEffectiveProduct(flavor.id)?.name || flavor.name)}):</p>
+                                <p>{getEffectiveProduct(flavor.id)?.tooltip || flavor.description}</p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -444,15 +468,22 @@ const ProductSection = () => {
                             }`}
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
-                          <div className={`w-12 h-12 rounded-xl shrink-0 ${selectedFlavor === flavor.id ? 'bg-cream/20' : flavor.bgColor} flex items-center justify-center`}>
-                            {/* Using Sparkles for all for brevity, original had Droplet for silky */}
-                            <Sparkles className={`w-6 h-6 ${selectedFlavor === flavor.id ? 'text-white' : flavor.textColor}`} />
-                          </div>
                           <div className="text-left min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-baseline gap-2">
                               <span className="font-bold text-base leading-tight">
-                                {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.name || flavor.name}
+                                {(() => {
+                                  const eff = getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id);
+                                  return eff ? cleanName(eff.name) : flavor.name;
+                                })()}
                               </span>
+                              {(() => {
+                                const eff = getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id);
+                                return eff?.is_on_sale && (
+                                  <span className="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider animate-pulse">
+                                    AKCE
+                                  </span>
+                                );
+                              })()}
                               {flavor.labels && flavor.labels.map(label => (
                                 <span key={label} className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
                                   {label}
@@ -478,8 +509,8 @@ const ProductSection = () => {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent side="left" className="max-w-xs">
-                              <p className="font-bold mb-1">Složení ({products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.name || flavor.name}):</p>
-                              <p>{products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.ingredients || flavor.ingredients}</p>
+                              <p className="font-bold mb-1">Popis ({cleanName(getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)?.name || flavor.name)}):</p>
+                              <p>{getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)?.tooltip || flavor.description}</p>
                             </TooltipContent>
                           </Tooltip>
                         </div>

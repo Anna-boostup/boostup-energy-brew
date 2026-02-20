@@ -20,6 +20,8 @@ create table if not exists public.inventory (
     image_url text,
     description text,
     ingredients text,
+    tooltip text,
+    is_on_sale boolean default false,
     created_at timestamptz default now()
 );
 alter table public.inventory enable row level security;
