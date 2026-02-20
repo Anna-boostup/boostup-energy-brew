@@ -24,7 +24,7 @@ export default function middleware(request: Request) {
     if (
         !authUser ||
         !authPass ||
-        (productionDomain && hostname.includes(productionDomain)) ||
+        (productionDomain && (hostname === productionDomain || hostname === `www.${productionDomain}`)) ||
         hostname.includes('localhost') ||
         hostname.includes('127.0.0.1')
     ) {
