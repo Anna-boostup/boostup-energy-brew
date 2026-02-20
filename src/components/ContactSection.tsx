@@ -1,9 +1,10 @@
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Phone, Mail, MapPin, Send, MessageSquare } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const ContactSection = () => {
+  const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.contact;
   const { toast } = useToast();
 

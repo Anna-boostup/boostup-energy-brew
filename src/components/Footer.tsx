@@ -1,9 +1,10 @@
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 import { Link } from "react-router-dom";
 import { Youtube, Instagram, Facebook } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 
 const Footer = () => {
+  const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.footer;
 
   return (

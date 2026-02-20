@@ -126,6 +126,7 @@ const App = () => (
                       <Route index element={<AdminDashboard />} />
                       <Route path="orders" element={<Orders />} />
                       <Route path="inventory" element={<Inventory />} />
+                      <Route path="content" element={<ContentManagement />} />
                     </Route>
 
                     {/* Legal Routes */}

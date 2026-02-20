@@ -1,4 +1,4 @@
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
 import { Button } from "./ui/button";
 import EnergyChart from "./EnergyChart";
@@ -12,6 +12,7 @@ import {
 } from "./ui/dialog";
 
 const ConceptSection = () => {
+  const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.concept3b;
   const [selectedConcept, setSelectedConcept] = useState<any>(null);
 

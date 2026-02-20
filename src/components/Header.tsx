@@ -9,7 +9,7 @@ import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 
 interface HeaderProps {
   variant?: 'default' | 'simple';
@@ -20,6 +20,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
   const { user, profile } = useAuth();
+  const { content: SITE_CONTENT } = useContent();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">

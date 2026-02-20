@@ -1,9 +1,10 @@
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Zap, Mail, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 const CTASection = () => {
+  const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.cta;
   const [email, setEmail] = useState("");
   const [isHovered, setIsHovered] = useState(false);

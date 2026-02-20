@@ -1,7 +1,8 @@
-import { SITE_CONTENT } from "@/config/site-content";
+import { useContent } from "@/context/ContentContext";
 import { Zap, Clock, Shield, Leaf, Sparkles } from "lucide-react";
 
 const MissionSection = () => {
+  const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.mission;
 
   const iconMap: Record<string, any> = {
