@@ -48,7 +48,6 @@ const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allow
 
 
 import AdminLayout from "./components/admin/AdminLayout";
-import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Inventory from "./pages/admin/Inventory";
 import Orders from "./pages/admin/Orders";
@@ -121,7 +120,6 @@ const App = () => (
                     <Route path="/payment/error" element={<PaymentError />} />
 
                     {/* Admin Routes */}
-                    <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/admin" element={<AdminLayout />}>
                       <Route index element={<AdminDashboard />} />
                       <Route path="orders" element={<Orders />} />

@@ -9,14 +9,14 @@ const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { user, profile, loading } = useAuth();
+    const { user, profile, loading, signOut } = useAuth();
 
     if (loading) {
         return <div className="p-8">Ověřuji oprávnění...</div>;
     }
 
     if (!user) {
-        return <Navigate to="/admin/login" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     if (profile?.role !== 'admin') {
@@ -30,9 +30,9 @@ const AdminLayout = () => {
         );
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem("adminAuth");
-        navigate("/admin/login");
+    const handleLogout = async () => {
+        await signOut();
+        navigate("/");
     };
 
     const navItems = [
