@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useInventory, Product } from "@/context/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface ProductEditDialogProps {
     isOpen: boolean;
@@ -24,11 +25,12 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         name: "",
         price: 0,
         description: "",
-        ingredients: "",
         tooltip: "",
         is_on_sale: false,
         image_url: ""
     });
+
+    const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
         if (product) {
@@ -36,13 +38,49 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                 name: product.name || "",
                 price: product.price || 0,
                 description: product.description || "",
-                ingredients: product.ingredients || "",
                 tooltip: product.tooltip || "",
                 is_on_sale: product.is_on_sale || false,
                 image_url: product.image_url || ""
             });
         }
     }, [product, isOpen]);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !product) return;
+
+        setIsUploading(true);
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${product.sku}-${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError, data } = await supabase.storage
+                .from('product-images')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('product-images')
+                .getPublicUrl(filePath);
+
+            setFormData(prev => ({ ...prev, image_url: publicUrl }));
+
+            toast({
+                title: "Obrázek nahrán",
+                description: "Obrázek byl úspěšně nahrán na server.",
+            });
+        } catch (error: any) {
+            toast({
+                title: "Chyba při nahrávání",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -132,22 +170,31 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="ingredients">Složení (Vyskakovací okno)</Label>
-                        <Textarea
-                            id="ingredients"
-                            value={formData.ingredients}
-                            onChange={(e) => setFormData(prev => ({ ...prev, ingredients: e.target.value }))}
-                            rows={2}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="image_url">URL Obrázku</Label>
-                        <Input
-                            id="image_url"
-                            value={formData.image_url}
-                            onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-                        />
+                        <Label>Fotka produktu</Label>
+                        <div className="flex flex-col gap-4">
+                            {formData.image_url && (
+                                <div className="relative w-full aspect-square max-w-[200px] border rounded-lg overflow-hidden bg-muted">
+                                    <img
+                                        src={formData.image_url}
+                                        alt="Náhled"
+                                        className="w-full h-full object-contain"
+                                    />
+                                </div>
+                            )}
+                            <div className="flex items-center gap-2">
+                                <Input
+                                    id="image_upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    disabled={isUploading || isLoading}
+                                />
+                                {isUploading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                Nahrajte čtvercový obrázek (PNG s průhledností je ideální).
+                            </p>
+                        </div>
                     </div>
 
                     <DialogFooter className="pt-4">

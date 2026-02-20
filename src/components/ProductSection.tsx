@@ -52,9 +52,21 @@ const ProductSection = () => {
 
   const getProductImage = () => {
     if (!flavorMode && !selectedFlavor) return bottlesHero;
-    if (flavorMode === "mix") return bottleSingle;
 
-    // Single Flavor specific logic
+    if (flavorMode === "mix" && selectedPack) {
+      const sku = `mix-${selectedPack}`;
+      const eff = getEffectiveProduct(sku);
+      if (eff?.image_url) return eff.image_url;
+      return bottlesHero;
+    }
+
+    if (flavorMode === "single" && selectedFlavor && selectedPack) {
+      const sku = `${selectedFlavor}-${selectedPack}`;
+      const eff = getEffectiveProduct(sku);
+      if (eff?.image_url) return eff.image_url;
+    }
+
+    // Static Fallbacks for 3-pack (if no image uploaded)
     if (flavorMode === "single" && selectedFlavor && selectedPack === 3) {
       if (selectedFlavor === 'lemon') return pack3Lemon;
       if (selectedFlavor === 'red') return pack3Red;
@@ -125,8 +137,8 @@ const ProductSection = () => {
       price: direct?.price || base?.price || 0,
       description: direct?.description || base?.description || "",
       tooltip: direct?.tooltip || base?.tooltip || "",
-      ingredients: direct?.ingredients || base?.ingredients || "",
       is_on_sale: direct?.is_on_sale || base?.is_on_sale || false,
+      image_url: direct?.image_url || base?.image_url || null,
     };
   };
 
