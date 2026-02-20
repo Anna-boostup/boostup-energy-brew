@@ -131,7 +131,11 @@ const ProductSection = () => {
   };
 
   const cleanName = (name: string) => {
-    return name.replace(/\s*\(.*?\)\s*/g, '').trim();
+    // Remove text in parentheses and strip emojis from the start/content
+    return name
+      .replace(/\s*\(.*?\)\s*/g, '')
+      .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '')
+      .trim();
   };
 
   const handleAddToCart = () => {
@@ -435,7 +439,6 @@ const ProductSection = () => {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="left" className="max-w-xs">
-                                <p className="font-bold mb-1">Popis ({cleanName(getEffectiveProduct(flavor.id)?.name || flavor.name)}):</p>
                                 <p>{getEffectiveProduct(flavor.id)?.tooltip || flavor.description}</p>
                               </TooltipContent>
                             </Tooltip>
@@ -509,7 +512,6 @@ const ProductSection = () => {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent side="left" className="max-w-xs">
-                              <p className="font-bold mb-1">Popis ({cleanName(getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)?.name || flavor.name)}):</p>
                               <p>{getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)?.tooltip || flavor.description}</p>
                             </TooltipContent>
                           </Tooltip>
