@@ -3,6 +3,16 @@ import { supabase } from "@/lib/supabase";
 
 export type SKU = string;
 
+export interface Product {
+    sku: string;
+    name: string;
+    quantity: number;
+    price: number;
+    image_url?: string;
+    description?: string;
+    ingredients?: string;
+}
+
 export interface Order {
     id: string;
     date: string;
@@ -56,6 +66,7 @@ export interface StockMovement {
 
 interface InventoryContextType {
     stock: Record<SKU, number>;
+    products: Product[];
     orders: Order[];
     movements: StockMovement[];
     addMovement: (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => Promise<void>;
@@ -64,12 +75,14 @@ interface InventoryContextType {
     getStock: (sku: SKU) => number;
     addOrder: (order: Order) => void;
     updateOrderStatus: (orderId: string, status: Order['status']) => void;
+    updateProduct: (sku: string, updates: Partial<Product>) => Promise<void>;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [stock, setStock] = useState<Record<SKU, number>>({});
+    const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [movements, setMovements] = useState<StockMovement[]>([]);
 
@@ -85,8 +98,15 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const inventorySubscription = supabase
             .channel('inventory_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload) => {
-                const { sku, quantity } = payload.new as { sku: string; quantity: number };
-                setStock(prev => ({ ...prev, [sku]: quantity }));
+                const updatedItem = payload.new as Product;
+                setStock(prev => ({ ...prev, [updatedItem.sku]: updatedItem.quantity }));
+                setProducts(prev => {
+                    const exists = prev.find(p => p.sku === updatedItem.sku);
+                    if (exists) {
+                        return prev.map(p => p.sku === updatedItem.sku ? updatedItem : p);
+                    }
+                    return [...prev, updatedItem];
+                });
             })
             .subscribe();
 
@@ -121,10 +141,13 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (error) console.error('Error fetching inventory:', error);
         if (data) {
             const stockMap: Record<SKU, number> = {};
+            const productsList: Product[] = [];
             data.forEach((item: any) => {
                 stockMap[item.sku] = item.quantity;
+                productsList.push(item);
             });
             setStock(stockMap);
+            setProducts(productsList);
         }
     };
 
@@ -222,8 +245,32 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
     };
 
+    const updateProduct = async (sku: string, updates: Partial<Product>) => {
+        const { error } = await supabase
+            .from('inventory')
+            .update(updates)
+            .eq('sku', sku);
+
+        if (error) {
+            console.error('Error updating product:', error);
+            throw error;
+        }
+    };
+
     return (
-        <InventoryContext.Provider value={{ stock, orders, movements, addMovement, updateStock, decrementStock, getStock, addOrder, updateOrderStatus }}>
+        <InventoryContext.Provider value={{
+            stock,
+            products,
+            orders,
+            movements,
+            addMovement,
+            updateStock,
+            decrementStock,
+            getStock,
+            addOrder,
+            updateOrderStatus,
+            updateProduct
+        }}>
             {children}
         </InventoryContext.Provider>
     );

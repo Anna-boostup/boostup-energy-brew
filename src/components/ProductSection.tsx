@@ -47,7 +47,7 @@ const ProductSection = () => {
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
-  const { getStock } = useInventory();
+  const { getStock, products } = useInventory();
   const { toast } = useToast();
 
   const getProductImage = () => {
@@ -85,7 +85,17 @@ const ProductSection = () => {
   const currentFlavor = selectedFlavor ? flavors.find(f => f.id === selectedFlavor)! : flavors[0]; // Fallback
 
   // Calculate price with potential subscription discount
-  const basePrice = selectedPack ? packPrices[selectedPack] * quantity : 0;
+  const getDynamicPrice = () => {
+    if (!selectedPack) return 0;
+    if (flavorMode === "single" && selectedFlavor) {
+      const sku = `${selectedFlavor}-${selectedPack}`;
+      const product = products.find(p => p.sku === sku);
+      if (product) return product.price * quantity;
+    }
+    return packPrices[selectedPack] * quantity;
+  };
+
+  const basePrice = getDynamicPrice();
   const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.85) : basePrice;
 
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
@@ -151,10 +161,22 @@ const ProductSection = () => {
     const mixConfig = flavorMode === "mix" ? mixCounts : undefined;
     const mixIdSuffix = flavorMode === "mix" ? `-${mixCounts.lemon}-${mixCounts.red}-${mixCounts.silky}` : "";
 
+    let displayName = flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`;
+    let displayPrice = packPrices[selectedPack];
+
+    if (flavorMode === "single" && selectedFlavor) {
+      const sku = `${selectedFlavor}-${selectedPack}`;
+      const product = products.find(p => p.sku === sku);
+      if (product) {
+        displayName = product.name;
+        displayPrice = product.price;
+      }
+    }
+
     addToCart({
       id: flavorMode === "mix" ? `mix-${selectedPack}${mixIdSuffix}` : `${selectedFlavor}-${selectedPack}`,
-      name: flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`,
-      price: packPrices[selectedPack],
+      name: displayName,
+      price: displayPrice,
       quantity: quantity,
       flavor: flavorMode === "mix" ? "MIX" : currentFlavor.name,
       pack: selectedPack,
@@ -343,9 +365,12 @@ const ProductSection = () => {
                               <Sparkles className={`w-6 h-6 ${mixCounts[flavor.id] > 0 ? 'text-white' : flavor.textColor}`} />
                             </div>
                             <div className="text-left min-w-0 flex-1">
-                              <div className="font-bold text-base leading-tight">{flavor.name}</div>
-                              <div className="font-bold text-base leading-tight">{flavor.name}</div>
-                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>{flavor.description}</div>
+                              <div className="font-bold text-base leading-tight">
+                                {products.find(p => p.sku === flavor.id)?.name || flavor.name}
+                              </div>
+                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>
+                                {products.find(p => p.sku === flavor.id)?.description || flavor.description}
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
@@ -386,8 +411,8 @@ const ProductSection = () => {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="left" className="max-w-xs">
-                                <p className="font-bold mb-1">Složení ({flavor.name}):</p>
-                                <p>{flavor.ingredients}</p>
+                                <p className="font-bold mb-1">Složení ({products.find(p => p.sku === flavor.id)?.name || flavor.name}):</p>
+                                <p>{products.find(p => p.sku === flavor.id)?.ingredients || flavor.ingredients}</p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -425,7 +450,9 @@ const ProductSection = () => {
                           </div>
                           <div className="text-left min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-base leading-tight">{flavor.name}</span>
+                              <span className="font-bold text-base leading-tight">
+                                {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.name || flavor.name}
+                              </span>
                               {flavor.labels && flavor.labels.map(label => (
                                 <span key={label} className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
                                   {label}
@@ -433,7 +460,7 @@ const ProductSection = () => {
                               ))}
                             </div>
                             <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
-                              {flavor.description}
+                              {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || flavor.description}
                             </div>
                           </div>
                         </button>
@@ -451,8 +478,8 @@ const ProductSection = () => {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent side="left" className="max-w-xs">
-                              <p className="font-bold mb-1">Složení ({flavor.name}):</p>
-                              <p>{flavor.ingredients}</p>
+                              <p className="font-bold mb-1">Složení ({products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.name || flavor.name}):</p>
+                              <p>{products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.ingredients || flavor.ingredients}</p>
                             </TooltipContent>
                           </Tooltip>
                         </div>

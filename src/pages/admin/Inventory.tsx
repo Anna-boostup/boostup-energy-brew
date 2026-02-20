@@ -2,20 +2,23 @@ import { useState } from "react";
 import { useInventory, SKU } from "@/context/InventoryContext";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, History } from "lucide-react";
+import { Plus, History, Edit } from "lucide-react";
 import { RestockDialog } from "@/components/admin/RestockDialog";
 import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
+import { ProductEditDialog } from "@/components/admin/ProductEditDialog";
 
-const MobileInventoryCard = ({ sku, qty, onHistory, onRestock }: { sku: string, qty: number, onHistory: () => void, onRestock: () => void }) => (
+const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void }) => (
     <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white shadow-sm">
         <div className="flex justify-between items-start">
             <div>
                 <p className="font-mono font-bold text-lg">{sku}</p>
                 <div className="flex flex-col">
                     <span className="font-bold text-sm">
-                        {sku.includes('lemon') && "🍋 Lemon Blast"}
-                        {sku.includes('red') && "🍓 Red Rush"}
-                        {sku.includes('silky') && "🌿 Silky Leaf"}
+                        {product?.name || (
+                            sku.includes('lemon') ? "🍋 Lemon Blast" :
+                                sku.includes('red') ? "🍓 Red Rush" :
+                                    sku.includes('silky') ? "🌿 Silky Leaf" : sku
+                        )}
                     </span>
                     <span className="text-xs text-muted-foreground">
                         {sku.includes('-')
@@ -35,28 +38,41 @@ const MobileInventoryCard = ({ sku, qty, onHistory, onRestock }: { sku: string, 
                 variant="outline"
                 onClick={onHistory}
                 className="flex-1"
+                title="Historie"
             >
-                <History className="h-4 w-4 mr-1" />
+                <History className="h-3 w-3 mr-1" />
                 Historie
+            </Button>
+            <Button
+                size="sm"
+                variant="outline"
+                className="flex-1"
+                onClick={onEdit}
+                title="Upravit detaily"
+            >
+                <Edit className="h-3 w-3 mr-1" />
+                Upravit
             </Button>
             <Button
                 size="sm"
                 className="bg-green-600 hover:bg-green-700 text-white flex-1"
                 onClick={onRestock}
+                title="Naskladnit"
             >
-                <Plus className="h-4 w-4 mr-1" />
-                Naskladnit
+                <Plus className="h-3 w-3 mr-1" />
+                Sklad
             </Button>
         </div>
     </div>
 );
 
 const Inventory = () => {
-    const { stock } = useInventory();
+    const { stock, products } = useInventory();
 
     // Dialog States
     const [restockSku, setRestockSku] = useState<SKU | null>(null);
     const [historySku, setHistorySku] = useState<SKU | null>(null);
+    const [editSku, setEditSku] = useState<SKU | null>(null);
 
     const sortedStock = Object.entries(stock)
         .filter(([sku]) => !sku.includes('mix'))
@@ -91,52 +107,63 @@ const Inventory = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {sortedStock.map(([sku, qty]) => (
-                            <TableRow key={sku}>
-                                <TableCell className="font-mono font-medium">{sku}</TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span className="font-bold">
-                                            {sku.includes('lemon') && "🍋 Lemon Blast"}
-                                            {sku.includes('red') && "🍓 Red Rush"}
-                                            {sku.includes('silky') && "🌿 Silky Leaf"}
+                        {sortedStock.map(([sku, qty]) => {
+                            const product = products.find(p => p.sku === sku);
+                            return (
+                                <TableRow key={sku}>
+                                    <TableCell className="font-mono font-medium">{sku}</TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">
+                                                {product?.name || (
+                                                    sku.includes('lemon') ? "🍋 Lemon Blast" :
+                                                        sku.includes('red') ? "🍓 Red Rush" :
+                                                            sku.includes('silky') ? "🌿 Silky Leaf" : sku
+                                                )}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {sku.includes('-')
+                                                    ? `📦 Balení ${sku.split('-')[1]} ks`
+                                                    : "🍾 Samostatná lahev (pro Mixy)"}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <span className={`font-bold ${qty < 10 ? "text-red-600" : ""}`}>
+                                            {qty} ks
                                         </span>
-                                        <span className="text-xs text-muted-foreground">
-                                            {sku.includes('-')
-                                                ? `📦 Balení ${sku.split('-')[1]} ks`
-                                                : "🍾 Samostatná lahev (pro Mixy)"}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <span className={`font-bold ${qty < 10 ? "text-red-600" : ""}`}>
-                                        {qty} ks
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => setHistorySku(sku)}
-                                            title="Historie pohybů"
-                                        >
-                                            <History className="h-4 w-4 mr-1" />
-                                            Historie
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            className="bg-green-600 hover:bg-green-700 text-white"
-                                            onClick={() => setRestockSku(sku)}
-                                            title="Naskladnit"
-                                        >
-                                            <Plus className="h-4 w-4 mr-1" />
-                                            Naskladnit
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => setHistorySku(sku)}
+                                                title="Historie pohybů"
+                                            >
+                                                <History className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => setEditSku(sku)}
+                                                title="Upravit detaily"
+                                            >
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                className="bg-green-600 hover:bg-green-700 text-white"
+                                                onClick={() => setRestockSku(sku)}
+                                                title="Naskladnit"
+                                            >
+                                                <Plus className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </div>
@@ -147,9 +174,11 @@ const Inventory = () => {
                     <MobileInventoryCard
                         key={sku}
                         sku={sku}
+                        product={products.find(p => p.sku === sku)}
                         qty={qty}
                         onHistory={() => setHistorySku(sku)}
                         onRestock={() => setRestockSku(sku)}
+                        onEdit={() => setEditSku(sku)}
                     />
                 ))}
             </div>
@@ -166,6 +195,12 @@ const Inventory = () => {
                 isOpen={!!historySku}
                 onClose={() => setHistorySku(null)}
                 sku={historySku}
+            />
+
+            <ProductEditDialog
+                isOpen={!!editSku}
+                onClose={() => setEditSku(null)}
+                product={editSku ? products.find(p => p.sku === editSku) || null : null}
             />
         </div>
     );
