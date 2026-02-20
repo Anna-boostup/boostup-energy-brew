@@ -9,6 +9,8 @@ import { useCart } from "@/context/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 
+import { SITE_CONTENT } from "@/config/site-content";
+
 interface HeaderProps {
   variant?: 'default' | 'simple';
 }
@@ -18,8 +20,6 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
   const { user, profile } = useAuth();
-
-
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
@@ -34,10 +34,11 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
           {/* Desktop Navigation */}
           {variant === 'default' && (
             <nav className="hidden md:flex items-center gap-8">
-              <a href="/#mise" className="text-muted-foreground hover:text-foreground transition-colors">Naše mise</a>
-              <a href="/#produkty" className="text-muted-foreground hover:text-foreground transition-colors">Produkty</a>
-              <a href="/#3b" className="text-muted-foreground hover:text-foreground transition-colors">3B Koncept</a>
-              <a href="/#kontakt" className="text-muted-foreground hover:text-foreground transition-colors">Kontakt</a>
+              {SITE_CONTENT.navigation.map((link) => (
+                <a key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground transition-colors">
+                  {link.label}
+                </a>
+              ))}
             </nav>
           )}
 
@@ -45,13 +46,13 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
           <div className="hidden md:flex items-center gap-4">
             {variant === 'default' && (
               <div className="flex items-center gap-3">
-                <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-muted-foreground hover:text-foreground transition-colors">
                   <Instagram className="w-5 h-5" />
                 </a>
-                <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-muted-foreground hover:text-foreground transition-colors">
                   <Facebook className="w-5 h-5" />
                 </a>
-                <a href="#" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors">
                   <Linkedin className="w-5 h-5" />
                 </a>
               </div>
@@ -118,34 +119,16 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <nav className="flex flex-col gap-4 mb-6">
               {variant === 'default' && (
                 <>
-                  <a
-                    href="/#mise"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-lg font-medium py-2 border-b border-border/50"
-                  >
-                    Naše mise
-                  </a>
-                  <a
-                    href="/#produkty"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-lg font-medium py-2 border-b border-border/50"
-                  >
-                    Produkty
-                  </a>
-                  <a
-                    href="/#3b"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-lg font-medium py-2 border-b border-border/50"
-                  >
-                    3B Koncept
-                  </a>
-                  <a
-                    href="/#kontakt"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-lg font-medium py-2 border-b border-border/50"
-                  >
-                    Kontakt
-                  </a>
+                  {SITE_CONTENT.navigation.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-lg font-medium py-2 border-b border-border/50"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
                 </>
               )}
 
@@ -201,9 +184,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             </nav>
 
             <div className="flex gap-4">
-              <a href="#" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
-              <a href="#" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
         )}

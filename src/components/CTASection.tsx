@@ -1,8 +1,10 @@
+import { SITE_CONTENT } from "@/config/site-content";
 import { Button } from "./ui/button";
 import { Zap, Mail, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 const CTASection = () => {
+  const content = SITE_CONTENT.cta;
   const [email, setEmail] = useState("");
   const [isHovered, setIsHovered] = useState(false);
 
@@ -32,19 +34,18 @@ const CTASection = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-lime/20 backdrop-blur-sm rounded-full text-lime text-sm font-black mb-10 border border-lime/30 animate-fade-up animate-bounce-subtle">
             <Sparkles className="w-5 h-5" />
-            <span>Buď první, kdo to zkusí</span>
+            <span>{content.badge}</span>
             <Zap className="w-5 h-5" />
           </div>
 
           {/* Headline */}
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-primary-foreground mb-8 leading-tight animate-fade-up animation-delay-100">
-            PŘIPRAV SE NA
-            <span className="block text-lime animate-slide-in-left animation-delay-300">NOVOU ÉRU ENERGIE</span>
+            {content.headline.part1}
+            <span className="block text-lime animate-slide-in-left animation-delay-300">{content.headline.highlight}</span>
           </h2>
 
           <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto animate-fade-up animation-delay-200">
-            Přihlaš se k odběru a získej exkluzivní přístup k testerům, slevám a novinkám.
-            Buď součástí komunity BoostUp.
+            {content.description}
           </p>
 
           {/* Email signup */}
@@ -60,7 +61,7 @@ const CTASection = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="vas@email.cz"
+                  placeholder={content.placeholder}
                   className="w-full py-4 bg-transparent text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none text-lg font-medium"
                 />
               </div>
@@ -69,7 +70,7 @@ const CTASection = () => {
                 size="lg"
                 className="w-full sm:w-auto bg-lime hover:bg-lime-dark text-foreground font-black rounded-full px-10 py-6 group shadow-button flex items-center justify-center"
               >
-                Přihlásit se
+                {content.button}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
               </Button>
             </div>
@@ -87,15 +88,15 @@ const CTASection = () => {
                   />
                 ))}
               </div>
-              <span className="text-sm font-bold">+500 čeká na launch</span>
+              <span className="text-sm font-bold">{content.socialProof.waiting}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 rounded-full bg-lime animate-pulse" />
-              <span className="text-sm font-bold">Launch Q1 2025</span>
+              <span className="text-sm font-bold">{content.socialProof.launch}</span>
             </div>
             <div className="flex items-center gap-3">
               <Zap className="w-5 h-5 text-orange" />
-              <span className="text-sm font-bold">100% přírodní</span>
+              <span className="text-sm font-bold">{content.socialProof.natural}</span>
             </div>
           </div>
         </div>

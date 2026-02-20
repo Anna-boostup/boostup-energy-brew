@@ -1,100 +1,113 @@
-import { useState } from "react";
+import { SITE_CONTENT } from "@/config/site-content";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { toast } from "@/hooks/use-toast";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Send, MessageSquare } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const ContactSection = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const content = SITE_CONTENT.contact;
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Zpráva odeslána!",
-      description: "Děkujeme za váš zájem. Brzy se vám ozveme.",
+      title: content.toast.success.title,
+      description: content.toast.success.description,
     });
-    setFormData({ name: "", email: "", message: "" });
   };
 
   return (
-    <section id="kontakt" className="py-20 bg-primary text-primary-foreground">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-            Kontakt
-          </h2>
-          <div className="flex flex-col md:flex-row justify-center gap-6 text-primary-foreground/80">
-            <a href="tel:+420777333327" className="flex items-center justify-center gap-2 hover:text-primary-foreground transition-colors">
-              <Phone className="w-4 h-4" />
-              Telefonní číslo: 777 333 327
-            </a>
-            <a href="mailto:boostupteam@email.com" className="flex items-center justify-center gap-2 hover:text-primary-foreground transition-colors">
-              <Mail className="w-4 h-4" />
-              E-mail: boostupteam@email.com
-            </a>
-          </div>
-          <div className="mt-4 text-primary-foreground/60 text-sm">
-            <p>Výrobce: AB Quattro</p>
-            <p>Distributor: Mendlova univerzita</p>
-          </div>
-        </div>
+    <section id="kontakt" className="py-28 bg-background relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
+            {/* Contact Info */}
+            <div className="animate-fade-up">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-primary rounded-full text-sm font-bold mb-6">
+                <MessageSquare className="w-4 h-4" />
+                {content.title}
+              </span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-foreground mb-8 leading-tight">
+                {content.headline}
+              </h2>
+              <p className="text-lg text-muted-foreground mb-12 leading-relaxed">
+                {content.description}
+              </p>
 
-        {/* Contact Form */}
-        <div className="max-w-xl mx-auto bg-background rounded-2xl p-6 sm:p-8 shadow-xl">
-          <h3 className="text-foreground font-display font-semibold text-xl mb-2 text-center">
-            Rádi uslyšíme vaše názory a zodpovíme dotazy
-          </h3>
-          <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1">
-                Jméno
-              </label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Vaše jméno"
-                required
-                className="bg-secondary border-border"
-              />
+              <div className="space-y-8">
+                <div className="flex items-center gap-6 group">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <Phone className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.phone.label}</p>
+                    <p className="text-xl font-display font-bold">{content.info.phone.value}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6 group">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <Mail className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.email.label}</p>
+                    <p className="text-xl font-display font-bold">{content.info.email.value}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6 group">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <MapPin className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.address.label}</p>
+                    <p className="text-xl font-display font-bold leading-relaxed">
+                      {content.info.address.value.line1}<br />
+                      {content.info.address.value.line2}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1">
-                E-mail
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="vas@email.cz"
-                required
-                className="bg-secondary border-border"
-              />
+
+            {/* Form */}
+            <div className="bg-card p-8 lg:p-12 rounded-[2rem] border-2 border-border shadow-soft animate-fade-up animation-delay-200">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold ml-1">{content.form.name.label}</label>
+                    <input
+                      required
+                      type="text"
+                      className="w-full px-6 py-4 rounded-xl border-2 border-border bg-background focus:border-primary outline-none transition-all"
+                      placeholder={content.form.name.placeholder}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold ml-1">{content.form.email.label}</label>
+                    <input
+                      required
+                      type="email"
+                      className="w-full px-6 py-4 rounded-xl border-2 border-border bg-background focus:border-primary outline-none transition-all"
+                      placeholder={content.form.email.placeholder}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold ml-1">{content.form.message.label}</label>
+                  <textarea
+                    required
+                    rows={4}
+                    className="w-full px-6 py-4 rounded-xl border-2 border-border bg-background focus:border-primary outline-none transition-all resize-none"
+                    placeholder={content.form.message.placeholder}
+                  ></textarea>
+                </div>
+                <Button variant="hero" type="submit" className="w-full group">
+                  {content.form.submit}
+                  <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </Button>
+              </form>
             </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-1">
-                Zpráva
-              </label>
-              <Textarea
-                id="message"
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Vaše zpráva..."
-                rows={4}
-                required
-                className="bg-secondary border-border resize-none"
-              />
-            </div>
-            <Button type="submit" variant="hero" className="w-full">
-              Odeslat
-            </Button>
-          </form>
+          </div>
         </div>
       </div>
     </section>

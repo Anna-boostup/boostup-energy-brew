@@ -1,98 +1,77 @@
-import { Instagram, Facebook, Linkedin, Zap, Mail, MapPin } from "lucide-react";
+import { SITE_CONTENT } from "@/config/site-content";
 import { Link } from "react-router-dom";
+import { Youtube, Instagram, Facebook } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 
 const Footer = () => {
-  return (
-    <footer className="py-16 bg-foreground text-primary-foreground relative overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
-          }}
-        />
-      </div>
+  const content = SITE_CONTENT.footer;
 
+  return (
+    <footer className="bg-foreground text-primary-foreground pt-24 pb-12 overflow-hidden relative">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
           {/* Brand */}
-          <div className="md:col-span-2">
-            <img src={logoWhite} alt="BoostUp" className="h-10 mb-6" />
-            <p className="text-primary-foreground/70 max-w-md mb-6">
-              6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity.
-              Žádná umělá sladidla a aromata.
+          <div className="col-span-1 lg:col-span-1">
+            <Link to="/" className="inline-block mb-8">
+              <img src={logoWhite} alt="BoostUp" className="h-10 w-auto" />
+            </Link>
+            <p className="text-primary-foreground/60 text-lg leading-relaxed mb-8 max-w-sm">
+              {content.brand.description}
             </p>
-            <div className="flex items-center gap-4">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-lime hover:text-foreground transition-all duration-300"
-              >
-                <Instagram className="w-5 h-5" />
+            <div className="flex gap-4">
+              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                <Instagram className="w-6 h-6" />
               </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-lime hover:text-foreground transition-all duration-300"
-              >
-                <Facebook className="w-5 h-5" />
+              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                <Facebook className="w-6 h-6" />
               </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-lime hover:text-foreground transition-all duration-300"
-              >
-                <Linkedin className="w-5 h-5" />
+              <a href={SITE_CONTENT.social.youtube} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                <Youtube className="w-6 h-6" />
               </a>
             </div>
           </div>
 
-          {/* Links */}
-          <div>
-            <h4 className="font-display font-bold text-lg mb-4">Odkazy</h4>
-            <ul className="space-y-3">
-              {["O nás", "Produkty", "Koncept 3B", "Kontakt", "Blog"].map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-primary-foreground/70 hover:text-lime transition-colors duration-300"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Links Groups */}
+          {content.links.map((group) => (
+            <div key={group.title}>
+              <h4 className="font-display font-black text-xl mb-8 tracking-wider">{group.title}</h4>
+              <ul className="space-y-4">
+                {group.items.map((item) => (
+                  <li key={item.label}>
+                    <a href={item.href} className="text-primary-foreground/60 hover:text-lime transition-colors text-lg">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-bold text-lg mb-4">Kontakt</h4>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3 text-primary-foreground/70">
-                <Mail className="w-5 h-5 text-lime" />
-                info@boostup.cz
-              </li>
-              <li className="flex items-center gap-3 text-primary-foreground/70">
-                <MapPin className="w-5 h-5 text-terracotta" />
-                Praha, Česká republika
-              </li>
-              <li className="flex items-center gap-3 text-primary-foreground/70">
-                <Zap className="w-5 h-5 text-olive-light" />
-                Launch Q1 2025
+            <h4 className="font-display font-black text-xl mb-8 tracking-wider">{content.contact.title}</h4>
+            <ul className="space-y-4 text-primary-foreground/60 text-lg">
+              <li>{content.contact.email}</li>
+              <li>{content.contact.phone}</li>
+              <li className="leading-relaxed">
+                {content.contact.address.line1}<br />
+                {content.contact.address.line2}
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-primary-foreground/50">
-            © 2024 BoostUp. Všechna práva vyhrazena.
+        {/* Bottom */}
+        <div className="pt-12 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-8">
+          <p className="text-primary-foreground/40 text-sm font-bold tracking-widest">
+            {content.bottom.copyright}
           </p>
-          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-end gap-x-6 gap-y-4 text-sm text-primary-foreground/50 text-center md:text-right">
-            <Link to="/ochrana-osobnich-udaju" className="hover:text-primary-foreground transition-colors">Ochrana soukromí</Link>
-            <Link to="/obchodni-podminky" className="hover:text-primary-foreground transition-colors">Obchodní podmínky</Link>
-            <Link to="/reklamace" className="hover:text-primary-foreground transition-colors">Reklamace</Link>
-            <Link to="/admin" className="hover:text-primary-foreground transition-colors opacity-0 hover:opacity-100">Admin</Link>
+          <div className="flex gap-8">
+            {content.bottom.legal.map((link) => (
+              <a key={link.label} href={link.href} className="text-primary-foreground/40 hover:text-primary-foreground transition-colors text-sm font-bold tracking-widest uppercase">
+                {link.label}
+              </a>
+            ))}
           </div>
         </div>
       </div>

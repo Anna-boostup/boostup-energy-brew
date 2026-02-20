@@ -2,7 +2,11 @@ import { Button } from "./ui/button";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
 import bottlesHero from "@/assets/bottles-hero-final.png";
 
+import { SITE_CONTENT } from "@/config/site-content";
+
 const HeroSection = () => {
+  const content = SITE_CONTENT.hero;
+
   return (
     <section className="min-h-screen pt-20 relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary/30">
       {/* Animated background elements */}
@@ -18,7 +22,7 @@ const HeroSection = () => {
         <div className="flex justify-center mb-10">
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide animate-fade-up shadow-button animate-bounce-subtle">
             <Zap className="w-5 h-5 text-lime" />
-            BRZY NA TRHU
+            {content.announcement}
             <Sparkles className="w-5 h-5 text-lime" />
           </div>
         </div>
@@ -26,35 +30,34 @@ const HeroSection = () => {
         {/* Centered Text Content */}
         <div className="text-center animate-fade-up z-10 mb-12">
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
-            <span className="block animate-slide-in-left">ENERGIE</span>
-            <span className="block text-gradient-energy animate-slide-in-left animation-delay-200">NA CELÝ DEN</span>
+            <span className="block animate-slide-in-left">{content.headline.part1}</span>
+            <span className="block text-gradient-energy animate-slide-in-left animation-delay-200">{content.headline.gradient}</span>
             <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-muted-foreground mt-4 animate-slide-in-left animation-delay-400">
-              přirozeně.
+              {content.headline.part2}
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-up animation-delay-500">
-            <span className="text-foreground font-bold">6 hodin soustředění a čisté energie</span> ze stimulantů.
-            Síla 2,5 espressa bez nervozity. <span className="text-terracotta font-bold">Žádná umělá sladidla a aromata</span>.
+            {content.description}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center">
             <a href="#produkty">
               <Button variant="hero" size="xl" className="group min-w-[200px] shadow-lg hover:shadow-xl transition-all">
-                Chci koupit
+                {content.cta.primary}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
               </Button>
             </a>
 
             <a href="#mise">
               <Button variant="outline" size="xl" className="rounded-full border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md">
-                Chci objevit více
+                {content.cta.secondary}
               </Button>
             </a>
 
             <a href="#3b">
               <Button variant="outline" size="xl" className="rounded-full border-2 border-terracotta text-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-sm hover:shadow-md">
-                Koncept 3B
+                {content.cta.concept3b}
               </Button>
             </a>
           </div>
@@ -83,22 +86,15 @@ const HeroSection = () => {
 
         {/* Trust Badges - Below image */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-4 sm:gap-6 justify-center items-center animate-fade-up animation-delay-800">
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
-            <div className="w-4 h-4 rounded-full bg-olive animate-pulse" />
-            <span className="text-sm font-bold text-foreground">Přírodní stimulanty</span>
-          </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
-            <div className="w-4 h-4 rounded-full bg-lime animate-pulse animation-delay-200" />
-            <span className="text-sm font-bold text-foreground">Elektrolyty</span>
-          </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
-            <div className="w-4 h-4 rounded-full bg-terracotta animate-pulse animation-delay-400" />
-            <span className="text-sm font-bold text-foreground">Adaptogeny</span>
-          </div>
-          <div className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
-            <div className="w-4 h-4 rounded-full bg-orange animate-pulse animation-delay-600" />
-            <span className="text-sm font-bold text-foreground">Vitamíny</span>
-          </div>
+          {content.trustBadges.map((badge, idx) => {
+            const colors = ["bg-olive", "bg-lime", "bg-terracotta", "bg-orange"];
+            return (
+              <div key={badge} className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
+                <div className={`w-4 h-4 rounded-full ${colors[idx % colors.length]} animate-pulse`} style={{ animationDelay: `${idx * 200}ms` }} />
+                <span className="text-sm font-bold text-foreground">{badge}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

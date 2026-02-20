@@ -20,48 +20,15 @@ import {
 
 
 
-type Flavor = "lemon" | "red" | "silky";
-type Pack = 3 | 12 | 21;
+import { FLAVORS, PACK_PRICES, PACK_SIZES, type FlavorType } from "@/config/product-data";
+
+type Flavor = FlavorType;
+type Pack = typeof PACK_SIZES[number];
 type FlavorMode = "single" | "mix";
 
-const flavors = [
-  {
-    id: "lemon" as Flavor,
-    name: "LEMON BLAST",
-    color: "from-lime to-lime-dark",
-    bgColor: "bg-lime",
-    borderColor: "border-lime",
-    textColor: "text-foreground",
-    description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
-    ingredients: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    labels: ["Bez cukru", "Vegan"]
-  },
-  {
-    id: "red" as Flavor,
-    name: "RED RUSH",
-    color: "from-terracotta to-terracotta-dark",
-    bgColor: "bg-terracotta",
-    borderColor: "border-terracotta",
-    textColor: "text-cream",
-    description: "Červené ovoce a guarana pro tvůj rychlý a efektivní start",
-    ingredients: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    labels: ["Vitamíny", "Rychlý nástup"]
-  },
-  {
-    id: "silky" as Flavor,
-    name: "SILKY LEAF",
-    color: "from-olive to-olive-dark",
-    bgColor: "bg-olive",
-    borderColor: "border-olive",
-    textColor: "text-cream",
-    description: "Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii",
-    ingredients: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    labels: ["Antioxidanty", "Klidná síla"]
-  },
-];
-
-const packs: Pack[] = [3, 12, 21];
-const packPrices = { 3: 149, 12: 499, 21: 799 };
+const flavors = FLAVORS;
+const packs = PACK_SIZES;
+const packPrices = PACK_PRICES;
 
 // Mix description based on pack size
 const getMixDescription = (pack: Pack): string => {

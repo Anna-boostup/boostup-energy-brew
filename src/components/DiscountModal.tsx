@@ -16,7 +16,7 @@ const DiscountModal = () => {
         if (!hasSeenPopup && !isLoggedIn) {
             const timer = setTimeout(() => {
                 setIsOpen(true);
-            }, 5000); // Show after 5 seconds
+            }, 3000); // Show after 3 seconds
 
             return () => clearTimeout(timer);
         }
