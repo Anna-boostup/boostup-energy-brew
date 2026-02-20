@@ -45,7 +45,7 @@ const HeroSection = () => {
             <Button
               variant="default"
               size="xl"
-              className="group min-w-[200px] shadow-button hover:shadow-lg transition-all animate-energy-pulse"
+              className="group min-w-[200px] shadow-button hover:shadow-lg transition-all animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
               onClick={() => {
                 const element = document.getElementById('produkty');
                 if (element) {
@@ -60,7 +60,7 @@ const HeroSection = () => {
             <Button
               variant="default"
               size="xl"
-              className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse"
+              className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
               onClick={() => {
                 const element = document.getElementById('mise');
                 if (element) {
@@ -74,7 +74,7 @@ const HeroSection = () => {
             <Button
               variant="default"
               size="xl"
-              className="bg-secondary text-terracotta border-2 border-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse"
+              className="bg-secondary text-terracotta border-2 border-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
               onClick={() => {
                 const element = document.getElementById('3b');
                 if (element) {

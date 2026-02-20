@@ -107,7 +107,7 @@ const ConceptSection = () => {
           <Button
             variant="default"
             size="xl"
-            className="group animate-energy-pulse shadow-button hover:shadow-lg"
+            className="group animate-energy-pulse shadow-button hover:shadow-lg rounded-full hover:scale-105 cursor-pointer"
             onClick={() => {
               const element = document.getElementById('produkty');
               if (element) {
