@@ -1,6 +1,3 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
 /**
  * Vercel Middleware for Basic Authentication
  * 
@@ -10,24 +7,20 @@ import type { NextRequest } from 'next/server';
  */
 
 export const config = {
-    // Apply middleware to all paths
-    matcher: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    // Apply middleware to all paths except static assets
+    matcher: '/((?!api|_next/static|_next/image|favicon.ico|assets).*)',
 };
 
-export default function middleware(request: NextRequest) {
+export default function middleware(request: Request) {
+    const url = new URL(request.url);
     const hostname = request.headers.get('host') || '';
 
     // 1. Configuration from Environment Variables
-    // Note: These must be set in Vercel Project Settings -> Environment Variables
     const authUser = process.env.AUTH_USER;
     const authPass = process.env.AUTH_PASS;
     const productionDomain = process.env.PRODUCTION_DOMAIN;
 
     // 2. Bypass Logic
-    // Bypass if:
-    // - No authentication is configured
-    // - Current hostname matches the production domain
-    // - Current hostname is localhost (for local development)
     if (
         !authUser ||
         !authPass ||
@@ -35,7 +28,9 @@ export default function middleware(request: NextRequest) {
         hostname.includes('localhost') ||
         hostname.includes('127.0.0.1')
     ) {
-        return NextResponse.next();
+        return new Response(null, {
+            headers: { 'x-middleware-next': '1' }
+        });
     }
 
     // 3. Basic Auth Verification
@@ -48,7 +43,9 @@ export default function middleware(request: NextRequest) {
             const [user, pwd] = decoded.split(':');
 
             if (user === authUser && pwd === authPass) {
-                return NextResponse.next();
+                return new Response(null, {
+                    headers: { 'x-middleware-next': '1' }
+                });
             }
         } catch (e) {
             console.error('Failed to decode Auth Header', e);
@@ -56,7 +53,7 @@ export default function middleware(request: NextRequest) {
     }
 
     // 4. Return 401 Unauthorized if auth fails
-    return new NextResponse('Authentication Required', {
+    return new Response('Authentication Required', {
         status: 401,
         headers: {
             'WWW-Authenticate': 'Basic realm="Secure Area"',
