@@ -4,24 +4,87 @@
 -- Poznámka: Tyto produkty odpovídají tomu, co aplikace očekává v kódu
 insert into public.inventory (sku, name, quantity, price, image_url)
 values (
-        'boostup-classic-1',
-        'BOOSTUP Classic (Balení 12ks)',
-        48,
-        890,
+        'lemon',
+        '🍋 Lemon Blast (Samostatná lahev)',
+        0,
+        59,
         'https://drinkboostup.cz/bottles.png'
     ),
     (
-        'boostup-classic-6',
-        'BOOSTUP Classic (Balení 6ks)',
-        24,
-        490,
+        'lemon-3',
+        '🍋 Lemon Blast (Balení 3 ks)',
+        0,
+        149,
         'https://drinkboostup.cz/bottles.png'
     ),
     (
-        'boostup-trial',
-        'BOOSTUP Trial Pack (3ks)',
-        100,
-        290,
+        'lemon-12',
+        '🍋 Lemon Blast (Balení 12 ks)',
+        0,
+        499,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'lemon-21',
+        '🍋 Lemon Blast (Balení 21 ks)',
+        0,
+        799,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'red',
+        '🍓 Red Rush (Samostatná lahev)',
+        0,
+        59,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'red-3',
+        '🍓 Red Rush (Balení 3 ks)',
+        0,
+        149,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'red-12',
+        '🍓 Red Rush (Balení 12 ks)',
+        0,
+        499,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'red-21',
+        '🍓 Red Rush (Balení 21 ks)',
+        0,
+        799,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'silky',
+        '🌿 Silky Leaf (Samostatná lahev)',
+        0,
+        59,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'silky-3',
+        '🌿 Silky Leaf (Balení 3 ks)',
+        0,
+        149,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'silky-12',
+        '🌿 Silky Leaf (Balení 12 ks)',
+        0,
+        499,
+        'https://drinkboostup.cz/bottles.png'
+    ),
+    (
+        'silky-21',
+        '🌿 Silky Leaf (Balení 21 ks)',
+        0,
+        799,
         'https://drinkboostup.cz/bottles.png'
     ) on conflict (sku) do
 update
@@ -54,8 +117,8 @@ values (
 -- (Předpokládá, že máte vytvořený profil, jinak user_id smažte nebo nechte null)
 insert into public.stock_movements (sku, type, amount, note)
 values (
-        'boostup-classic-1',
+        'lemon-12',
         'restock',
-        50,
+        10,
         'Počáteční naskladnění pro testování'
     );
