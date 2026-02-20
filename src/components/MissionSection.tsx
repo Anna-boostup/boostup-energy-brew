@@ -45,7 +45,7 @@ const MissionSection = () => {
           </h2>
 
           <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground/80 leading-relaxed animate-fade-up animation-delay-200">
-            {content.paragraphs.map((text, i) => (
+            {(content.paragraphs || []).map((text, i) => (
               <p key={i} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
             ))}
           </div>
@@ -53,7 +53,7 @@ const MissionSection = () => {
 
         {/* Features Grid - Large stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {content.features.map((feature, index) => {
+          {(content.features || []).map((feature, index) => {
             const Icon = iconMap[feature.title] || Zap;
             const textColor = feature.color === 'bg-lime' || feature.color === 'bg-orange' ? 'text-foreground' : 'text-cream';
 

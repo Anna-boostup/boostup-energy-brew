@@ -33,11 +33,11 @@ const Footer = () => {
           </div>
 
           {/* Links Groups */}
-          {content.links.map((group) => (
+          {(content.links || []).map((group) => (
             <div key={group.title}>
               <h4 className="font-display font-black text-xl mb-8 tracking-wider">{group.title}</h4>
               <ul className="space-y-4">
-                {group.items.map((item) => (
+                {(group.items || []).map((item) => (
                   <li key={item.label}>
                     <a
                       href={item.href}
@@ -78,7 +78,7 @@ const Footer = () => {
             {content.bottom.copyright}
           </p>
           <div className="flex gap-8">
-            {content.bottom.legal.map((link) => (
+            {(content.bottom.legal || []).map((link) => (
               <a key={link.label} href={link.href} className="text-primary-foreground/40 hover:text-primary-foreground transition-colors text-sm font-bold tracking-widest uppercase">
                 {link.label}
               </a>

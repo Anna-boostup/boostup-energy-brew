@@ -12,6 +12,7 @@ import PaymentError from "./pages/PaymentError";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Logout from "./pages/Logout";
 // import Profile from "./pages/Profile"; // Deprecated
 import ProtectedRoute from "./components/ProtectedRoute";
 import AccountLayout from "./pages/account/AccountLayout";
@@ -83,7 +84,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    <Route path="/register" element={<Register />} />
+                    <Route path="/logout" element={<Logout />} />
 
                     {/* Account Routes */}
                     {/* Account Routes (Personal) */}

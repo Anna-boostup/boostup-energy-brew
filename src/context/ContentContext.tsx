@@ -26,15 +26,49 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 .single();
 
             if (error) {
-                if (error.code !== 'PGRST116') { // PGRST116 is "no rows found", which is expected if first run
+                if (error.code !== 'PGRST116') { // PGRST116 is "no rows found"
                     console.error('Error fetching site content:', error);
                 }
-            } else if (data?.content) {
-                // Merge with local content to ensure any new keys in code are present
-                // even if DB is slightly behind
+                return;
+            }
+
+            if (data?.content) {
+                const dbContent = data.content;
+
+                // Deep merge helper (simple version for this specific structure)
+                const mergedHero = {
+                    ...SITE_CONTENT.hero,
+                    ...(dbContent.hero || {})
+                };
+
+                const mergedMission = {
+                    ...SITE_CONTENT.mission,
+                    ...(dbContent.mission || {})
+                };
+
+                const mergedCTA = {
+                    ...SITE_CONTENT.cta,
+                    ...(dbContent.cta || {})
+                };
+
+                const mergedContact = {
+                    ...SITE_CONTENT.contact,
+                    ...(dbContent.contact || {})
+                };
+
+                const mergedFooter = {
+                    ...SITE_CONTENT.footer,
+                    ...(dbContent.footer || {})
+                };
+
                 setContent({
                     ...SITE_CONTENT,
-                    ...data.content
+                    ...dbContent,
+                    hero: mergedHero,
+                    mission: mergedMission,
+                    cta: mergedCTA,
+                    contact: mergedContact,
+                    footer: mergedFooter
                 });
             }
         } catch (err) {
@@ -48,8 +82,14 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
         fetchContent();
     }, []);
 
+    const value = {
+        content,
+        loading,
+        refreshContent: fetchContent
+    };
+
     return (
-        <ContentContext.Provider value={{ content, loading, refreshContent: fetchContent }}>
+        <ContentContext.Provider value={value}>
             {children}
         </ContentContext.Provider>
     );

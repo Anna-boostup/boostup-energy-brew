@@ -57,7 +57,7 @@ const ConceptSection = () => {
 
         {/* 3B Cards */}
         <div className="grid md:grid-cols-3 gap-8 lg:gap-10 mb-16">
-          {content.concepts.map((concept, index) => {
+          {(content.concepts || []).map((concept, index) => {
             const Icon = iconMap[concept.id];
             const colors = colorMap[concept.id];
 

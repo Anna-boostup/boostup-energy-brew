@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { User, Package, LogOut, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 
 const AccountLayout = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { signOut } = useAuth();
 
     const navigation = [
@@ -49,7 +50,10 @@ const AccountLayout = () => {
                             <Button
                                 variant="ghost"
                                 className="justify-start gap-3 px-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 mt-4 hidden md:flex"
-                                onClick={() => signOut()}
+                                onClick={async () => {
+                                    await signOut();
+                                    navigate("/logout", { replace: true });
+                                }}
                             >
                                 <LogOut className="w-4 h-4" />
                                 Odhlásit se
@@ -59,7 +63,10 @@ const AccountLayout = () => {
                                 variant="ghost"
                                 size="icon"
                                 className="md:hidden shrink-0 text-muted-foreground hover:text-destructive"
-                                onClick={() => signOut()}
+                                onClick={async () => {
+                                    await signOut();
+                                    navigate("/logout", { replace: true });
+                                }}
                             >
                                 <LogOut className="w-4 h-4" />
                             </Button>

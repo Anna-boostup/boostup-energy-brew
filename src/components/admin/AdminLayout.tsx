@@ -32,7 +32,7 @@ const AdminLayout = () => {
 
     const handleLogout = async () => {
         await signOut();
-        navigate("/");
+        navigate("/logout", { replace: true });
     };
 
     const navItems = [

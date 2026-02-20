@@ -111,7 +111,7 @@ const HeroSection = () => {
 
         {/* Trust Badges - Below image */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-4 sm:gap-6 justify-center items-center animate-fade-up animation-delay-800">
-          {content.trustBadges.map((badge, idx) => {
+          {(content.trustBadges || []).map((badge, idx) => {
             const colors = ["bg-olive", "bg-lime", "bg-terracotta", "bg-orange"];
             return (
               <div key={badge} className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
