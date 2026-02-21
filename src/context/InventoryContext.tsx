@@ -189,7 +189,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const addMovement = async (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
-        // 1. Zkusíme profesionální cestu přes RPC (včetně zápisu do historie)
+        console.log(`[Inventory] Starting movement update: ${sku}, amount: ${amount}, type: ${type}`);
+
+        // 1. Zkusíme profesionální cestu přes RPC
         const { error: rpcError } = await supabase.rpc('handle_stock_movement', {
             p_sku: sku,
             p_type: type,
@@ -197,36 +199,38 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             p_note: note
         });
 
-        // Pokud RPC funguje, končíme
-        if (!rpcError) return;
+        if (!rpcError) {
+            console.log(`[Inventory] RPC success for ${sku}`);
+            return;
+        }
 
-        console.warn("RPC failed, falling back to direct update:", rpcError);
+        console.warn("[Inventory] RPC failed, trying direct fallback:", rpcError);
 
-        // 2. FALLBACK: Pokud RPC neexistuje nebo selže, zkusíme přímý update tabulky inventory
-        // Toto zajistí, že naskladnění proběhne, i když DB není 100% připravená.
+        // 2. FALLBACK: Přímý update tabulky inventory
         const currentQty = stock[sku] || 0;
+        console.log(`[Inventory] Current local qty for ${sku}: ${currentQty}. New target: ${currentQty + amount}`);
+
         const { error: updateError } = await supabase
             .from('inventory')
             .update({ quantity: currentQty + amount })
             .eq('sku', sku);
 
         if (updateError) {
-            console.error("Direct update failed too:", updateError);
-            alert("Chyba při aktualizaci skladu: " + updateError.message);
+            console.error("[Inventory] Direct update failed:", updateError);
+            alert(`Sklad nelze aktualizovat. Chyba: ${updateError.message} (${updateError.code})`);
             return;
         }
 
-        // 3. Volitelně zkusíme zapsat aspoň log do historie, pokud tabulka existuje
+        console.log(`[Inventory] Direct update success for ${sku}`);
+
+        // 3. Volitelný zápis historie
         try {
             await supabase.from('stock_movements').insert({
-                sku,
-                type,
-                amount,
-                note: note || "Manual fallback update",
+                sku, type, amount, note: note || "Manual fallback",
                 user_id: (await supabase.auth.getUser()).data.user?.id
             });
         } catch (e) {
-            console.log("Could not write to history table, but inventory was updated.");
+            console.log("[Inventory] History log skipped.");
         }
     };
 
