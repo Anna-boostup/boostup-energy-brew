@@ -62,7 +62,7 @@ const AdminLayout = () => {
         <div className="min-h-screen bg-slate-50 flex">
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 bg-slate-900 text-white p-4 flex items-center justify-between z-50">
-                <span className="font-display font-bold text-xl tracking-wider">BOOSTUP<span className="text-primary">.</span></span>
+                <Link to="/" className="font-display font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                 <Sheet>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-white hover:bg-slate-800">
@@ -71,7 +71,7 @@ const AdminLayout = () => {
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 bg-slate-900 border-r-slate-800 text-white w-72">
                         <div className="p-6 border-b border-slate-800">
-                            <h1 className="font-display font-bold text-2xl tracking-wider">BOOSTUP<span className="text-primary">.</span></h1>
+                            <Link to="/" className="font-display font-bold text-2xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                             <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
                         </div>
                         <nav className="p-4 space-y-2">
@@ -86,8 +86,8 @@ const AdminLayout = () => {
                                             // Ideally close sheet here if controllable
                                         }}
                                         className={`w - full flex items - center justify - between px - 4 py - 3 rounded - xl transition - all ${isActive
-                                                ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                            ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                             } `}
                                     >
                                         <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ const AdminLayout = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden md:block w-64 bg-slate-900 text-white fixed h-full shadow-xl z-10">
                 <div className="p-6 border-b border-slate-800">
-                    <h1 className="font-display font-bold text-2xl tracking-wider">BOOSTUP<span className="text-primary">.</span></h1>
+                    <Link to="/" className="font-display font-bold text-2xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                     <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
                 </div>
 
@@ -131,8 +131,8 @@ const AdminLayout = () => {
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
                                 className={`w - full flex items - center justify - between px - 4 py - 3 rounded - xl transition - all ${isActive
-                                        ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                    ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                     } `}
                             >
                                 <div className="flex items-center gap-3">
