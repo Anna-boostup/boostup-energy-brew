@@ -289,7 +289,7 @@ const CheckoutPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-secondary/30 py-12">
+        <div className="min-h-screen bg-secondary/30 py-6 sm:py-12">
             <div className="container mx-auto px-4">
                 <div className="mb-12">
                     <button
@@ -304,13 +304,13 @@ const CheckoutPage = () => {
                     </h1>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-12">
+                <div className="grid lg:grid-cols-3 gap-6 lg:gap-12">
                     {/* Checkout Form */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="lg:col-span-2 space-y-6">
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Personal Info */}
-                            <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
-                                <div className="flex justify-between items-center mb-8">
+                            <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
+                                <div className="flex flex-wrap justify-between items-start gap-2 mb-6 sm:mb-8">
                                     <h2 className="text-2xl font-display font-bold flex items-center gap-3">
                                         <Truck className="w-6 h-6 text-primary" />
                                         Doprava a kontakt
@@ -334,9 +334,9 @@ const CheckoutPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid md:grid-cols-2 gap-6">
+                                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                                     {formData.isCompany && (
-                                        <div className="md:col-span-2 space-y-4 animate-in fade-in slide-in-from-top-2">
+                                        <div className="sm:col-span-2 space-y-4 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2">
                                                 <label className="text-sm font-bold text-muted-foreground ml-1 text-primary">NÁZEV FIRMY *</label>
                                                 <input
@@ -348,7 +348,7 @@ const CheckoutPage = () => {
                                                     className="w-full bg-background border-2 border-primary/30 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                 />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-2 gap-3">
                                                 <div className="space-y-2">
                                                     <label className="text-sm font-bold text-muted-foreground ml-1">IČO *</label>
                                                     <input
@@ -422,7 +422,7 @@ const CheckoutPage = () => {
                                         />
                                         <p className="text-[10px] text-muted-foreground italic ml-1">Včetně předvolby (např. +420)</p>
                                     </div>
-                                    <div className="md:col-span-2 space-y-2">
+                                    <div className="sm:col-span-2 space-y-2">
                                         <label htmlFor="street" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Ulice a číslo popisné *</label>
                                         <input
                                             id="street"
@@ -460,7 +460,7 @@ const CheckoutPage = () => {
                                     </div>
 
                                     {!user && (
-                                        <div className="md:col-span-2 space-y-4 pt-4 border-t border-border/50">
+                                        <div className="sm:col-span-2 space-y-4 pt-4 border-t border-border/50">
                                             <div className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id="createAccount"
@@ -490,8 +490,8 @@ const CheckoutPage = () => {
                             </div>
 
                             {/* Billing Address Section */}
-                            <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
-                                <div className="flex justify-between items-center mb-6">
+                            <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
+                                <div className="flex flex-wrap justify-between items-start gap-2 mb-4 sm:mb-6">
                                     <h2 className="text-2xl font-display font-bold flex items-center gap-3">
                                         <FileText className="w-6 h-6 text-primary" />
                                         Fakturační údaje
@@ -509,7 +509,7 @@ const CheckoutPage = () => {
 
                                 {!billingSameAsDelivery && (
                                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                                        <div className="grid md:grid-cols-2 gap-6">
+                                        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                                             {/* Company Fields */}
                                             {formData.isCompany && (
                                                 <>
@@ -548,7 +548,7 @@ const CheckoutPage = () => {
                                                 </div>
                                             )}
 
-                                            <div className="md:col-span-2 space-y-2 pt-2 border-t">
+                                            <div className="sm:col-span-2 space-y-2 pt-2 border-t">
                                                 <label className="text-sm font-bold text-muted-foreground ml-1">ULICE A ČÍSLO POPISNÉ (FAKTURAČNÍ)</label>
                                                 <input
                                                     name="billingStreet"
@@ -584,7 +584,7 @@ const CheckoutPage = () => {
 
                                 {billingSameAsDelivery && (
                                     <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
-                                        <div className="grid md:grid-cols-2 gap-6">
+                                        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                                             {/* Company Fields */}
                                             {formData.isCompany && (
                                                 <>
@@ -631,8 +631,8 @@ const CheckoutPage = () => {
                             </div>
 
                             {/* Shipping Method */}
-                            <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
-                                <h2 className="text-2xl font-display font-bold flex items-center gap-3 mb-8">
+                            <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
+                                <h2 className="text-xl sm:text-2xl font-display font-bold flex items-center gap-3 mb-6 sm:mb-8">
                                     <Package className="w-6 h-6 text-primary" />
                                     Způsob dopravy
                                 </h2>
@@ -692,8 +692,8 @@ const CheckoutPage = () => {
                             </div>
 
                             {/* Payment Method */}
-                            <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
-                                <h2 className="text-2xl font-display font-bold flex items-center gap-3 mb-8">
+                            <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
+                                <h2 className="text-xl sm:text-2xl font-display font-bold flex items-center gap-3 mb-6 sm:mb-8">
                                     <CreditCard className="w-6 h-6 text-primary" />
                                     Způsob platby
                                 </h2>
@@ -800,7 +800,7 @@ const CheckoutPage = () => {
 
                     {/* Summary */}
                     <div className="lg:col-span-1">
-                        <div className="bg-card rounded-3xl p-8 border border-border shadow-md sticky top-24 space-y-6">
+                        <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-border shadow-md lg:sticky lg:top-24 space-y-6">
                             <h2 className="text-xl font-display font-bold flex items-center gap-3">
                                 <ShoppingBag className="w-5 h-5 text-primary" />
                                 Shrnutí objednávky
