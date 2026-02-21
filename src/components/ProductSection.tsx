@@ -112,23 +112,33 @@ const ProductSection = () => {
       .trim();
   };
 
+  const isBrokenImage = (url: string | null | undefined) => {
+    if (!url) return true;
+    // Known broken placeholders from previous migrations/seeds
+    const brokenPlaceholders = [
+      'https://drinkboostup.cz/bottles.png',
+      'bottles.png'
+    ];
+    return brokenPlaceholders.includes(url);
+  };
+
   const getProductImage = () => {
     if (!flavorMode && !selectedFlavor) return bottlesHero;
 
     if (flavorMode === "mix" && selectedPack) {
       const sku = `mix-${selectedPack}`;
       const eff = getEffectiveProduct(sku);
-      if (eff?.image_url) return eff.image_url;
+      if (!isBrokenImage(eff?.image_url)) return eff!.image_url!;
       return bottlesHero;
     }
 
     if (flavorMode === "single" && selectedFlavor && selectedPack) {
       const sku = `${selectedFlavor}-${selectedPack}`;
       const eff = getEffectiveProduct(sku);
-      if (eff?.image_url) return eff.image_url;
+      if (!isBrokenImage(eff?.image_url)) return eff!.image_url!;
     }
 
-    // Static Fallbacks for 3-pack (if no image uploaded)
+    // Static Fallbacks for 3-pack (if no valid image uploaded)
     if (flavorMode === "single" && selectedFlavor && selectedPack === 3) {
       if (selectedFlavor === 'lemon') return pack3Lemon;
       if (selectedFlavor === 'red') return pack3Red;
@@ -288,9 +298,15 @@ const ProductSection = () => {
                     {flavorMode === "mix" ? (
                       <MixStack
                         images={[
-                          getEffectiveProduct('lemon')?.image_url || bottleSingle,
-                          getEffectiveProduct('red')?.image_url || bottleSingle,
-                          getEffectiveProduct('silky')?.image_url || bottleSingle
+                          !isBrokenImage(getEffectiveProduct('lemon')?.image_url)
+                            ? getEffectiveProduct('lemon')!.image_url!
+                            : bottleSingle,
+                          !isBrokenImage(getEffectiveProduct('red')?.image_url)
+                            ? getEffectiveProduct('red')!.image_url!
+                            : bottleSingle,
+                          !isBrokenImage(getEffectiveProduct('silky')?.image_url)
+                            ? getEffectiveProduct('silky')!.image_url!
+                            : bottleSingle
                         ]}
                         className="scale-90 md:scale-100"
                       />
