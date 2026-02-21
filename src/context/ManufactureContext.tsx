@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 export interface ManufactureMaterial {
     id: string;
@@ -7,6 +8,7 @@ export interface ManufactureMaterial {
     quantity: number;
     unit: string;
     min_quantity: number;
+    notifications_enabled: boolean;
     created_at: string;
 }
 
@@ -39,11 +41,28 @@ export const ManufactureProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [materials, setMaterials] = useState<ManufactureMaterial[]>([]);
     const [movements, setMovements] = useState<ManufactureMovement[]>([]);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+    const alertTriggered = useRef(false);
 
     useEffect(() => {
         fetchMaterials();
         fetchMovements();
     }, []);
+
+    useEffect(() => {
+        if (!loading && materials.length > 0 && !alertTriggered.current) {
+            const lowStockItems = materials.filter(m => m.notifications_enabled && m.quantity <= m.min_quantity);
+            if (lowStockItems.length > 0) {
+                toast({
+                    title: "⚠️ Nízký stav zásob ve výrobě",
+                    description: `Následující položky docházejí: ${lowStockItems.map(m => m.name).join(", ")}.`,
+                    variant: "destructive",
+                    duration: 10000,
+                });
+                alertTriggered.current = true;
+            }
+        }
+    }, [loading, materials, toast]);
 
     const fetchMaterials = async () => {
         const { data, error } = await supabase

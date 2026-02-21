@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useManufacture, ManufactureMaterial } from "@/context/ManufactureContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,6 +19,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
     const [name, setName] = useState("");
     const [unit, setUnit] = useState("");
     const [minQuantity, setMinQuantity] = useState("0");
+    const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -25,10 +27,12 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
             setName(material.name);
             setUnit(material.unit);
             setMinQuantity(material.min_quantity.toString());
+            setNotificationsEnabled(material.notifications_enabled || false);
         } else {
             setName("");
             setUnit("");
             setMinQuantity("0");
+            setNotificationsEnabled(false);
         }
     }, [material, isOpen]);
 
@@ -40,7 +44,8 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
             const data = {
                 name,
                 unit,
-                min_quantity: Number(minQuantity)
+                min_quantity: Number(minQuantity),
+                notifications_enabled: notificationsEnabled
             };
 
             if (material) {
@@ -98,6 +103,19 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                             value={minQuantity}
                             onChange={(e) => setMinQuantity(e.target.value)}
                         />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-2">
+                        <Checkbox
+                            id="notifications"
+                            checked={notificationsEnabled}
+                            onCheckedChange={(checked) => setNotificationsEnabled(!!checked)}
+                        />
+                        <Label
+                            htmlFor="notifications"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            Zapnout upozornění na nízký stav
+                        </Label>
                     </div>
                 </div>
                 <DialogFooter>

@@ -6,6 +6,7 @@ create table if not exists public.manufacture_inventory (
     unit text not null,
     -- e.g. 'kg', 'l', 'ks'
     min_quantity numeric default 0,
+    notifications_enabled boolean default false,
     created_at timestamptz default now()
 );
 alter table public.manufacture_inventory enable row level security;

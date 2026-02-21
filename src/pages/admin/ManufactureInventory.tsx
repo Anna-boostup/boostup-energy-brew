@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useManufacture, ManufactureMaterial } from "@/context/ManufactureContext";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, History, Edit, Beaker } from "lucide-react";
+import { Plus, History, Edit, Beaker, Bell } from "lucide-react";
 import { ManufactureRestockDialog } from "@/components/admin/ManufactureRestockDialog";
 import { ManufactureHistoryDialog } from "@/components/admin/ManufactureHistoryDialog";
 import { ManufactureEditDialog } from "@/components/admin/ManufactureEditDialog";
@@ -49,11 +49,18 @@ const ManufactureInventory = () => {
                                 <TableRow key={m.id}>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                                            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 relative">
                                                 <Beaker className="w-4 h-4" />
+                                                {m.notifications_enabled && (
+                                                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center">
+                                                        <Bell className="w-1.5 h-1.5 text-white" />
+                                                    </div>
+                                                )}
                                             </div>
                                             <div>
-                                                <p className="font-bold">{m.name}</p>
+                                                <p className="font-bold flex items-center gap-2">
+                                                    {m.name}
+                                                </p>
                                                 <p className="text-xs text-muted-foreground">Jednotka: {m.unit}</p>
                                             </div>
                                         </div>

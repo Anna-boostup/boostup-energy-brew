@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useManufacture } from "@/context/ManufactureContext";
 
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const { user, profile, loading, signOut } = useAuth();
+    const { materials } = useManufacture();
 
     if (loading) {
         return <div className="p-8">Ověřuji oprávnění...</div>;
@@ -35,11 +37,18 @@ const AdminLayout = () => {
         navigate("/logout", { replace: true });
     };
 
+    const hasLowStockAlert = materials.some(m => m.notifications_enabled && m.quantity <= m.min_quantity);
+
     const navItems = [
         { icon: LayoutDashboard, label: "Přehled", path: "/admin" },
         { icon: ShoppingCart, label: "Objednávky", path: "/admin/orders" },
         { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
-        { icon: Factory, label: "Sklad výroby", path: "/admin/manufacture" },
+        {
+            icon: Factory,
+            label: "Sklad výroby",
+            path: "/admin/manufacture",
+            hasAlert: hasLowStockAlert
+        },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
     ];
 
@@ -70,13 +79,18 @@ const AdminLayout = () => {
                                             navigate(item.path);
                                             // Ideally close sheet here if controllable
                                         }}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
                                             ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                             : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                             }`}
                                     >
-                                        <Icon className="w-5 h-5" />
-                                        {item.label}
+                                        <div className="flex items-center gap-3">
+                                            <Icon className="w-5 h-5" />
+                                            {item.label}
+                                        </div>
+                                        {item.hasAlert && (
+                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                        )}
                                     </button>
                                 );
                             })}
@@ -110,13 +124,18 @@ const AdminLayout = () => {
                             <button
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
                                     ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                     : "text-slate-400 hover:bg-slate-800 hover:text-white"
                                     }`}
                             >
-                                <Icon className="w-5 h-5" />
-                                {item.label}
+                                <div className="flex items-center gap-3">
+                                    <Icon className="w-5 h-5" />
+                                    {item.label}
+                                </div>
+                                {item.hasAlert && (
+                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                )}
                             </button>
                         );
                     })}
