@@ -73,6 +73,20 @@ const ProductSection = () => {
   const { toast } = useToast();
 
   const getEffectiveProduct = (sku: string) => {
+    // Virtual logic for Mix
+    if (sku.startsWith('mix-')) {
+      const packSize = parseInt(sku.split('-')[1]) as Pack;
+      return {
+        sku,
+        name: `BoostUp ${packSize}x Pack (MIX)`,
+        price: PACK_PRICES[packSize] || 0,
+        description: getMixDescription(packSize),
+        tooltip: "Ochutnejte všechny příchutě v jednom balení",
+        is_on_sale: false,
+        image_url: null, // MixStack handles visual
+      };
+    }
+
     const direct = products.find(p => p.sku === sku);
     const baseSku = sku.includes('-') ? sku.split('-')[0] : sku;
     const base = products.find(p => p.sku === baseSku);
@@ -223,17 +237,11 @@ const ProductSection = () => {
     const mixConfig = flavorMode === "mix" ? mixCounts : undefined;
     const mixIdSuffix = flavorMode === "mix" ? `-${mixCounts.lemon}-${mixCounts.red}-${mixCounts.silky}` : "";
 
-    let displayName = flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`;
-    let displayPrice = packPrices[selectedPack];
+    const sku = flavorMode === "mix" ? `mix-${selectedPack}` : `${selectedFlavor}-${selectedPack}`;
+    const effProduct = getEffectiveProduct(sku);
 
-    if (flavorMode === "single" && selectedFlavor) {
-      const sku = `${selectedFlavor}-${selectedPack}`;
-      const effProduct = getEffectiveProduct(sku);
-      if (effProduct) {
-        displayName = effProduct.name;
-        displayPrice = effProduct.price;
-      }
-    }
+    const displayName = effProduct?.name || (flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`);
+    const displayPrice = effProduct?.price || packPrices[selectedPack];
 
     addToCart({
       id: flavorMode === "mix" ? `mix-${selectedPack}${mixIdSuffix}` : `${selectedFlavor}-${selectedPack}`,

@@ -118,33 +118,6 @@ values (
         'https://drinkboostup.cz/bottles.png',
         'Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii',
         'Voda, extrakt ze zeleného čaje, meduňka, L-theanin, přírodní sladidla.'
-    ),
-    (
-        'mix-3',
-        '🌈 MIX příchutí (Balení 3 ks)',
-        0,
-        149,
-        'https://drinkboostup.cz/bottles.png',
-        'Ochutnejte všechny příchutě v jednom balení',
-        'Obsahuje Lemon Blast, Red Rush a Silky Leaf.'
-    ),
-    (
-        'mix-12',
-        '🌈 MIX příchutí (Balení 12 ks)',
-        0,
-        499,
-        'https://drinkboostup.cz/bottles.png',
-        'Ideální zásoba všech oblíbených příchutí',
-        'Obsahuje 4x Lemon, 4x Red a 4x Silky.'
-    ),
-    (
-        'mix-21',
-        '🌈 MIX příchutí (Balení 21 ks)',
-        0,
-        799,
-        'https://drinkboostup.cz/bottles.png',
-        'Maximální balení pro opravdové fanoušky',
-        'Obsahuje 7x Lemon, 7x Red a 7x Silky.'
     ) on conflict (sku) do
 update
 set name = excluded.name,
