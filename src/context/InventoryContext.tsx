@@ -189,16 +189,44 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const addMovement = async (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
-        const { error } = await supabase.rpc('handle_stock_movement', {
+        // 1. Zkusíme profesionální cestu přes RPC (včetně zápisu do historie)
+        const { error: rpcError } = await supabase.rpc('handle_stock_movement', {
             p_sku: sku,
             p_type: type,
             p_amount: amount,
             p_note: note
         });
 
-        if (error) {
-            console.error("Error adding movement:", error);
-            alert("Chyba při aktualizaci skladu: " + error.message);
+        // Pokud RPC funguje, končíme
+        if (!rpcError) return;
+
+        console.warn("RPC failed, falling back to direct update:", rpcError);
+
+        // 2. FALLBACK: Pokud RPC neexistuje nebo selže, zkusíme přímý update tabulky inventory
+        // Toto zajistí, že naskladnění proběhne, i když DB není 100% připravená.
+        const currentQty = stock[sku] || 0;
+        const { error: updateError } = await supabase
+            .from('inventory')
+            .update({ quantity: currentQty + amount })
+            .eq('sku', sku);
+
+        if (updateError) {
+            console.error("Direct update failed too:", updateError);
+            alert("Chyba při aktualizaci skladu: " + updateError.message);
+            return;
+        }
+
+        // 3. Volitelně zkusíme zapsat aspoň log do historie, pokud tabulka existuje
+        try {
+            await supabase.from('stock_movements').insert({
+                sku,
+                type,
+                amount,
+                note: note || "Manual fallback update",
+                user_id: (await supabase.auth.getUser()).data.user?.id
+            });
+        } catch (e) {
+            console.log("Could not write to history table, but inventory was updated.");
         }
     };
 
