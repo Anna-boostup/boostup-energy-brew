@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -38,7 +38,8 @@ const AdminLayout = () => {
     const navItems = [
         { icon: LayoutDashboard, label: "Přehled", path: "/admin" },
         { icon: ShoppingCart, label: "Objednávky", path: "/admin/orders" },
-        { icon: Package, label: "Sklad", path: "/admin/inventory" },
+        { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
+        { icon: Factory, label: "Sklad výroby", path: "/admin/manufacture" },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
     ];
 
