@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -55,6 +55,7 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
+        { icon: User, label: "Můj profil", path: "/admin/profile" },
     ];
 
     return (
@@ -84,10 +85,10 @@ const AdminLayout = () => {
                                             navigate(item.path);
                                             // Ideally close sheet here if controllable
                                         }}
-                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
-                                            ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                                            }`}
+                                        className={`w - full flex items - center justify - between px - 4 py - 3 rounded - xl transition - all ${isActive
+                                                ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                            } `}
                                     >
                                         <div className="flex items-center gap-3">
                                             <Icon className="w-5 h-5" />
@@ -129,10 +130,10 @@ const AdminLayout = () => {
                             <button
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
-                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
-                                    ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                                    }`}
+                                className={`w - full flex items - center justify - between px - 4 py - 3 rounded - xl transition - all ${isActive
+                                        ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                    } `}
                             >
                                 <div className="flex items-center gap-3">
                                     <Icon className="w-5 h-5" />

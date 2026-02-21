@@ -52,6 +52,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Inventory from "./pages/admin/Inventory";
 import ManufactureInventory from "./pages/admin/ManufactureInventory";
+import AdminProfile from "./pages/admin/AdminProfile";
 import Orders from "./pages/admin/Orders";
 import ContentManagement from "./pages/admin/ContentManagement";
 
@@ -130,6 +131,7 @@ const App = () => (
                         <Route path="inventory" element={<Inventory />} />
                         <Route path="manufacture" element={<ManufactureInventory />} />
                         <Route path="content" element={<ContentManagement />} />
+                        <Route path="profile" element={<AdminProfile />} />
                       </Route>
 
                       {/* Legal Routes */}
