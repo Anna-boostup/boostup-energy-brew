@@ -201,6 +201,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (!rpcError) {
             console.log(`[Inventory] RPC success for ${sku}`);
+            // OKAMŽITÁ AKTUALIZACE LOKÁLNÍHO STAVU (Optimistický update)
+            setStock(prev => ({ ...prev, [sku]: (prev[sku] || 0) + amount }));
+            setProducts(prev => prev.map(p => p.sku === sku ? { ...p, quantity: (p.quantity || 0) + amount } : p));
             return;
         }
 
@@ -208,11 +211,11 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         // 2. FALLBACK: Přímý update tabulky inventory
         const currentQty = stock[sku] || 0;
-        console.log(`[Inventory] Current local qty for ${sku}: ${currentQty}. New target: ${currentQty + amount}`);
+        const newQty = currentQty + amount;
 
         const { error: updateError } = await supabase
             .from('inventory')
-            .update({ quantity: currentQty + amount })
+            .update({ quantity: newQty })
             .eq('sku', sku);
 
         if (updateError) {
@@ -222,6 +225,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
 
         console.log(`[Inventory] Direct update success for ${sku}`);
+        // OKAMŽITÁ AKTUALIZACE LOKÁLNÍHO STAVU
+        setStock(prev => ({ ...prev, [sku]: newQty }));
+        setProducts(prev => prev.map(p => p.sku === sku ? { ...p, quantity: newQty } : p));
 
         // 3. Volitelný zápis historie
         try {
