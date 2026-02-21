@@ -24,7 +24,7 @@ const ManufactureInventory = () => {
                 <h2 className="text-3xl font-bold tracking-tight">Sklad výroby</h2>
                 <Button onClick={() => setIsAddOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Přidat surovinu
+                    Přidat surovinu/materiál
                 </Button>
             </div>
 
@@ -32,7 +32,7 @@ const ManufactureInventory = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Surovina</TableHead>
+                            <TableHead>Surovina/materiál</TableHead>
                             <TableHead className="text-right">Množství</TableHead>
                             <TableHead className="text-right">Akce</TableHead>
                         </TableRow>
@@ -41,7 +41,7 @@ const ManufactureInventory = () => {
                         {materials.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                                    Zatím žádné suroviny. Přidejte první tlačítkem výše.
+                                    Zatím žádné suroviny/materiály. Přidejte první tlačítkem výše.
                                 </TableCell>
                             </TableRow>
                         ) : (

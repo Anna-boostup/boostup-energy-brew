@@ -51,13 +51,13 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
 
             toast({
                 title: "Uloženo",
-                description: `Surovina ${name} byla uložena.`,
+                description: `Surovina/materiál ${name} byl uložen.`,
             });
             onClose();
         } catch (error) {
             toast({
                 title: "Chyba",
-                description: "Nepodařilo se uložit surovinu.",
+                description: "Nepodařilo se uložit položku.",
                 variant: "destructive",
             });
         } finally {
@@ -69,11 +69,11 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{material ? `Upravit: ${material.name}` : "Přidat novou surovinu"}</DialogTitle>
+                    <DialogTitle>{material ? `Upravit: ${material.name}` : "Přidat novou surovinu/materiál"}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Název suroviny</Label>
+                        <Label htmlFor="name">Název položky</Label>
                         <Input
                             id="name"
                             value={name}
@@ -82,7 +82,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="unit">Jednotka</Label>
+                        <Label htmlFor="unit">Měrná jednotka</Label>
                         <Input
                             id="unit"
                             value={unit}

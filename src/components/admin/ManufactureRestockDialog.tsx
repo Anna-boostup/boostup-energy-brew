@@ -32,7 +32,7 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
 
             toast({
                 title: "Úspěšně uloženo",
-                description: `Zásoba suroviny ${material.name} byla upravena.`,
+                description: `Zásoba položky ${material.name} byla upravena.`,
             });
             onClose();
             setAmount("");
