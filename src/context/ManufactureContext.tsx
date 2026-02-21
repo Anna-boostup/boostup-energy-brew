@@ -7,7 +7,8 @@ export interface ManufactureMaterial {
     name: string;
     quantity: number;
     unit: string;
-    min_quantity: number;
+    min_quantity: number;       // 🔴 kritická úroveň
+    warning_quantity: number;  // 🟡 varovná úroveň
     notifications_enabled: boolean;
     created_at: string;
 }
@@ -51,14 +52,24 @@ export const ManufactureProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     useEffect(() => {
         if (!loading && materials.length > 0 && !alertTriggered.current) {
-            const lowStockItems = materials.filter(m => m.notifications_enabled && m.quantity <= m.min_quantity);
-            if (lowStockItems.length > 0) {
+            const criticalItems = materials.filter(m => m.notifications_enabled && m.quantity <= m.min_quantity);
+            const warningItems = materials.filter(m => m.notifications_enabled && m.quantity > m.min_quantity && m.warning_quantity > 0 && m.quantity <= m.warning_quantity);
+            if (criticalItems.length > 0) {
                 toast({
-                    title: "⚠️ Nízký stav zásob ve výrobě",
-                    description: `Následující položky docházejí: ${lowStockItems.map(m => m.name).join(", ")}.`,
+                    title: "🔴 Kritický stav zásob!",
+                    description: `Okamžitě doplňte: ${criticalItems.map(m => m.name).join(", ")}.`,
                     variant: "destructive",
-                    duration: 10000,
+                    duration: 12000,
                 });
+            }
+            if (warningItems.length > 0) {
+                toast({
+                    title: "🟡 Varování: zásoby brzy dojdou",
+                    description: `Brzy bude potřeba doplnit: ${warningItems.map(m => m.name).join(", ")}.`,
+                    duration: 9000,
+                });
+            }
+            if (criticalItems.length > 0 || warningItems.length > 0) {
                 alertTriggered.current = true;
             }
         }

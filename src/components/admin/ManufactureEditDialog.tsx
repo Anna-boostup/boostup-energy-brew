@@ -18,6 +18,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
     const { toast } = useToast();
     const [name, setName] = useState("");
     const [unit, setUnit] = useState("");
+    const [warningQuantity, setWarningQuantity] = useState("0");
     const [minQuantity, setMinQuantity] = useState("0");
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -26,11 +27,13 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
         if (material) {
             setName(material.name);
             setUnit(material.unit);
+            setWarningQuantity((material.warning_quantity ?? 0).toString());
             setMinQuantity(material.min_quantity.toString());
             setNotificationsEnabled(material.notifications_enabled || false);
         } else {
             setName("");
             setUnit("");
+            setWarningQuantity("0");
             setMinQuantity("0");
             setNotificationsEnabled(false);
         }
@@ -44,6 +47,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
             const data = {
                 name,
                 unit,
+                warning_quantity: Number(warningQuantity),
                 min_quantity: Number(minQuantity),
                 notifications_enabled: notificationsEnabled
             };
@@ -95,16 +99,40 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                             placeholder="ks, kg, l, atd."
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="min">Minimální stav pro upozornění</Label>
-                        <Input
-                            id="min"
-                            type="number"
-                            value={minQuantity}
-                            onChange={(e) => setMinQuantity(e.target.value)}
-                        />
+
+                    <div className="border rounded-lg p-3 space-y-3 bg-slate-50">
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Úrovně upozornění</p>
+                        <div className="grid gap-1.5">
+                            <Label htmlFor="warning" className="flex items-center gap-1.5 text-amber-600">
+                                <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
+                                Varovná úroveň (žlutá)
+                            </Label>
+                            <Input
+                                id="warning"
+                                type="number"
+                                min="0"
+                                value={warningQuantity}
+                                onChange={(e) => setWarningQuantity(e.target.value)}
+                            />
+                            <p className="text-xs text-slate-400">Zásoby brzy dojdou — připravte objednávku.</p>
+                        </div>
+                        <div className="grid gap-1.5">
+                            <Label htmlFor="min" className="flex items-center gap-1.5 text-red-600">
+                                <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+                                Kritická úroveň (červená)
+                            </Label>
+                            <Input
+                                id="min"
+                                type="number"
+                                min="0"
+                                value={minQuantity}
+                                onChange={(e) => setMinQuantity(e.target.value)}
+                            />
+                            <p className="text-xs text-slate-400">Zásoby jsou téměř vyčerpány — okamžitě doplňte.</p>
+                        </div>
                     </div>
-                    <div className="flex items-center space-x-2 pt-2">
+
+                    <div className="flex items-center space-x-2">
                         <Checkbox
                             id="notifications"
                             checked={notificationsEnabled}

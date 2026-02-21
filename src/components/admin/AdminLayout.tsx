@@ -37,7 +37,12 @@ const AdminLayout = () => {
         navigate("/logout", { replace: true });
     };
 
-    const hasLowStockAlert = materials.some(m => m.notifications_enabled && m.quantity <= m.min_quantity);
+    const hasLowStockAlert = materials.some(m =>
+        m.notifications_enabled && (
+            m.quantity <= m.min_quantity ||
+            (m.warning_quantity > 0 && m.quantity <= m.warning_quantity)
+        )
+    );
 
     const navItems = [
         { icon: LayoutDashboard, label: "Přehled", path: "/admin" },

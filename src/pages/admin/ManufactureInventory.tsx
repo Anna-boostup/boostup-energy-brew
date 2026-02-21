@@ -66,12 +66,26 @@ const ManufactureInventory = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <span className={`font-mono font-bold text-lg ${m.quantity <= m.min_quantity ? "text-red-600" : "text-slate-900"}`}>
-                                            {m.quantity} {m.unit}
-                                        </span>
-                                        {m.quantity <= m.min_quantity && (
-                                            <p className="text-[10px] text-red-500 font-bold uppercase">Nízký stav!</p>
-                                        )}
+                                        {(() => {
+                                            const isCritical = m.quantity <= m.min_quantity;
+                                            const isWarning = !isCritical && m.warning_quantity > 0 && m.quantity <= m.warning_quantity;
+                                            return (
+                                                <>
+                                                    <span className={`font-mono font-bold text-lg ${isCritical ? "text-red-600"
+                                                            : isWarning ? "text-amber-500"
+                                                                : "text-slate-900"
+                                                        }`}>
+                                                        {m.quantity} {m.unit}
+                                                    </span>
+                                                    {isCritical && (
+                                                        <p className="text-[10px] text-red-500 font-bold uppercase">Kritický stav!</p>
+                                                    )}
+                                                    {isWarning && (
+                                                        <p className="text-[10px] text-amber-500 font-bold uppercase">Dochází...</p>
+                                                    )}
+                                                </>
+                                            );
+                                        })()}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">

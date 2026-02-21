@@ -6,6 +6,8 @@ create table if not exists public.manufacture_inventory (
     unit text not null,
     -- e.g. 'kg', 'l', 'ks'
     min_quantity numeric default 0,
+    -- warning level (yellow): between warning_quantity and min_quantity is warning zone
+    warning_quantity numeric default 0,
     notifications_enabled boolean default false,
     created_at timestamptz default now()
 );
