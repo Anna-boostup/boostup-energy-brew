@@ -671,9 +671,7 @@ const ProductSection = () => {
                             <span className="font-semibold text-sm sm:text-base">
                               {isOutOfStock
                                 ? "Vyprodáno"
-                                : flavorMode === "mix"
-                                  ? `Přidat MIX do košíku`
-                                  : `Přidat ${cleanName(currentFlavor.name)} do košíku`}
+                                : "Přidat do košíku"}
                             </span>
                           </div>
                           {!isOutOfStock && (
