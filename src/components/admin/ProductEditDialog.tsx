@@ -109,97 +109,99 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col">
                 <DialogHeader>
                     <DialogTitle>Upravit produkt: {product.sku}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Název produktu</Label>
-                        <Input
-                            id="name"
-                            value={formData.name}
-                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                            required
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between space-x-2 border p-3 rounded-md bg-muted/30">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="is_on_sale">Akce</Label>
-                            <p className="text-xs text-muted-foreground">Zobrazí štítek AKCE u produktu</p>
-                        </div>
-                        <Switch
-                            id="is_on_sale"
-                            checked={formData.is_on_sale}
-                            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_on_sale: checked }))}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="price">Cena (Kč)</Label>
-                        <Input
-                            id="price"
-                            type="number"
-                            value={formData.price}
-                            onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Popis (pod názvem na hlavní straně)</Label>
-                        <Textarea
-                            id="description"
-                            value={formData.description}
-                            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                            placeholder="Např. Citrusová svěžest a energie..."
-                            rows={2}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="tooltip">Tooltip (text v bublině "i")</Label>
-                        <Textarea
-                            id="tooltip"
-                            value={formData.tooltip}
-                            onChange={(e) => setFormData(prev => ({ ...prev, tooltip: e.target.value }))}
-                            placeholder="Text, který se zobrazí v bublině..."
-                            rows={2}
-                        />
-                    </div>
-
-                    {!product.sku.startsWith('mix-') && (
+                <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+                    <div className="overflow-y-auto flex-1 space-y-4 py-4 pr-1">
                         <div className="space-y-2">
-                            <Label>Fotka produktu</Label>
-                            <div className="flex flex-col gap-4">
-                                {formData.image_url && (
-                                    <div className="relative w-full aspect-square max-w-[200px] border rounded-lg overflow-hidden bg-muted">
-                                        <img
-                                            src={formData.image_url}
-                                            alt="Náhled"
-                                            className="w-full h-full object-contain"
-                                        />
-                                    </div>
-                                )}
-                                <div className="flex items-center gap-2">
-                                    <Input
-                                        id="image_upload"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={isUploading || isLoading}
-                                    />
-                                    {isUploading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Nahrajte čtvercový obrázek (PNG s průhledností je ideální).
-                                </p>
-                            </div>
+                            <Label htmlFor="name">Název produktu</Label>
+                            <Input
+                                id="name"
+                                value={formData.name}
+                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                required
+                            />
                         </div>
-                    )}
 
-                    <DialogFooter className="pt-4">
+                        <div className="flex items-center justify-between space-x-2 border p-3 rounded-md bg-muted/30">
+                            <div className="space-y-0.5">
+                                <Label htmlFor="is_on_sale">Akce</Label>
+                                <p className="text-xs text-muted-foreground">Zobrazí štítek AKCE u produktu</p>
+                            </div>
+                            <Switch
+                                id="is_on_sale"
+                                checked={formData.is_on_sale}
+                                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_on_sale: checked }))}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="price">Cena (Kč)</Label>
+                            <Input
+                                id="price"
+                                type="number"
+                                value={formData.price}
+                                onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Popis (pod názvem na hlavní straně)</Label>
+                            <Textarea
+                                id="description"
+                                value={formData.description}
+                                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                                placeholder="Např. Citrusová svěžest a energie..."
+                                rows={2}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="tooltip">Tooltip (text v bublině "i")</Label>
+                            <Textarea
+                                id="tooltip"
+                                value={formData.tooltip}
+                                onChange={(e) => setFormData(prev => ({ ...prev, tooltip: e.target.value }))}
+                                placeholder="Text, který se zobrazí v bublině..."
+                                rows={2}
+                            />
+                        </div>
+
+                        {!product.sku.startsWith('mix-') && (
+                            <div className="space-y-2">
+                                <Label>Fotka produktu</Label>
+                                <div className="flex flex-col gap-4">
+                                    {formData.image_url && (
+                                        <div className="relative w-full aspect-square max-w-[200px] border rounded-lg overflow-hidden bg-muted">
+                                            <img
+                                                src={formData.image_url}
+                                                alt="Náhled"
+                                                className="w-full h-full object-contain"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                        <Input
+                                            id="image_upload"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            disabled={isUploading || isLoading}
+                                        />
+                                        {isUploading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Nahrajte čtvercový obrázek (PNG s průhledností je ideální).
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                    </div>
+                    <DialogFooter className="pt-4 border-t mt-2">
                         <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
                             Zrušit
                         </Button>
