@@ -8,12 +8,12 @@ import PaymentInstructions from '@/components/PaymentInstructions';
 const PaymentSuccess = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const [countdown, setCountdown] = useState(10);
+    const status = searchParams.get('status') || 'success';
+    const isPending = status === 'pending';
+    const [countdown, setCountdown] = useState(isPending ? 120 : 10);
 
     const orderNumber = searchParams.get('orderNumber') || 'BUP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     const amount = searchParams.get('amount') || '0';
-    const status = searchParams.get('status') || 'success';
-    const isPending = status === 'pending';
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -100,12 +100,14 @@ const PaymentSuccess = () => {
                     </div>
 
                     <div className="space-y-6">
-                        {!isPending && (
-                            <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 flex items-center justify-center gap-3">
-                                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                                <p className="text-sm font-bold">Automatické přesměrování za {countdown} sekund</p>
-                            </div>
-                        )}
+                        <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 flex items-center justify-center gap-3">
+                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                            <p className="text-sm font-bold">
+                                {isPending
+                                    ? `Tato stránka se zavře za ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}`
+                                    : `Automatické přesměrování za ${countdown} sekund`}
+                            </p>
+                        </div>
 
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Button
