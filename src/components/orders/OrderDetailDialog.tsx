@@ -67,8 +67,16 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                         <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={`text-sm px-4 py-1 ${order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}`}>
                             {order.status === 'pending' ? 'Platba: Čeká na zaplacení' : 'Platba: Zaplaceno'}
                         </Badge>
-                        <Badge variant={order.status === 'shipped' ? 'default' : 'outline'} className={`text-sm px-4 py-1 ${order.status === 'shipped' ? 'bg-blue-600' : 'border-amber-200 text-amber-700'}`}>
-                            {order.status === 'shipped' ? 'Stav: Vyřízena' : 'Stav: Čeká k vyřízení'}
+                        <Badge
+                            variant={order.status === 'shipped' ? 'default' : 'outline'}
+                            className={`text-sm px-4 py-1 ${order.status === 'shipped' ? 'bg-blue-600' :
+                                    order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50' :
+                                        'border-amber-200 text-amber-700'
+                                }`}
+                        >
+                            {order.status === 'shipped' ? 'Stav: Vyřízena' :
+                                order.status === 'processing' ? 'Stav: Rozpracováno' :
+                                    'Stav: Čeká k vyřízení'}
                         </Badge>
                     </div>
                 </div>

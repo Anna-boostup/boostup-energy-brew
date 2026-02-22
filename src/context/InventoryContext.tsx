@@ -49,7 +49,7 @@ export interface Order {
         price: number;
     }[];
     total: number;
-    status: 'pending' | 'paid' | 'shipped';
+    status: 'pending' | 'paid' | 'processing' | 'shipped';
     is_subscription_order?: boolean;
     packeta_barcode?: string;
     packeta_packet_id?: string;

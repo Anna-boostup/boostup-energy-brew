@@ -1,10 +1,10 @@
-import { useInventory } from "@/context/InventoryContext";
+import { useInventory, Order } from "@/context/InventoryContext";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
     Dialog,
@@ -13,7 +13,7 @@ import {
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 
 
-const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: 'shipped' | 'paid') => void }) => (
+const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => (
     <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white shadow-sm">
         <div className="flex justify-between items-start">
             <div>
@@ -24,8 +24,17 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                 <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}>
                     {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
                 </Badge>
-                <Badge variant={order.status === 'shipped' ? 'default' : 'outline'} className={order.status === 'shipped' ? 'bg-blue-600' : 'border-amber-200 text-amber-700'}>
-                    {order.status === 'shipped' ? 'Stav: Vyřízena' : 'Stav: Čeká k vyřízení'}
+                <Badge
+                    variant={order.status === 'shipped' ? 'default' : 'outline'}
+                    className={
+                        order.status === 'shipped' ? 'bg-blue-600' :
+                            order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50' :
+                                'border-amber-200 text-amber-700'
+                    }
+                >
+                    {order.status === 'shipped' ? 'Stav: Vyřízena' :
+                        order.status === 'processing' ? 'Stav: Rozpracováno' :
+                            'Stav: Čeká k vyřízení'}
                 </Badge>
             </div>
         </div>
@@ -58,9 +67,19 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         <CheckCircle className="w-4 h-4" />
                     </Button>
                 )}
-                {order.status === 'paid' && (
+                {(order.status === 'paid' || order.status === 'processing') && (
                     <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-blue-600 hover:bg-blue-700">
                         <Truck className="w-4 h-4" />
+                    </Button>
+                )}
+                {order.packeta_barcode && (
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-green-600 text-green-600 hover:bg-green-50"
+                        onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                    >
+                        <Printer className="w-4 h-4" />
                     </Button>
                 )}
             </div>
@@ -72,11 +91,13 @@ const Orders = () => {
     const { orders, updateOrderStatus } = useInventory();
     const { toast } = useToast();
 
-    const handleStatusChange = (orderId: string, newStatus: 'shipped' | 'paid') => {
+    const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
         updateOrderStatus(orderId, newStatus);
         toast({
             title: "Stav objednávky změněn",
-            description: `Objednávka ${orderId.slice(0, 8)} byla označena jako ${newStatus === 'shipped' ? 'Odeslaná' : 'Zaplacená'}.`,
+            description: `Objednávka ${orderId.slice(0, 8)} byla označena jako ${newStatus === 'shipped' ? 'Odeslaná' :
+                newStatus === 'paid' ? 'Zaplacená' : 'Rozpracovaná'
+                }.`,
         });
     };
 
@@ -132,8 +153,17 @@ const Orders = () => {
                                             <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 w-fit' : 'w-fit'}>
                                                 {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
                                             </Badge>
-                                            <Badge variant={order.status === 'shipped' ? 'default' : 'outline'} className={order.status === 'shipped' ? 'bg-blue-600 w-fit' : 'border-amber-200 text-amber-700 w-fit'}>
-                                                {order.status === 'shipped' ? 'Stav: Vyřízena' : 'Stav: Čeká k vyřízení'}
+                                            <Badge
+                                                variant={order.status === 'shipped' ? 'default' : 'outline'}
+                                                className={
+                                                    order.status === 'shipped' ? 'bg-blue-600 w-fit' :
+                                                        order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50 w-fit' :
+                                                            'border-amber-200 text-amber-700 w-fit'
+                                                }
+                                            >
+                                                {order.status === 'shipped' ? 'Stav: Vyřízena' :
+                                                    order.status === 'processing' ? 'Stav: Rozpracováno' :
+                                                        'Stav: Čeká k vyřízení'}
                                             </Badge>
                                         </div>
                                     </TableCell>
@@ -162,11 +192,32 @@ const Orders = () => {
                                             {order.status === 'paid' && (
                                                 <Button
                                                     size="sm"
+                                                    onClick={() => handleStatusChange(order.id, 'processing')}
+                                                    className="bg-blue-100 hover:bg-blue-200 text-blue-700 border-blue-200"
+                                                    title="Označit jako rozpracované"
+                                                >
+                                                    <Clock className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                            {(order.status === 'paid' || order.status === 'processing') && (
+                                                <Button
+                                                    size="sm"
                                                     onClick={() => handleStatusChange(order.id, 'shipped')}
                                                     className="bg-blue-600 hover:bg-blue-700 text-white"
                                                     title="Označit jako vyřízené/odeslané"
                                                 >
                                                     <Truck className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                            {order.packeta_barcode && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                                                    title="Tisk štítku Zásilkovny"
+                                                    onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                                                >
+                                                    <Printer className="w-4 h-4" />
                                                 </Button>
                                             )}
                                         </div>
