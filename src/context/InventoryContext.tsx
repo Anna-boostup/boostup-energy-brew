@@ -75,7 +75,7 @@ interface InventoryContextType {
     updateStock: (sku: SKU, quantity: number) => void;
     decrementStock: (sku: SKU, amount: number) => Promise<boolean>;
     getStock: (sku: SKU) => number;
-    addOrder: (order: Order) => void;
+    addOrder: (order: Order) => Promise<boolean>;
     updateOrderStatus: (orderId: string, status: Order['status']) => void;
     updateProduct: (sku: string, updates: Partial<Product>) => Promise<void>;
 }
@@ -272,8 +272,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (error) {
             console.error('Error adding order:', error);
-            alert("Chyba při vytváření objednávky: " + error.message);
+            return false;
         }
+        return true;
     };
 
     const updateOrderStatus = async (orderId: string, status: Order['status']) => {
