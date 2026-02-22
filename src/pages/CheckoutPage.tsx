@@ -209,7 +209,7 @@ const CheckoutPage = () => {
             });
 
             // 3. Create Order Record
-            const newOrder: Order = {
+            let newOrder: Order = {
                 id: orderNumber,
                 date: new Date().toISOString(),
                 customer: {
@@ -253,6 +253,35 @@ const CheckoutPage = () => {
             // Adjust initial status based on payment method
             if (formData.paymentMethod === 'transfer_fast' || formData.paymentMethod === 'transfer_manual') {
                 newOrder.status = 'pending';
+            }
+
+            // 3.5 Create Packeta Shipment if applicable
+            if (formData.deliveryMethod === 'zasilkovna' && formData.packetaPointId) {
+                try {
+                    const packetaRes = await fetch('/api/create-packeta-packet', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            orderNumber,
+                            firstName: formData.firstName,
+                            lastName: formData.lastName,
+                            email: formData.email,
+                            phone: formData.phone,
+                            packetaPointId: formData.packetaPointId,
+                            total: newOrder.total
+                        })
+                    });
+
+                    const packetaData = await packetaRes.json();
+                    if (packetaRes.ok && packetaData.barcode) {
+                        newOrder.packeta_barcode = packetaData.barcode;
+                        newOrder.packeta_packet_id = packetaData.packetId;
+                    } else {
+                        console.error('Packeta creation failed:', packetaData.error);
+                    }
+                } catch (e) {
+                    console.error('Packeta API call failed:', e);
+                }
             }
 
             const orderSaved = await addOrder(newOrder);

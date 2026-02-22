@@ -51,6 +51,8 @@ export interface Order {
     total: number;
     status: 'pending' | 'paid' | 'shipped';
     is_subscription_order?: boolean;
+    packeta_barcode?: string;
+    packeta_packet_id?: string;
 }
 
 export interface StockMovement {
@@ -177,12 +179,12 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const mappedOrders = data.map((o: any) => ({
                 ...o,
                 date: o.created_at,
-                // Ensure customer object is reconstructed from flattened columns if needed
-                // But we stored it as columns customer_name, customer_email
                 customer: {
                     name: o.customer_name,
                     email: o.customer_email
-                }
+                },
+                packeta_barcode: o.packeta_barcode,
+                packeta_packet_id: o.packeta_packet_id,
             }));
             setOrders(mappedOrders);
         }
@@ -268,6 +270,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             items: order.items,
             delivery_info: order.delivery_info,
             is_subscription_order: order.is_subscription_order || false,
+            packeta_barcode: order.packeta_barcode || null,
+            packeta_packet_id: order.packeta_packet_id || null,
         });
 
         if (error) {

@@ -179,6 +179,24 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                         </div>
                     </div>
                 )}
+
+                {/* Packeta Label (if barcode exists) */}
+                {order.packeta_barcode && (
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-100 mt-6 flex justify-between items-center">
+                        <div className="text-sm text-green-900">
+                            <h4 className="font-bold text-green-700">Zásilkovna</h4>
+                            <p>Číslo zásilky: <strong>{order.packeta_barcode}</strong></p>
+                        </div>
+                        <Button
+                            variant="default"
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                        >
+                            <Printer className="w-4 h-4 mr-2" />
+                            Tisk štítku
+                        </Button>
+                    </div>
+                )}
             </div>
 
             <div className="flex justify-end gap-2 mt-4 print:hidden">
