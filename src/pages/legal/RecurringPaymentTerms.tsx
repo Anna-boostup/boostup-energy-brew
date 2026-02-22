@@ -95,7 +95,7 @@ const RecurringPaymentTerms = () => {
             </p>
             <ul>
                 <li><strong>E-mail:</strong> info@drinkboostup.cz</li>
-                <li><strong>Telefon:</strong> +420 XXX XXX XXX</li>
+                <li><strong>Telefon:</strong> +420 775 222 037</li>
                 <li><strong>Adresa:</strong> BoostUp Supplements s.r.o., Chaloupkova 3002/1a, Královo Pole, 612 00 Brno</li>
             </ul>
             <p>
