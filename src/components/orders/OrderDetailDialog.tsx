@@ -93,7 +93,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                                     variant="default"
                                     size="sm"
                                     className="h-9 bg-green-600 hover:bg-green-700 gap-2"
-                                    onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                                    onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
                                 >
                                     <Printer className="w-4 h-4" />
                                     Štítek

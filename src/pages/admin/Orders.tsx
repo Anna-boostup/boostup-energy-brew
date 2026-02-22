@@ -79,7 +79,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         size="sm"
                         variant="ghost"
                         className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
-                        onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                        onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
                         title="Tisk štítku Zásilkovny"
                     >
                         <Printer className="h-4 w-4" />
@@ -225,7 +225,7 @@ const Orders = () => {
                                                     variant="ghost"
                                                     className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
                                                     title="Tisk štítku Zásilkovny"
-                                                    onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                                                    onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
                                                 >
                                                     <Printer className="w-4 h-4" />
                                                 </Button>
