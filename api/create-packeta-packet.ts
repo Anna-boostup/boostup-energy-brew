@@ -67,19 +67,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Check for "status ok" and "barcode" to determine success
         if (!text.includes('<status>ok</status>') && !text.includes('<barcode>')) {
-            // Detailed error parsing for faults
-            const faultMatch = text.match(/<fault>([^<]+)<\/fault>/);
+            // Detailed error parsing for faults - extract the inner-most descriptive fault
             const faultStringMatch = text.match(/<string>([^<]+)<\/string>/);
-
-            const faultType = faultMatch ? faultMatch[1] : 'UnknownFault';
-            const errorMsg = faultStringMatch ? faultStringMatch[1] : faultType;
-
-            // Extract the specific validation or account error from <detail> if it exists
             const innerFaultMatch = text.match(/<detail>.*?<fault>([^<]+)<\/fault>/s);
-            const detailMsg = innerFaultMatch ? `: ${innerFaultMatch[1]}` : '';
 
-            console.error('Packeta API error:', errorMsg, detailMsg);
-            return res.status(400).json({ error: `Packeta chyba: ${errorMsg}${detailMsg}` });
+            let cleanError = '';
+            if (innerFaultMatch) {
+                // Strip XML and order number prefix (e.g., "Č. ob. ORD-XXX: ")
+                cleanError = innerFaultMatch[1].replace(/Č\. ob\. [^:]+: /, '');
+            } else if (faultStringMatch) {
+                cleanError = faultStringMatch[1];
+            } else {
+                cleanError = 'Chyba validace zásilky.';
+            }
+
+            console.error('Packeta API error:', cleanError);
+            return res.status(400).json({ error: `Packeta: ${cleanError}` });
         }
 
         const barcodeMatch = text.match(/<barcode>([^<]+)<\/barcode>/);
