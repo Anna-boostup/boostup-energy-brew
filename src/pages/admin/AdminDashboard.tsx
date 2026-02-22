@@ -1,8 +1,11 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ShoppingBag, Package, Users } from "lucide-react";
-import { useInventory } from "@/context/InventoryContext";
+import { DollarSign, ShoppingBag, Package, Users, Printer, Eye } from "lucide-react";
+import { useInventory, Order } from "@/context/InventoryContext";
 import InvoiceModal from "@/components/admin/InvoiceModal";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 
 const AdminDashboard = () => {
     const { stock, orders } = useInventory();
@@ -80,13 +83,45 @@ const AdminDashboard = () => {
                                             <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleString()}</p>
                                         </div>
                                         <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
-                                            <div className="text-left md:text-right">
-                                                <p className="font-bold text-sm">{order.total} Kč</p>
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    Zaplaceno
-                                                </span>
+                                            <div className="flex flex-col gap-1 items-end">
+                                                <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}>
+                                                    {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
+                                                </Badge>
+                                                <Badge
+                                                    variant={order.status === 'shipped' ? 'default' : 'outline'}
+                                                    className={
+                                                        order.status === 'shipped' ? 'bg-blue-600' :
+                                                            order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50' :
+                                                                'border-amber-200 text-amber-700'
+                                                    }
+                                                >
+                                                    {order.status === 'shipped' ? 'Stav: Vyřízena' :
+                                                        order.status === 'processing' ? 'Stav: Rozpracováno' :
+                                                            'Stav: Čeká k vyřízení'}
+                                                </Badge>
                                             </div>
-                                            <InvoiceModal order={order} />
+                                            <div className="flex gap-2">
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <OrderDetailDialog order={order} />
+                                                </Dialog>
+                                                {order.packeta_barcode && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                                        onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                                                        title="Tisk štítku Zásilkovny"
+                                                    >
+                                                        <Printer className="h-4 w-4" />
+                                                    </Button>
+                                                )}
+                                                <InvoiceModal order={order} />
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
