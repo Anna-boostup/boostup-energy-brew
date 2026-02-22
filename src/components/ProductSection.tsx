@@ -16,9 +16,31 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// ... (existing code)
-
-
+// Dynamic component for the "Mix" display
+const MixStack = ({ images, className }: { images: string[], className?: string }) => {
+  return (
+    <div className={`relative flex items-center justify-center ${className}`}>
+      {/* Right Bottle (Silky) */}
+      <img
+        src={images[2]}
+        alt="Mix Right"
+        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90 transition-all duration-500"
+      />
+      {/* Left Bottle (Red) */}
+      <img
+        src={images[1]}
+        alt="Mix Left"
+        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 transition-all duration-500 absolute"
+      />
+      {/* Middle Bottle (Lemon) - Front */}
+      <img
+        src={images[0]}
+        alt="Mix Middle"
+        className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 transition-all duration-500 hover:scale-105 absolute"
+      />
+    </div>
+  );
+};
 
 import { FLAVORS, PACK_PRICES, PACK_SIZES, type FlavorType } from "@/config/product-data";
 
@@ -50,11 +72,73 @@ const ProductSection = () => {
   const { getStock, products } = useInventory();
   const { toast } = useToast();
 
+  const getEffectiveProduct = (sku: string) => {
+    // Virtual logic for Mix
+    if (sku.startsWith('mix-')) {
+      const packSize = parseInt(sku.split('-')[1]) as Pack;
+      return {
+        sku,
+        name: `BoostUp ${packSize}x Pack (MIX)`,
+        price: PACK_PRICES[packSize] || 0,
+        description: getMixDescription(packSize),
+        tooltip: "Ochutnejte všechny příchutě v jednom balení",
+        is_on_sale: false,
+        image_url: null, // MixStack handles visual
+      };
+    }
+
+    const direct = products.find(p => p.sku === sku);
+    const baseSku = sku.includes('-') ? sku.split('-')[0] : sku;
+    const base = products.find(p => p.sku === baseSku);
+
+    if (!direct && !base) return null;
+
+    return {
+      sku,
+      name: direct?.name || base?.name || "",
+      price: direct?.price || base?.price || 0,
+      description: direct?.description || base?.description || "",
+      tooltip: direct?.tooltip || base?.tooltip || "",
+      is_on_sale: direct?.is_on_sale || base?.is_on_sale || false,
+      image_url: direct?.image_url || base?.image_url || null,
+    };
+  };
+
+  const cleanName = (name: string) => {
+    // Remove text in parentheses and strip emojis from the start/content
+    return name
+      .replace(/\s*\(.*?\)\s*/g, '')
+      .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '')
+      .trim();
+  };
+
+  const isBrokenImage = (url: string | null | undefined) => {
+    if (!url) return true;
+    // Known broken placeholders from previous migrations/seeds
+    const brokenPlaceholders = [
+      'https://drinkboostup.cz/bottles.png',
+      'bottles.png'
+    ];
+    return brokenPlaceholders.includes(url);
+  };
+
   const getProductImage = () => {
     if (!flavorMode && !selectedFlavor) return bottlesHero;
-    if (flavorMode === "mix") return bottleSingle;
 
-    // Single Flavor specific logic
+    if (flavorMode === "mix" && selectedPack) {
+      const sku = `mix-${selectedPack}`;
+      const eff = getEffectiveProduct(sku);
+      if (!isBrokenImage(eff?.image_url)) return eff!.image_url!;
+      return bottlesHero;
+    }
+
+    if (flavorMode === "single" && selectedFlavor && selectedPack) {
+      const sku = `${selectedFlavor}-${selectedPack}`;
+      const eff = getEffectiveProduct(sku);
+      if (!isBrokenImage(eff?.image_url)) return eff!.image_url!;
+    }
+
+    // Static Fallbacks for 3-pack (if no valid image uploaded)
     if (flavorMode === "single" && selectedFlavor && selectedPack === 3) {
       if (selectedFlavor === 'lemon') return pack3Lemon;
       if (selectedFlavor === 'red') return pack3Red;
@@ -112,31 +196,7 @@ const ProductSection = () => {
     setMixCounts(newCounts);
   };
 
-  const getEffectiveProduct = (sku: string) => {
-    const direct = products.find(p => p.sku === sku);
-    const baseSku = sku.includes('-') ? sku.split('-')[0] : sku;
-    const base = products.find(p => p.sku === baseSku);
-
-    if (!direct && !base) return null;
-
-    return {
-      sku,
-      name: direct?.name || base?.name || "",
-      price: direct?.price || base?.price || 0,
-      description: direct?.description || base?.description || "",
-      tooltip: direct?.tooltip || base?.tooltip || "",
-      ingredients: direct?.ingredients || base?.ingredients || "",
-      is_on_sale: direct?.is_on_sale || base?.is_on_sale || false,
-    };
-  };
-
-  const cleanName = (name: string) => {
-    // Remove text in parentheses and strip emojis from the start/content
-    return name
-      .replace(/\s*\(.*?\)\s*/g, '')
-      .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '')
-      .trim();
-  };
+  // Placeholder if needed
 
   const handleAddToCart = () => {
     if (!selectedPack) {
@@ -187,17 +247,11 @@ const ProductSection = () => {
     const mixConfig = flavorMode === "mix" ? mixCounts : undefined;
     const mixIdSuffix = flavorMode === "mix" ? `-${mixCounts.lemon}-${mixCounts.red}-${mixCounts.silky}` : "";
 
-    let displayName = flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`;
-    let displayPrice = packPrices[selectedPack];
+    const sku = flavorMode === "mix" ? `mix-${selectedPack}` : `${selectedFlavor}-${selectedPack}`;
+    const effProduct = getEffectiveProduct(sku);
 
-    if (flavorMode === "single" && selectedFlavor) {
-      const sku = `${selectedFlavor}-${selectedPack}`;
-      const effProduct = getEffectiveProduct(sku);
-      if (effProduct) {
-        displayName = effProduct.name;
-        displayPrice = effProduct.price;
-      }
-    }
+    const displayName = effProduct?.name || (flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`);
+    const displayPrice = effProduct?.price || packPrices[selectedPack];
 
     addToCart({
       id: flavorMode === "mix" ? `mix-${selectedPack}${mixIdSuffix}` : `${selectedFlavor}-${selectedPack}`,
@@ -241,11 +295,28 @@ const ProductSection = () => {
 
                 <div className="relative animate-float">
                   <div className="relative">
-                    <img
-                      src={productImageSrc}
-                      alt={flavorMode === "mix" ? "BoostUp Mix" : selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
-                      className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
-                    />
+                    {flavorMode === "mix" ? (
+                      <MixStack
+                        images={[
+                          !isBrokenImage(getEffectiveProduct('lemon')?.image_url)
+                            ? getEffectiveProduct('lemon')!.image_url!
+                            : bottleSingle,
+                          !isBrokenImage(getEffectiveProduct('red')?.image_url)
+                            ? getEffectiveProduct('red')!.image_url!
+                            : bottleSingle,
+                          !isBrokenImage(getEffectiveProduct('silky')?.image_url)
+                            ? getEffectiveProduct('silky')!.image_url!
+                            : bottleSingle
+                        ]}
+                        className="scale-90 md:scale-100"
+                      />
+                    ) : (
+                      <img
+                        src={productImageSrc}
+                        alt={selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
+                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
+                      />
+                    )}
                   </div>
 
                   {(selectedFlavor || flavorMode === "mix") && (
@@ -597,7 +668,11 @@ const ProductSection = () => {
                         <div className="flex flex-col items-center justify-center gap-0.5 w-full">
                           <div className="flex items-center justify-center gap-2">
                             <ShoppingBag className="w-5 h-5 shrink-0" />
-                            <span className="font-semibold text-sm sm:text-base">{isOutOfStock ? "Vyprodáno" : "Přidat do košíku"}</span>
+                            <span className="font-semibold text-sm sm:text-base">
+                              {isOutOfStock
+                                ? "Vyprodáno"
+                                : "Přidat do košíku"}
+                            </span>
                           </div>
                           {!isOutOfStock && (
                             <span className="font-bold text-base opacity-90">{price} Kč</span>

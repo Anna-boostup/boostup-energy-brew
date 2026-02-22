@@ -189,16 +189,54 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const addMovement = async (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
-        const { error } = await supabase.rpc('handle_stock_movement', {
+        console.log(`[Inventory] Starting movement update: ${sku}, amount: ${amount}, type: ${type}`);
+
+        // 1. Zkusíme profesionální cestu přes RPC
+        const { error: rpcError } = await supabase.rpc('handle_stock_movement', {
             p_sku: sku,
             p_type: type,
             p_amount: amount,
             p_note: note
         });
 
-        if (error) {
-            console.error("Error adding movement:", error);
-            alert("Chyba při aktualizaci skladu: " + error.message);
+        if (!rpcError) {
+            console.log(`[Inventory] RPC success for ${sku}`);
+            // OKAMŽITÁ AKTUALIZACE LOKÁLNÍHO STAVU (Optimistický update)
+            setStock(prev => ({ ...prev, [sku]: (prev[sku] || 0) + amount }));
+            setProducts(prev => prev.map(p => p.sku === sku ? { ...p, quantity: (p.quantity || 0) + amount } : p));
+            return;
+        }
+
+        console.warn("[Inventory] RPC failed, trying direct fallback:", rpcError);
+
+        // 2. FALLBACK: Přímý update tabulky inventory
+        const currentQty = stock[sku] || 0;
+        const newQty = currentQty + amount;
+
+        const { error: updateError } = await supabase
+            .from('inventory')
+            .update({ quantity: newQty })
+            .eq('sku', sku);
+
+        if (updateError) {
+            console.error("[Inventory] Direct update failed:", updateError);
+            alert(`Sklad nelze aktualizovat. Chyba: ${updateError.message} (${updateError.code})`);
+            return;
+        }
+
+        console.log(`[Inventory] Direct update success for ${sku}`);
+        // OKAMŽITÁ AKTUALIZACE LOKÁLNÍHO STAVU
+        setStock(prev => ({ ...prev, [sku]: newQty }));
+        setProducts(prev => prev.map(p => p.sku === sku ? { ...p, quantity: newQty } : p));
+
+        // 3. Volitelný zápis historie
+        try {
+            await supabase.from('stock_movements').insert({
+                sku, type, amount, note: note || "Manual fallback",
+                user_id: (await supabase.auth.getUser()).data.user?.id
+            });
+        } catch (e) {
+            console.log("[Inventory] History log skipped.");
         }
     };
 

@@ -51,15 +51,19 @@ const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allow
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Inventory from "./pages/admin/Inventory";
+import ManufactureInventory from "./pages/admin/ManufactureInventory";
+import AdminProfile from "./pages/admin/AdminProfile";
 import Orders from "./pages/admin/Orders";
 import ContentManagement from "./pages/admin/ContentManagement";
 
 import TermsOfService from "./pages/legal/TermsOfService";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import Returns from "./pages/legal/Returns";
+import RecurringPaymentTerms from "./pages/legal/RecurringPaymentTerms";
 
 import { CartProvider } from "./context/CartContext";
 import { InventoryProvider } from "./context/InventoryContext";
+import { ManufactureProvider } from "./context/ManufactureContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ContentProvider } from "./context/ContentContext";
 
@@ -75,69 +79,74 @@ const App = () => (
         <AuthProvider>
           <ContentProvider>
             <InventoryProvider>
-              <CartProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <ScrollToTop />
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/logout" element={<Logout />} />
+              <ManufactureProvider>
+                <CartProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <ScrollToTop />
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/logout" element={<Logout />} />
 
-                    {/* Account Routes */}
-                    {/* Account Routes (Personal) */}
-                    <Route path="/account" element={
-                      <ProtectedRoute>
-                        <RoleGuard allowedType="personal">
-                          <AccountLayout />
-                        </RoleGuard>
-                      </ProtectedRoute>
-                    }>
-                      <Route index element={<Navigate to="/account/profile" replace />} />
-                      <Route path="profile" element={<AccountProfile />} />
-                      <Route path="orders" element={<AccountOrders />} />
-                      <Route path="subscriptions" element={<Subscriptions />} />
-                    </Route>
+                      {/* Account Routes */}
+                      {/* Account Routes (Personal) */}
+                      <Route path="/account" element={
+                        <ProtectedRoute>
+                          <RoleGuard allowedType="personal">
+                            <AccountLayout />
+                          </RoleGuard>
+                        </ProtectedRoute>
+                      }>
+                        <Route index element={<Navigate to="/account/profile" replace />} />
+                        <Route path="profile" element={<AccountProfile />} />
+                        <Route path="orders" element={<AccountOrders />} />
+                        <Route path="subscriptions" element={<Subscriptions />} />
+                      </Route>
 
-                    {/* Company Account Routes */}
-                    <Route path="/company-account" element={
-                      <ProtectedRoute>
-                        <RoleGuard allowedType="company">
-                          <CompanyAccountLayout />
-                        </RoleGuard>
-                      </ProtectedRoute>
-                    }>
-                      <Route index element={<Navigate to="/company-account/profile" replace />} />
-                      <Route path="profile" element={<CompanyProfile />} />
-                      {/* Reusing Orders component but it will need to context aware or just show same orders */}
-                      <Route path="orders" element={<AccountOrders />} />
-                      <Route path="subscriptions" element={<Subscriptions />} />
-                    </Route>
+                      {/* Company Account Routes */}
+                      <Route path="/company-account" element={
+                        <ProtectedRoute>
+                          <RoleGuard allowedType="company">
+                            <CompanyAccountLayout />
+                          </RoleGuard>
+                        </ProtectedRoute>
+                      }>
+                        <Route index element={<Navigate to="/company-account/profile" replace />} />
+                        <Route path="profile" element={<CompanyProfile />} />
+                        {/* Reusing Orders component but it will need to context aware or just show same orders */}
+                        <Route path="orders" element={<AccountOrders />} />
+                        <Route path="subscriptions" element={<Subscriptions />} />
+                      </Route>
 
-                    <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/payment/success" element={<PaymentSuccess />} />
-                    <Route path="/payment/error" element={<PaymentError />} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/payment/success" element={<PaymentSuccess />} />
+                      <Route path="/payment/error" element={<PaymentError />} />
 
-                    {/* Admin Routes */}
-                    <Route path="/admin" element={<AdminLayout />}>
-                      <Route index element={<AdminDashboard />} />
-                      <Route path="orders" element={<Orders />} />
-                      <Route path="inventory" element={<Inventory />} />
-                      <Route path="content" element={<ContentManagement />} />
-                    </Route>
+                      {/* Admin Routes */}
+                      <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="orders" element={<Orders />} />
+                        <Route path="inventory" element={<Inventory />} />
+                        <Route path="manufacture" element={<ManufactureInventory />} />
+                        <Route path="content" element={<ContentManagement />} />
+                        <Route path="profile" element={<AdminProfile />} />
+                      </Route>
 
-                    {/* Legal Routes */}
-                    <Route path="/obchodni-podminky" element={<TermsOfService />} />
-                    <Route path="/ochrana-osobnich-udaju" element={<PrivacyPolicy />} />
-                    <Route path="/reklamace" element={<Returns />} />
+                      {/* Legal Routes */}
+                      <Route path="/obchodni-podminky" element={<TermsOfService />} />
+                      <Route path="/ochrana-osobnich-udaju" element={<PrivacyPolicy />} />
+                      <Route path="/reklamace" element={<Returns />} />
+                      <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
 
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </BrowserRouter>
-              </CartProvider>
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
+                </CartProvider>
+              </ManufactureProvider>
             </InventoryProvider>
           </ContentProvider>
         </AuthProvider>

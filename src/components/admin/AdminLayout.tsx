@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useManufacture } from "@/context/ManufactureContext";
 
 const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const { user, profile, loading, signOut } = useAuth();
+    const { materials } = useManufacture();
 
     if (loading) {
         return <div className="p-8">Ověřuji oprávnění...</div>;
@@ -35,18 +37,32 @@ const AdminLayout = () => {
         navigate("/logout", { replace: true });
     };
 
+    const hasLowStockAlert = materials.some(m =>
+        m.notifications_enabled && (
+            m.quantity <= m.min_quantity ||
+            (m.warning_quantity > 0 && m.quantity <= m.warning_quantity)
+        )
+    );
+
     const navItems = [
         { icon: LayoutDashboard, label: "Přehled", path: "/admin" },
         { icon: ShoppingCart, label: "Objednávky", path: "/admin/orders" },
-        { icon: Package, label: "Sklad", path: "/admin/inventory" },
+        { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
+        {
+            icon: Factory,
+            label: "Sklad výroby",
+            path: "/admin/manufacture",
+            hasAlert: hasLowStockAlert
+        },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
+        { icon: User, label: "Můj profil", path: "/admin/profile" },
     ];
 
     return (
         <div className="min-h-screen bg-slate-50 flex">
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 bg-slate-900 text-white p-4 flex items-center justify-between z-50">
-                <span className="font-display font-bold text-xl tracking-wider">BOOSTUP<span className="text-primary">.</span></span>
+                <Link to="/" className="font-display font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                 <Sheet>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-white hover:bg-slate-800">
@@ -55,7 +71,7 @@ const AdminLayout = () => {
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 bg-slate-900 border-r-slate-800 text-white w-72">
                         <div className="p-6 border-b border-slate-800">
-                            <h1 className="font-display font-bold text-2xl tracking-wider">BOOSTUP<span className="text-primary">.</span></h1>
+                            <Link to="/" className="font-display font-bold text-2xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                             <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
                         </div>
                         <nav className="p-4 space-y-2">
@@ -69,13 +85,18 @@ const AdminLayout = () => {
                                             navigate(item.path);
                                             // Ideally close sheet here if controllable
                                         }}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                                        className={`w - full flex items - center justify - between px - 4 py - 3 rounded - xl transition - all ${isActive
                                             ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                             : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                                            }`}
+                                            } `}
                                     >
-                                        <Icon className="w-5 h-5" />
-                                        {item.label}
+                                        <div className="flex items-center gap-3">
+                                            <Icon className="w-5 h-5" />
+                                            {item.label}
+                                        </div>
+                                        {item.hasAlert && (
+                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                        )}
                                     </button>
                                 );
                             })}
@@ -97,7 +118,7 @@ const AdminLayout = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden md:block w-64 bg-slate-900 text-white fixed h-full shadow-xl z-10">
                 <div className="p-6 border-b border-slate-800">
-                    <h1 className="font-display font-bold text-2xl tracking-wider">BOOSTUP<span className="text-primary">.</span></h1>
+                    <Link to="/" className="font-display font-bold text-2xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                     <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
                 </div>
 
@@ -109,13 +130,18 @@ const AdminLayout = () => {
                             <button
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                                className={`w - full flex items - center justify - between px - 4 py - 3 rounded - xl transition - all ${isActive
                                     ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                     : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                                    }`}
+                                    } `}
                             >
-                                <Icon className="w-5 h-5" />
-                                {item.label}
+                                <div className="flex items-center gap-3">
+                                    <Icon className="w-5 h-5" />
+                                    {item.label}
+                                </div>
+                                {item.hasAlert && (
+                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                )}
                             </button>
                         );
                     })}
