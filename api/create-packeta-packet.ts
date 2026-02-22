@@ -65,20 +65,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const text = await response.text();
 
+        // Check for "status ok" and "barcode" to determine success
         if (!text.includes('<status>ok</status>') && !text.includes('<barcode>')) {
-            const sanitizedXml = xml.replace(apiPassword, '***MASKED***');
-            console.error('Packeta failure. Request XML:', sanitizedXml);
-            console.error('Packeta raw response:', text);
+            // Detailed error parsing for faults
+            const faultMatch = text.match(/<fault>([^<]+)<\/fault>/);
+            const faultStringMatch = text.match(/<string>([^<]+)<\/string>/);
 
-            // Try to extract internal detail if available
-            const detailMatch = text.match(/<detail>([^<]+)<\/detail>/);
-            const detailStr = detailMatch ? ` Detaily: ${detailMatch[1]}` : '';
+            const faultType = faultMatch ? faultMatch[1] : 'UnknownFault';
+            const errorMsg = faultStringMatch ? faultStringMatch[1] : faultType;
 
-            return res.status(400).json({
-                error: `Packeta chyba: ${text.substring(0, 300)}${detailStr}`,
-                debug_request: sanitizedXml,
-                debug_response: text
-            });
+            // Extract the specific validation or account error from <detail> if it exists
+            const innerFaultMatch = text.match(/<detail>.*?<fault>([^<]+)<\/fault>/s);
+            const detailMsg = innerFaultMatch ? `: ${innerFaultMatch[1]}` : '';
+
+            console.error('Packeta API error:', errorMsg, detailMsg);
+            return res.status(400).json({ error: `Packeta chyba: ${errorMsg}${detailMsg}` });
         }
 
         const barcodeMatch = text.match(/<barcode>([^<]+)<\/barcode>/);
@@ -88,16 +89,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const packetId = idMatch ? idMatch[1] : null;
 
         if (!barcode || !packetId) {
-            return res.status(500).json({
-                error: 'Chyba parsování odpovědi ze Zásilkovny.',
-                debug_response: text
-            });
+            console.error('Unexpected Packeta raw response:', text);
+            return res.status(500).json({ error: 'Chyba parsování odpovědi ze Zásilkovny.' });
         }
 
         return res.status(200).json({ success: true, barcode, packetId });
 
     } catch (err: any) {
-        console.error('Packeta API error:', err);
+        console.error('Packeta API connection error:', err);
         return res.status(500).json({ error: `Chyba spojení se Zásilkovnou: ${err.message}` });
     }
 }
