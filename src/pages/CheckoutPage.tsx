@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-// ---- Resend Email Helper ----
+// ---- Email Helper — calls our Vercel serverless function (avoids CORS) ----
 const sendOrderConfirmationEmail = async (
     to: string,
     orderNumber: string,
@@ -21,47 +21,11 @@ const sendOrderConfirmationEmail = async (
     items: { name: string; quantity: number; price: number }[],
     total: number
 ) => {
-    const apiKey = import.meta.env.VITE_RESEND_API_KEY;
-    if (!apiKey) { console.warn('VITE_RESEND_API_KEY not set, skipping email'); return; }
-
-    const itemsHtml = items.map(i =>
-        `<tr><td style="padding:6px 0">${i.name} × ${i.quantity}</td><td style="padding:6px 0;text-align:right">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`
-    ).join('');
-
-    const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a">
-      <div style="background:#2d5a27;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-        <h1 style="color:#fff;margin:0;font-size:24px">BOOSTUP.</h1>
-      </div>
-      <div style="background:#f9f9f9;padding:32px;border-radius:0 0 12px 12px">
-        <h2 style="margin-top:0">Potvrzení objednávky</h2>
-        <p>Ahoj <strong>${customerName}</strong>, tvoje objednávka byla úspěšně přijata!</p>
-        <p><strong>Číslo objednávky:</strong> ${orderNumber}</p>
-        <table style="width:100%;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;margin:16px 0">
-          ${itemsHtml}
-          <tr style="font-weight:bold;font-size:16px">
-            <td style="padding:10px 0">Celkem</td>
-            <td style="padding:10px 0;text-align:right">${total.toFixed(0)} Kč</td>
-          </tr>
-        </table>
-        <p>Zanedlouho ti pošleme informace o doručení.</p>
-        <p style="color:#666;font-size:13px">Dotazy: <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a> &middot; +420 775 222 037</p>
-      </div>
-    </div>`;
-
     try {
-        await fetch('https://api.resend.com/emails', {
+        await fetch('/api/send-email', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from: 'objednavky@drinkboostup.cz',
-                to,
-                subject: `✅ Potvrzení objednávky ${orderNumber} | BoostUp`,
-                html
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to, orderNumber, customerName, items, total })
         });
     } catch (e) {
         console.warn('Email send failed (non-critical):', e);
