@@ -209,7 +209,7 @@ const CheckoutPage = () => {
             });
 
             // 3. Create Order Record
-            let newOrder: Order = {
+            const newOrder: Order = {
                 id: orderNumber,
                 date: new Date().toISOString(),
                 customer: {
@@ -418,18 +418,21 @@ const CheckoutPage = () => {
                                             </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-muted-foreground ml-1">IČO *</label>
+                                                    <label htmlFor="ico" className="text-sm font-bold text-muted-foreground ml-1">IČO *</label>
                                                     <input
+                                                        id="ico"
                                                         name="ico"
                                                         value={formData.ico}
                                                         onChange={handleChange}
                                                         required={formData.isCompany}
+                                                        placeholder="12345678"
                                                         className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-sm font-bold text-muted-foreground ml-1">DIČ</label>
+                                                    <label htmlFor="dic" className="text-sm font-bold text-muted-foreground ml-1">DIČ</label>
                                                     <input
+                                                        id="dic"
                                                         name="dic"
                                                         value={formData.dic}
                                                         onChange={handleChange}
@@ -478,8 +481,9 @@ const CheckoutPage = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground ml-1">TELEFON *</label>
+                                        <label htmlFor="phone" className="text-sm font-bold text-muted-foreground ml-1">TELEFON *</label>
                                         <input
+                                            id="phone"
                                             type="tel"
                                             name="phone"
                                             value={formData.phone}
@@ -540,8 +544,9 @@ const CheckoutPage = () => {
 
                                             {formData.createAccount && (
                                                 <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                                    <label className="text-sm font-bold text-muted-foreground ml-1">HESLO *</label>
+                                                    <label htmlFor="password" className="text-sm font-bold text-muted-foreground ml-1">HESLO *</label>
                                                     <input
+                                                        id="password"
                                                         type="password"
                                                         name="password"
                                                         value={formData.password}
@@ -582,20 +587,24 @@ const CheckoutPage = () => {
                                             {formData.isCompany && (
                                                 <>
                                                     <div className="space-y-2 md:col-span-2">
-                                                        <label className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
+                                                        <label htmlFor="billingCompanyName" className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
                                                         <input
+                                                            id="billingCompanyName"
                                                             name="companyName"
                                                             value={formData.companyName}
                                                             onChange={handleChange}
+                                                            placeholder="Název firmy"
                                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
+                                                        <label htmlFor="billingDic" className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
                                                         <input
+                                                            id="billingDic"
                                                             name="dic"
                                                             value={formData.dic}
                                                             onChange={handleChange}
+                                                            placeholder="CZ..."
                                                             className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                         />
                                                     </div>
@@ -617,32 +626,38 @@ const CheckoutPage = () => {
                                             )}
 
                                             <div className="sm:col-span-2 space-y-2 pt-2 border-t">
-                                                <label className="text-sm font-bold text-muted-foreground ml-1">ULICE A ČÍSLO POPISNÉ (FAKTURAČNÍ)</label>
+                                                <label htmlFor="billingStreet" className="text-sm font-bold text-muted-foreground ml-1">ULICE A ČÍSLO POPISNÉ (FAKTURAČNÍ)</label>
                                                 <input
+                                                    id="billingStreet"
                                                     name="billingStreet"
                                                     value={formData.billingStreet}
                                                     onChange={handleChange}
                                                     required={!billingSameAsDelivery}
+                                                    placeholder="Lidická 123"
                                                     className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ)</label>
+                                                <label htmlFor="billingCity" className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ)</label>
                                                 <input
+                                                    id="billingCity"
                                                     name="billingCity"
                                                     value={formData.billingCity}
                                                     onChange={handleChange}
                                                     required={!billingSameAsDelivery}
+                                                    placeholder="Brno"
                                                     className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-sm font-bold text-muted-foreground ml-1">PSČ (FAKTURAČNÍ)</label>
+                                                <label htmlFor="billingZip" className="text-sm font-bold text-muted-foreground ml-1">PSČ (FAKTURAČNÍ)</label>
                                                 <input
+                                                    id="billingZip"
                                                     name="billingZip"
                                                     value={formData.billingZip}
                                                     onChange={handleChange}
                                                     required={!billingSameAsDelivery}
+                                                    placeholder="602 00"
                                                     className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
                                                 />
                                             </div>
@@ -657,8 +672,9 @@ const CheckoutPage = () => {
                                             {formData.isCompany && (
                                                 <>
                                                     <div className="space-y-2 md:col-span-2">
-                                                        <label className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
+                                                        <label htmlFor="billingCompanyName2" className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
                                                         <input
+                                                            id="billingCompanyName2"
                                                             name="companyName"
                                                             value={formData.companyName}
                                                             onChange={handleChange}
@@ -667,8 +683,9 @@ const CheckoutPage = () => {
                                                         />
                                                     </div>
                                                     <div className="space-y-2 md:col-span-2">
-                                                        <label className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
+                                                        <label htmlFor="billingDic2" className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
                                                         <input
+                                                            id="billingDic2"
                                                             name="dic"
                                                             value={formData.dic}
                                                             onChange={handleChange}
@@ -682,8 +699,9 @@ const CheckoutPage = () => {
                                             {/* Personal Fields (ICO option) */}
                                             {!formData.isCompany && (
                                                 <div className="space-y-2 md:col-span-2">
-                                                    <label className="text-sm font-bold text-muted-foreground ml-1">IČO (VOLITELNÉ)</label>
+                                                    <label htmlFor="billingIco2" className="text-sm font-bold text-muted-foreground ml-1">IČO (VOLITELNÉ)</label>
                                                     <input
+                                                        id="billingIco2"
                                                         name="ico"
                                                         value={formData.ico}
                                                         onChange={handleChange}
@@ -709,6 +727,7 @@ const CheckoutPage = () => {
                                     <label className={`block border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.deliveryMethod === 'zasilkovna' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
                                         <div className="flex items-center gap-3">
                                             <input
+                                                id="deliveryZasilkovna"
                                                 type="radio"
                                                 name="deliveryMethod"
                                                 value="zasilkovna"
@@ -895,6 +914,7 @@ const CheckoutPage = () => {
                                     <label className="text-xs font-bold text-muted-foreground ml-1 uppercase">Slevový kód</label>
                                     <div className="flex gap-2">
                                         <input
+                                            id="discountCode"
                                             placeholder="Vložte kód"
                                             className="flex-1 bg-background border-2 border-border rounded-xl px-3 py-2 text-sm focus:border-primary outline-none transition-all"
                                         />

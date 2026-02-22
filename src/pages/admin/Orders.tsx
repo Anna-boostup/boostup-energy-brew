@@ -11,6 +11,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
+import { FileText } from "lucide-react";
+import InvoiceModal from "@/components/admin/InvoiceModal";
 
 
 const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => (
@@ -75,13 +77,19 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                 {order.packeta_barcode && (
                     <Button
                         size="sm"
-                        variant="outline"
-                        className="border-green-600 text-green-600 hover:bg-green-50"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
                         onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
+                        title="Tisk štítku Zásilkovny"
                     >
-                        <Printer className="w-4 h-4" />
+                        <Printer className="h-4 w-4" />
                     </Button>
                 )}
+                <InvoiceModal order={order}>
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        <FileText className="h-4 w-4" />
+                    </Button>
+                </InvoiceModal>
             </div>
         </div>
     </div>
@@ -171,9 +179,8 @@ const Orders = () => {
                                         <div className="flex justify-end gap-2">
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button size="sm" variant="outline">
-                                                        <Eye className="w-4 h-4 mr-2" />
-                                                        Detail
+                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                                        <Eye className="w-4 h-4" />
                                                     </Button>
                                                 </DialogTrigger>
                                                 <OrderDetailDialog order={order} />
@@ -182,8 +189,9 @@ const Orders = () => {
                                             {order.status === 'pending' && (
                                                 <Button
                                                     size="sm"
+                                                    variant="ghost"
                                                     onClick={() => handleStatusChange(order.id, 'paid')}
-                                                    className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                                                    className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                                                     title="Označit jako zaplacené"
                                                 >
                                                     <CheckCircle className="w-4 h-4" />
@@ -192,8 +200,9 @@ const Orders = () => {
                                             {order.status === 'paid' && (
                                                 <Button
                                                     size="sm"
+                                                    variant="ghost"
                                                     onClick={() => handleStatusChange(order.id, 'processing')}
-                                                    className="bg-blue-100 hover:bg-blue-200 text-blue-700 border-blue-200"
+                                                    className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                                     title="Označit jako rozpracované"
                                                 >
                                                     <Clock className="w-4 h-4" />
@@ -202,8 +211,9 @@ const Orders = () => {
                                             {(order.status === 'paid' || order.status === 'processing') && (
                                                 <Button
                                                     size="sm"
+                                                    variant="ghost"
                                                     onClick={() => handleStatusChange(order.id, 'shipped')}
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                                                    className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                                     title="Označit jako vyřízené/odeslané"
                                                 >
                                                     <Truck className="w-4 h-4" />
@@ -212,14 +222,19 @@ const Orders = () => {
                                             {order.packeta_barcode && (
                                                 <Button
                                                     size="sm"
-                                                    variant="outline"
-                                                    className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
                                                     title="Tisk štítku Zásilkovny"
                                                     onClick={() => window.open(`https://www.zasilkovna.cz/api/v4/90e8bba2997e70586b730cd4985a243a/packets/${order.packeta_barcode}.pdf`, '_blank')}
                                                 >
                                                     <Printer className="w-4 h-4" />
                                                 </Button>
                                             )}
+                                            <InvoiceModal order={order}>
+                                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                                                    <FileText className="h-4 w-4" />
+                                                </Button>
+                                            </InvoiceModal>
                                         </div>
                                     </TableCell>
                                 </TableRow>

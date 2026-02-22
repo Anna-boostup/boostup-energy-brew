@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ShoppingBag, Package, Users, Printer, Eye } from "lucide-react";
+import { DollarSign, ShoppingBag, Package, Users, Printer, Eye, FileText } from "lucide-react";
 import { useInventory, Order } from "@/context/InventoryContext";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 import { Badge } from "@/components/ui/badge";
@@ -120,7 +120,11 @@ const AdminDashboard = () => {
                                                         <Printer className="h-4 w-4" />
                                                     </Button>
                                                 )}
-                                                <InvoiceModal order={order} />
+                                                <InvoiceModal order={order}>
+                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                                                        <FileText className="h-4 w-4" />
+                                                    </Button>
+                                                </InvoiceModal>
                                             </div>
                                         </div>
                                     </div>
