@@ -59,6 +59,7 @@ import ContentManagement from "./pages/admin/ContentManagement";
 import TermsOfService from "./pages/legal/TermsOfService";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import Returns from "./pages/legal/Returns";
+import RecurringPaymentTerms from "./pages/legal/RecurringPaymentTerms";
 
 import { CartProvider } from "./context/CartContext";
 import { InventoryProvider } from "./context/InventoryContext";
@@ -138,6 +139,7 @@ const App = () => (
                       <Route path="/obchodni-podminky" element={<TermsOfService />} />
                       <Route path="/ochrana-osobnich-udaju" element={<PrivacyPolicy />} />
                       <Route path="/reklamace" element={<Returns />} />
+                      <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
 
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />

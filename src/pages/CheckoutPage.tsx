@@ -867,7 +867,10 @@ const CheckoutPage = () => {
                             </Button>
 
                             <p className="text-[10px] text-center text-muted-foreground leading-relaxed">
-                                Kliknutím na tlačítko souhlasíte s <a href="/obchodni-podminky" className="underline hover:text-primary">obchodními podmínkami</a> a <a href="/ochrana-osobnich-udaju" className="underline hover:text-primary">zpracováním osobních údajů</a>.
+                                Kliknutím na tlačítko souhlasíte s <a href="/obchodni-podminky" className="underline hover:text-primary">obchodními podmínkami</a>,{' '}
+                                <a href="/ochrana-osobnich-udaju" className="underline hover:text-primary">zpracováním osobních údajů</a> a{' '}
+                                <a href="/podminky-opakovane-platby" className="underline hover:text-primary">podmínkami opakované platby</a>.
+
                             </p>
                         </div>
                     </div>
