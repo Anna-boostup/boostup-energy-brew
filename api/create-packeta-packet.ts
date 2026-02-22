@@ -24,8 +24,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         cod = 0
     } = req.body;
 
-    if (!orderNumber || !firstName || !lastName || !email || !phone || !packetaPointId) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    const safeFirstName = firstName?.trim() || 'Zakaznik';
+    const safeLastName = lastName?.trim() || 'Prijmeni'; // lastName is mandatory
+    const safePhone = (phone || '').replace(/\s/g, '');
+
+    if (!orderNumber || !email || !safePhone || !packetaPointId) {
+        return res.status(400).json({ error: 'Chybí povinné údaje pro Zásilkovnu (ID bodu, email nebo telefon)' });
     }
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
@@ -33,44 +37,53 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <apiPassword>${apiPassword}</apiPassword>
   <packetAttributes>
     <number>${orderNumber}</number>
-    <name>${firstName}</name>
-    <surname>${lastName}</surname>
+    <name>${safeFirstName}</name>
+    <surname>${safeLastName}</surname>
     <email>${email}</email>
-    <phone>${phone.replace(/\s/g, '')}</phone>
+    <phone>${safePhone}</phone>
     <addressId>${packetaPointId}</addressId>
+    <currency>CZK</currency>
     <cod>${cod}</cod>
     <value>${Math.round(total)}</value>
     <weight>${weight}</weight>
-    <currency>CZK</currency>
     <eshop>drinkboostup</eshop>
+    <adultContent>0</adultContent>
   </packetAttributes>
 </createPacket>`;
 
     try {
+        console.log(`Creating Packeta packet for order ${orderNumber}...`);
+
         const response = await fetch(PACKETA_API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/xml; charset=utf-8' },
+            headers: {
+                'Content-Type': 'text/xml; charset=utf-8',
+                'Accept-Language': 'cs-CZ',
+                'Content-Language': 'cs-CZ'
+            },
             body: xml
         });
 
         const text = await response.text();
-        console.log('Packeta API response:', text);
 
-        // Parse barcode and id from XML response
-        const barcodeMatch = text.match(/<barcode>([^<]+)<\/barcode>/);
-        const idMatch = text.match(/<id>([^<]+)<\/id>/);
+        // Detailed error parsing
         const faultMatch = text.match(/<fault>([^<]+)<\/fault>/);
         const faultStringMatch = text.match(/<string>([^<]+)<\/string>/);
+        const detailMatch = text.match(/<detail>([^<]+)<\/detail>/);
 
         if (faultMatch) {
             const errorMsg = faultStringMatch ? faultStringMatch[1] : faultMatch[1];
-            console.error('Packeta fault:', errorMsg);
-            return res.status(400).json({ error: `Packeta chyba: ${errorMsg}` });
+            const detailMsg = detailMatch ? ` (${detailMatch[1]})` : '';
+            console.error('Packeta API Fault:', errorMsg, detailMsg);
+            return res.status(400).json({ error: `Packeta chyba: ${errorMsg}${detailMsg}` });
         }
 
+        const barcodeMatch = text.match(/<barcode>([^<]+)<\/barcode>/);
+        const idMatch = text.match(/<id>([^<]+)<\/id>/);
+
         if (!barcodeMatch || !idMatch) {
-            console.error('Could not parse Packeta response:', text);
-            return res.status(500).json({ error: 'Neočekávaná odpověď z Packeta API' });
+            console.error('Unexpected Packeta raw response:', text);
+            return res.status(500).json({ error: 'Chyba při parsování odpovědi ze Zásilkovny. Zkontrolujte logy.' });
         }
 
         const barcode = barcodeMatch[1];
@@ -78,8 +91,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         return res.status(200).json({ success: true, barcode, packetId });
 
-    } catch (err) {
-        console.error('Packeta API error:', err);
-        return res.status(500).json({ error: 'Chyba při komunikaci s Packeta API' });
+    } catch (err: any) {
+        console.error('Packeta API connection error:', err);
+        return res.status(500).json({ error: `Chyba spojení se Zásilkovnou: ${err.message}` });
     }
 }
