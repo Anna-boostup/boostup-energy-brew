@@ -177,9 +177,9 @@ export const SITE_CONTENT = {
         headline: "MÁTE DOTAZ?",
         description: "Zajímá vás něco ohledně našich produktů, partnerství nebo jen chcete pozdravit? Napište nám nebo zavolejte, rádi se s vámi spojíme.",
         info: {
-            phone: { label: "Telefon", value: "777 333 327" },
-            email: { label: "Email", value: "boostupteam@email.com" },
-            address: { label: "Adresa", value: { line1: "Lidická 700/19", line2: "602 00 Brno, Czech Republic" } }
+            phone: { label: "Telefon", value: "775 222 037" },
+            email: { label: "Email", value: "info@drinkboostup.cz" },
+            address: { label: "Adresa", value: { line1: "Chaloupkova 3002/1a, Královo Pole", line2: "612 00 Brno, Czech Republic" } }
         },
         form: {
             name: { label: "Jméno", placeholder: "Jan Novák" },
@@ -221,11 +221,11 @@ export const SITE_CONTENT = {
         ],
         contact: {
             title: "KONTAKT",
-            email: "hello@boostup.cz",
-            phone: "+420 777 123 456",
+            email: "info@drinkboostup.cz",
+            phone: "+420 775 222 037",
             address: {
-                line1: "Lidická 700/19",
-                line2: "602 00 Brno, Czech Republic"
+                line1: "Chaloupkova 3002/1a, Královo Pole",
+                line2: "612 00 Brno, Czech Republic"
             }
         },
         bottom: {
