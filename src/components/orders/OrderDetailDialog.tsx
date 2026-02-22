@@ -63,10 +63,12 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                         <p className="text-sm text-muted-foreground">Objednávka #{order.id}</p>
                         <p className="text-sm text-muted-foreground">Datum: {new Date(order.date || order.created_at).toLocaleDateString()}</p>
                     </div>
-                    <div className="text-right">
-                        <Badge variant={order.status === 'paid' ? 'secondary' : order.status === 'shipped' ? 'default' : 'outline'} className="text-lg px-4 py-1">
-                            {order.status === 'pending' ? 'Čeká na platbu' :
-                                order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+                    <div className="text-right flex flex-col gap-2 items-end">
+                        <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={`text-sm px-4 py-1 ${order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}`}>
+                            {order.status === 'pending' ? 'Platba: Čeká na zaplacení' : 'Platba: Zaplaceno'}
+                        </Badge>
+                        <Badge variant={order.status === 'shipped' ? 'default' : 'outline'} className={`text-sm px-4 py-1 ${order.status === 'shipped' ? 'bg-blue-600' : 'border-amber-200 text-amber-700'}`}>
+                            {order.status === 'shipped' ? 'Stav: Vyřízena' : 'Stav: Čeká k vyřízení'}
                         </Badge>
                     </div>
                 </div>

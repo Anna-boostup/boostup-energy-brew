@@ -20,13 +20,14 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                 <p className="font-bold">#{order.id.slice(0, 8)}</p>
                 <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleDateString()}</p>
             </div>
-            <Badge variant={
-                order.status === 'pending' ? 'outline' :
-                    order.status === 'paid' ? 'secondary' : 'default'
-            }>
-                {order.status === 'pending' ? 'Čeká na platbu' :
-                    order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
-            </Badge>
+            <div className="flex flex-col gap-1 items-end">
+                <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}>
+                    {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
+                </Badge>
+                <Badge variant={order.status === 'shipped' ? 'default' : 'outline'} className={order.status === 'shipped' ? 'bg-blue-600' : 'border-amber-200 text-amber-700'}>
+                    {order.status === 'shipped' ? 'Stav: Vyřízena' : 'Stav: Čeká k vyřízení'}
+                </Badge>
+            </div>
         </div>
 
         <div className="space-y-1">
@@ -52,8 +53,13 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     </DialogTrigger>
                     <OrderDetailDialog order={order} />
                 </Dialog>
-                {order.status !== 'shipped' && (
-                    <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')}>
+                {order.status === 'pending' && (
+                    <Button size="sm" onClick={() => onStatusChange(order.id, 'paid')} className="bg-emerald-600 hover:bg-emerald-700">
+                        <CheckCircle className="w-4 h-4" />
+                    </Button>
+                )}
+                {order.status === 'paid' && (
+                    <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-blue-600 hover:bg-blue-700">
                         <Truck className="w-4 h-4" />
                     </Button>
                 )}
@@ -122,16 +128,14 @@ const Orders = () => {
                                     </TableCell>
                                     <TableCell className="font-bold">{order.total} Kč</TableCell>
                                     <TableCell>
-                                        <Badge variant={
-                                            order.status === 'pending' ? 'outline' :
-                                                order.status === 'paid' ? 'secondary' : 'default'
-                                        }>
-                                            {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
-                                            {order.status === 'paid' && <CheckCircle className="w-3 h-3 mr-1" />}
-                                            {order.status === 'shipped' && <Truck className="w-3 h-3 mr-1" />}
-                                            {order.status === 'pending' ? 'Čeká na platbu' :
-                                                order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
-                                        </Badge>
+                                        <div className="flex flex-col gap-1">
+                                            <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 w-fit' : 'w-fit'}>
+                                                {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
+                                            </Badge>
+                                            <Badge variant={order.status === 'shipped' ? 'default' : 'outline'} className={order.status === 'shipped' ? 'bg-blue-600 w-fit' : 'border-amber-200 text-amber-700 w-fit'}>
+                                                {order.status === 'shipped' ? 'Stav: Vyřízena' : 'Stav: Čeká k vyřízení'}
+                                            </Badge>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
@@ -145,11 +149,22 @@ const Orders = () => {
                                                 <OrderDetailDialog order={order} />
                                             </Dialog>
 
-                                            {order.status !== 'shipped' && (
+                                            {order.status === 'pending' && (
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleStatusChange(order.id, 'paid')}
+                                                    className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                                                    title="Označit jako zaplacené"
+                                                >
+                                                    <CheckCircle className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                            {order.status === 'paid' && (
                                                 <Button
                                                     size="sm"
                                                     onClick={() => handleStatusChange(order.id, 'shipped')}
-                                                    className="bg-primary hover:bg-primary/90"
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                                                    title="Označit jako vyřízené/odeslané"
                                                 >
                                                     <Truck className="w-4 h-4" />
                                                 </Button>
