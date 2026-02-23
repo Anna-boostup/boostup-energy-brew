@@ -65,7 +65,12 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
 
     if (!order) return null;
 
-    const qrVS = order.id.replace(/\D/g, '');
+    // Numeric order number for VS (max 10 digits for Czech banks)
+    const qrVS = (order.order_number || order.id.replace(/\D/g, '')).slice(0, 10);
+
+    // Properly URL encode the SPD string
+    const spdData = `SPD*1.0*ACC:${bank.iban}*AM:${order.total}.00*CC:CZK*VS:${qrVS}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(spdData)}`;
 
     return (
         <DialogContent className="max-w-4xl max-h-[95vh] p-0 overflow-hidden [&>button]:hidden">
@@ -221,7 +226,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                     <div className="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row gap-8 items-center">
                         <div className="bg-white p-3 rounded-xl shrink-0">
                             <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SPD*1.0*ACC:${bank.iban}*AM:${order.total}.00*CC:CZK*VS:${qrVS}`}
+                                src={qrUrl}
                                 alt="QR Platba"
                                 className="w-32 h-32"
                             />
@@ -231,12 +236,16 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-slate-400 text-xs font-bold uppercase mb-1">Účet</p>
-                                    <p className="font-mono text-lg font-bold">2102766861/2010</p>
+                                    <p className="font-mono text-lg font-bold">{bank.accountNumber}/{bank.bankCode}</p>
                                 </div>
                                 <div>
                                     <p className="text-slate-400 text-xs font-bold uppercase mb-1">VS</p>
-                                    <p className="font-mono text-lg font-bold">{order.id.replace(/\D/g, '')}</p>
+                                    <p className="font-mono text-lg font-bold">{qrVS}</p>
                                 </div>
+                            </div>
+                            <div>
+                                <p className="text-slate-400 text-xs font-bold uppercase mb-1">Banka</p>
+                                <p className="font-bold">{bank.bankName}</p>
                             </div>
                             <p className="text-slate-400 text-xs italic">Naskenujte QR kód ve své bankovní aplikaci pro okamžitou platbu.</p>
                         </div>
