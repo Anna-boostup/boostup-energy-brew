@@ -791,25 +791,30 @@ const CheckoutPage = () => {
                                         <button
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'applepay' }))}
-                                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${formData.paymentMethod === 'applepay' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
+                                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all h-24 justify-center ${formData.paymentMethod === 'applepay' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
                                         >
-                                            <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center text-white text-xl"></div>
-                                            <span className="font-bold text-xs">Apple Pay</span>
+                                            <div className="h-8 w-auto flex items-center justify-center">
+                                                <svg viewBox="0 0 42 17" className="h-full w-auto">
+                                                    <path d="M5.564 12.63c-.15 1.05-.8 1.933-1.854 2.21-1.01.275-2.09-.324-2.457-1.334-.374-1.025.074-2.227 1.01-2.73 1.012-.533 2.193-.2 2.834.735.152.22.317.373.467.435v.684zm-3.08-1.57c-.703.11-1.32.744-1.464 1.543-.142.793.18 1.57.818 1.9.64.332 1.488.163 2.05-.41.385-.395.59-1.045.59-1.92 0-.25-.015-.473-.042-.656-.63-.496-1.3-.544-1.95-.457zm22.463 3.65c.57.106 1.343.344 1.764.57 2.25 1.258 4.29 1.13 6.096-.388.932-.782 1.324-1.636 1.324-3.52v-2.14c0-.987-.134-1.282-.57-1.282-.544 0-.687.295-.687 1.305v2.09c0 1.953-.353 2.37-1.87 3.23-.746.422-2.152.684-3.793.444-1.6-.235-3.076-.848-3.076-2.22 0-1.895 2.15-2.285 4.885-3.056 2.196-.618 3.86-1.125 3.86-2.905 0-1.983-1.643-2.956-4.1-2.956-2.314 0-4.04 1.066-4.04 2.19 0 .5.166.8.528.8.442 0 .59-.3.59-1.012 0-.46.52-.767 1.104-.767 1.144 0 1.83.6 1.83 1.626 0 1.282-.6 1.486-2.378 1.99-2.822.793-4.887 1.39-4.887 3.32 0 1.93 1.364 2.5 3.536 2.68zm2.497-5.065c-2.457.65-3.513.882-3.513 1.977 0 .493.593 1.05 1.71 1.05a8.773 8.773 0 0 0 3.016-.86c1.11-.632 1.373-.918 1.373-1.666 0-.825-.633-1.025-2.586-1.5zm11.332 5.28c1.396 0 2.254-.882 2.254-1.897 0-1.054-.86-1.93-2.254-1.93-1.394 0-2.245.876-2.245 1.93 0 1.015.85 1.897 2.245 1.897zm0-1.218c-.808 0-1.013-.438-1.013-.711 0-.256.242-.712 1.013-.712.784 0 1.006.44 1.006.712 0 .285-.205.711-1.006.711zm-5.73 1.218a2.126 2.126 0 0 0 1.764-1.04v.852c0 .283.08.385.405.385.344 0 .416-.1.416-.397V9.52c0-.285-.08-.398-.416-.398-.323 0-.405.113-.405.398v.67a1.996 1.996 0 0 0-1.78-.89c-1.393 0-2.245.895-2.245 1.935 0 1.022.852 1.897 2.26 1.897zm.05-1.218c-.896 0-1.047-.432-1.047-.704 0-.27.151-.72 1.047-.72.887 0 1.033.45 1.033.72 0 .272-.146.704-1.033.704zm-14.8-1.516V7.48c0-.987-.134-1.282-.57-1.282-.544 0-.687.295-.687 1.305v3.834c0 .825-.264 1.107-.932 1.32-.57.177-.96.223-1.425.132v.566c.338.152.886.152 1.4-.047 1.5-.544 2.214-1.238 2.214-3zm1.144 2.735c.32 0 .402-.113.402-.4V9.52c0-.285-.082-.398-.418-.398-.325 0-.403.113-.403.398v3.476c0 .287.08.4.42.4zm-.016-5.83c.328 0 .545-.235.545-.568a.56.56 0 0 0-.545-.57c-.322 0-.545.244-.545.57s.223.568.545.568zM5.98 5.75c-.32 0-.62-.112-.892-.303.582-.44.957-1.12.957-1.888 0-1.353-1.135-2.433-2.522-2.408-1.133.023-2.096.84-2.33 1.932A2.432 2.432 0 0 0 1.53 5.48c.18.066.368.1.558.102a.4.4 0 0 1 .4.4l-.066 3.535c-.01.378.07.487.42.487.315 0 .41-.1.41-.39V6.014c0-.236.192-.428.428-.428h2.3c.362 0 .438-.113.438-.418 0-.306-.07-.418-.438-.418z" fill="currentColor" />
+                                                </svg>
+                                            </div>
+                                            <span className="font-bold text-[10px] uppercase tracking-wider text-muted-foreground/60">Apple Pay</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'googlepay' }))}
-                                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all ${formData.paymentMethod === 'googlepay' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
+                                            className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all h-24 justify-center ${formData.paymentMethod === 'googlepay' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
                                         >
-                                            <div className="w-10 h-10 bg-white border border-border rounded-lg flex items-center justify-center">
-                                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                            <div className="h-8 flex items-center justify-center">
+                                                <svg width="42" height="17" viewBox="0 0 42 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.564 12.63c-.15 1.05-.8 1.933-1.854 2.21-1.01.275-2.09-.324-2.457-1.334-.374-1.025.074-2.227 1.01-2.73 1.012-.533 2.193-.2 2.834.735.152.22.317.373.467.435v.684zm-3.08-1.57c-.703.11-1.32.744-1.464 1.543-.142.793.18 1.57.818 1.9.64.332 1.488.163 2.05-.41.385-.395.59-1.045.59-1.92 0-.25-.015-.473-.042-.656-.63-.496-1.3-.544-1.95-.457z" fill="currentColor" />
                                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
                                                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
                                                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                                                 </svg>
                                             </div>
-                                            <span className="font-bold text-xs">Google Pay</span>
+                                            <span className="font-bold text-[10px] uppercase tracking-wider text-muted-foreground/60">Google Pay</span>
                                         </button>
                                     </div>
 
@@ -817,14 +822,32 @@ const CheckoutPage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'card' }))}
-                                        className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${formData.paymentMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
+                                        className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all h-24 ${formData.paymentMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
                                     >
-                                        <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-primary">
-                                            <CreditCard size={20} />
+                                        <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center text-primary shrink-0">
+                                            <CreditCard size={24} />
                                         </div>
                                         <div className="flex-1 text-left">
-                                            <p className="font-bold">Platební karta</p>
-                                            <p className="text-xs text-muted-foreground">Visa, Mastercard, Maestro</p>
+                                            <p className="font-extrabold text-base">Platební karta</p>
+                                            <div className="flex gap-2 mt-1">
+                                                {/* Visa */}
+                                                <svg viewBox="0 0 24 24" className="w-8 h-5 text-slate-400 group-hover:text-primary transition-colors">
+                                                    <path fill="currentColor" d="M1 4h22v16H1z" opacity=".1" />
+                                                    <path fill="#1A1F71" d="M3.3 8L2.4 13.9H4.1L5 8H3.3zm5.7 0L7.4 11.7l-.2-1.2h-.1l-.4-1.9-.3-.6H4.2l.1.5h1.2l1.3 4.9h1.7L10.7 8H9zm4.2 0l-1.3 5.9h1.6l1.3-5.9h-1.6zm5.8 1.9c-.3-.2-.8-.3-1.4-.3-1.6 0-2.3 1-2.3 1.9 0 1.1 1.2 1.3 1.2 2.1 0 .3-.3.6-.9.6-.8 0-1.3-.4-1.3-.4l-.1.9c.3.2.9.4 1.5.4 1.7 0 2.4-.9 2.4-2 0-1.2-1.2-1.4-1.2-2.1 0-.3.3-.5.8-.5.7 0 1 .3 1 .3l.3-1z" />
+                                                    <path fill="#F7B600" d="M3.2 8L2.8 10.3c.7-.4 2.1-.8 3.3-.8L3.2 8z" />
+                                                </svg>
+                                                {/* Mastercard */}
+                                                <svg viewBox="0 0 24 24" className="w-8 h-5">
+                                                    <circle cx="9" cy="12" r="6" fill="#EB001B" opacity=".8" />
+                                                    <circle cx="15" cy="12" r="6" fill="#F79E1B" opacity=".8" />
+                                                </svg>
+                                                {/* Maestro */}
+                                                <svg viewBox="0 0 24 24" className="w-8 h-5">
+                                                    <circle cx="9" cy="12" r="6" fill="#0061A8" opacity=".8" />
+                                                    <circle cx="15" cy="12" r="6" fill="#ED1C2E" opacity=".8" />
+                                                    <path fill="#FFFFFF" d="M12 7.7a6 6 0 0 0 0 8.6 6 6 0 0 0 0-8.6z" opacity=".5" />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </button>
 
