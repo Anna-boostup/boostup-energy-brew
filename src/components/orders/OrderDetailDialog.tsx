@@ -103,7 +103,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                                     variant="default"
                                     size="sm"
                                     className="h-9 bg-green-600 hover:bg-green-700 gap-2"
-                                    onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
+                                    onClick={() => window.open(`/api/get-packeta-label?packetId=${order.packeta_packet_id}`, '_blank')}
                                 >
                                     <Printer className="w-4 h-4" />
                                     Štítek

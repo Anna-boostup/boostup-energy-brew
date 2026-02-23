@@ -53,22 +53,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: `Packeta: ${errorMsg}` });
         }
 
-        // Extract base64 PDF from response
-        const pdfMatch = text.match(/<response>([^<]+)<\/response>/);
+        // Extract base64 PDF from response - check multiple possible tags
+        const pdfMatch = text.match(/<response>([^<]+)<\/response>/) ||
+            text.match(/<labelContents>([^<]+)<\/labelContents>/) ||
+            text.match(/<result>([^<]+)<\/result>/) ||
+            text.match(/<content>([^<]+)<\/content>/);
+
         if (!pdfMatch || !pdfMatch[1]) {
-            // Try alternative response tag
-            const labelMatch = text.match(/<labelContents>([^<]+)<\/labelContents>/);
-            if (!labelMatch || !labelMatch[1]) {
-                console.error('No PDF content in Packeta response:', text.substring(0, 1000));
-                return res.status(500).json({ error: 'Failed to extract PDF from Packeta response' });
-            }
-            const pdfBuffer = Buffer.from(labelMatch[1], 'base64');
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `inline; filename="label-${sanitizedId}.pdf"`);
-            return res.send(pdfBuffer);
+            console.error('No PDF content in Packeta response. Full response summary:', text.substring(0, 1000));
+            return res.status(500).json({ error: 'Failed to extract PDF from Packeta response' });
         }
 
-        const pdfBuffer = Buffer.from(pdfMatch[1], 'base64');
+        const pdfBuffer = Buffer.from(pdfMatch[1].trim(), 'base64');
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="label-${sanitizedId}.pdf"`);
         return res.send(pdfBuffer);
