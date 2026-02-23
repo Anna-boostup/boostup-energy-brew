@@ -852,11 +852,11 @@ const CheckoutPage = () => {
                                     </button>
 
                                     {/* Fast Bank Transfer */}
-                                    <div className={`p-6 rounded-3xl border-2 transition-all shadow-sm ${formData.paymentMethod === 'transfer_fast' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background hover:border-primary/50'}`}>
+                                    <div className={`rounded-3xl border-2 transition-all shadow-sm ${formData.paymentMethod === 'transfer_fast' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background hover:border-primary/50'}`}>
                                         <button
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_fast' }))}
-                                            className="w-full flex items-center gap-6 mb-6 group h-32"
+                                            className="w-full flex items-center gap-6 p-6 group h-32"
                                         >
                                             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${formData.paymentMethod === 'transfer_fast' ? 'bg-primary shadow-lg scale-110' : 'bg-secondary'}`}>
                                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${formData.paymentMethod === 'transfer_fast' ? 'text-white' : 'text-primary'}`}>
@@ -875,7 +875,7 @@ const CheckoutPage = () => {
                                         </button>
 
                                         {formData.paymentMethod === 'transfer_fast' && (
-                                            <div className="grid grid-cols-4 sm:grid-cols-4 gap-3 animate-in fade-in zoom-in-95 duration-300">
+                                            <div className="p-6 pt-0 grid grid-cols-4 sm:grid-cols-4 gap-3 animate-in fade-in zoom-in-95 duration-300">
                                                 {[
                                                     { id: 'csas', name: 'Spořitelna', domain: 'csas.cz' },
                                                     { id: 'kb', name: 'KB', domain: 'kb.cz' },
