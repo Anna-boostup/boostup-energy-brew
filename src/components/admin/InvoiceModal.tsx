@@ -19,7 +19,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
     // SPAD (Short Payment Descriptor) string generation
     // Format: SPD:1.0*ACC:IBAN*AM:AMOUNT*CC:CURRENCY*MSG:MESSAGE
     const generateSpad = () => {
-        const vs = order.id.replace(/\D/g, '').slice(0, 10);
+        const vs = order.id.replace(/\D/g, '').slice(-10);
         return `SPD*1.0*ACC:${bank.iban}*AM:${order.total}.00*CC:CZK*VS:${vs}`;
     };
 

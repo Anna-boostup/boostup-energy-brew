@@ -66,7 +66,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
     if (!order) return null;
 
     // Numeric order number for VS (max 10 digits for Czech banks)
-    const qrVS = (order.order_number || order.id.replace(/\D/g, '')).slice(0, 10);
+    const qrVS = (order.id.replace(/\D/g, '')).slice(-10);
 
     // Properly URL encode the SPD string
     const spdData = `SPD*1.0*ACC:${bank.iban}*AM:${order.total}.00*CC:CZK*VS:${qrVS}`;

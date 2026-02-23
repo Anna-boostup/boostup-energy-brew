@@ -109,11 +109,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dispatch({ type: 'CLEAR_CART' });
     };
 
-    const cartTotal = state.items.reduce((total, item) => {
+    const cartTotal = parseFloat(state.items.reduce((total, item) => {
         // Apply 15% discount for subscriptions
         const price = item.subscriptionInterval ? item.price * 0.85 : item.price;
         return total + (price * item.quantity);
-    }, 0);
+    }, 0).toFixed(2));
     const cartCount = state.items.reduce((count, item) => count + item.quantity, 0);
 
     return (
