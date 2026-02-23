@@ -36,7 +36,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                 )}
             </DialogTrigger>
             {/* Increased width and max-width for better print preview */}
-            <DialogContent className="max-w-4xl max-h-[95vh] p-0 overflow-hidden [&>button]:hidden">
+            <DialogContent className="max-w-4xl max-h-[95vh] p-0 overflow-y-auto [&>button]:hidden">
 
                 {/* Custom Sticky Header Toolbar */}
                 <div className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-50 shadow-sm no-print">
@@ -62,7 +62,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                     </div>
                 </div>
 
-                <div className="overflow-y-auto p-6 md:p-12 bg-slate-50">
+                <div className="p-6 md:p-12 bg-slate-50">
                     <div ref={invoiceRef} className="bg-white p-8 md:p-12 text-black shadow-lg rounded-sm mx-auto max-w-[800px] min-h-[1100px]" id="invoice-print">
                         {/* Header */}
                         <div className="flex justify-between items-start mb-12 border-b pb-8">
