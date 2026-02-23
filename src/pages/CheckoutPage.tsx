@@ -824,15 +824,19 @@ const CheckoutPage = () => {
                                         onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'card' }))}
                                         className={`w-full p-6 rounded-3xl border-2 flex items-center gap-6 transition-all h-32 shadow-sm hover:shadow-md group ${formData.paymentMethod === 'card' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background hover:border-primary/50'}`}
                                     >
-                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${formData.paymentMethod === 'card' ? 'bg-primary text-white shadow-lg scale-110' : 'bg-secondary text-primary'}`}>
-                                            <CreditCard size={32} />
+                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${formData.paymentMethod === 'card' ? 'bg-primary shadow-lg scale-110' : 'bg-secondary'}`}>
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="2" y="5" width="20" height="14" rx="3" className={`${formData.paymentMethod === 'card' ? 'fill-white/20' : 'fill-primary/10'}`} />
+                                                <path d="M2 9H22" stroke="currentColor" strokeWidth="2" className={`${formData.paymentMethod === 'card' ? 'text-white' : 'text-primary'}`} />
+                                                <rect x="5" y="13" width="4" height="2" rx="0.5" className={`${formData.paymentMethod === 'card' ? 'fill-white' : 'fill-primary'}`} />
+                                            </svg>
                                         </div>
                                         <div className="flex-1 text-left">
                                             <div className="flex justify-between items-center pr-2">
-                                                <p className="font-black text-lg">Platební karta</p>
+                                                <p className="font-black text-lg">Kartou online</p>
                                                 <div className="flex gap-4 items-center scale-90 sm:scale-100 origin-right">
                                                     {/* Visa */}
-                                                    <svg width="42" height="14" viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="46" height="15" viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M12.924 1.15H10.16L8.436 10.375H11.2L12.924 1.15ZM21.9 1.15C21.036 1.15 20.364 1.4 19.98 2.3L16.2 11.275H19.08L19.656 9.6125H22.98L23.292 11.275H25.92L23.58 1.15H21.9ZM20.196 8.0125L21.36 4.7L22.02 8.0125H20.196ZM6.396 1.15L3.636 9.175L3.336 7.625C2.796 5.8 1.476 3.9625 0 3.0875L2.556 12.5625H5.436L9.756 1.15H6.396Z" fill="#1A1F71" />
                                                         <path d="M12.552 1.15H15.156L13.884 10.375C13.884 10.375 13.56 12.3875 16.512 12.3875H17.484V14.6125C17.484 14.6125 15.696 15 14.484 15C11.532 15 11.196 12.875 11.196 12.875L12.552 1.15Z" fill="#F7B600" />
                                                     </svg>
@@ -853,12 +857,21 @@ const CheckoutPage = () => {
                                         <button
                                             type="button"
                                             onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_fast' }))}
-                                            className="w-full flex items-center gap-6 mb-6 group"
+                                            className="w-full flex items-center gap-6 mb-6 group h-32"
                                         >
-                                            <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center text-primary italic font-black text-xl shadow-inner group-hover:scale-110 transition-transform">⚡</div>
+                                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${formData.paymentMethod === 'transfer_fast' ? 'bg-primary shadow-lg scale-110' : 'bg-secondary'}`}>
+                                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${formData.paymentMethod === 'transfer_fast' ? 'text-white' : 'text-primary'}`}>
+                                                    <path d="M3 21H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                                    <path d="M5 10V18" stroke="currentColor" strokeWidth="2" />
+                                                    <path d="M9 10V18" stroke="currentColor" strokeWidth="2" />
+                                                    <path d="M15 10V18" stroke="currentColor" strokeWidth="2" />
+                                                    <path d="M19 10V18" stroke="currentColor" strokeWidth="2" />
+                                                    <path d="M12 3L2 10H22L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                                                </svg>
+                                            </div>
                                             <div className="flex-1 text-left">
-                                                <p className="font-black text-lg">Rychlá bankovní platba</p>
-                                                <p className="text-sm text-muted-foreground font-medium">Okamžitý převod přes vaše bankovnictví</p>
+                                                <p className="font-black text-lg">Okamžitá platba bankou</p>
+                                                <p className="text-sm text-muted-foreground font-medium">Převod přes platební bránu</p>
                                             </div>
                                         </button>
 
@@ -890,16 +903,26 @@ const CheckoutPage = () => {
                                         )}
                                     </div>
 
-                                    {/* Manual Bank Transfer (QR Code) */}
+                                    {/* Manual Bank Transfer (Proforma) */}
                                     <button
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_manual', subMethod: '' }))}
-                                        className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${formData.paymentMethod === 'transfer_manual' ? 'border-primary bg-primary/5' : 'border-border bg-background'}`}
+                                        className={`w-full p-6 rounded-3xl border-2 flex items-center gap-6 transition-all h-32 shadow-sm hover:shadow-md group ${formData.paymentMethod === 'transfer_manual' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background hover:border-primary/50'}`}
                                     >
-                                        <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-primary italic font-black text-xs">QR</div>
+                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${formData.paymentMethod === 'transfer_manual' ? 'bg-primary shadow-lg scale-110' : 'bg-secondary'}`}>
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${formData.paymentMethod === 'transfer_manual' ? 'text-white' : 'text-primary'}`}>
+                                                <path d="M3 3H9V9H3V3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                                                <path d="M15 3H21V9H15V3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                                                <path d="M3 15H9V21H3V15Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                                                <path d="M15 15H21V21H15V15Z" stroke="currentColor" strokeWidth="1" />
+                                                <path d="M18 18H18.01" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                                                <path d="M12 3V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray="1 4" />
+                                                <path d="M3 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray="1 4" />
+                                            </svg>
+                                        </div>
                                         <div className="flex-1 text-left">
-                                            <p className="font-bold">Bankovní převod - QR kód</p>
-                                            <p className="text-xs text-muted-foreground">Zobrazení údajů a QR kódu po dokončení</p>
+                                            <p className="font-black text-lg">Bankovní převod (Proforma)</p>
+                                            <p className="text-sm text-muted-foreground font-medium mt-1">Platební údaje a QR kód po dokončení</p>
                                         </div>
                                     </button>
                                 </div>
