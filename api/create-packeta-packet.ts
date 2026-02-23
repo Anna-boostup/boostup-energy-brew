@@ -46,7 +46,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <cod>${cod}</cod>
     <value>${Math.round(total)}</value>
     <weight>${weight}</weight>
-    <eshop>drinkboostup</eshop>
+    <eshop>SKL1</eshop>
+    <senderAddressId>546263</senderAddressId>
     <adultContent>0</adultContent>
   </packetAttributes>
 </createPacket>`;

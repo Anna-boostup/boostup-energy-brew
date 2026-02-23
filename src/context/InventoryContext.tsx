@@ -80,6 +80,7 @@ interface InventoryContextType {
     addOrder: (order: Order) => Promise<boolean>;
     updateOrderStatus: (orderId: string, status: Order['status']) => void;
     updateProduct: (sku: string, updates: Partial<Product>) => Promise<void>;
+    updateOrderPacketaInfo: (orderId: string, barcode: string, packetId: string) => Promise<void>;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -302,6 +303,24 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
     };
 
+    const updateOrderPacketaInfo = async (orderId: string, barcode: string, packetId: string) => {
+        const { error } = await supabase
+            .from('orders')
+            .update({
+                packeta_barcode: barcode,
+                packeta_packet_id: packetId
+            })
+            .eq('id', orderId);
+
+        if (error) {
+            console.error('Error updating packeta info:', error);
+            throw error;
+        }
+
+        // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, packeta_barcode: barcode, packeta_packet_id: packetId } : o));
+    };
+
     return (
         <InventoryContext.Provider value={{
             stock,
@@ -314,7 +333,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             getStock,
             addOrder,
             updateOrderStatus,
-            updateProduct
+            updateProduct,
+            updateOrderPacketaInfo
         }}>
             {children}
         </InventoryContext.Provider>

@@ -8,8 +8,11 @@ import InvoiceModal from "@/components/admin/InvoiceModal";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
+import { useInventory } from "@/context/InventoryContext";
+
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { toast } = useToast();
+    const { updateOrderPacketaInfo } = useInventory();
     const [isCreatingPacket, setIsCreatingPacket] = useState(false);
 
     // Helper to safely format currency if formatPrice isn't available or fails
@@ -35,12 +38,14 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
             });
 
             const packetaData = await packetaRes.json();
-            if (packetaRes.ok && packetaData.barcode) {
+            if (packetaRes.ok && packetaData.barcode && packetaData.packetId) {
+                // Update the order in the database and local context immediately
+                await updateOrderPacketaInfo(order.id, packetaData.barcode, packetaData.packetId);
+
                 toast({
                     title: "Zásilka vytvořena",
-                    description: `Kód zásilky: ${packetaData.barcode}. Reloadněte stránku pro zobrazení tlačítka tisku.`,
+                    description: `Kód zásilky: ${packetaData.barcode}. Tlačítko pro tisk štítku je nyní k dispozici.`,
                 });
-                // In a real app we would update the local state or refetch
             } else {
                 throw new Error(packetaData.error || 'Neznámá chyba');
             }
