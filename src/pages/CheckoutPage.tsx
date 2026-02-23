@@ -818,34 +818,33 @@ const CheckoutPage = () => {
                                             <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50">Google Pay</span>
                                         </button>
                                     </div>
-
                                     {/* Card */}
                                     <button
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'card' }))}
-                                        className={`w-full p-6 rounded-3xl border-2 flex items-center gap-6 transition-all h-28 shadow-sm hover:shadow-md ${formData.paymentMethod === 'card' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background hover:border-primary/50'}`}
+                                        className={`w-full p-6 rounded-3xl border-2 flex items-center gap-6 transition-all h-32 shadow-sm hover:shadow-md group ${formData.paymentMethod === 'card' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background hover:border-primary/50'}`}
                                     >
-                                        <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
+                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${formData.paymentMethod === 'card' ? 'bg-primary text-white shadow-lg scale-110' : 'bg-secondary text-primary'}`}>
                                             <CreditCard size={32} />
                                         </div>
                                         <div className="flex-1 text-left">
                                             <div className="flex justify-between items-center pr-2">
                                                 <p className="font-black text-lg">Platební karta</p>
-                                                <div className="flex gap-4">
+                                                <div className="flex gap-4 items-center scale-90 sm:scale-100 origin-right">
                                                     {/* Visa */}
-                                                    <svg width="40" height="24" viewBox="0 0 24 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg width="42" height="14" viewBox="0 0 100 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M12.924 1.15H10.16L8.436 10.375H11.2L12.924 1.15ZM21.9 1.15C21.036 1.15 20.364 1.4 19.98 2.3L16.2 11.275H19.08L19.656 9.6125H22.98L23.292 11.275H25.92L23.58 1.15H21.9ZM20.196 8.0125L21.36 4.7L22.02 8.0125H20.196ZM6.396 1.15L3.636 9.175L3.336 7.625C2.796 5.8 1.476 3.9625 0 3.0875L2.556 12.5625H5.436L9.756 1.15H6.396Z" fill="#1A1F71" />
                                                         <path d="M12.552 1.15H15.156L13.884 10.375C13.884 10.375 13.56 12.3875 16.512 12.3875H17.484V14.6125C17.484 14.6125 15.696 15 14.484 15C11.532 15 11.196 12.875 11.196 12.875L12.552 1.15Z" fill="#F7B600" />
                                                     </svg>
                                                     {/* Mastercard */}
-                                                    <svg width="40" height="24" viewBox="0 0 24 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle cx="7.5" cy="7.5" r="7.5" fill="#EB001B" />
-                                                        <circle cx="16.5" cy="7.5" r="7.5" fill="#F79E1B" />
-                                                        <path d="M12 2.625C10.125 3.9375 9 6.0625 9 8.4375C9 10.8125 10.125 12.9375 12 14.25C13.875 12.9375 15 10.8125 15 8.4375C15 6.0625 13.875 3.9375 12 2.625Z" fill="#FF5F00" />
+                                                    <svg width="34" height="22" viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <circle cx="10" cy="10" r="10" fill="#EB001B" />
+                                                        <circle cx="22" cy="10" r="10" fill="#F79E1B" />
+                                                        <path d="M16 2.3C17.7 4.2 18.7 6.8 18.7 10C18.7 13.2 17.7 15.8 16 17.7C14.3 15.8 13.3 13.2 13.3 10C13.3 6.8 14.3 4.2 16 2.3Z" fill="#FF5F00" />
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-muted-foreground font-medium mt-1">Visa, Mastercard, Apple Pay, Google Pay</p>
+                                            <p className="text-sm text-muted-foreground font-medium mt-1">Visa, Mastercard, Maestro</p>
                                         </div>
                                     </button>
 
