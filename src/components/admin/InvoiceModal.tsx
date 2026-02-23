@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Printer, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { SITE_CONTENT } from "@/config/site-content";
 
 interface InvoiceModalProps {
     order: Order;
@@ -13,12 +14,12 @@ interface InvoiceModalProps {
 
 const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
     const invoiceRef = useRef<HTMLDivElement>(null);
+    const bank = SITE_CONTENT.bankInfo;
 
     // SPAD (Short Payment Descriptor) string generation
     // Format: SPD:1.0*ACC:IBAN*AM:AMOUNT*CC:CURRENCY*MSG:MESSAGE
-    const iban = "CZ0000000000000000000000"; // Placeholder IBAN
     const generateSpad = () => {
-        return `SPD:1.0*ACC:${iban}*AM:${order.total}.00*CC:CZK*MSG:OBJ-${order.id}`;
+        return `SPD:1.0*ACC:${bank.iban}*AM:${order.total}.00*CC:CZK*MSG:OBJ-${order.id}`;
     };
 
     const handlePrint = () => {
@@ -70,7 +71,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                                 <p className="text-slate-500 mt-1">Číslo dokladu: {order.id}</p>
                             </div>
                             <div className="text-right">
-                                <h2 className="font-bold text-xl mb-2">BoostUp s.r.o.</h2>
+                                <h2 className="font-bold text-xl mb-2">{bank.accountName}</h2>
                                 <p className="text-sm text-slate-600">Technologická 123</p>
                                 <p className="text-sm text-slate-600">616 00 Brno</p>
                                 <p className="text-sm text-slate-600">IČ: 12345678</p>

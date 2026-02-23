@@ -229,7 +229,7 @@ export const SITE_CONTENT = {
             }
         },
         bottom: {
-            copyright: "© 2024 BOOSTUP ENERGY S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
+            copyright: "© 2024 BOOSTUP SUPPLEMENTS S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
             legal: [
                 { label: "Terms", href: "#" },
                 { label: "Privacy", href: "#" }
@@ -238,11 +238,11 @@ export const SITE_CONTENT = {
     },
 
     bankInfo: {
-        accountNumber: "2402922119",
-        bankCode: "2010", // Fio banka as placeholder or actual?
-        bankName: "Fio banka",
-        iban: "CZ1220100000002402922119",
-        accountName: "BOOSTUP ENERGY S.R.O.",
+        accountNumber: "6654376004",
+        bankCode: "5500",
+        bankName: "Raiffeisenbank",
+        iban: "CZ4755000000006654376004",
+        accountName: "BOOSTUP SUPPLEMENTS S.R.O.",
         currency: "CZK",
         qrMessage: "Objednávka"
     }

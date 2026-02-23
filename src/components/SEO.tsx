@@ -15,7 +15,7 @@ export const SEO = ({
     url = "https://boostup.cz",
     type = "website"
 }: SEOProps) => {
-    const siteTitle = "BoostUp Energy";
+    const siteTitle = "BoostUp Supplements";
     const fullTitle = `${title} | ${siteTitle}`;
 
     return (

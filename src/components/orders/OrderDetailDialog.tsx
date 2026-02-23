@@ -10,10 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 
 import { useInventory } from "@/context/InventoryContext";
 
+import { SITE_CONTENT } from "@/config/site-content";
+
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { toast } = useToast();
     const { updateOrderPacketaInfo } = useInventory();
     const [isCreatingPacket, setIsCreatingPacket] = useState(false);
+    const bank = SITE_CONTENT.bankInfo;
 
     // Helper to safely format currency if formatPrice isn't available or fails
     const formatCurrency = (amount: number) => {
@@ -61,6 +64,8 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
     };
 
     if (!order) return null;
+
+    const qrVS = order.id.replace(/\D/g, '');
 
     return (
         <DialogContent className="max-w-4xl max-h-[95vh] p-0 overflow-hidden [&>button]:hidden">
@@ -216,7 +221,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                     <div className="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row gap-8 items-center">
                         <div className="bg-white p-3 rounded-xl shrink-0">
                             <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SPD*1.0*ACC:CZ9120100000002102766861*AM:${order.total}.00*CC:CZK*VS:${order.id.replace(/\D/g, '')}`}
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SPD*1.0*ACC:${bank.iban}*AM:${order.total}.00*CC:CZK*VS:${qrVS}`}
                                 alt="QR Platba"
                                 className="w-32 h-32"
                             />
