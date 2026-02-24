@@ -881,7 +881,7 @@ const CheckoutPage = () => {
                                                         id: 'csas',
                                                         name: 'Spořitelna',
                                                         icon: (
-                                                            <svg viewBox="85 0 25 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                            <svg viewBox="0 0 133 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10">
                                                                 <path d="m 92.4,0 c 0.9,0 1.8,0.4 2.4,1 0.7,0.7 1,1.5 1,2.5 0,1 -0.3,1.8 -1,2.5 -0.7,0.7 -1.5,1 -2.5,1 -1,0 -1.8,-0.3 -2.5,-1 -0.7,-0.7 -1,-1.5 -1,-2.5 0,-1 0.3,-1.8 1,-2.5 0.9,-0.6 1.7,-1 2.6,-1 l 0,0 z m 11.6,14.1 0,-2.2 c 0,-2 -1.7,-3.7 -3.7,-3.7 l -15.7,0 c -2,0 -3.7,1.7 -3.7,3.7 l 0,8.1 17.5,0 0,1.2 -17.5,0 0,2.2 c 0,2 1.7,3.7 3.7,3.7 l 15.7,0 c 2,0 3.7,-1.7 3.7,-3.7 l 0,-8.1 -17.5,0 0,-1.2 17.5,0 z" fill="#ED1C24" />
                                                             </svg>
                                                         )
@@ -890,7 +890,7 @@ const CheckoutPage = () => {
                                                         id: 'kb',
                                                         name: 'KB',
                                                         icon: (
-                                                            <svg viewBox="0 0 430 430" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5/6 h-5/6">
+                                                            <svg viewBox="0 0 430 430" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
                                                                 <rect fill="#E3233D" width="430" height="215" />
                                                                 <rect y="215" width="430" height="215" fill="#1A1A1A" />
                                                                 <rect x="75" y="202" fill="#FFFFFF" width="280" height="26" />
@@ -901,7 +901,7 @@ const CheckoutPage = () => {
                                                         id: 'csob',
                                                         name: 'ČSOB',
                                                         icon: (
-                                                            <svg viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                            <svg viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10">
                                                                 <path d="M34.215,18.182c0-8.935,7.244-16.179,16.18-16.179s16.18,7.244,16.18,16.179s-7.244,16.179-16.18,16.179S34.215,27.117,34.215,18.182z M62.328,31.271c-3.083,3.342-8.519,6.685-15.493,6.685c-5.411,0-10.07-2.104-13.034-4.441c-17.664,1.854-30.8,4.481-30.8,4.481v7.153l93.616-0.01l0.009-14.748C96.626,30.391,80.652,30.292,62.328,31.271z" fill="#004787" />
                                                             </svg>
                                                         )
@@ -910,10 +910,9 @@ const CheckoutPage = () => {
                                                         id: 'airbank',
                                                         name: 'Air Bank',
                                                         icon: (
-                                                            <svg viewBox="10 -5 50 45" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                            <svg viewBox="10 -5 45 45" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12">
                                                                 <path d="M 31.742,0.323 18.525,25.534 h 3.828 L 35.571,0.323 h -3.828" fill="#99cc33" />
                                                                 <path d="M 3.536,9.054 a 1.733,1.733 0 0 0 1.789,1.789 2.094,2.094 0 0 0 1.566,-0.720 c 0.621,-0.795 0.696,-1.764 0.696,-3.107" fill="#000000" />
-                                                                <path d="M 50,15 v 10 M 45,20 h 10" stroke="#000000" strokeWidth="2" strokeLinecap="round" className="opacity-0" /> {/* Spacer */}
                                                             </svg>
                                                         )
                                                     },
@@ -921,7 +920,7 @@ const CheckoutPage = () => {
                                                         id: 'fio',
                                                         name: 'Fio',
                                                         icon: (
-                                                            <svg viewBox="0 0 153 105" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-3/4 h-3/4">
+                                                            <svg viewBox="0 0 153 105" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10">
                                                                 <path d="M53.1,70 4.8,53.4 52.9,36.8" fill="#F7E106" />
                                                                 <path d="M99.9,20.6 153,2.2 153,104.5 99.7,86.1 142.2,71.5 142.2,35.1" fill="#004787" />
                                                             </svg>
@@ -931,7 +930,7 @@ const CheckoutPage = () => {
                                                         id: 'raiffeisen',
                                                         name: 'RB',
                                                         icon: (
-                                                            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
                                                                 <rect width="120" height="120" fill="#FEE000" rx="12" />
                                                                 <path d="m 20,40 h 80 v 10 h -80 z" fill="#000000" />
                                                                 <path d="m 40,20 v 80 h 10 v -80 z" fill="#000000" />
@@ -944,7 +943,7 @@ const CheckoutPage = () => {
                                                         id: 'moneta',
                                                         name: 'Moneta',
                                                         icon: (
-                                                            <svg viewBox="10 10 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                            <svg viewBox="10 10 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10">
                                                                 <path d="m15.907 26.36 14.005 13.503-14.001 13.503v-27.006zm43.273-14.77-24.699 23.842-24.482-23.632v56.126l24.343-23.565 4.7137-4.4984 14.001-13.503v27.006l-9.4274-9.0736-4.5753 4.433 20.337 19.693v-56.828z" fill="#EF4036" />
                                                             </svg>
                                                         )
@@ -953,7 +952,7 @@ const CheckoutPage = () => {
                                                         id: 'mbank',
                                                         name: 'mBank',
                                                         icon: (
-                                                            <svg viewBox="0 0 128 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                                            <svg viewBox="0 0 128 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10">
                                                                 <rect width="34" height="48" fill="#EB001B" />
                                                                 <rect x="34" width="34" height="48" fill="#F79E1B" />
                                                                 <rect x="68" width="32" height="48" fill="#EB001B" />
