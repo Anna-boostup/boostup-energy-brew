@@ -877,25 +877,101 @@ const CheckoutPage = () => {
                                         {formData.paymentMethod === 'transfer_fast' && (
                                             <div className="p-6 pt-0 grid grid-cols-4 sm:grid-cols-4 gap-3 animate-in fade-in zoom-in-95 duration-300">
                                                 {[
-                                                    { id: 'csas', name: 'Spořitelna', domain: 'csas.cz' },
-                                                    { id: 'kb', name: 'KB', domain: 'kb.cz' },
-                                                    { id: 'csob', name: 'ČSOB', domain: 'csob.cz' },
-                                                    { id: 'airbank', name: 'Air Bank', domain: 'airbank.cz' },
-                                                    { id: 'fio', name: 'Fio', domain: 'fio.cz' },
-                                                    { id: 'raiffeisen', name: 'RB', domain: 'rb.cz' },
-                                                    { id: 'moneta', name: 'Moneta', domain: 'moneta.cz' },
-                                                    { id: 'mbank', name: 'mBank', domain: 'mbank.cz' }
+                                                    {
+                                                        id: 'csas',
+                                                        name: 'Spořitelna',
+                                                        icon: (
+                                                            <svg viewBox="0 0 133 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-110">
+                                                                <path d="m 92.4,0 c 0.9,0 1.8,0.4 2.4,1 0.7,0.7 1,1.5 1,2.5 0,1 -0.3,1.8 -1,2.5 -0.7,0.7 -1.5,1 -2.5,1 -1,0 -1.8,-0.3 -2.5,-1 -0.7,-0.7 -1,-1.5 -1,-2.5 0,-1 0.3,-1.8 1,-2.5 0.9,-0.6 1.7,-1 2.6,-1 l 0,0 z m 11.6,14.1 0,-2.2 c 0,-2 -1.7,-3.7 -3.7,-3.7 l -15.7,0 c -2,0 -3.7,1.7 -3.7,3.7 l 0,8.1 17.5,0 0,1.2 -17.5,0 0,2.2 c 0,2 1.7,3.7 3.7,3.7 l 15.7,0 c 2,0 3.7,-1.7 3.7,-3.7 l 0,-8.1 -17.5,0 0,-1.2 17.5,0 z" fill="#ED1C24" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'kb',
+                                                        name: 'KB',
+                                                        icon: (
+                                                            <svg viewBox="0 0 430 430" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-110">
+                                                                <rect fill="#E3233D" width="430" height="215" />
+                                                                <rect y="215" width="430" height="215" fill="#1A1A1A" />
+                                                                <rect x="75" y="202" fill="#FFFFFF" width="280" height="26" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'csob',
+                                                        name: 'ČSOB',
+                                                        icon: (
+                                                            <svg viewBox="0 0 100 79" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-125">
+                                                                <path d="M34.215,18.182c0-8.935,7.244-16.179,16.18-16.179s16.18,7.244,16.18,16.179s-7.244,16.179-16.18,16.179S34.215,27.117,34.215,18.182z M62.328,31.271c-3.083,3.342-8.519,6.685-15.493,6.685c-5.411,0-10.07-2.104-13.034-4.441c-17.664,1.854-30.8,4.481-30.8,4.481v7.153l93.616-0.01l0.009-14.748C96.626,30.391,80.652,30.292,62.328,31.271z" fill="#004787" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'airbank',
+                                                        name: 'Air Bank',
+                                                        icon: (
+                                                            <svg viewBox="0 0 88 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-150">
+                                                                <path d="M 31.742,0.323 18.525,25.534 h 3.828 L 35.571,0.323 h -3.828" fill="#99cc33" />
+                                                                <path d="M 3.536,9.054 a 1.733,1.733 0 0 0 1.789,1.789 2.094,2.094 0 0 0 1.566,-0.720 c 0.621,-0.795 0.696,-1.764 0.696,-3.107 -2.361,-0.198 -4.051,0.546 -4.051,2.038 z m 4.511,3.877 a 9.775,9.775 0 0 1 -0.118,-1.715 4.176,4.176 0 0 1 -3.728,2.013 c -1.814,0 -2.634,-0.522 -3.107,-0.994 A 3.89,3.89 0 0 1 0,9.476 4.176,4.176 0 0 1 2.66,5.574 c 1.547,-0.696 3.728,-0.696 4.971,-0.696 a 4.896,4.896 0 0 0 -0.174,-1.665 1.702,1.702 0 0 0 -1.640,-1.044 1.677,1.677 0 0 0 -1.392,0.696 1.864,1.864 0 0 0 -0.273,1.118 H 0.547 a 3.511,3.511 0 0 1 1.416,-2.958 6.556,6.556 0 0 1 3.803,-1.019 c 1.044,0 3.231,0.174 4.474,1.615 a 4.971,4.971 0 0 1 0.87,3.107 v 5.046 a 15.187,15.187 0 0 0 0.242,3.181 H 8.072 Z M 13.504,0.329 h 3.678 V 12.931 h -3.678 z" fill="#000000" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'fio',
+                                                        name: 'Fio',
+                                                        icon: (
+                                                            <svg viewBox="0 0 153 105" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-125">
+                                                                <path d="M53.1,70 4.8,53.4 52.9,36.8" fill="#F7E106" />
+                                                                <path d="M99.9,20.6 153,2.2 153,104.5 99.7,86.1 142.2,71.5 142.2,35.1" fill="#004787" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'raiffeisen',
+                                                        name: 'RB',
+                                                        icon: (
+                                                            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-125">
+                                                                <rect width="120" height="120" fill="#FEE000" rx="12" />
+                                                                <path d="M99.4 0 L0 120.3 L120.2 120.4 L120.2 0 Z" fill="none" />
+                                                                <path d="m 20,40 h 80 v 10 h -80 z" fill="#000000" />
+                                                                <path d="m 40,20 v 80 h 10 v -80 z" fill="#000000" />
+                                                                <path d="m 70,20 v 80 h 10 v -80 z" fill="#000000" />
+                                                                <path d="m 20,70 h 80 v 10 h -80 z" fill="#000000" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'moneta',
+                                                        name: 'Moneta',
+                                                        icon: (
+                                                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-150">
+                                                                <path d="m15.907 26.36 14.005 13.503-14.001 13.503v-27.006zm43.273-14.77-24.699 23.842-24.482-23.632v56.126l24.343-23.565 4.7137-4.4984 14.001-13.503v27.006l-9.4274-9.0736-4.5753 4.433 20.337 19.693v-56.828z" fill="#EF4036" />
+                                                            </svg>
+                                                        )
+                                                    },
+                                                    {
+                                                        id: 'mbank',
+                                                        name: 'mBank',
+                                                        icon: (
+                                                            <svg viewBox="0 0 128 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full scale-110">
+                                                                <rect width="34" height="48" fill="#37105" />
+                                                                <rect x="34" width="34" height="48" fill="#F79E1B" />
+                                                                <rect x="68" width="32" height="48" fill="#EB001B" />
+                                                                <rect x="100" width="28" height="48" fill="#99CC33" />
+                                                            </svg>
+                                                        )
+                                                    }
                                                 ].map(bank => (
                                                     <button
                                                         key={bank.id}
                                                         type="button"
                                                         onClick={() => setFormData(prev => ({ ...prev, subMethod: bank.id }))}
-                                                        className={`p-3 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all aspect-square justify-center shadow-sm ${formData.subMethod === bank.id ? 'border-primary bg-primary/20 ring-2 ring-primary/20 scale-105' : 'border-border bg-white hover:border-primary/50'}`}
+                                                        className={`p-1.5 rounded-2xl border-2 flex flex-col items-center gap-1 transition-all aspect-square justify-center shadow-sm overflow-hidden ${formData.subMethod === bank.id ? 'border-primary bg-primary/20 ring-2 ring-primary/20 scale-105' : 'border-border bg-white hover:border-primary/50'}`}
                                                     >
-                                                        <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm overflow-hidden p-1">
-                                                            <img src={`https://www.google.com/s2/favicons?domain=${bank.domain}&sz=128`} alt={bank.name} className="w-full h-full object-contain" />
+                                                        <div className="w-full h-12 flex items-center justify-center p-1">
+                                                            {bank.icon}
                                                         </div>
-                                                        <span className="text-[9px] font-black uppercase tracking-tight truncate w-full text-center text-foreground">{bank.name}</span>
+                                                        <span className="text-[8px] font-black uppercase tracking-tight truncate w-full text-center text-foreground/80 mt-auto">{bank.name}</span>
                                                     </button>
                                                 ))}
                                             </div>
