@@ -925,7 +925,7 @@ const CheckoutPage = () => {
                                                         id: 'fio',
                                                         name: 'Fio',
                                                         icon: (
-                                                            <svg viewBox="0 0 574.8 106.7" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-2">
+                                                            <svg viewBox="0 0 205 110" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-2">
                                                                 <polygon fill="#00408A" points="53.1,70 4.8,53.4 52.9,36.8" />
                                                                 <polygon fill="#00408A" points="99.9,20.6 153,2.2 153,104.5 99.7,86.1 142.2,71.5 142.2,35.1" />
                                                                 <polygon fill="#00408A" points="41.4,67.9 41.4,106.7 97.8,87.1 154.2,67.9 197.1,53.8 154.2,39.9 97.9,20.3 41.3,0.9 41.3,39.9" />
@@ -940,7 +940,7 @@ const CheckoutPage = () => {
                                                         id: 'raiffeisen',
                                                         name: 'RB',
                                                         icon: (
-                                                            <svg viewBox="-2.52 -2.52 316.94 89" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-2">
+                                                            <svg viewBox="-8 -3 69 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-2">
                                                                 <rect fill="#fee600" width="52.9" height="52.9" transform="translate(0,2.5)" />
                                                                 <path fill="#000" d="m 26.4,35.3 15.9,15.9 6.2,-6.2 -15.9,-15.9 3.1,-3.1 v -6.2 l 2.2,-2.2 v 5.1 l 2.2,2.1 7.8,-7.8 2.1,2.1 a 13.92,13.92 0 0 0 -4.1,-9.5 6.7,6.7 0 0 0 -9.7,-0.3 l -7.5,7.5 1.9,1.9 -4.1,4.1 -4.1,-4.1 1.9,-1.9 -7.5,-7.5 a 6.62,6.62 0 0 0 -9.7,0.3 13.66,13.66 0 0 0 -4,9.5 l 2,-2.1 7.8,7.8 2.2,-2.2 v -5.1 l 2.2,2.2 v 6.2 l 3.1,3.1 -16,15.8 6.2,6.2 z" />
                                                                 <path d="M71.79 5.19a9 9 0 0 0-0.89 0H61.69V28.9h6.1V19.8l5.89 9.1h6.01l-7.5-9.7a6.21 6.21 0 0 0 3.9-2.39 6.68 6.68 0 0 0 1.29-4.3 6.64 6.64 0 0 0-2.39-5.5 9 9 0 0 0-5-1.8z" fill="#000000" />
@@ -952,7 +952,7 @@ const CheckoutPage = () => {
                                                         id: 'moneta',
                                                         name: 'Moneta',
                                                         icon: (
-                                                            <svg viewBox="0 0 400 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-2">
+                                                            <svg viewBox="5 0 95 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full p-2">
                                                                 <path fill="#EF4036" d="m15.9 26.3 14 13.5-14 13.5v-27zm43.2-14.7-24.6 23.8-24.4-23.6v56.1l24.3-23.5 4.7-4.4 14-13.5v27l-9.4-9-4.5 4.4 20.3 19.6v-56.8z" />
                                                                 <path fill="#140757" d="M120 20h10v40h-10zM150 20h10l20 30V20h10v40h-10l-20-30v30h-10z" />
                                                             </svg>
