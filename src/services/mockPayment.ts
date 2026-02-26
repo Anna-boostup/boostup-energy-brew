@@ -17,37 +17,46 @@ export interface PaymentResult {
     orderNumber: string;
     amount: number;
     timestamp: string;
+    gw_url?: string;
 }
 
 export interface PaymentStatus {
     paymentId: string;
-    status: 'PAID' | 'PENDING' | 'FAILED' | 'CANCELED';
+    status: 'PAID' | 'PENDING' | 'AUTHORIZED' | 'FAILED' | 'CANCELED';
     paidAt?: string;
 }
 
 export const mockPaymentService = {
     /**
-     * Simuluje vytvoření platby
+     * Simuluje inicializaci platby a vrácení URL brány
      */
-    async createPayment(orderData: PaymentOrderData): Promise<PaymentResult> {
+    async initiatePayment(orderData: PaymentOrderData): Promise<PaymentResult> {
         // Simulace API volání (delay)
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 800));
 
         // Generování mock payment ID
-        const paymentId = `MOCK-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-
-        // 90% success rate
-        const isSuccess = Math.random() > 0.1;
+        const paymentId = `GP-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
         return {
-            success: isSuccess,
+            success: true,
             paymentId: paymentId,
-            message: isSuccess
-                ? 'Platba byla úspěšně zpracována'
-                : 'Platba byla zamítnuta bankou',
+            message: 'Platba byla inicializována',
             orderNumber: orderData.orderNumber,
             amount: orderData.total,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            gw_url: `https://gw.gopay.com/mock-gateway?id=${paymentId}`
+        };
+    },
+
+    /**
+     * Simuluje vytvoření platby (původní metoda pro zpětnou kompatibilitu)
+     */
+    async createPayment(orderData: PaymentOrderData): Promise<PaymentResult> {
+        const init = await this.initiatePayment(orderData);
+        // Okamžitý úspěch u staré metody
+        return {
+            ...init,
+            success: true
         };
     },
 
@@ -57,6 +66,7 @@ export const mockPaymentService = {
     async checkPaymentStatus(paymentId: string): Promise<PaymentStatus> {
         await new Promise(resolve => setTimeout(resolve, 500));
 
+        // Pokud ID začíná na GP-, simulujeme že je zaplaceno (pro testy)
         return {
             paymentId: paymentId,
             status: 'PAID',

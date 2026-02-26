@@ -212,10 +212,10 @@ export const SITE_CONTENT = {
             {
                 title: "PODPORA",
                 items: [
-                    { label: "VOP", href: "/vop" },
-                    { label: "Ochrana soukromí", href: "/privacy" },
+                    { label: "VOP", href: "/obchodni-podminky" },
+                    { label: "Ochrana soukromí", href: "/ochrana-osobnich-udaju" },
                     { label: "Cookies", href: "/cookies" },
-                    { label: "Doprava a platba", href: "/shipping" }
+                    { label: "Doprava a platba", href: "/doprava-a-platba" }
                 ]
             }
         ],
@@ -231,8 +231,8 @@ export const SITE_CONTENT = {
         bottom: {
             copyright: "© 2024 BOOSTUP SUPPLEMENTS S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
             legal: [
-                { label: "Terms", href: "#" },
-                { label: "Privacy", href: "#" }
+                { label: "Obchodní podmínky", href: "/obchodni-podminky" },
+                { label: "Ochrana osobních údajů", href: "/ochrana-osobnich-udaju" }
             ]
         }
     },
