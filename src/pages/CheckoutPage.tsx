@@ -1104,11 +1104,23 @@ const CheckoutPage = () => {
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground uppercase font-bold text-[10px]">Doprava</span>
-                                    <span className="text-lime font-bold">ZDARMA</span>
+                                    {(() => {
+                                        const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
+                                        return isFreeShipping ? (
+                                            <span className="text-lime font-bold uppercase">ZDARMA</span>
+                                        ) : (
+                                            <span className="font-bold">79 Kč</span>
+                                        );
+                                    })()}
                                 </div>
                                 <div className="pt-4 mt-2 border-t-2 border-primary flex justify-between items-end">
                                     <span className="font-display font-bold text-xl uppercase italic">Celkem</span>
-                                    <span className="text-3xl font-display font-bold text-gradient-energy leading-none">{cartTotal} Kč</span>
+                                    <span className="text-3xl font-display font-bold text-gradient-energy leading-none">
+                                        {(() => {
+                                            const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
+                                            return cartTotal + (isFreeShipping ? 0 : 79);
+                                        })()} Kč
+                                    </span>
                                 </div>
                             </div>
 

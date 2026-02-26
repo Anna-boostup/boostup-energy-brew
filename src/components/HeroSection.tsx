@@ -1,12 +1,15 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
 import bottlesHero from "@/assets/bottles-hero-final.png";
-
+import { useState } from "react";
+import IngredientDialog from "./IngredientDialog";
 import { useContent } from "@/context/ContentContext";
 
 const HeroSection = () => {
   const { content: siteContent } = useContent();
   const content = siteContent.hero;
+  const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <section className="min-h-screen pt-20 relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary/30">
@@ -110,17 +113,40 @@ const HeroSection = () => {
         </div>
 
         {/* Trust Badges - Below image */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-4 sm:gap-6 justify-center items-center animate-fade-up animation-delay-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-4 sm:gap-6 justify-center items-center animate-fade-up animation-delay-800 relative z-30">
           {(content.trustBadges || []).map((badge, idx) => {
             const colors = ["bg-olive", "bg-lime", "bg-terracotta", "bg-orange"];
+            const detailKeys = ['stimulants', 'electrolytes', 'adaptogens', 'vitamins'];
+            const key = detailKeys[idx % detailKeys.length];
+
             return (
-              <div key={badge} className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card">
-                <div className={`w-4 h-4 rounded-full ${colors[idx % colors.length]} animate-pulse`} style={{ animationDelay: `${idx * 200}ms` }} />
+              <button
+                key={badge}
+                onClick={() => {
+                  setSelectedIngredient(key);
+                  setIsDialogOpen(true);
+                }}
+                className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card hover:shadow-lg hover:scale-105 transition-all cursor-pointer border border-transparent hover:border-primary/20 group"
+              >
+                <div className={`w-4 h-4 rounded-full ${colors[idx % colors.length]} animate-pulse group-hover:scale-125 transition-transform`} style={{ animationDelay: `${idx * 200}ms` }} />
                 <span className="text-sm font-bold text-foreground">{badge}</span>
-              </div>
+                <span className="ml-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity font-black">ZJISTIT VÍCE</span>
+              </button>
             );
           })}
         </div>
+
+        <IngredientDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          data={selectedIngredient ? (siteContent.ingredientDetails as any)[selectedIngredient] : null}
+          colorClass={
+            selectedIngredient === 'stimulants' ? 'bg-lime' :
+              selectedIngredient === 'electrolytes' ? 'bg-blue-400' :
+                selectedIngredient === 'adaptogens' ? 'bg-terracotta' :
+                  selectedIngredient === 'vitamins' ? 'bg-orange' : 'bg-primary'
+          }
+        />
       </div>
     </section>
   );

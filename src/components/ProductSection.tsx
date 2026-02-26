@@ -344,16 +344,31 @@ const ProductSection = () => {
                     <button
                       key={pack}
                       onClick={() => setSelectedPack(pack)}
-                      className={`py-4 sm:py-5 px-4 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
+                      className={`relative py-4 sm:py-5 px-4 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
                         ? "bg-primary text-primary-foreground shadow-button"
                         : "bg-card text-foreground border-2 border-border hover:border-primary"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
+                      {pack === 12 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
+                          -10% SLEVA
+                        </div>
+                      )}
+                      {pack === 21 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
+                          NEJVÝHODNĚJŠÍ -30%
+                        </div>
+                      )}
                       {pack}x
                       <span className="block text-xs sm:text-sm font-semibold opacity-80">
                         {packPrices[pack]} Kč
                       </span>
+                      {pack === 21 && (
+                        <span className="block text-[9px] font-bold text-green-600 mt-1 uppercase leading-none">
+                          + Doprava zdarma
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

@@ -245,5 +245,52 @@ export const SITE_CONTENT = {
         accountName: "BOOSTUP SUPPLEMENTS S.R.O.",
         currency: "CZK",
         qrMessage: "Objednávka"
+    },
+
+    ingredientDetails: {
+        stimulants: {
+            title: "Přírodní stimulanty",
+            subtitle: "Čistá energie z přírody",
+            description: "Využíváme sílu ověřených přírodních látek, které dodávají energii postupně, bez prudkých výkyvů a následné vyčerpanosti.",
+            benefits: [
+                "Zvýšení bdělosti a pozornosti",
+                "Podpora mentálního výkonu",
+                "Postupné uvolňování bez nervozity"
+            ],
+            ingredients: ["Přírodní kofein", "Guarana", "L-Theanin"]
+        },
+        electrolytes: {
+            title: "Elektrolyty",
+            subtitle: "Optimální hydratace buněk",
+            description: "Zásadní minerály pro správnou funkci svalů, nervové soustavy a udržení hloubkové hydratace během celého dne.",
+            benefits: [
+                "Prevence svalových křečí",
+                "Lepší přenos nervových vzruchů",
+                "Udržení energie v buňkách"
+            ],
+            ingredients: ["Hořčík", "Draslík", "Sodík", "Vápník"]
+        },
+        adaptogens: {
+            title: "Adaptogeny",
+            subtitle: "Odolnost vůči stresu",
+            description: "Byliny a houby, které pomáhají organismu adaptovat se na fyzický a psychický stres a udržovat vnitřní rovnováhu.",
+            benefits: [
+                "Snížení hladiny kortizolu",
+                "Podpora imunitního systému",
+                "Zlepšení nálady a regenerace"
+            ],
+            ingredients: ["Ashwagandha", "Rhodiola Rosea", "Meduňka"]
+        },
+        vitamins: {
+            title: "Vitamíny",
+            subtitle: "Palivo pro váš metabolismus",
+            description: "Komplex vitamínů skupiny B a C, které jsou klíčové pro transformaci potravy na energii a ochranu před oxidativním stresem.",
+            benefits: [
+                "Podpora energetického metabolismu",
+                "Snížení míry únavy a vyčerpání",
+                "Ochrana DNA a buněk"
+            ],
+            ingredients: ["Vitamín B6", "Vitamín B12", "Vitamín C"]
+        }
     }
 };

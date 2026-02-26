@@ -83,6 +83,7 @@ const ContentManagement = () => {
                 <TabsList className="bg-muted p-1 mb-6 flex flex-wrap h-auto gap-1">
                     <TabsTrigger value="hero">Hero (Úvod)</TabsTrigger>
                     <TabsTrigger value="mission">Mise</TabsTrigger>
+                    <TabsTrigger value="ingredients">Ingredience</TabsTrigger>
                     <TabsTrigger value="concept">3B Koncept</TabsTrigger>
                     <TabsTrigger value="cta">CTA (Odběr)</TabsTrigger>
                     <TabsTrigger value="contact">Kontakt</TabsTrigger>
@@ -213,6 +214,87 @@ const ContentManagement = () => {
                                     />
                                 ))}
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* INGREDIENTS SECTION */}
+                <TabsContent value="ingredients">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Detaily ingrediencí (Popup)</CardTitle>
+                            <CardDescription>Upravte texty, které se zobrazí v modálním okně po kliknutí na pilulky v sekci Hero.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-12">
+                            {Object.entries(localContent.ingredientDetails || {}).map(([key, details]: [string, any]) => (
+                                <div key={key} className="space-y-6 p-6 rounded-xl bg-secondary/20 border border-border">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-3 h-3 rounded-full ${key === 'stimulants' ? 'bg-lime' :
+                                                key === 'electrolytes' ? 'bg-blue-400' :
+                                                    key === 'adaptogens' ? 'bg-terracotta' :
+                                                        'bg-orange'
+                                            }`} />
+                                        <h3 className="text-xl font-bold capitalize">{details.title}</h3>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid gap-2">
+                                            <Label>Název (Title)</Label>
+                                            <Input
+                                                value={details.title}
+                                                onChange={(e) => updateField(['ingredientDetails', key, 'title'], e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label>Podnadpis (Subtitle)</Label>
+                                            <Input
+                                                value={details.subtitle}
+                                                onChange={(e) => updateField(['ingredientDetails', key, 'subtitle'], e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label>Hlavní popis</Label>
+                                        <Textarea
+                                            rows={2}
+                                            value={details.description}
+                                            onChange={(e) => updateField(['ingredientDetails', key, 'description'], e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-4">
+                                            <Label className="text-muted-foreground uppercase text-[10px] font-black tracking-widest">Benefity (odrážky)</Label>
+                                            {details.benefits.map((benefit: string, i: number) => (
+                                                <Input
+                                                    key={i}
+                                                    value={benefit}
+                                                    onChange={(e) => {
+                                                        const newBenefits = [...details.benefits];
+                                                        newBenefits[i] = e.target.value;
+                                                        updateField(['ingredientDetails', key, 'benefits'], newBenefits);
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className="space-y-4">
+                                            <Label className="text-muted-foreground uppercase text-[10px] font-black tracking-widest">Obsažené látky (tagy)</Label>
+                                            {details.ingredients.map((ing: string, i: number) => (
+                                                <Input
+                                                    key={i}
+                                                    value={ing}
+                                                    onChange={(e) => {
+                                                        const newIngs = [...details.ingredients];
+                                                        newIngs[i] = e.target.value;
+                                                        updateField(['ingredientDetails', key, 'ingredients'], newIngs);
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
                 </TabsContent>
