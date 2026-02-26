@@ -30,10 +30,42 @@ const TermsOfService = () => {
                 Cenu zboží a případné náklady spojené s dodáním zboží dle kupní smlouvy může kupující uhradit prodávajícímu následujícími způsoby:
             </p>
             <ul>
-                <li>Bezhotovostně převodem na účet prodávajícího</li>
-                <li>Bezhotovostně platební kartou ( Stripe / GoPay / ComGate )</li>
-                <li>Dobírkou v místě určení při převzetí zboží (Zásilkovna / Kurýr)</li>
+                <li>Bezhotovostně převodem na účet prodávajícího (Raiffeisenbank)</li>
+                <li>Bezhotovostně platební kartou přes bránu GoPay (včetně Apple Pay a Google Pay)</li>
+                <li>Okamžitým bankovním převodem přes bránu GoPay</li>
             </ul>
+
+            <h2>5. Přeprava a dodání zboží</h2>
+            <p>
+                Náklady na poštovné a balné hradí kupující dle zvoleného způsobu dopravy (Zásilkovna na výdejní místo nebo na adresu).
+                Při objednávce nad 1500 Kč je doprava zdarma. Zboží, které je skladem, expedujeme zpravidla do 24 hodin od přijetí
+                platby nebo potvrzení objednávky.
+            </p>
+
+            <h2>6. Odstoupení od kupní smlouvy</h2>
+            <p>
+                Kupující má právo odstoupit od kupní smlouvy ve lhůtě 14 dnů od převzetí zboží. Odstoupení od kupní smlouvy
+                musí být prodávajícímu odesláno ve výše uvedené lhůtě e-mailem na <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a>.
+                Zboží musí být vráceno nepoužité a v původním neporušeném obalu (vzhledem k povaze doplňků stravy).
+            </p>
+
+            <h2>7. Práva z vadného plnění (Reklamace)</h2>
+            <p>
+                Práva a povinnosti smluvních stran ohledně práv z vadného plnění se řídí příslušnými obecně závaznými právními předpisy.
+                Prodávající odpovídá kupujícímu, že zboží při převzetí nemá vady a je v souladu s popisem.
+            </p>
+
+            <h2>8. Ochrana osobních údajů</h2>
+            <p>
+                Ochrana osobních údajů kupujícího, který je fyzickou osobou, je poskytována v souladu s nařízením GDPR.
+                Podrobnosti jsou uvedeny v samostatném dokumentu <a href="/ochrana-osobnich-udaju">Zásady ochrany osobních údajů</a>.
+            </p>
+
+            <h2>9. Závěrečná ustanovení</h2>
+            <p>
+                Pokud vztah založený kupní smlouvou obsahuje mezinárodní (zahraniční) prvek, pak strany sjednávají, že vztah se řídí českým právem.
+                Tyto obchodní podmínky nabývají účinnosti dne 24. února 2026.
+            </p>
         </LegalLayout>
     );
 };
