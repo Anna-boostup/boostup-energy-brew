@@ -4,7 +4,11 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useCart } from '@/context/CartContext';
 import { useInventory, Order } from '@/context/InventoryContext';
-import { ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle, Loader2, Package, FileText } from 'lucide-react';
+import {
+    ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
+    Loader2, Package, FileText, ChevronLeft, MapPin,
+    Minus, Plus, Trash2, Lock
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import mockPaymentService from '@/services/mockPayment';
 import { Button } from '@/components/ui/button';
@@ -12,6 +16,7 @@ import PacketaWidget from '@/components/PacketaWidget';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import GoPayMockGateway from '@/components/GoPayMockGateway';
 
 // ---- Email Helper — calls our Vercel serverless function (avoids CORS) ----
 const sendOrderConfirmationEmail = async (
@@ -40,6 +45,11 @@ const CheckoutPage = () => {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedPoint, setSelectedPoint] = useState<any>(null);
+
+    // Payment Simulation States
+    const [isRedirecting, setIsRedirecting] = useState(false);
+    const [showMockGateway, setShowMockGateway] = useState(false);
+    const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
 
     // Billing Address State
     const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
@@ -296,34 +306,11 @@ const CheckoutPage = () => {
                 return;
             }
 
-            const paymentResult = await mockPaymentService.createPayment({
-                orderNumber: orderNumber,
-                total: cartTotal,
-                items: cart,
-                customer: formData
-            });
-
-            if (paymentResult.success) {
-                // Create subscription records if any
-                const subscriptionItems = cart.filter(item => !!item.subscriptionInterval);
-                if (subscriptionItems.length > 0 && currentUser) {
-                    const subsToInsert = subscriptionItems.map(item => ({
-                        user_id: currentUser.id,
-                        status: 'active',
-                        interval: item.subscriptionInterval,
-                        product_handle: item.flavorMode === 'mix' ? 'mix-pack' : `${item.flavor}-pack`,
-                        quantity: item.quantity,
-                        next_delivery_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-                    }));
-
-                    await supabase.from('subscriptions').insert(subsToInsert);
-                }
-
+            // --- Payment Simulation Logic ---
+            if (formData.paymentMethod === 'transfer_manual') {
+                // For manual transfer, we don't go to gateway
                 clearCart();
                 const totalWithShipping = cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0);
-                const isBankTransfer = formData.paymentMethod === 'transfer_fast' || formData.paymentMethod === 'transfer_manual';
-
-                // Send order confirmation email (non-blocking)
                 sendOrderConfirmationEmail(
                     formData.email,
                     orderNumber,
@@ -331,17 +318,72 @@ const CheckoutPage = () => {
                     newOrder.items,
                     totalWithShipping
                 );
-
-                navigate(`/payment/success?paymentId=${paymentResult.paymentId}&orderNumber=${orderNumber}&amount=${totalWithShipping}${isBankTransfer ? '&status=pending' : ''}`);
-            } else {
-                navigate(`/payment/error?message=${encodeURIComponent(paymentResult.message)}`);
+                navigate(`/payment/success?paymentId=TRANSFER-${orderNumber}&orderNumber=${orderNumber}&amount=${totalWithShipping}&status=pending`);
+                return;
             }
+
+            // For other methods (card, fast transfer, etc.), simulate gateway
+            setPendingOrder(newOrder);
+            setIsRedirecting(true);
+
+            // Wait for "redirection" animation
+            setTimeout(() => {
+                setIsRedirecting(false);
+                setShowMockGateway(true);
+            }, 2500);
+
         } catch (error) {
-            console.error('Payment error:', error);
-            navigate('/payment/error?message=Technická%20chyba%20při%20zpracování%20platby');
-        } finally {
+            console.error('Checkout error:', error);
+            toast({
+                title: "Technická chyba",
+                description: "Při zpracování objednávky došlo k chybě.",
+                variant: "destructive"
+            });
             setIsProcessing(false);
         }
+    };
+
+    const handlePaymentSuccess = async (paymentId: string) => {
+        if (!pendingOrder) return;
+
+        try {
+            clearCart();
+            const totalWithShipping = pendingOrder.total;
+
+            await sendOrderConfirmationEmail(
+                pendingOrder.customer.email || formData.email,
+                pendingOrder.id,
+                pendingOrder.customer.name,
+                pendingOrder.items,
+                totalWithShipping
+            );
+
+            navigate(`/payment/success?paymentId=${paymentId}&orderNumber=${pendingOrder.id}&amount=${totalWithShipping}`);
+        } catch (error) {
+            console.error('Finalization error:', error);
+        } finally {
+            setShowMockGateway(false);
+            setIsProcessing(false);
+        }
+    };
+
+    const handlePaymentError = (message: string) => {
+        setShowMockGateway(false);
+        setIsProcessing(false);
+        toast({
+            title: "Platba neproběhla",
+            description: message,
+            variant: "destructive"
+        });
+    };
+
+    const handlePaymentCancel = () => {
+        setShowMockGateway(false);
+        setIsProcessing(false);
+        toast({
+            title: "Platba zrušena",
+            description: "Platba byla zrušena uživatelem.",
+        });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -1096,6 +1138,56 @@ const CheckoutPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Redirection Overlay */}
+            {isRedirecting && (
+                <div className="fixed inset-0 z-[150] bg-background/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
+                    <div className="max-w-md w-full space-y-8">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse-glow" />
+                            <div className="bg-white p-6 rounded-[2rem] shadow-2xl relative">
+                                <svg viewBox="0 0 100 30" className="h-10 w-auto mx-auto mb-4">
+                                    <path d="M15 5h10v20h-10z" fill="#ec1c24" />
+                                    <text x="30" y="22" className="font-bold text-2xl" fill="#333">GoPay</text>
+                                </svg>
+                                <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden mt-6">
+                                    <motion.div
+                                        className="h-full bg-[#ec1c24]"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: "100%" }}
+                                        transition={{ duration: 2.2, ease: "easeInOut" }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <h2 className="text-2xl font-black uppercase tracking-tight">Ověřování spojení...</h2>
+                            <p className="text-muted-foreground font-medium">Přesměrováváme vás na zabezpečenou platební bránu GoPay.</p>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                            <Lock size={12} /> SSL ENCRYPTED CONNECTION
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Mock Gateway */}
+            {pendingOrder && (
+                <GoPayMockGateway
+                    isOpen={showMockGateway}
+                    onClose={() => setShowMockGateway(false)}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                    onCancel={handlePaymentCancel}
+                    orderData={{
+                        orderNumber: pendingOrder.id,
+                        amount: pendingOrder.total,
+                        items: pendingOrder.items,
+                        customer: pendingOrder.customer
+                    }}
+                    paymentId={`GP-${pendingOrder.id}`}
+                />
+            )}
         </div>
     );
 };
