@@ -73,11 +73,26 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-black text-xl mb-8 tracking-wider">{content.contact.title}</h4>
             <ul className="space-y-4 text-primary-foreground/60 text-lg">
-              <li>{content.contact.email}</li>
-              <li>{content.contact.phone}</li>
+              <li>
+                <a href={`mailto:${content.contact.email}`} className="hover:text-lime transition-colors">
+                  {content.contact.email}
+                </a>
+              </li>
+              <li>
+                <a href={`tel:${content.contact.phone.replace(/\s/g, '')}`} className="hover:text-lime transition-colors">
+                  {content.contact.phone}
+                </a>
+              </li>
               <li className="leading-relaxed">
-                {content.contact.address.line1}<br />
-                {content.contact.address.line2}
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Chaloupkova+3002/1a,+612+00+Brno"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-lime transition-colors"
+                >
+                  {content.contact.address.line1}<br />
+                  {content.contact.address.line2}
+                </a>
               </li>
             </ul>
           </div>

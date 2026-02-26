@@ -35,38 +35,49 @@ const ContactSection = () => {
               </p>
 
               <div className="space-y-8">
-                <div className="flex items-center gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                <a
+                  href={`tel:${content.info.phone.value.replace(/\s/g, '')}`}
+                  className="flex items-center gap-6 group cursor-pointer"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110 shadow-sm group-hover:shadow-lg">
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.phone.label}</p>
-                    <p className="text-xl font-display font-bold">{content.info.phone.value}</p>
+                    <p className="text-xl font-display font-bold group-hover:text-primary transition-colors">{content.info.phone.value}</p>
                   </div>
-                </div>
+                </a>
 
-                <div className="flex items-center gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                <a
+                  href={`mailto:${content.info.email.value}`}
+                  className="flex items-center gap-6 group cursor-pointer"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110 shadow-sm group-hover:shadow-lg">
                     <Mail className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.email.label}</p>
-                    <p className="text-xl font-display font-bold">{content.info.email.value}</p>
+                    <p className="text-xl font-display font-bold group-hover:text-primary transition-colors">{content.info.email.value}</p>
                   </div>
-                </div>
+                </a>
 
-                <div className="flex items-center gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Chaloupkova+3002/1a,+612+00+Brno"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-6 group cursor-pointer"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110 shadow-sm group-hover:shadow-lg">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.address.label}</p>
-                    <p className="text-xl font-display font-bold leading-relaxed">
+                    <p className="text-xl font-display font-bold leading-relaxed group-hover:text-primary transition-colors">
                       {content.info.address.value.line1}<br />
                       {content.info.address.value.line2}
                     </p>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
 
