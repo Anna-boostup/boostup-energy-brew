@@ -176,6 +176,22 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                                 <p className="text-xs font-semibold text-slate-500">
                                     PLATBA: <span className="text-slate-900">{order.delivery_info?.paymentMethod === 'transfer' ? 'Bankovní převod' : 'Kartou online'}</span>
                                 </p>
+                                {order.packeta_barcode && (
+                                    <div className="pt-2 mt-2 border-t border-slate-200">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-tighter mb-1">Sledování zásilky</p>
+                                        <div className="flex items-center gap-2">
+                                            <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-bold">{order.packeta_barcode}</code>
+                                            <a
+                                                href={`https://tracking.packeta.com/cs/?id=${order.packeta_barcode}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[10px] text-primary hover:underline font-bold"
+                                            >
+                                                Sledovat balík →
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
