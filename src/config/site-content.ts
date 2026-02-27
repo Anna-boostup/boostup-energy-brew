@@ -21,11 +21,11 @@ export const SITE_CONTENT = {
     hero: {
         announcement: "BRZY NA TRHU",
         headline: {
-            part1: "ENERGIE",
-            gradient: "NA CELÝ DEN",
-            part2: "přirozeně."
+            part1: "OBJEVTE NOVÝ STANDARD",
+            gradient: "STABILNÍHO SOUSTŘEDĚNÍ",
+            part2: "Efektivita, rychlost a přesnost i pod tlakem."
         },
-        description: "6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata.",
+        description: "Až 6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata.",
         cta: {
             primary: "Chci koupit",
             secondary: "Chci objevit více",

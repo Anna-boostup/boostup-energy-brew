@@ -33,10 +33,14 @@ const HeroSection = () => {
 
         {/* Centered Text Content */}
         <div className="text-center animate-fade-up z-10 mb-12">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-black text-foreground mb-6 leading-[0.9] tracking-tight">
-            <span className="block animate-slide-in-left">{content.headline.part1}</span>
-            <span className="block text-gradient-energy animate-slide-in-left animation-delay-200">{content.headline.gradient}</span>
-            <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-muted-foreground mt-4 animate-slide-in-left animation-delay-400">
+          <h1 className="font-display text-foreground mb-8 tracking-tight">
+            <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-muted-foreground mb-4 animate-slide-in-left uppercase tracking-[0.2em]">
+              {content.headline.part1}
+            </span>
+            <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gradient-energy animate-slide-in-left animation-delay-200 leading-[1.1] uppercase">
+              {content.headline.gradient}
+            </span>
+            <span className="block text-lg sm:text-2xl md:text-3xl font-bold text-foreground/80 mt-6 animate-slide-in-left animation-delay-400 leading-tight max-w-4xl mx-auto italic">
               {content.headline.part2}
             </span>
           </h1>
