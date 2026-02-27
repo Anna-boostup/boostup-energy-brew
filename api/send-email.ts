@@ -8,7 +8,7 @@ const COLORS = {
     muted: '#666666'
 };
 
-const BASE_URL = 'https://drinkboostup.cz';
+const BASE_URL = 'https://boostup-energy-brew-git-development-boostup1.vercel.app';
 const LOGO_URL = `${BASE_URL}/logo-green.png`;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
