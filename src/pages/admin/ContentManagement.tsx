@@ -87,6 +87,7 @@ const ContentManagement = () => {
                     <TabsTrigger value="concept">3B Koncept</TabsTrigger>
                     <TabsTrigger value="cta">CTA (Odběr)</TabsTrigger>
                     <TabsTrigger value="contact">Kontakt</TabsTrigger>
+                    <TabsTrigger value="flavors">Příchutě</TabsTrigger>
                     <TabsTrigger value="footer">Patička</TabsTrigger>
                 </TabsList>
 
@@ -230,9 +231,9 @@ const ContentManagement = () => {
                                 <div key={key} className="space-y-6 p-6 rounded-xl bg-secondary/20 border border-border">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-3 h-3 rounded-full ${key === 'stimulants' ? 'bg-lime' :
-                                                key === 'electrolytes' ? 'bg-blue-400' :
-                                                    key === 'adaptogens' ? 'bg-terracotta' :
-                                                        'bg-orange'
+                                            key === 'electrolytes' ? 'bg-blue-400' :
+                                                key === 'adaptogens' ? 'bg-terracotta' :
+                                                    'bg-orange'
                                             }`} />
                                         <h3 className="text-xl font-bold capitalize">{details.title}</h3>
                                     </div>
@@ -459,6 +460,89 @@ const ContentManagement = () => {
                                     onChange={(e) => updateField(['contact', 'info', 'address', 'value', 'line2'], e.target.value)}
                                 />
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* FLAVORS SECTION */}
+                <TabsContent value="flavors">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Správa Příchutí & Štítků</CardTitle>
+                            <CardDescription>Upravte názvy, popisy a štítky pro jednotlivé varianty BoostUp.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-12">
+                            {Object.entries(localContent.flavors || {}).map(([key, flavor]: [string, any]) => (
+                                <div key={key} className="space-y-6 p-6 rounded-xl bg-secondary/20 border border-border">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-3 h-3 rounded-full ${key === 'lemon' ? 'bg-lime' :
+                                            key === 'red' ? 'bg-terracotta' :
+                                                'bg-olive'
+                                            }`} />
+                                        <h3 className="text-xl font-bold uppercase">{flavor.name}</h3>
+                                    </div>
+
+                                    <div className="grid gap-4">
+                                        <div className="grid gap-2">
+                                            <Label>Název příchutě</Label>
+                                            <Input
+                                                value={flavor.name}
+                                                onChange={(e) => updateField(['flavors', key, 'name'], e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label>Krátký popis</Label>
+                                            <Textarea
+                                                rows={2}
+                                                value={flavor.description}
+                                                onChange={(e) => updateField(['flavors', key, 'description'], e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center">
+                                            <Label className="text-muted-foreground uppercase text-[10px] font-black tracking-widest">Štítky (Tagy)</Label>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-7 text-[10px] font-bold"
+                                                onClick={() => {
+                                                    const newLabels = [...(flavor.labels || []), "Nový štítek"];
+                                                    updateField(['flavors', key, 'labels'], newLabels);
+                                                }}
+                                            >
+                                                + PŘIDAT ŠTÍTEK
+                                            </Button>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                            {(flavor.labels || []).map((label: string, i: number) => (
+                                                <div key={i} className="flex gap-2">
+                                                    <Input
+                                                        value={label}
+                                                        onChange={(e) => {
+                                                            const newLabels = [...flavor.labels];
+                                                            newLabels[i] = e.target.value;
+                                                            updateField(['flavors', key, 'labels'], newLabels);
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                        onClick={() => {
+                                                            const newLabels = flavor.labels.filter((_: any, index: number) => index !== i);
+                                                            updateField(['flavors', key, 'labels'], newLabels);
+                                                        }}
+                                                    >
+                                                        <RotateCcw className="h-4 w-4 rotate-45" /> {/* Use RotateCcw as an "X" for simplicity or cross icon if available */}
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
                 </TabsContent>

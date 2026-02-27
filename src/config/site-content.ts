@@ -247,6 +247,24 @@ export const SITE_CONTENT = {
         qrMessage: "Objednávka"
     },
 
+    flavors: {
+        lemon: {
+            name: "LEMON BLAST",
+            description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
+            labels: ["Bez cukru", "Vegan", "Energie"]
+        },
+        red: {
+            name: "RED RUSH",
+            description: "Červené ovoce a guarana pro tvůj rychlý a efektivní start",
+            labels: ["Vitamíny", "Rychlý nástup", "Výkon"]
+        },
+        silky: {
+            name: "SILKY LEAF",
+            description: "Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii",
+            labels: ["Antioxidanty", "Klidná síla", "Soustředění"]
+        }
+    },
+
     ingredientDetails: {
         stimulants: {
             title: "Přírodní stimulanty",

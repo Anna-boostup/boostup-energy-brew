@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
@@ -62,6 +63,7 @@ const getMixDescription = (pack: Pack): string => {
 };
 
 const ProductSection = () => {
+  const { content } = useContent();
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [flavorMode, setFlavorMode] = useState<FlavorMode | null>(null);
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
@@ -168,6 +170,12 @@ const ProductSection = () => {
 
   const currentFlavor = selectedFlavor ? flavors.find(f => f.id === selectedFlavor)! : flavors[0]; // Fallback
 
+  // Get dynamic flavor data from CMS
+  const cmsFlavor = selectedFlavor ? content.flavors[selectedFlavor] : content.flavors[flavors[0].id];
+  const flavorName = cmsFlavor?.name || currentFlavor.name;
+  const flavorDesc = cmsFlavor?.description || currentFlavor.description;
+  const flavorLabels = cmsFlavor?.labels || currentFlavor.labels;
+
   // Calculate price with potential subscription discount
   const getDynamicPrice = () => {
     if (!selectedPack) return 0;
@@ -258,7 +266,7 @@ const ProductSection = () => {
       name: displayName,
       price: displayPrice,
       quantity: quantity,
-      flavor: flavorMode === "mix" ? "MIX" : currentFlavor.name,
+      flavor: flavorMode === "mix" ? "MIX" : flavorName,
       pack: selectedPack,
       flavorMode: flavorMode,
       image: bottleSingle,
@@ -268,7 +276,7 @@ const ProductSection = () => {
 
     toast({
       title: purchaseType === 'subscription' ? "Předplatné přidáno!" : "Přidáno do košíku",
-      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : currentFlavor.name} (${selectedPack} ks)${purchaseType === 'subscription' ? " - Měsíčně (-15%)" : ""}`,
+      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : flavorName} (${selectedPack} ks)${purchaseType === 'subscription' ? " - Měsíčně (-15%)" : ""}`,
       duration: 3000,
       className: purchaseType === 'subscription' ? "border-amber-500 bg-amber-50" : ""
     });
@@ -313,7 +321,7 @@ const ProductSection = () => {
                     ) : (
                       <img
                         src={productImageSrc}
-                        alt={selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
+                        alt={selectedFlavor ? flavorName : "BoostUp Energy Brew"}
                         className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
                       />
                     )}
@@ -475,14 +483,19 @@ const ProductSection = () => {
                             <div className="text-left min-w-0 flex-1">
                               <div className="font-bold text-base leading-tight">
                                 {(() => {
-                                  const eff = getEffectiveProduct(flavor.id);
-                                  return eff ? cleanName(eff.name) : flavor.name;
+                                  // Prioritized CMS name, fallback to technical data
+                                  return content.flavors[flavor.id]?.name || (getEffectiveProduct(flavor.id) ? cleanName(getEffectiveProduct(flavor.id)!.name) : flavor.name);
                                 })()}
+                                {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
+                                  <span key={label} className="ml-2 text-[8px] uppercase font-bold px-1 py-0.5 rounded-full bg-white/10 border border-white/5 inline-block align-middle">
+                                    {label}
+                                  </span>
+                                ))}
                               </div>
                               <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>
                                 {(() => {
                                   const eff = getEffectiveProduct(flavor.id);
-                                  return eff?.description || flavor.description;
+                                  return eff?.description || content.flavors[flavor.id]?.description || flavor.description;
                                 })()}
                               </div>
                             </div>
@@ -560,10 +573,9 @@ const ProductSection = () => {
                           <div className="text-left min-w-0 flex-1">
                             <div className="flex items-baseline gap-2">
                               <span className="font-bold text-base leading-tight">
-                                {(() => {
-                                  const eff = getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id);
-                                  return eff ? cleanName(eff.name) : flavor.name;
-                                })()}
+                                <span className="font-bold text-base leading-tight">
+                                  {content.flavors[flavor.id]?.name || (getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id) ? cleanName(getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)!.name) : flavor.name)}
+                                </span>
                               </span>
                               {(() => {
                                 const eff = getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id);
@@ -573,14 +585,14 @@ const ProductSection = () => {
                                   </span>
                                 );
                               })()}
-                              {flavor.labels && flavor.labels.map(label => (
+                              {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
                                 <span key={label} className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
                                   {label}
                                 </span>
                               ))}
                             </div>
                             <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
-                              {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || flavor.description}
+                              {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || content.flavors[flavor.id]?.description || flavor.description}
                             </div>
                           </div>
                         </button>

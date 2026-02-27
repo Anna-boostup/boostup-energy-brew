@@ -61,6 +61,20 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     ...(dbContent.footer || {})
                 };
 
+                const mergedFlavors = { ...SITE_CONTENT.flavors };
+                if (dbContent.flavors) {
+                    Object.keys(dbContent.flavors).forEach(key => {
+                        if (mergedFlavors[key]) {
+                            mergedFlavors[key] = {
+                                ...mergedFlavors[key],
+                                ...dbContent.flavors[key]
+                            };
+                        } else {
+                            mergedFlavors[key] = dbContent.flavors[key];
+                        }
+                    });
+                }
+
                 setContent({
                     ...SITE_CONTENT,
                     ...dbContent,
@@ -68,7 +82,8 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     mission: mergedMission,
                     cta: mergedCTA,
                     contact: mergedContact,
-                    footer: mergedFooter
+                    footer: mergedFooter,
+                    flavors: mergedFlavors
                 });
             }
         } catch (err) {
