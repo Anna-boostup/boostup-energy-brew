@@ -41,17 +41,17 @@ const synergyData = [
 const ingredientInfo = [
   {
     name: "Kofein",
-    color: "#aa263e",
+    color: "hsl(var(--accent))",
     description: "Rychlý nástup a ostrý vrchol. Účinek kofeinu rychle stoupá, vrcholí přibližně 1,5 hodiny po konzumaci a poté relativně rychle klesá."
   },
   {
     name: "Guarana",
-    color: "#f29739",
+    color: "hsl(var(--orange))",
     description: "Pomalý a déletrvající účinek. Guarana má pozvolnější nástup, její účinek vrcholí později (kolem 3-4 hodin) a poskytuje stabilnější stimulaci."
   },
   {
     name: "Theanin",
-    color: "#dfdf57",
+    color: "hsl(var(--lime))",
     description: "Stabilizační základna. Theanin podporuje klidnou koncentraci, zmírňuje nervozitu z kofeinu a poskytuje vyváženou mentální ostrost bez vedlejších účinků."
   },
 ];

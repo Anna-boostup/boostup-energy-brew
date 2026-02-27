@@ -8,58 +8,58 @@
   :root {
     /* BoostUp Brand Colors - New Palette */
     /* #f4f1e6 - Cream/Background */
-    --background: 48 30% 93%;
-    --foreground: 100 35% 27%;
+    --background: 47 30% 93%;
+    --foreground: 99 33% 26%;
 
     /* Cards slightly darker cream */
-    --card: 48 25% 90%;
-    --card-foreground: 100 35% 27%;
+    --card: 47 25% 90%;
+    --card-foreground: 99 33% 26%;
 
-    --popover: 48 30% 93%;
-    --popover-foreground: 100 35% 27%;
+    --popover: 47 30% 93%;
+    --popover-foreground: 99 33% 26%;
 
-    /* Primary: #3d5a2f - Dark Green */
-    --primary: 100 35% 27%;
-    --primary-foreground: 48 30% 93%;
+    /* Primary: #3a572c - Dark Green */
+    --primary: 99 33% 26%;
+    --primary-foreground: 47 30% 93%;
 
     /* Secondary: Lighter cream */
-    --secondary: 48 25% 88%;
-    --secondary-foreground: 100 35% 27%;
+    --secondary: 47 25% 88%;
+    --secondary-foreground: 99 33% 26%;
 
     /* Muted */
-    --muted: 48 20% 85%;
-    --muted-foreground: 100 25% 40%;
+    --muted: 47 20% 85%;
+    --muted-foreground: 99 25% 40%;
 
     /* Accent: #aa263e - Red/Burgundy */
-    --accent: 350 64% 41%;
-    --accent-foreground: 48 30% 93%;
+    --accent: 349 63% 41%;
+    --accent-foreground: 47 30% 93%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 100 15% 78%;
-    --input: 100 15% 82%;
-    --ring: 100 35% 27%;
+    --border: 99 15% 78%;
+    --input: 99 15% 82%;
+    --ring: 99 33% 26%;
 
     --radius: 0.75rem;
 
     /* Custom Brand Colors - Exact HEX conversions to HSL */
-    /* #3d5a2f - Dark Green (Main) */
-    --olive: 100 31% 27%;
-    --olive-dark: 100 31% 20%;
-    --olive-light: 100 31% 35%;
+    /* #3a572c - Dark Green (Main) */
+    --olive: 99 33% 26%;
+    --olive-dark: 99 33% 18%;
+    --olive-light: 99 33% 35%;
 
-    /* #dfdf57 - Lime Yellow (Secondary) */
-    --lime: 60 68% 61%;
-    --lime-dark: 60 68% 50%;
+    /* #dee16b - Lime Yellow */
+    --lime: 61 65% 65%;
+    --lime-dark: 61 65% 50%;
 
     /* #aa263e - Red/Burgundy (Accent) */
     --terracotta: 349 63% 41%;
     --terracotta-dark: 349 63% 32%;
 
-    /* #f29739 - Orange (Accent Secondary) */
-    --orange: 30 88% 59%;
-    --orange-dark: 30 88% 48%;
+    /* #d56230 - Orange */
+    --orange: 18 65% 51%;
+    --orange-dark: 18 65% 42%;
 
     /* #f4f1e6 - Cream (Background) */
     --cream: 47 30% 93%;
