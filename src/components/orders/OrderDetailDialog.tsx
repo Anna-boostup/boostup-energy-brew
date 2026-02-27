@@ -14,7 +14,7 @@ import { SITE_CONTENT } from "@/config/site-content";
 
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { toast } = useToast();
-    const { updateOrderPacketaInfo } = useInventory();
+    const { updateOrderPacketaInfo, updateOrderStatus } = useInventory();
     const [isCreatingPacket, setIsCreatingPacket] = useState(false);
     const bank = SITE_CONTENT.bankInfo;
 
@@ -42,12 +42,12 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
 
             const packetaData = await packetaRes.json();
             if (packetaRes.ok && packetaData.barcode && packetaData.packetId) {
-                // Update the order in the database and local context immediately
+                // 1. Update Packeta info in DB (this is the only step now)
                 await updateOrderPacketaInfo(order.id, packetaData.barcode, packetaData.packetId);
 
                 toast({
                     title: "Zásilka vytvořena",
-                    description: `Kód zásilky: ${packetaData.barcode}. Tlačítko pro tisk štítku je nyní k dispozici.`,
+                    description: `Barcode: ${packetaData.barcode}. Doprava a e-mail budou automaticky odeslány, jakmile balík podáte v Zásilkovně.`,
                 });
             } else {
                 throw new Error(packetaData.error || 'Neznámá chyba');
@@ -75,16 +75,16 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
     return (
         <DialogContent className="max-w-4xl max-h-[95vh] p-0 overflow-hidden [&>button]:hidden">
             {/* Custom Sticky Header Toolbar */}
-            <div className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-50 shadow-sm">
+            <div className="flex items-center justify-between p-5 border-b bg-white sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-4">
                     <DialogClose asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <X className="h-4 w-4" />
+                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors">
+                            <X className="h-5 w-5 text-slate-500" />
                         </Button>
                     </DialogClose>
-                    <div className="flex flex-col">
-                        <DialogTitle className="text-lg font-bold">Objednávka #{order.id.slice(0, 8)}</DialogTitle>
-                        <p className="text-xs text-muted-foreground">{new Date(order.date || order.created_at).toLocaleString()}</p>
+                    <div className="flex flex-col gap-0.5">
+                        <DialogTitle className="text-xl font-extrabold tracking-tight text-slate-900">Objednávka #{order.id.slice(0, 8)}</DialogTitle>
+                        <p className="text-xs font-medium text-slate-500">{new Date(order.date || order.created_at).toLocaleString('cs-CZ')}</p>
                     </div>
                 </div>
 

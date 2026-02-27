@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useInventory, Order } from "@/context/InventoryContext";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
     Dialog,
@@ -98,6 +99,33 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
 const Orders = () => {
     const { orders, updateOrderStatus } = useInventory();
     const { toast } = useToast();
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleSyncPacketa = async () => {
+        setIsSyncing(true);
+        try {
+            const res = await fetch('/api/sync-packeta-status');
+            const data = await res.json();
+
+            if (res.ok) {
+                const updatedCount = data.processed?.filter((r: any) => r.status === 'updated_and_notified').length || 0;
+                toast({
+                    title: "Synchronizace dokončena",
+                    description: `Všechny zásilky byly zkontrolovány. Aktualizováno objednávek: ${updatedCount}.`,
+                });
+            } else {
+                throw new Error(data.error || 'Nastala chyba při synchronizaci.');
+            }
+        } catch (e: any) {
+            toast({
+                title: "Chyba synchronizace",
+                description: e.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
         updateOrderStatus(orderId, newStatus);
@@ -259,8 +287,18 @@ const Orders = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 className="text-3xl font-bold tracking-tight">Správa objednávek</h2>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 h-10 px-4 border-slate-200 shadow-sm"
+                    onClick={handleSyncPacketa}
+                    disabled={isSyncing}
+                >
+                    <RefreshCcw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                    {isSyncing ? 'Synchronizuji...' : 'Synchronizovat Zásilkovnu'}
+                </Button>
             </div>
 
             <Tabs defaultValue="pending" className="w-full">
