@@ -12,6 +12,13 @@ const MissionSection = () => {
     "Bez kompromisů": Shield
   };
 
+  const iconBgMap: Record<string, string> = {
+    "Čistá energie": "bg-lime",
+    "Dlouhotrvající": "bg-orange",
+    "Přírodní složení": "bg-olive-light",
+    "Bez kompromisů": "bg-terracotta"
+  };
+
   return (
     <section id="mise" className="py-28 bg-foreground text-primary-foreground relative overflow-hidden">
       {/* Animated background */}
@@ -66,9 +73,9 @@ const MissionSection = () => {
                 {/* Enhanced Glow effect */}
                 <div className={`absolute inset-0 ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl blur-2xl transition-all duration-500 scale-105 group-hover:scale-110`} />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border border-primary-foreground/10 group-hover:border-primary-foreground/30 transition-all duration-500 h-full flex flex-col items-center text-center backdrop-blur-sm">
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border border-primary-foreground/10 group-hover:border-primary-foreground/30 transition-all duration-500 h-full flex flex-col items-center text-center backdrop-blur-md">
                   {/* Icon */}
-                  <div className={`w-16 h-16 ${feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg`}>
+                  <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
