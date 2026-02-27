@@ -60,15 +60,15 @@ const MissionSection = () => {
             return (
               <div
                 key={feature.title}
-                className="relative group animate-fade-up hover-lift"
+                className="relative group animate-fade-up hover-lift cursor-default"
                 style={{ animationDelay: `${300 + index * 100}ms` }}
               >
-                {/* Glow effect */}
-                <div className={`absolute inset-0 ${feature.color} opacity-0 group-hover:opacity-30 rounded-3xl blur-xl transition-opacity duration-500`} />
+                {/* Enhanced Glow effect */}
+                <div className={`absolute inset-0 ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl blur-2xl transition-all duration-500 scale-105 group-hover:scale-110`} />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border border-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-500 h-full flex flex-col items-center text-center">
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border border-primary-foreground/10 group-hover:border-primary-foreground/30 transition-all duration-500 h-full flex flex-col items-center text-center backdrop-blur-sm">
                   {/* Icon */}
-                  <div className={`w-16 h-16 ${feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
+                  <div className={`w-16 h-16 ${feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
@@ -78,10 +78,10 @@ const MissionSection = () => {
                   </div>
 
                   {/* Title */}
-                  <h4 className="font-bold text-lg text-primary-foreground mb-2">{feature.title}</h4>
+                  <h4 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h4>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground/60">{feature.description}</p>
+                  <p className="text-sm text-primary-foreground/60 leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );

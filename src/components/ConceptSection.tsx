@@ -68,11 +68,12 @@ const ConceptSection = () => {
                 style={{ animationDelay: `${400 + index * 150}ms` }}
                 onClick={() => setSelectedConcept({ ...concept, ...colors, Icon })}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 blur-xl scale-105`} />
+                {/* Intense Background Glow */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover:border-transparent transition-all duration-500 h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground hover-lift">
+                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border group-hover:border-transparent transition-all duration-500 h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground hover-lift shadow-sm">
                   {/* Icon */}
-                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
+                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg`}>
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />
                   </div>
 
@@ -82,19 +83,19 @@ const ConceptSection = () => {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2">
+                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
                     {concept.title}
                   </h3>
                   <p className="text-sm text-muted-foreground group-hover:text-primary-foreground/70 mb-4 font-bold tracking-widest">
                     {concept.subtitle}
                   </p>
-                  <p className="text-muted-foreground group-hover:text-primary-foreground/80 flex-grow text-lg">
+                  <p className="text-muted-foreground group-hover:text-primary-foreground/80 flex-grow text-lg leading-relaxed">
                     {concept.description}
                   </p>
 
                   {/* Hover indicator */}
-                  <div className="mt-8 flex items-center gap-2 text-primary group-hover:text-lime font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span>Zjistit více</span>
+                  <div className="mt-8 flex items-center gap-2 text-primary group-hover:text-lime font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <span className="text-sm tracking-wide">ZJISTIT VÍCE</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                   </div>
                 </div>
