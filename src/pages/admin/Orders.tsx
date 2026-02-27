@@ -181,16 +181,25 @@ const Orders = () => {
         }
     };
 
-    const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
-        updateOrderStatus(orderId, newStatus);
+    const handleBulkStatusChange = (newStatus: Order['status']) => {
+        const idsArray = Array.from(selectedOrders);
+        idsArray.forEach(id => updateOrderStatus(id, newStatus));
+
         toast({
-            title: "Stav objednávky změněn",
-            description: `Objednávka ${orderId.slice(0, 8)} byla označena jako ${newStatus === 'shipped' ? 'Odeslaná' :
-                newStatus === 'paid' ? 'Zaplacená' :
-                    newStatus === 'cancelled' ? 'Stornovaná' :
-                        'Rozpracovaná'
+            title: "Hromadná změna stavu",
+            description: `${idsArray.length} objednávek bylo označeno jako ${newStatus === 'shipped' ? 'Odeslané' :
+                    newStatus === 'processing' ? 'Rozpracované' :
+                        newStatus === 'paid' ? 'Zaplacené' : 'Stornované'
                 }.`,
         });
+        setSelectedOrders(new Set());
+    };
+
+    const [isBulkCancelDialogOpen, setIsBulkCancelDialogOpen] = useState(false);
+
+    const handleBulkCancel = () => {
+        handleBulkStatusChange('cancelled');
+        setIsBulkCancelDialogOpen(false);
     };
 
     const pendingOrders = orders.filter(o => o.status !== 'shipped' && o.status !== 'cancelled');
@@ -288,7 +297,7 @@ const Orders = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
+                                        <div className="flex justify-end gap-1">
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
@@ -350,12 +359,12 @@ const Orders = () => {
                                                                 <AlertTriangle className="w-5 h-5 text-red-500" />
                                                                 Stornovat objednávku
                                                             </DialogTitle>
-                                                            <DialogHeader>
+                                                            <div className="pt-2">
                                                                 <div className="text-sm font-medium">Stornovat objednávku</div>
                                                                 <div className="text-xs text-muted-foreground mt-1">
                                                                     Opravdu chcete stornovat objednávku #{order.id.slice(0, 8)}? Tuto akci nelze vrátit.
                                                                 </div>
-                                                            </DialogHeader>
+                                                            </div>
                                                         </DialogHeader>
                                                         <DialogFooter className="gap-2 sm:gap-0 mt-4">
                                                             <DialogTrigger asChild>
@@ -452,26 +461,87 @@ const Orders = () => {
             </Tabs>
 
             {selectedOrders.size > 0 && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 shadow-xl rounded-full px-6 py-3 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 z-50">
-                    <div className="text-sm font-medium text-slate-600 border-r pr-6 border-slate-200">
-                        Vybráno: <span className="text-emerald-600 font-bold">{selectedOrders.size}</span> objednávek
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-8 animate-in fade-in slide-in-from-bottom-8 z-50 min-w-fit whitespace-nowrap">
+                    <div className="flex flex-col pr-8 border-r border-slate-200">
+                        <div className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-0.5">Vybráno</div>
+                        <div className="text-xl font-black text-emerald-600 line-height-none">{selectedOrders.size} <span className="text-sm font-medium text-slate-400">obj.</span></div>
                     </div>
-                    <div className="flex gap-2">
+
+                    <div className="flex items-center gap-3">
                         <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
-                            className="text-slate-600 hover:text-red-600 hover:bg-red-50"
+                            className="text-slate-600 h-10 px-4"
                             onClick={() => setSelectedOrders(new Set())}
                         >
-                            Zrušit výběr
+                            Zrušit
                         </Button>
+
+                        <div className="flex gap-2 p-1 bg-slate-50 border rounded-xl">
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-10 text-blue-600 hover:text-blue-700 hover:bg-blue-100/50 gap-2"
+                                onClick={() => handleBulkStatusChange('processing')}
+                                title="Hromadně označit jako rozpracované"
+                            >
+                                <Clock className="w-4 h-4" />
+                                <span className="hidden sm:inline">Rozpracovat</span>
+                            </Button>
+
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-10 text-blue-600 hover:text-blue-700 hover:bg-blue-100/50 gap-2"
+                                onClick={() => handleBulkStatusChange('shipped')}
+                                title="Hromadně označit jako vyřízené/odeslané"
+                            >
+                                <Truck className="w-4 h-4" />
+                                <span className="hidden sm:inline">Odeslat</span>
+                            </Button>
+
+                            <Dialog open={isBulkCancelDialogOpen} onOpenChange={setIsBulkCancelDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-10 text-red-500 hover:text-red-700 hover:bg-red-100/50 gap-2"
+                                        title="Hromadně stornovat"
+                                    >
+                                        <XCircle className="w-4 h-4" />
+                                        <span className="hidden sm:inline">Storno</span>
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle className="flex items-center gap-2">
+                                            <AlertTriangle className="w-5 h-5 text-red-500" />
+                                            Hromadné storno
+                                        </DialogTitle>
+                                        <div className="pt-2">
+                                            <div className="text-sm font-medium">Stornovat vybrané objednávky</div>
+                                            <div className="text-xs text-muted-foreground mt-1">
+                                                Opravdu chcete stornovat {selectedOrders.size} vybraných objednávek? Tuto akci nelze vrátit.
+                                            </div>
+                                        </div>
+                                    </DialogHeader>
+                                    <DialogFooter className="gap-2 sm:gap-0 mt-4">
+                                        <Button variant="outline" onClick={() => setIsBulkCancelDialogOpen(false)}>Zpět</Button>
+                                        <Button variant="destructive" onClick={handleBulkCancel}>
+                                            Potvrdit hromadné storno
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+
                         <Button
                             size="sm"
-                            className="bg-emerald-600 hover:bg-emerald-700 gap-2 px-4 h-9"
+                            className="bg-emerald-600 hover:bg-emerald-700 gap-2 px-6 h-10 shadow-lg shadow-emerald-200"
                             onClick={handleBulkPrint}
                         >
                             <Printer className="w-4 h-4" />
-                            Hromadný tisk
+                            <span>Tisk štítků</span>
                         </Button>
                     </div>
                 </div>
