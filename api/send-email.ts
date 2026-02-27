@@ -8,8 +8,8 @@ const COLORS = {
     muted: '#666666'
 };
 
-const BASE_URL = 'https://boostup-energy-brew-git-development-boostup1.vercel.app';
-const LOGO_URL = `${BASE_URL}/logo-green.png`;
+const BASE_URL = 'https://test.drinkboostup.cz';
+const LOGO_URL = `${BASE_URL}/logo-green.png?v=2`;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') {
@@ -45,7 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     switch (type) {
         case 'registration':
             subject = 'Vítej v týmu BoostUp! 🚀';
-            heroImageUrl = `${BASE_URL}/email-welcome.png`; // Placeholder for the hero image
+            heroImageUrl = `${BASE_URL}/email-welcome.png?v=2`; // Placeholder for the hero image
             contentHtml = `
                 <h1 style="color:${COLORS.olive};margin-top:0">Ahoj ${customerName}!</h1>
                 <p>Jsme nadšení, že ses přidal k BoostUp. Tvůj účet byl úspěšně vytvořen a teď už ti nic nebrání v cestě za maximálním výkonem.</p>
@@ -96,7 +96,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         case 'shipping':
             subject = `🚚 Tvoje zásilka ${orderNumber} je na cestě! | BoostUp`;
-            heroImageUrl = `${BASE_URL}/email-shipping.png`;
+            heroImageUrl = `${BASE_URL}/email-shipping.png?v=2`;
             const trackingUrl = `https://tracking.packeta.com/cs/?id=${trackingNumber}`;
             contentHtml = `
                 <h2 style="color:${COLORS.olive};margin-top:0">Tvůj BoostUp je na cestě! 🚀</h2>
@@ -150,14 +150,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         <!-- Header -->
                         <tr>
                             <td align="center" style="padding:40px 20px;background-color:white;border-bottom:1px solid #f0f0f0">
-                                <img src="${LOGO_URL}" alt="BoostUp" style="height:45px;width:auto">
+                                <img src="${LOGO_URL}" alt="BoostUp" width="180" style="display:block;height:auto;border:none">
                             </td>
                         </tr>
                         
                         ${heroImageUrl ? `
                         <tr>
                             <td>
-                                <img src="${heroImageUrl}" alt="BoostUp Image" style="width:100%;height:auto;display:block">
+                                <img src="${heroImageUrl}" alt="BoostUp Image" width="600" style="width:600px;max-width:100%;height:auto;display:block;border:none">
                             </td>
                         </tr>
                         ` : ''}
