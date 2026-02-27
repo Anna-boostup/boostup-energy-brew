@@ -125,41 +125,34 @@ const Orders = () => {
     };
 
     const handleBulkPrint = () => {
-        const packets = orders
-            .filter(o => selectedOrders.has(o.id) && (o.packeta_packet_id || o.packeta_barcode))
-            .map(o => o.packeta_packet_id || o.packeta_barcode) as string[];
+        // Find all numeric packet IDs. Barcodes (Z...) are NOT supported by the bulk API.
+        const ids = orders
+            .filter(o => selectedOrders.has(o.id) && o.packeta_packet_id)
+            .map(o => o.packeta_packet_id) as string[];
 
-        if (packets.length === 0) {
+        if (ids.length === 0) {
             toast({
-                title: "Žádné štítky k tisku",
-                description: "Vybrané objednávky nemají vygenerované štítky Zásilkovny.",
+                title: "Nelze tisknout hromadně",
+                description: "Vybrané objednávky nemají číselné ID zásilky (možná byly vytvořeny postaru). Vytiskněte je prosím po jednom z detailu objednávky.",
                 variant: "destructive"
             });
             return;
         }
 
-        setPrintIds(packets);
+        setPrintIds(ids);
         setIsPrintDialogOpen(true);
     };
 
     const executeA4Print = () => {
+        // Packeta's bulk PDF format for 4 labels on A4 page
         window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=A6 on A4`, '_blank');
         setIsPrintDialogOpen(false);
     };
 
     const executeSequentialPrint = () => {
-        // Sequentially open labels in new tabs
-        // Note: Browsers usually block multiple popups. We'll open them with a small delay.
-        printIds.forEach((id, index) => {
-            setTimeout(() => {
-                window.open(`/api/get-packeta-label?barcode=${id}`, '_blank');
-            }, index * 200);
-        });
+        // Instead of individual tabs, we get ONE PDF where each label is on its own A6 page
+        window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=A6`, '_blank');
         setIsPrintDialogOpen(false);
-        toast({
-            title: "Tisk zahájen",
-            description: "Otevírám jednotlivé štítky v nových oknech. Povolte prosím vyskakovací okna, pokud se nezobrazí.",
-        });
     };
 
     const handleSyncPacketa = async () => {

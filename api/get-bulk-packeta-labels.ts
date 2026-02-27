@@ -47,28 +47,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
 
         const text = await response.text();
-        console.log('Packeta bulk labels response summary:', text.substring(0, 500));
+        console.log('--- PACKETA BULK RESPONSE START ---');
+        console.log(text.substring(0, 500));
+        console.log('--- PACKETA BULK RESPONSE END ---');
 
         // Check for API fault
         if (text.includes('<status>error</status>') || text.includes('<faultCode>')) {
-            const faultMatch = text.match(/<string>([^<]+)<\/string>/);
+            const faultMatch = text.match(/<string>([^<]+)<\/string>/) || text.match(/<faultstring>([^<]+)<\/faultstring>/);
             const errorMsg = faultMatch ? faultMatch[1] : 'Neznámá chyba Zásilkovny';
             console.error('Packeta bulk labels API error:', errorMsg);
             return res.status(400).json({ error: `Packeta: ${errorMsg}` });
         }
 
         // Extract base64 PDF from response - robust parsing matching single label API
+        let pdfBase64 = '';
         const pdfMatch = text.match(/<response>([^<]+)<\/response>/) ||
             text.match(/<labelContents>([^<]+)<\/labelContents>/) ||
             text.match(/<result>([^<]+)<\/result>/) ||
             text.match(/<content>([^<]+)<\/content>/);
 
-        if (!pdfMatch || !pdfMatch[1]) {
-            console.error('No PDF content in Packeta bulk response. Full response summary:', text.substring(0, 1000));
+        if (pdfMatch && pdfMatch[1]) {
+            pdfBase64 = pdfMatch[1].trim();
+        } else {
+            // "Greedy" fallback: find any long continuous string that looks like base64
+            // (Looking for a sequence of 1000+ base64 chars between tags)
+            const greedyMatch = text.match(/>([A-Za-z0-9+/=]{1000,})</);
+            if (greedyMatch) {
+                console.log('Using greedy PDF extraction fallback');
+                pdfBase64 = greedyMatch[1].trim();
+            }
+        }
+
+        if (!pdfBase64) {
+            console.error('No PDF content in Packeta bulk response. Response length:', text.length);
             return res.status(500).json({ error: 'Failed to extract PDF from Packeta response' });
         }
 
-        const pdfBuffer = Buffer.from(pdfMatch[1].trim(), 'base64');
+        const pdfBuffer = Buffer.from(pdfBase64, 'base64');
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'inline; filename="packeta-labels.pdf"');
         return res.send(pdfBuffer);
