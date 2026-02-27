@@ -174,8 +174,8 @@ const Orders = () => {
             {/* Desktop View */}
             <div className="hidden md:block">
                 <Table>
-                    <TableHeader>
-                        <TableRow>
+                    <TableHeader className="bg-slate-50/50">
+                        <TableRow className="border-b-2 border-slate-200">
                             <TableHead className="w-12">
                                 <Checkbox
                                     checked={data.length > 0 && data.every(o => selectedOrders.has(o.id))}
@@ -189,13 +189,13 @@ const Orders = () => {
                                     }}
                                 />
                             </TableHead>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Datum</TableHead>
-                            <TableHead>Zákazník</TableHead>
-                            <TableHead>Položky</TableHead>
-                            <TableHead>Cena celkem</TableHead>
-                            <TableHead>Stav</TableHead>
-                            <TableHead className="text-right">Akce</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">ID</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Datum</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Zákazník</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Položky</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Cena celkem</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Stav</TableHead>
+                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Akce</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

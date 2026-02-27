@@ -150,14 +150,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         <!-- Header -->
                         <tr>
                             <td align="center" style="padding:40px 20px;background-color:white;border-bottom:1px solid #f0f0f0">
-                                <img src="${LOGO_URL}" alt="BoostUp" width="180" style="display:block;height:auto;border:none">
+                                <img src="${LOGO_URL}" alt="" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         
                         ${heroImageUrl ? `
                         <tr>
                             <td>
-                                <img src="${heroImageUrl}" alt="BoostUp Image" width="600" style="width:600px;max-width:100%;height:auto;display:block;border:none">
+                                <img src="${heroImageUrl}" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         ` : ''}
