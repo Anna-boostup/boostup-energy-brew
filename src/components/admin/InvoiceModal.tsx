@@ -113,7 +113,18 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                             <tbody className="divide-y divide-slate-50">
                                 {order.items.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="py-4 text-slate-800">{item.name}</td>
+                                        <td className="py-4 text-slate-800">
+                                            <div className="font-medium">{item.name}</div>
+                                            {item.mixConfiguration && (
+                                                <div className="text-xs text-slate-500 mt-1">
+                                                    — {[
+                                                        item.mixConfiguration.lemon && `Lemon: ${item.mixConfiguration.lemon} ks`,
+                                                        item.mixConfiguration.red && `Red: ${item.mixConfiguration.red} ks`,
+                                                        item.mixConfiguration.silky && `Silky: ${item.mixConfiguration.silky} ks`
+                                                    ].filter(Boolean).join(', ')}
+                                                </div>
+                                            )}
+                                        </td>
                                         <td className="py-4 text-center text-slate-600">{item.quantity}</td>
                                         <td className="py-4 text-right text-slate-600">{item.price} Kč</td>
                                         <td className="py-4 text-right font-bold text-slate-800">{item.price * item.quantity} Kč</td>

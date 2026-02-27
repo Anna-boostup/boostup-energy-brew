@@ -5,6 +5,7 @@ import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
+import logoGreen from "@/assets/logo-green.png";
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -71,7 +72,9 @@ const AdminLayout = () => {
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 bg-slate-900 border-r-slate-800 text-white w-72">
                         <div className="p-6 border-b border-slate-800">
-                            <Link to="/" className="font-display font-bold text-2xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
+                            <Link to="/" className="flex items-center">
+                                <img src={logoGreen} alt="BoostUp" className="h-8 w-auto brightness-0 invert" />
+                            </Link>
                             <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
                         </div>
                         <nav className="p-4 space-y-2">
@@ -118,7 +121,9 @@ const AdminLayout = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden md:block w-64 bg-slate-900 text-white fixed h-full shadow-xl z-10">
                 <div className="p-6 border-b border-slate-800">
-                    <Link to="/" className="font-display font-bold text-2xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
+                    <Link to="/" className="flex items-center">
+                        <img src={logoGreen} alt="BoostUp" className="h-8 w-auto brightness-0 invert" />
+                    </Link>
                     <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
                 </div>
 

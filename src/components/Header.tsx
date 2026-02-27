@@ -2,7 +2,7 @@ import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User, Package, Cr
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import logoBlack from "@/assets/logo-black.png";
+import logoGreen from "@/assets/logo-green.png";
 import logoWhite from "@/assets/logo-white.png";
 import CartModal from "./CartModal";
 import { useCart } from "@/context/CartContext";
@@ -28,7 +28,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src={logoBlack} alt="BoostUp" className="h-8 w-auto dark:hidden" />
+            <img src={logoGreen} alt="BoostUp" className="h-8 w-auto dark:hidden" />
             <img src={logoWhite} alt="BoostUp" className="h-8 w-auto hidden dark:block" />
           </Link>
 

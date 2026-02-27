@@ -47,6 +47,11 @@ export interface Order {
         name: string;
         quantity: number;
         price: number;
+        mixConfiguration?: {
+            lemon: number;
+            red: number;
+            silky: number;
+        };
     }[];
     total: number;
     status: 'pending' | 'paid' | 'processing' | 'shipped';

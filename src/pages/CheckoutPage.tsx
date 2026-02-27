@@ -23,7 +23,7 @@ const sendOrderConfirmationEmail = async (
     to: string,
     orderNumber: string,
     customerName: string,
-    items: { name: string; quantity: number; price: number }[],
+    items: { name: string; quantity: number; price: number; mixConfiguration?: any }[],
     total: number
 ) => {
     try {
@@ -253,7 +253,8 @@ const CheckoutPage = () => {
                     sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
                     name: item.name,
                     quantity: item.quantity,
-                    price: item.price
+                    price: item.price,
+                    mixConfiguration: item.mixConfiguration
                 })),
                 total: cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0),
                 status: 'paid', // Initial status, maybe should be pending if payment fails/is transfer

@@ -1,19 +1,52 @@
+import { useState } from "react";
 import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
-import { Phone, Mail, MapPin, Send, MessageSquare } from "lucide-react";
+import { Phone, Mail, MapPin, Send, MessageSquare, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const ContactSection = () => {
   const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.contact;
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: content.toast.success.title,
-      description: content.toast.success.description,
-    });
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: formData.email,
+          type: 'contact_auto_reply',
+          customerName: formData.name,
+          message: formData.message
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to send email');
+
+      toast({
+        title: content.toast.success.title,
+        description: content.toast.success.description,
+      });
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Chyba při odesílání",
+        description: "Zprávu se nepodařilo odeslat. Zkuste to prosím znovu nebo nám napište přímo.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -90,6 +123,8 @@ const ContactSection = () => {
                     <input
                       required
                       type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-6 py-4 rounded-xl border-2 border-border bg-background focus:border-primary outline-none transition-all"
                       placeholder={content.form.name.placeholder}
                     />
@@ -99,6 +134,8 @@ const ContactSection = () => {
                     <input
                       required
                       type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-6 py-4 rounded-xl border-2 border-border bg-background focus:border-primary outline-none transition-all"
                       placeholder={content.form.email.placeholder}
                     />
@@ -109,13 +146,21 @@ const ContactSection = () => {
                   <textarea
                     required
                     rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-6 py-4 rounded-xl border-2 border-border bg-background focus:border-primary outline-none transition-all resize-none"
                     placeholder={content.form.message.placeholder}
                   ></textarea>
                 </div>
-                <Button variant="hero" type="submit" className="w-full group">
-                  {content.form.submit}
-                  <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Button variant="hero" type="submit" className="w-full group" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      {content.form.submit}
+                      <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </>
+                  )}
                 </Button>
               </form>
             </div>

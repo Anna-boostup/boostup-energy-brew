@@ -1,7 +1,17 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+const COLORS = {
+    cream: '#f4f1e6',
+    olive: '#3a572c',
+    lime: '#dee16b',
+    text: '#1a1a1a',
+    muted: '#666666'
+};
+
+const BASE_URL = 'https://drinkboostup.cz';
+const LOGO_URL = `${BASE_URL}/logo-green.png`;
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    // Only allow POST
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -12,36 +22,161 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(500).json({ error: 'Email service not configured' });
     }
 
-    const { to, orderNumber, customerName, items, total } = req.body;
+    const {
+        to,
+        type = 'order_confirmation',
+        customerName = 'zákazníku',
+        orderNumber,
+        items = [],
+        total,
+        trackingNumber,
+        message, // For contact auto-reply
+        magicLink, // For magic link
+    } = req.body;
 
-    if (!to || !orderNumber) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    if (!to) {
+        return res.status(400).json({ error: 'Missing recipient email' });
     }
 
-    const itemsHtml = (items || []).map((i: { name: string; quantity: number; price: number }) =>
-        `<tr><td style="padding:6px 0">${i.name} × ${i.quantity}</td><td style="padding:6px 0;text-align:right">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`
-    ).join('');
+    let subject = 'BoostUp';
+    let contentHtml = '';
+    let heroImageUrl = '';
 
-    const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a">
-      <div style="background:#2d5a27;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-        <h1 style="color:#fff;margin:0;font-size:24px">BOOSTUP.</h1>
-      </div>
-      <div style="background:#f9f9f9;padding:32px;border-radius:0 0 12px 12px">
-        <h2 style="margin-top:0">Potvrzení objednávky</h2>
-        <p>Ahoj <strong>${customerName}</strong>, tvoje objednávka byla úspěšně přijata!</p>
-        <p><strong>Číslo objednávky:</strong> ${orderNumber}</p>
-        <table style="width:100%;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;margin:16px 0">
-          ${itemsHtml}
-          <tr style="font-weight:bold;font-size:16px">
-            <td style="padding:10px 0">Celkem</td>
-            <td style="padding:10px 0;text-align:right">${Number(total).toFixed(0)} Kč</td>
-          </tr>
+    switch (type) {
+        case 'registration':
+            subject = 'Vítej v týmu BoostUp! 🚀';
+            heroImageUrl = `${BASE_URL}/email-welcome.png`; // Placeholder for the hero image
+            contentHtml = `
+                <h1 style="color:${COLORS.olive};margin-top:0">Ahoj ${customerName}!</h1>
+                <p>Jsme nadšení, že ses přidal k BoostUp. Tvůj účet byl úspěšně vytvořen a teď už ti nic nebrání v cestě za maximálním výkonem.</p>
+                <div style="margin:30px 0;text-align:center">
+                    <a href="${BASE_URL}" style="background:${COLORS.olive};color:white;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block">Doplnit zásoby energie</a>
+                </div>
+                <p>Pokud budeš cokoliv potřebovat, stačí odpovědět na tento e-mail.</p>
+            `;
+            break;
+
+        case 'order_confirmation':
+            subject = `✅ Potvrzení objednávky ${orderNumber} | BoostUp`;
+            const itemsHtml = items.map((i: any) => {
+                let details = '';
+                if (i.mixConfiguration) {
+                    const flavors = [];
+                    if (i.mixConfiguration.lemon) flavors.push(`Lemon: ${i.mixConfiguration.lemon} ks`);
+                    if (i.mixConfiguration.red) flavors.push(`Red: ${i.mixConfiguration.red} ks`);
+                    if (i.mixConfiguration.silky) flavors.push(`Silky: ${i.mixConfiguration.silky} ks`);
+                    details = `<div style="font-size:12px;color:${COLORS.muted};margin-top:4px">— ${flavors.join(', ')}</div>`;
+                }
+                return `<tr><td style="padding:10px 0;border-bottom:1px solid #eeeeee"><div>${i.name} × ${i.quantity}</div>${details}</td><td style="padding:10px 0;text-align:right;border-bottom:1px solid #eeeeee;vertical-align:top">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`;
+            }).join('');
+
+            contentHtml = `
+                <h2 style="color:${COLORS.olive};margin-top:0">Díky za tvoji objednávku!</h2>
+                <p>Ahoj ${customerName}, tvoje objednávka <strong>${orderNumber}</strong> byla úspěšně přijata. Už na ní začínáme pracovat.</p>
+                <table style="width:100%;margin:20px 0;border-collapse:collapse">
+                    ${itemsHtml}
+                    <tr style="font-weight:bold;font-size:18px">
+                        <td style="padding:15px 0">Celkem</td>
+                        <td style="padding:15px 0;text-align:right">${Number(total).toFixed(0)} Kč</td>
+                    </tr>
+                </table>
+                <p>Hned jak zásilku předáme dopravci, pošleme ti e-mail se sledovacím číslem.</p>
+            `;
+            break;
+
+        case 'shipping':
+            subject = `🚚 Tvoje zásilka ${orderNumber} je na cestě! | BoostUp`;
+            heroImageUrl = `${BASE_URL}/email-shipping.png`;
+            const trackingUrl = `https://tracking.packeta.com/cs/?id=${trackingNumber}`;
+            contentHtml = `
+                <h2 style="color:${COLORS.olive};margin-top:0">Tvůj BoostUp je na cestě! 🚀</h2>
+                <p>Tvůj balíček k objednávce <strong>${orderNumber}</strong> jsme právě předali Zásilkovně.</p>
+                <div style="background:#ffffff;padding:24px;border-radius:12px;margin:24px 0;border:1px solid #eeeeee;text-align:center">
+                    <p style="margin-top:0;font-size:12px;color:${COLORS.muted};text-transform:uppercase;font-weight:bold;letter-spacing:1px">Sledovací číslo</p>
+                    <p style="font-size:20px;font-weight:bold;margin:10px 0;color:${COLORS.olive}">${trackingNumber}</p>
+                    <a href="${trackingUrl}" style="background:${COLORS.olive};color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;margin-top:10px">Sledovat zásilku</a>
+                </div>
+            `;
+            break;
+
+        case 'contact_auto_reply':
+            subject = 'Díky za tvou zprávu! | BoostUp';
+            contentHtml = `
+                <h2 style="color:${COLORS.olive};margin-top:0">Zpráva přijata ⚡</h2>
+                <p>Ahoj, tvoje zpráva dorazila k nám do BoostUpu. Ozveme se ti co nejdříve, obvykle to netrvá déle než pár hodin.</p>
+                <div style="background:#ffffff;padding:20px;border-radius:12px;margin:20px 0;border:1px solid #eeeeee;font-style:italic">
+                    "${message}"
+                </div>
+                <p>Zatím můžeš mrknout na naše novinky na <a href="https://instagram.com/drinkboostup" style="color:${COLORS.olive}">Instagramu</a>.</p>
+            `;
+            break;
+
+        case 'magic_link':
+            subject = 'Přihlášení do BoostUp ⚡';
+            contentHtml = `
+                <h2 style="color:${COLORS.olive};margin-top:0">Tvůj odkaz pro přihlášení</h2>
+                <p>Kliknutím na tlačítko níže budeš okamžitě přihlášen ke svému účtu.</p>
+                <div style="margin:32px 0;text-align:center">
+                    <a href="${magicLink}" style="background:${COLORS.olive};color:white;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block">Přihlásit se</a>
+                </div>
+                <p style="font-size:13px;color:${COLORS.muted}">Tento odkaz je platný pouze po omezenou dobu. Pokud jsi si ho nevyžádal, můžeš tento e-mail ignorovat.</p>
+            `;
+            break;
+    }
+
+    const emailHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${subject}</title>
+    </head>
+    <body style="margin:0;padding:0;background-color:${COLORS.cream};font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:${COLORS.text}">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td align="center" style="padding:40px 0">
+                    <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color:white;border-radius:24px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.05)">
+                        <!-- Header -->
+                        <tr>
+                            <td align="center" style="padding:40px 20px;background-color:white;border-bottom:1px solid #f0f0f0">
+                                <img src="${LOGO_URL}" alt="BoostUp" style="height:45px;width:auto">
+                            </td>
+                        </tr>
+                        
+                        ${heroImageUrl ? `
+                        <tr>
+                            <td>
+                                <img src="${heroImageUrl}" alt="BoostUp Image" style="width:100%;height:auto;display:block">
+                            </td>
+                        </tr>
+                        ` : ''}
+
+                        <!-- Body -->
+                        <tr>
+                            <td style="padding:48px 40px;line-height:1.6;font-size:16px">
+                                ${contentHtml}
+                            </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                            <td align="center" style="padding:40px;background-color:#fafafa;font-size:13px;color:${COLORS.muted}">
+                                <p style="margin:0 0 10px 0">BoostUp &middot; Chaloupkova 3002/1a &middot; 612 00 Brno</p>
+                                <p style="margin:0">
+                                    <a href="${BASE_URL}" style="color:${COLORS.olive};text-decoration:none;font-weight:bold">drinkboostup.cz</a>
+                                    &nbsp;&nbsp;&middot;&nbsp;&nbsp;
+                                    <a href="mailto:info@drinkboostup.cz" style="color:${COLORS.olive};text-decoration:none">info@drinkboostup.cz</a>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </table>
-        <p>Zanedlouho ti pošleme informace o doručení.</p>
-        <p style="color:#666;font-size:13px">Dotazy: <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a> &middot; +420 775 222 037</p>
-      </div>
-    </div>`;
+    </body>
+    </html>
+    `;
 
     try {
         const response = await fetch('https://api.resend.com/emails', {
@@ -51,10 +186,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: 'objednavky@drinkboostup.cz',
+                from: 'BoostUp <objednavky@drinkboostup.cz>',
                 to,
-                subject: `✅ Potvrzení objednávky ${orderNumber} | BoostUp`,
-                html
+                subject,
+                html: emailHtml
             })
         });
 
