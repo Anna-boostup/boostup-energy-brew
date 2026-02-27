@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Layers } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -111,6 +111,8 @@ const Orders = () => {
     const { toast } = useToast();
     const [isSyncing, setIsSyncing] = useState(false);
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
+    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+    const [printIds, setPrintIds] = useState<string[]>([]);
 
     const toggleOrderSelection = (id: string) => {
         const newSelected = new Set(selectedOrders);
@@ -124,8 +126,8 @@ const Orders = () => {
 
     const handleBulkPrint = () => {
         const packets = orders
-            .filter(o => selectedOrders.has(o.id) && o.packeta_barcode)
-            .map(o => o.packeta_barcode);
+            .filter(o => selectedOrders.has(o.id) && (o.packeta_packet_id || o.packeta_barcode))
+            .map(o => o.packeta_packet_id || o.packeta_barcode) as string[];
 
         if (packets.length === 0) {
             toast({
@@ -136,7 +138,28 @@ const Orders = () => {
             return;
         }
 
-        window.open(`/api/get-bulk-packeta-labels?ids=${packets.join(',')}`, '_blank');
+        setPrintIds(packets);
+        setIsPrintDialogOpen(true);
+    };
+
+    const executeA4Print = () => {
+        window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=A6 on A4`, '_blank');
+        setIsPrintDialogOpen(false);
+    };
+
+    const executeSequentialPrint = () => {
+        // Sequentially open labels in new tabs
+        // Note: Browsers usually block multiple popups. We'll open them with a small delay.
+        printIds.forEach((id, index) => {
+            setTimeout(() => {
+                window.open(`/api/get-packeta-label?barcode=${id}`, '_blank');
+            }, index * 200);
+        });
+        setIsPrintDialogOpen(false);
+        toast({
+            title: "Tisk zahájen",
+            description: "Otevírám jednotlivé štítky v nových oknech. Povolte prosím vyskakovací okna, pokud se nezobrazí.",
+        });
     };
 
     const handleSyncPacketa = async () => {
@@ -450,11 +473,49 @@ const Orders = () => {
                             onClick={handleBulkPrint}
                         >
                             <Printer className="w-4 h-4" />
-                            Tisk štítků (A4)
+                            Hromadný tisk
                         </Button>
                     </div>
                 </div>
             )}
+
+            <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Možnosti hromadného tisku</DialogTitle>
+                        <DialogDescription>
+                            Vyberte si formát, jakým chcete vytisknout {printIds.length} štítků.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-1 gap-4 mt-4">
+                        <Button
+                            variant="outline"
+                            className="h-24 flex flex-col gap-2 items-center justify-center border-2 hover:border-emerald-500 hover:bg-emerald-50"
+                            onClick={executeA4Print}
+                        >
+                            <LayoutGrid className="w-8 h-8 text-emerald-600" />
+                            <div className="flex flex-col">
+                                <span className="font-bold text-base">Kombinovat na A4</span>
+                                <span className="text-xs text-muted-foreground italic">Šetří papír, skládá štítky vedle sebe</span>
+                            </div>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="h-24 flex flex-col gap-2 items-center justify-center border-2 hover:border-slate-400 hover:bg-slate-50"
+                            onClick={executeSequentialPrint}
+                        >
+                            <Layers className="w-8 h-8 text-slate-600" />
+                            <div className="flex flex-col">
+                                <span className="font-bold text-base">Tisk postupně (po jednom)</span>
+                                <span className="text-xs text-muted-foreground italic">Otevře každý štítek v novém okně</span>
+                            </div>
+                        </Button>
+                    </div>
+                    <DialogFooter className="sm:justify-start">
+                        <Button variant="ghost" onClick={() => setIsPrintDialogOpen(false)}>Zrušit</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

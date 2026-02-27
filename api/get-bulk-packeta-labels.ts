@@ -47,21 +47,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
 
         const text = await response.text();
+        console.log('Packeta bulk labels response summary:', text.substring(0, 500));
 
         // Check for API fault
         if (text.includes('<status>error</status>') || text.includes('<faultCode>')) {
             const faultMatch = text.match(/<string>([^<]+)<\/string>/);
             const errorMsg = faultMatch ? faultMatch[1] : 'Neznámá chyba Zásilkovny';
-            console.error('Packeta labels API error:', errorMsg);
+            console.error('Packeta bulk labels API error:', errorMsg);
             return res.status(400).json({ error: `Packeta: ${errorMsg}` });
         }
 
-        // Extract base64 PDF from response
-        const pdfMatch = text.match(/<result>([^<]+)<\/result>/) ||
-            text.match(/<response>([^<]+)<\/response>/);
+        // Extract base64 PDF from response - robust parsing matching single label API
+        const pdfMatch = text.match(/<response>([^<]+)<\/response>/) ||
+            text.match(/<labelContents>([^<]+)<\/labelContents>/) ||
+            text.match(/<result>([^<]+)<\/result>/) ||
+            text.match(/<content>([^<]+)<\/content>/);
 
         if (!pdfMatch || !pdfMatch[1]) {
-            console.error('No PDF content in Packeta bulk response.');
+            console.error('No PDF content in Packeta bulk response. Full response summary:', text.substring(0, 1000));
             return res.status(500).json({ error: 'Failed to extract PDF from Packeta response' });
         }
 
