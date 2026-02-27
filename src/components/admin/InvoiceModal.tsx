@@ -122,6 +122,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                                                         item.mixConfiguration.red && `Red: ${item.mixConfiguration.red} ks`,
                                                         item.mixConfiguration.silky && `Silky: ${item.mixConfiguration.silky} ks`
                                                     ].filter(Boolean).join(', ')}
+                                                    {` (${(item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0)} ks celkem)`}
                                                 </div>
                                             )}
                                         </td>

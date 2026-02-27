@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Dialog,
     DialogTrigger,
@@ -100,6 +101,34 @@ const Orders = () => {
     const { orders, updateOrderStatus } = useInventory();
     const { toast } = useToast();
     const [isSyncing, setIsSyncing] = useState(false);
+    const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
+
+    const toggleOrderSelection = (id: string) => {
+        const newSelected = new Set(selectedOrders);
+        if (newSelected.has(id)) {
+            newSelected.delete(id);
+        } else {
+            newSelected.add(id);
+        }
+        setSelectedOrders(newSelected);
+    };
+
+    const handleBulkPrint = () => {
+        const packets = orders
+            .filter(o => selectedOrders.has(o.id) && o.packeta_barcode)
+            .map(o => o.packeta_barcode);
+
+        if (packets.length === 0) {
+            toast({
+                title: "Žádné štítky k tisku",
+                description: "Vybrané objednávky nemají vygenerované štítky Zásilkovny.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        window.open(`/api/get-bulk-packeta-labels?ids=${packets.join(',')}`, '_blank');
+    };
 
     const handleSyncPacketa = async () => {
         setIsSyncing(true);
@@ -147,6 +176,19 @@ const Orders = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead className="w-12">
+                                <Checkbox
+                                    checked={data.length > 0 && data.every(o => selectedOrders.has(o.id))}
+                                    onCheckedChange={(checked) => {
+                                        const newSelected = new Set(selectedOrders);
+                                        data.forEach(o => {
+                                            if (checked) newSelected.add(o.id);
+                                            else newSelected.delete(o.id);
+                                        });
+                                        setSelectedOrders(newSelected);
+                                    }}
+                                />
+                            </TableHead>
                             <TableHead>ID</TableHead>
                             <TableHead>Datum</TableHead>
                             <TableHead>Zákazník</TableHead>
@@ -165,7 +207,13 @@ const Orders = () => {
                             </TableRow>
                         ) : (
                             data.map((order) => (
-                                <TableRow key={order.id}>
+                                <TableRow key={order.id} className={selectedOrders.has(order.id) ? "bg-slate-50" : ""}>
+                                    <TableCell>
+                                        <Checkbox
+                                            checked={selectedOrders.has(order.id)}
+                                            onCheckedChange={() => toggleOrderSelection(order.id)}
+                                        />
+                                    </TableCell>
                                     <TableCell className="font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
                                     <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                                     <TableCell>
@@ -328,6 +376,32 @@ const Orders = () => {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            {selectedOrders.size > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 shadow-xl rounded-full px-6 py-3 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 z-50">
+                    <div className="text-sm font-medium text-slate-600 border-r pr-6 border-slate-200">
+                        Vybráno: <span className="text-emerald-600 font-bold">{selectedOrders.size}</span> objednávek
+                    </div>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-slate-600 hover:text-red-600 hover:bg-red-50"
+                            onClick={() => setSelectedOrders(new Set())}
+                        >
+                            Zrušit výběr
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700 gap-2 px-4 h-9"
+                            onClick={handleBulkPrint}
+                        >
+                            <Printer className="w-4 h-4" />
+                            Tisk štítků (A4)
+                        </Button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

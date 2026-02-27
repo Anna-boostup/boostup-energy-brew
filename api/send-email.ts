@@ -62,10 +62,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 let details = '';
                 if (i.mixConfiguration) {
                     const flavors = [];
-                    if (i.mixConfiguration.lemon) flavors.push(`Lemon: ${i.mixConfiguration.lemon} ks`);
-                    if (i.mixConfiguration.red) flavors.push(`Red: ${i.mixConfiguration.red} ks`);
-                    if (i.mixConfiguration.silky) flavors.push(`Silky: ${i.mixConfiguration.silky} ks`);
-                    details = `<div style="font-size:12px;color:${COLORS.muted};margin-top:4px">— ${flavors.join(', ')}</div>`;
+                    let totalBottles = 0;
+                    if (i.mixConfiguration.lemon) {
+                        flavors.push(`Lemon: ${i.mixConfiguration.lemon} ks`);
+                        totalBottles += i.mixConfiguration.lemon;
+                    }
+                    if (i.mixConfiguration.red) {
+                        flavors.push(`Red: ${i.mixConfiguration.red} ks`);
+                        totalBottles += i.mixConfiguration.red;
+                    }
+                    if (i.mixConfiguration.silky) {
+                        flavors.push(`Silky: ${i.mixConfiguration.silky} ks`);
+                        totalBottles += i.mixConfiguration.silky;
+                    }
+                    details = `<div style="font-size:12px;color:${COLORS.muted};margin-top:4px">— ${flavors.join(', ')} (${totalBottles} ks celkem)</div>`;
                 }
                 return `<tr><td style="padding:10px 0;border-bottom:1px solid #eeeeee"><div>${i.name} × ${i.quantity}</div>${details}</td><td style="padding:10px 0;text-align:right;border-bottom:1px solid #eeeeee;vertical-align:top">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`;
             }).join('');
