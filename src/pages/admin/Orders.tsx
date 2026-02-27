@@ -150,8 +150,8 @@ const Orders = () => {
     };
 
     const executeSequentialPrint = () => {
-        // Instead of individual tabs, we get ONE PDF where each label is on its own A6 page
-        window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=A6`, '_blank');
+        // format='105x148mm' is the standard A6 size and ensures each label is on its own page
+        window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=105x148mm`, '_blank');
         setIsPrintDialogOpen(false);
     };
 
