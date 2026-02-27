@@ -67,13 +67,13 @@ const MissionSection = () => {
             return (
               <div
                 key={feature.title}
-                className="relative group animate-fade-up hover-lift cursor-default"
+                className="relative group animate-fade-up cursor-default"
                 style={{ animationDelay: `${300 + index * 100}ms` }}
               >
-                {/* Enhanced Glow effect */}
-                <div className={`absolute inset-0 ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl blur-2xl transition-all duration-500 scale-105 group-hover:scale-110`} />
+                {/* Intense Background Glow */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border border-primary-foreground/10 group-hover:border-primary-foreground/30 transition-all duration-500 h-full flex flex-col items-center text-center backdrop-blur-md">
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 hover-lift h-full flex flex-col items-center text-center backdrop-blur-md">
                   {/* Icon */}
                   <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />

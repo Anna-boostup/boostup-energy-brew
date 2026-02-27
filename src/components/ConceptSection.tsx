@@ -71,7 +71,7 @@ const ConceptSection = () => {
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border group-hover:border-transparent transition-all duration-500 h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground hover-lift shadow-sm">
+                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500">
                   {/* Icon */}
                   <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg`}>
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />

@@ -394,12 +394,13 @@
 
 /* Hover effects */
 .hover-lift {
-  @apply transition-all duration-500 ease-out;
+  @apply transition-all duration-500 ease-out border-2 border-transparent;
 }
 
 .hover-lift:hover {
-  @apply -translate-y-4 scale-[1.03] shadow-2xl;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 40px rgba(var(--primary), 0.1);
+  @apply -translate-y-4 scale-[1.03] shadow-2xl ring-2 ring-lime/50;
+  border-color: hsl(var(--lime));
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 30px hsla(var(--lime), 0.3);
 }
 
 /* Text gradient */
