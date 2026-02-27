@@ -41,11 +41,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let subject = 'BoostUp';
     let contentHtml = '';
     let heroImageUrl = '';
+    let heroCid = '';
 
     switch (type) {
         case 'registration':
             subject = 'Vítej v týmu BoostUp! 🚀';
-            heroImageUrl = `${BASE_URL}/email-welcome.png?v=2`; // Placeholder for the hero image
+            heroImageUrl = `${BASE_URL}/email-welcome.png?v=3`;
+            heroCid = 'welcome';
             contentHtml = `
                 <h1 style="color:${COLORS.olive};margin-top:0">Ahoj ${customerName}!</h1>
                 <p>Jsme nadšení, že ses přidal k BoostUp. Tvůj účet byl úspěšně vytvořen a teď už ti nic nebrání v cestě za maximálním výkonem.</p>
@@ -96,7 +98,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         case 'shipping':
             subject = `🚚 Tvoje zásilka ${orderNumber} je na cestě! | BoostUp`;
-            heroImageUrl = `${BASE_URL}/email-shipping.png?v=2`;
+            heroImageUrl = `${BASE_URL}/email-shipping.png?v=3`;
+            heroCid = 'shipping';
             const trackingUrl = `https://tracking.packeta.com/cs/?id=${trackingNumber}`;
             contentHtml = `
                 <h2 style="color:${COLORS.olive};margin-top:0">Tvůj BoostUp je na cestě! 🚀</h2>
@@ -129,7 +132,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 <div style="margin:32px 0;text-align:center">
                     <a href="${magicLink}" style="background:${COLORS.olive};color:white;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block">Přihlásit se</a>
                 </div>
-                <p style="font-size:13px;color:${COLORS.muted}">Tento odkaz je platný pouze po omezenou dobu. Pokud jsi si ho nevyžádal, můžeš tento e-mail ignorovat.</p>
+                <p style="font-size:13px;color:${COLORS.muted}">Tento odkaz je platný pouze po omezenou dobu. Pokud jsi jsi ho nevyžádal, můžeš tento e-mail ignorovat.</p>
             `;
             break;
     }
@@ -150,14 +153,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         <!-- Header -->
                         <tr>
                             <td align="center" style="padding:40px 20px;background-color:white;border-bottom:1px solid #f0f0f0">
-                                <img src="${LOGO_URL}" alt="" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
+                                <img src="cid:logo" alt="" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         
                         ${heroImageUrl ? `
                         <tr>
                             <td>
-                                <img src="${heroImageUrl}" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
+                                <img src="cid:hero" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         ` : ''}
@@ -189,6 +192,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     try {
+        const attachments = [];
+
+        // Fetch logo
+        const logoRes = await fetch(LOGO_URL);
+        const logoBuffer = await logoRes.arrayBuffer();
+        attachments.push({
+            filename: 'logo.png',
+            content: Buffer.from(logoBuffer).toString('base64'),
+            cid: 'logo'
+        });
+
+        // Fetch hero image if applicable
+        if (heroImageUrl) {
+            const heroRes = await fetch(heroImageUrl);
+            const heroBuffer = await heroRes.arrayBuffer();
+            attachments.push({
+                filename: `${heroCid}.png`,
+                content: Buffer.from(heroBuffer).toString('base64'),
+                cid: 'hero'
+            });
+        }
+
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -199,7 +224,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 from: 'BoostUp <objednavky@drinkboostup.cz>',
                 to,
                 subject,
-                html: emailHtml
+                html: emailHtml,
+                attachments
             })
         });
 

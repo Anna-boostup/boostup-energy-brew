@@ -5,12 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     Dialog,
     DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
 } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import { FileText } from "lucide-react";
@@ -25,20 +30,24 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                 <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleDateString()}</p>
             </div>
             <div className="flex flex-col gap-1 items-end">
-                <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}>
-                    {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
+                <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}>
+                    {order.status === 'pending' ? 'Platba: Čeká' :
+                        order.status === 'cancelled' ? 'Platba: Storno' :
+                            'Platba: Zaplaceno'}
                 </Badge>
                 <Badge
-                    variant={order.status === 'shipped' ? 'default' : 'outline'}
+                    variant={order.status === 'shipped' ? 'default' : order.status === 'cancelled' ? 'destructive' : 'outline'}
                     className={
                         order.status === 'shipped' ? 'bg-blue-600' :
                             order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50' :
-                                'border-amber-200 text-amber-700'
+                                order.status === 'cancelled' ? 'bg-red-50 text-red-700 border-red-100' :
+                                    'border-amber-200 text-amber-700'
                     }
                 >
                     {order.status === 'shipped' ? 'Stav: Vyřízena' :
                         order.status === 'processing' ? 'Stav: Rozpracováno' :
-                            'Stav: Čeká k vyřízení'}
+                            order.status === 'cancelled' ? 'Stav: Stornováno' :
+                                'Stav: Čeká k vyřízení'}
                 </Badge>
             </div>
         </div>
@@ -161,21 +170,23 @@ const Orders = () => {
         toast({
             title: "Stav objednávky změněn",
             description: `Objednávka ${orderId.slice(0, 8)} byla označena jako ${newStatus === 'shipped' ? 'Odeslaná' :
-                newStatus === 'paid' ? 'Zaplacená' : 'Rozpracovaná'
+                newStatus === 'paid' ? 'Zaplacená' :
+                    newStatus === 'cancelled' ? 'Stornovaná' :
+                        'Rozpracovaná'
                 }.`,
         });
     };
 
-    const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'paid');
-    const shippedOrders = orders.filter(o => o.status === 'shipped');
+    const pendingOrders = orders.filter(o => o.status !== 'shipped' && o.status !== 'cancelled');
+    const shippedOrders = orders.filter(o => o.status === 'shipped' || o.status === 'cancelled');
 
     const OrderTable = ({ data }: { data: typeof orders }) => (
         <>
             {/* Desktop View */}
             <div className="hidden md:block">
                 <Table>
-                    <TableHeader className="bg-slate-50/50">
-                        <TableRow className="border-b-2 border-slate-200">
+                    <TableHeader className="bg-slate-100">
+                        <TableRow className="border-b-2 border-slate-300">
                             <TableHead className="w-12">
                                 <Checkbox
                                     checked={data.length > 0 && data.every(o => selectedOrders.has(o.id))}
@@ -189,13 +200,13 @@ const Orders = () => {
                                     }}
                                 />
                             </TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">ID</TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Datum</TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Zákazník</TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Položky</TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Cena celkem</TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Stav</TableHead>
-                            <TableHead className="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Akce</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">ID</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Datum</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Zákazník</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Položky</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Cena celkem</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Stav</TableHead>
+                            <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4 text-right">Akce</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -234,20 +245,24 @@ const Orders = () => {
                                     <TableCell className="font-bold">{order.total} Kč</TableCell>
                                     <TableCell>
                                         <div className="flex flex-col gap-1">
-                                            <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 w-fit' : 'w-fit'}>
-                                                {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
+                                            <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 w-fit' : 'w-fit'}>
+                                                {order.status === 'pending' ? 'Platba: Čeká' :
+                                                    order.status === 'cancelled' ? 'Platba: Storno' :
+                                                        'Platba: Zaplaceno'}
                                             </Badge>
                                             <Badge
-                                                variant={order.status === 'shipped' ? 'default' : 'outline'}
+                                                variant={order.status === 'shipped' ? 'default' : order.status === 'cancelled' ? 'destructive' : 'outline'}
                                                 className={
                                                     order.status === 'shipped' ? 'bg-blue-600 w-fit' :
                                                         order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50 w-fit' :
-                                                            'border-amber-200 text-amber-700 w-fit'
+                                                            order.status === 'cancelled' ? 'bg-red-50 text-red-700 border-red-100 w-fit' :
+                                                                'border-amber-200 text-amber-700 w-fit'
                                                 }
                                             >
                                                 {order.status === 'shipped' ? 'Stav: Vyřízena' :
                                                     order.status === 'processing' ? 'Stav: Rozpracováno' :
-                                                        'Stav: Čeká k vyřízení'}
+                                                        order.status === 'cancelled' ? 'Stav: Stornováno' :
+                                                            'Stav: Čeká k vyřízení'}
                                             </Badge>
                                         </div>
                                     </TableCell>
@@ -295,6 +310,44 @@ const Orders = () => {
                                                     <Truck className="w-4 h-4" />
                                                 </Button>
                                             )}
+
+                                            {order.status !== 'shipped' && order.status !== 'cancelled' && (
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            title="Stornovat objednávku"
+                                                        >
+                                                            <XCircle className="w-4 h-4" />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent>
+                                                        <DialogHeader>
+                                                            <DialogTitle className="flex items-center gap-2">
+                                                                <AlertTriangle className="w-5 h-5 text-red-500" />
+                                                                Stornovat objednávku
+                                                            </DialogTitle>
+                                                            <DialogHeader>
+                                                                <div className="text-sm font-medium">Stornovat objednávku</div>
+                                                                <div className="text-xs text-muted-foreground mt-1">
+                                                                    Opravdu chcete stornovat objednávku #{order.id.slice(0, 8)}? Tuto akci nelze vrátit.
+                                                                </div>
+                                                            </DialogHeader>
+                                                        </DialogHeader>
+                                                        <DialogFooter className="gap-2 sm:gap-0 mt-4">
+                                                            <DialogTrigger asChild>
+                                                                <Button variant="outline">Zpět</Button>
+                                                            </DialogTrigger>
+                                                            <Button variant="destructive" onClick={() => handleStatusChange(order.id, 'cancelled')}>
+                                                                Potvrdit storno
+                                                            </Button>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            )}
+
                                             {order.packeta_barcode && (
                                                 <Button
                                                     size="sm"
