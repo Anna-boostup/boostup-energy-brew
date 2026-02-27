@@ -4,5 +4,11 @@
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/sync-packeta-status",
+      "schedule": "0 16 * * *"
+    }
   ]
 }
