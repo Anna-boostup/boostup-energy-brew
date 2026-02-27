@@ -253,7 +253,12 @@ const Orders = () => {
                                         <div className="flex flex-col gap-1">
                                             {order.items.map((item, idx) => (
                                                 <div key={idx} className="text-sm">
-                                                    {item.quantity}x <span className="font-medium">{item.name}</span>
+                                                    {item.quantity}x <span className="font-medium">
+                                                        {item.mixConfiguration
+                                                            ? item.name.replace('(MIX)', `(MIX-${(item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0)})`)
+                                                            : item.name
+                                                        }
+                                                    </span>
                                                 </div>
                                             ))}
                                         </div>

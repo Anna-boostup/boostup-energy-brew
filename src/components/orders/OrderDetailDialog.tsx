@@ -210,7 +210,12 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                         <TableBody>
                             {order.items && order.items.map((item: any, idx: number) => (
                                 <TableRow key={idx}>
-                                    <TableCell className="font-medium text-slate-900">{item.name}</TableCell>
+                                    <TableCell className="font-medium text-slate-900">
+                                        {item.mixConfiguration
+                                            ? item.name.replace('(MIX)', `(MIX-${(item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0)})`)
+                                            : item.name
+                                        }
+                                    </TableCell>
                                     <TableCell className="text-right text-slate-600 font-bold">{item.quantity}x</TableCell>
                                     <TableCell className="text-right font-bold">{formatCurrency(item.price * item.quantity)}</TableCell>
                                 </TableRow>

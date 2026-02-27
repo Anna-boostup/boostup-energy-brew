@@ -114,7 +114,12 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                                 {order.items.map((item, index) => (
                                     <tr key={index}>
                                         <td className="py-4 text-slate-800">
-                                            <div className="font-medium">{item.name}</div>
+                                            <div className="font-medium">
+                                                {item.mixConfiguration
+                                                    ? item.name.replace('(MIX)', `(MIX-${(item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0)})`)
+                                                    : item.name
+                                                }
+                                            </div>
                                             {item.mixConfiguration && (
                                                 <div className="text-xs text-slate-500 mt-1">
                                                     — {[

@@ -62,6 +62,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             subject = `✅ Potvrzení objednávky ${orderNumber} | BoostUp`;
             const itemsHtml = items.map((i: any) => {
                 let details = '';
+                let displayName = i.name;
+
                 if (i.mixConfiguration) {
                     const flavors = [];
                     let totalBottles = 0;
@@ -78,8 +80,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         totalBottles += i.mixConfiguration.silky;
                     }
                     details = `<div style="font-size:12px;color:${COLORS.muted};margin-top:4px">— ${flavors.join(', ')} (${totalBottles} ks celkem)</div>`;
+
+                    // Update (MIX) to (MIX-totalBottles)
+                    displayName = displayName.replace('(MIX)', `(MIX-${totalBottles})`);
                 }
-                return `<tr><td style="padding:10px 0;border-bottom:1px solid #eeeeee"><div>${i.name} × ${i.quantity}</div>${details}</td><td style="padding:10px 0;text-align:right;border-bottom:1px solid #eeeeee;vertical-align:top">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`;
+                return `<tr><td style="padding:10px 0;border-bottom:1px solid #eeeeee"><div>${displayName} × ${i.quantity}</div>${details}</td><td style="padding:10px 0;text-align:right;border-bottom:1px solid #eeeeee;vertical-align:top">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`;
             }).join('');
 
             contentHtml = `
