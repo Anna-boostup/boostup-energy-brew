@@ -181,6 +181,18 @@ const Orders = () => {
         }
     };
 
+    const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
+        updateOrderStatus(orderId, newStatus);
+        toast({
+            title: "Stav objednávky změněn",
+            description: `Objednávka ${orderId.slice(0, 8)} byla označena jako ${newStatus === 'shipped' ? 'Odeslaná' :
+                newStatus === 'paid' ? 'Zaplacená' :
+                    newStatus === 'cancelled' ? 'Stornovaná' :
+                        'Rozpracovaná'
+                }.`,
+        });
+    };
+
     const handleBulkStatusChange = (newStatus: Order['status']) => {
         const idsArray = Array.from(selectedOrders);
         idsArray.forEach(id => updateOrderStatus(id, newStatus));
@@ -188,8 +200,8 @@ const Orders = () => {
         toast({
             title: "Hromadná změna stavu",
             description: `${idsArray.length} objednávek bylo označeno jako ${newStatus === 'shipped' ? 'Odeslané' :
-                    newStatus === 'processing' ? 'Rozpracované' :
-                        newStatus === 'paid' ? 'Zaplacené' : 'Stornované'
+                newStatus === 'processing' ? 'Rozpracované' :
+                    newStatus === 'paid' ? 'Zaplacené' : 'Stornované'
                 }.`,
         });
         setSelectedOrders(new Set());
