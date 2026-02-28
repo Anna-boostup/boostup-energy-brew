@@ -433,8 +433,12 @@ const Orders = () => {
         setIsBulkCancelDialogOpen(false);
     };
 
-    const pendingOrders = orders.filter(o => o.status !== 'shipped' && o.status !== 'cancelled');
-    const shippedOrders = orders.filter(o => o.status === 'shipped' || o.status === 'cancelled');
+    const newOrders = orders.filter(o => o.status === 'pending' || o.status === 'paid');
+    const processingOrders = orders.filter(o => o.status === 'processing');
+    const shippedOrders = orders.filter(o => o.status === 'shipped');
+    const cancelledOrders = orders.filter(o => o.status === 'cancelled');
+
+    const pendingCount = newOrders.length + processingOrders.length;
 
     return (
         <div className="space-y-8">
@@ -453,19 +457,24 @@ const Orders = () => {
             </div>
 
             <Tabs defaultValue="pending" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-                    <TabsTrigger value="pending">Aktuální ({pendingOrders.length})</TabsTrigger>
-                    <TabsTrigger value="shipped">Vyřízené ({shippedOrders.length})</TabsTrigger>
-                </TabsList>
-                <TabsContent value="pending" className="mt-6">
+                <div className="overflow-x-auto pb-2 -mx-1 px-1 mb-2 scrollbar-hide">
+                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0">
+                        <TabsTrigger value="pending" className="px-4">Nové / Zaplacené ({newOrders.length})</TabsTrigger>
+                        <TabsTrigger value="processing" className="px-4">Rozpracované ({processingOrders.length})</TabsTrigger>
+                        <TabsTrigger value="shipped" className="px-4">Vyřízené ({shippedOrders.length})</TabsTrigger>
+                        <TabsTrigger value="cancelled" className="px-4">Stornované ({cancelledOrders.length})</TabsTrigger>
+                    </TabsList>
+                </div>
+
+                <TabsContent value="pending" className="mt-4">
                     <p className="text-muted-foreground mb-4 md:hidden text-sm px-1">Tip: Posunutím karty zobrazíte více detailů.</p>
                     <Card>
                         <CardHeader className="hidden md:flex">
-                            <CardTitle>Čekající a zaplacené objednávky</CardTitle>
+                            <CardTitle>Nové a zaplacené objednávky</CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 md:p-6">
                             <OrderTable
-                                data={pendingOrders}
+                                data={newOrders}
                                 selectedOrders={selectedOrders}
                                 toggleOrderSelection={toggleOrderSelection}
                                 onStatusChange={handleStatusChange}
@@ -474,7 +483,25 @@ const Orders = () => {
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value="shipped" className="mt-6">
+
+                <TabsContent value="processing" className="mt-4">
+                    <Card>
+                        <CardHeader className="hidden md:flex">
+                            <CardTitle>Rozpracované objednávky</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 md:p-6">
+                            <OrderTable
+                                data={processingOrders}
+                                selectedOrders={selectedOrders}
+                                toggleOrderSelection={toggleOrderSelection}
+                                onStatusChange={handleStatusChange}
+                                setSelectedOrders={setSelectedOrders}
+                            />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="shipped" className="mt-4">
                     <Card>
                         <CardHeader className="hidden md:flex">
                             <CardTitle>Odeslané a dokončené objednávky</CardTitle>
@@ -482,6 +509,23 @@ const Orders = () => {
                         <CardContent className="p-4 md:p-6">
                             <OrderTable
                                 data={shippedOrders}
+                                selectedOrders={selectedOrders}
+                                toggleOrderSelection={toggleOrderSelection}
+                                onStatusChange={handleStatusChange}
+                                setSelectedOrders={setSelectedOrders}
+                            />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="cancelled" className="mt-4">
+                    <Card>
+                        <CardHeader className="hidden md:flex">
+                            <CardTitle>Stornované objednávky</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 md:p-6">
+                            <OrderTable
+                                data={cancelledOrders}
                                 selectedOrders={selectedOrders}
                                 toggleOrderSelection={toggleOrderSelection}
                                 onStatusChange={handleStatusChange}
