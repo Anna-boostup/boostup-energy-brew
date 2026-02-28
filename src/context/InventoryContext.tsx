@@ -293,6 +293,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (error) {
             console.error('Error updating order status:', error);
             alert("Chyba při aktualizaci stavu: " + error.message);
+        } else {
+            // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
+            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
         }
     };
 

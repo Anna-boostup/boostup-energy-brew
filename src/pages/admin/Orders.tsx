@@ -16,6 +16,7 @@ import {
     DialogTitle,
     DialogDescription,
     DialogFooter,
+    DialogClose,
 } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import { FileText } from "lucide-react";
@@ -276,12 +277,14 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                         </div>
                                                     </DialogHeader>
                                                     <DialogFooter className="gap-2 sm:gap-0 mt-4">
-                                                        <DialogTrigger asChild>
+                                                        <DialogClose asChild>
                                                             <Button variant="outline">Zpět</Button>
-                                                        </DialogTrigger>
-                                                        <Button variant="destructive" onClick={() => onStatusChange(order.id, 'cancelled')}>
-                                                            Potvrdit storno
-                                                        </Button>
+                                                        </DialogClose>
+                                                        <DialogClose asChild>
+                                                            <Button variant="destructive" onClick={() => onStatusChange(order.id, 'cancelled')}>
+                                                                Potvrdit storno
+                                                            </Button>
+                                                        </DialogClose>
                                                     </DialogFooter>
                                                 </DialogContent>
                                             </Dialog>
