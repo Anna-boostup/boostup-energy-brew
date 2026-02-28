@@ -5,9 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Layers } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Layers, ArrowUpDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
     Dialog,
     DialogTrigger,
@@ -113,9 +121,11 @@ interface OrderTableProps {
     toggleOrderSelection: (id: string) => void;
     onStatusChange: (id: string, status: Order['status']) => void;
     setSelectedOrders: (ids: Set<string>) => void;
+    onSort: (key: 'id' | 'date') => void;
+    sortConfig: { key: 'id' | 'date'; direction: 'asc' | 'desc' };
 }
 
-const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange, setSelectedOrders }: OrderTableProps) => (
+const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange, setSelectedOrders, onSort, sortConfig }: OrderTableProps) => (
     <>
         {/* Desktop View */}
         <div className="hidden md:block">
@@ -135,8 +145,22 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 }}
                             />
                         </TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">ID</TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Datum</TableHead>
+                        <TableHead
+                            className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4 cursor-pointer hover:bg-slate-200 transition-colors"
+                            onClick={() => onSort('id')}
+                        >
+                            <div className="flex items-center gap-1">
+                                ID {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3" />}
+                            </div>
+                        </TableHead>
+                        <TableHead
+                            className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4 cursor-pointer hover:bg-slate-200 transition-colors"
+                            onClick={() => onSort('date')}
+                        >
+                            <div className="flex items-center gap-1">
+                                Datum {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3" />}
+                            </div>
+                        </TableHead>
                         <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Zákazník</TableHead>
                         <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Položky</TableHead>
                         <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Cena celkem</TableHead>
@@ -335,6 +359,31 @@ const Orders = () => {
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
     const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
     const [printIds, setPrintIds] = useState<string[]>([]);
+    const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
+        key: 'date',
+        direction: 'desc'
+    });
+
+    const handleSort = (key: 'id' | 'date') => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc'
+        }));
+    };
+
+    const getSortedOrders = (ordersList: Order[]) => {
+        return [...ordersList].sort((a, b) => {
+            if (sortConfig.key === 'id') {
+                return sortConfig.direction === 'asc'
+                    ? a.id.localeCompare(b.id)
+                    : b.id.localeCompare(a.id);
+            } else {
+                return sortConfig.direction === 'asc'
+                    ? new Date(a.date).getTime() - new Date(b.date).getTime()
+                    : new Date(b.date).getTime() - new Date(a.date).getTime();
+            }
+        });
+    };
 
     const toggleOrderSelection = (id: string) => {
         const newSelected = new Set(selectedOrders);
@@ -452,36 +501,66 @@ const Orders = () => {
         setIsBulkCancelDialogOpen(false);
     };
 
-    const newOrders = orders.filter(o => o.status === 'pending' || o.status === 'paid');
-    const processingOrders = orders.filter(o => o.status === 'processing');
-    const shippedOrders = orders.filter(o => o.status === 'shipped');
-    const cancelledOrders = orders.filter(o => o.status === 'cancelled');
+    const filteredOrders = {
+        pending: getSortedOrders(orders.filter(o => o.status === 'pending' || o.status === 'paid')),
+        processing: getSortedOrders(orders.filter(o => o.status === 'processing')),
+        shipped: getSortedOrders(orders.filter(o => o.status === 'shipped')),
+        cancelled: getSortedOrders(orders.filter(o => o.status === 'cancelled'))
+    };
 
-    const pendingCount = newOrders.length + processingOrders.length;
+    const pendingCount = filteredOrders.pending.length + filteredOrders.processing.length;
 
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 className="text-3xl font-bold tracking-tight">Správa objednávek</h2>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 h-10 px-4 border-slate-200 shadow-sm"
-                    onClick={handleSyncPacketa}
-                    disabled={isSyncing}
-                >
-                    <RefreshCcw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-                    {isSyncing ? 'Synchronizuji...' : 'Synchronizovat Zásilkovnu'}
-                </Button>
+                <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-2 h-10 px-4 border-slate-200 shadow-sm">
+                                <ArrowUpDown className="w-4 h-4" />
+                                <span className="hidden sm:inline">Řazení</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuLabel>Seřadit podle</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => { setSortConfig({ key: 'date', direction: 'desc' }) }}>
+                                Nejnovější prve
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setSortConfig({ key: 'date', direction: 'asc' }) }}>
+                                Nejstarší prve
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => { setSortConfig({ key: 'id', direction: 'asc' }) }}>
+                                Čísla obj. (0-9)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setSortConfig({ key: 'id', direction: 'desc' }) }}>
+                                Čísla obj. (9-0)
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 h-10 px-4 border-slate-200 shadow-sm"
+                        onClick={handleSyncPacketa}
+                        disabled={isSyncing}
+                    >
+                        <RefreshCcw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                        <span className="hidden sm:inline">{isSyncing ? 'Synchronizuji...' : 'Synchronizovat'}</span>
+                        <span className="sm:hidden">{isSyncing ? '...' : 'Sync'}</span>
+                    </Button>
+                </div>
             </div>
 
             <Tabs defaultValue="pending" className="w-full">
                 <div className="overflow-x-auto pb-2 -mx-1 px-1 mb-2 scrollbar-hide">
                     <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0">
-                        <TabsTrigger value="pending" className="px-4">Nové / Zaplacené ({newOrders.length})</TabsTrigger>
-                        <TabsTrigger value="processing" className="px-4">Rozpracované ({processingOrders.length})</TabsTrigger>
-                        <TabsTrigger value="shipped" className="px-4">Vyřízené ({shippedOrders.length})</TabsTrigger>
-                        <TabsTrigger value="cancelled" className="px-4">Stornované ({cancelledOrders.length})</TabsTrigger>
+                        <TabsTrigger value="pending" className="px-4">Nové / Zaplacené ({filteredOrders.pending.length})</TabsTrigger>
+                        <TabsTrigger value="processing" className="px-4">Rozpracované ({filteredOrders.processing.length})</TabsTrigger>
+                        <TabsTrigger value="shipped" className="px-4">Vyřízené ({filteredOrders.shipped.length})</TabsTrigger>
+                        <TabsTrigger value="cancelled" className="px-4">Stornované ({filteredOrders.cancelled.length})</TabsTrigger>
                     </TabsList>
                 </div>
 
@@ -493,11 +572,13 @@ const Orders = () => {
                         </CardHeader>
                         <CardContent className="p-4 md:p-6">
                             <OrderTable
-                                data={newOrders}
+                                data={filteredOrders.pending}
                                 selectedOrders={selectedOrders}
                                 toggleOrderSelection={toggleOrderSelection}
                                 onStatusChange={handleStatusChange}
                                 setSelectedOrders={setSelectedOrders}
+                                onSort={handleSort}
+                                sortConfig={sortConfig}
                             />
                         </CardContent>
                     </Card>
@@ -510,11 +591,13 @@ const Orders = () => {
                         </CardHeader>
                         <CardContent className="p-4 md:p-6">
                             <OrderTable
-                                data={processingOrders}
+                                data={filteredOrders.processing}
                                 selectedOrders={selectedOrders}
                                 toggleOrderSelection={toggleOrderSelection}
                                 onStatusChange={handleStatusChange}
                                 setSelectedOrders={setSelectedOrders}
+                                onSort={handleSort}
+                                sortConfig={sortConfig}
                             />
                         </CardContent>
                     </Card>
@@ -527,11 +610,13 @@ const Orders = () => {
                         </CardHeader>
                         <CardContent className="p-4 md:p-6">
                             <OrderTable
-                                data={shippedOrders}
+                                data={filteredOrders.shipped}
                                 selectedOrders={selectedOrders}
                                 toggleOrderSelection={toggleOrderSelection}
                                 onStatusChange={handleStatusChange}
                                 setSelectedOrders={setSelectedOrders}
+                                onSort={handleSort}
+                                sortConfig={sortConfig}
                             />
                         </CardContent>
                     </Card>
@@ -544,11 +629,13 @@ const Orders = () => {
                         </CardHeader>
                         <CardContent className="p-4 md:p-6">
                             <OrderTable
-                                data={cancelledOrders}
+                                data={filteredOrders.cancelled}
                                 selectedOrders={selectedOrders}
                                 toggleOrderSelection={toggleOrderSelection}
                                 onStatusChange={handleStatusChange}
                                 setSelectedOrders={setSelectedOrders}
+                                onSort={handleSort}
+                                sortConfig={sortConfig}
                             />
                         </CardContent>
                     </Card>

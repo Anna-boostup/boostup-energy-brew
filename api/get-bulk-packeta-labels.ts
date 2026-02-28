@@ -6,13 +6,14 @@ const PACKETA_API_URL = 'https://www.zasilkovna.cz/api/rest';
 async function fetchIndividualLabel(packetId: string, apiPassword: string): Promise<{ buffer: Buffer | null; error?: string }> {
     const sanitizedId = String(packetId).replace(/[^a-zA-Z0-9-]/g, '');
 
-    // Standard A6 on A4 format used in the working individual API
+    // Standard A6 format (105x148mm) - this is crucial for the bulk merge
+    // to correctly place raw label content instead of shrinking a full A4 page.
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <packetLabelPdf>
   <apiPassword>${apiPassword}</apiPassword>
   <packetId>${sanitizedId}</packetId>
   <offset>0</offset>
-  <format>A6 on A4</format>
+  <format>105x148mm</format>
 </packetLabelPdf>`;
 
     try {
