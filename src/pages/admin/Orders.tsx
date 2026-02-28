@@ -368,13 +368,29 @@ const Orders = () => {
     const executeA4Print = () => {
         // Packeta's bulk PDF format for 4 labels on A4 page
         window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=A6 on A4`, '_blank');
+
+        // Automatically move to processing
+        handleBulkStatusChange('processing');
+
         setIsPrintDialogOpen(false);
+        toast({
+            title: "Tisk spuštěn",
+            description: "Štítky se generují v novém okně. Objednávky byly přesunuty do 'Rozpracovaných'.",
+        });
     };
 
     const executeSequentialPrint = () => {
         // format='105x148mm' is the standard A6 size and ensures each label is on its own page
         window.open(`/api/get-bulk-packeta-labels?ids=${printIds.join(',')}&format=105x148mm`, '_blank');
+
+        // Automatically move to processing
+        handleBulkStatusChange('processing');
+
         setIsPrintDialogOpen(false);
+        toast({
+            title: "Tisk spuštěn",
+            description: "Štítky se generují v novém okně. Objednávky byly přesunuty do 'Rozpracovaných'.",
+        });
     };
 
     const handleSyncPacketa = async () => {

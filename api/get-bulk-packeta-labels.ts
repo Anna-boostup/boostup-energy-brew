@@ -71,7 +71,7 @@ async function fetchIndividualLabel(packetId: string, apiPassword: string): Prom
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    const { ids } = req.query;
+    const { ids, format } = req.query;
 
     if (!ids || typeof ids !== 'string') {
         return res.status(400).json({ error: 'Missing or invalid ids parameter' });
@@ -88,43 +88,118 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        console.log(`Starting resilient bulk merge for ${packetIds.length} labels...`);
+        console.log(`Starting resilient bulk merge for ${packetIds.length} labels (${format || 'sequential'})...`);
 
         // Fetch all labels in parallel
         const results = await Promise.all(
-            packetIds.map(id => fetchIndividualLabel(id.trim(), apiPassword))
+            packetIds.map(async id => {
+                const buffer = await fetchIndividualLabel(id.trim(), apiPassword);
+                return { id: id.trim(), buffer };
+            })
         );
 
-        // Filter out null results (failed labels)
-        const validBuffers = results.filter((b): b is Buffer => b !== null);
-        const skippedCount = packetIds.length - validBuffers.length;
+        const validResults = results.filter(r => r.buffer !== null);
+        const skippedIds = results.filter(r => r.buffer === null).map(r => r.id);
 
-        if (validBuffers.length === 0) {
+        if (validResults.length === 0) {
             return res.status(500).json({ error: 'Nepodařilo se stáhnout ani jeden platný štítek. Zkontrolujte ID zásilek.' });
         }
 
-        // Merge PDFs
         const mergedPdf = await PDFDocument.create();
 
-        for (const buffer of validBuffers) {
-            try {
-                const pdf = await PDFDocument.load(buffer);
-                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                copiedPages.forEach((page) => mergedPdf.addPage(page));
-            } catch (loadErr) {
-                console.error('PDFDocument.load failed for a buffer:', loadErr);
+        if (format === 'A6 on A4') {
+            // 2x2 Grid on A4
+            // A4 dimensions: 595.28 x 841.89 points
+            const A4_WIDTH = 595.28;
+            const A4_HEIGHT = 841.89;
+            const LABEL_WIDTH = A4_WIDTH / 2;
+            const LABEL_HEIGHT = A4_HEIGHT / 2;
+
+            let currentPage = mergedPdf.addPage([A4_WIDTH, A4_HEIGHT]);
+            let labelIndex = 0;
+
+            for (const item of validResults) {
+                if (labelIndex > 0 && labelIndex % 4 === 0) {
+                    currentPage = mergedPdf.addPage([A4_WIDTH, A4_HEIGHT]);
+                }
+
+                const pdf = await PDFDocument.load(item.buffer!);
+                const [embeddedPage] = await mergedPdf.embedPages([pdf.getPages()[0]]);
+
+                // Position in 2x2 grid (Y is from bottom)
+                const col = labelIndex % 2; // 0 or 1
+                const row = Math.floor((labelIndex % 4) / 2); // 0 (top) or 1 (bottom)
+
+                const x = col * LABEL_WIDTH;
+                const y = (1 - row) * LABEL_HEIGHT; // row 0 -> top (y=420), row 1 -> bottom (y=0)
+
+                currentPage.drawPage(embeddedPage, {
+                    x,
+                    y,
+                    width: LABEL_WIDTH,
+                    height: LABEL_HEIGHT,
+                });
+
+                labelIndex++;
             }
+        } else {
+            // Sequential A6 pages
+            for (const item of validResults) {
+                try {
+                    const pdf = await PDFDocument.load(item.buffer!);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                } catch (loadErr) {
+                    console.error(`PDFDocument.load failed for packet ${item.id}:`, loadErr);
+                }
+            }
+        }
+
+        // Add summary page if any labels were skipped
+        if (skippedIds.length > 0) {
+            const summaryPage = mergedPdf.addPage([595.28, 841.89]);
+            const { fontBold, fontRegular } = { fontBold: await mergedPdf.embedFont('Helvetica-Bold'), fontRegular: await mergedPdf.embedFont('Helvetica') };
+
+            summaryPage.drawText('CHYBA: Některé štítky nebylo možné stáhnout', {
+                x: 50,
+                y: 780,
+                size: 20,
+                font: fontBold,
+                color: { type: 'RGB', red: 0.8, green: 0, blue: 0 } as any
+            });
+
+            summaryPage.drawText('Následující ID zásilek nebyla společností Zásilkovna nalezena nebo vrátila neplatný formát:', {
+                x: 50,
+                y: 740,
+                size: 12,
+                font: fontRegular
+            });
+
+            let yOffset = 710;
+            for (const id of skippedIds) {
+                summaryPage.drawText(`- ${id}`, {
+                    x: 70,
+                    y: yOffset,
+                    size: 11,
+                    font: fontRegular
+                });
+                yOffset -= 20;
+                if (yOffset < 50) break; // Don't overflow page
+            }
+
+            summaryPage.drawText('Vytiskněte tyto štítky prosím ručně z detailu objednávky.', {
+                x: 50,
+                y: yOffset - 20,
+                size: 10,
+                font: fontRegular,
+                color: { type: 'RGB', red: 0.4, green: 0.4, blue: 0.4 } as any
+            });
         }
 
         const mergedPdfBytes = await mergedPdf.save();
 
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'inline; filename="packeta-merged-labels.pdf"');
-
-        if (skippedCount > 0) {
-            res.setHeader('X-Packeta-Skipped-Count', skippedCount.toString());
-            console.warn(`Merged ${validBuffers.length} labels, skipped ${skippedCount} items.`);
-        }
+        res.setHeader('Content-Disposition', 'inline; filename="packeta-labels.pdf"');
 
         return res.send(Buffer.from(mergedPdfBytes));
 
