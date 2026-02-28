@@ -347,15 +347,15 @@ const Orders = () => {
     };
 
     const handleBulkPrint = () => {
-        // Find all numeric packet IDs. Barcodes (Z...) are NOT supported by the bulk API.
+        // Find all identifying IDs. Barcodes (Z...) are most reliable.
         const ids = orders
-            .filter(o => selectedOrders.has(o.id) && o.packeta_packet_id)
-            .map(o => o.packeta_packet_id) as string[];
+            .filter(o => selectedOrders.has(o.id) && (o.packeta_barcode || o.packeta_packet_id))
+            .map(o => o.packeta_barcode || o.packeta_packet_id) as string[];
 
         if (ids.length === 0) {
             toast({
                 title: "Nelze tisknout hromadně",
-                description: "Vybrané objednávky nemají číselné ID zásilky (možná byly vytvořeny postaru). Vytiskněte je prosím po jednom z detailu objednávky.",
+                description: "Vybrané objednávky nemají číselné ID ani čárový kód zásilky. Vytiskněte je prosím po jednom z detailu objednávky.",
                 variant: "destructive"
             });
             return;
