@@ -6,12 +6,13 @@ const PACKETA_API_URL = 'https://www.zasilkovna.cz/api/rest';
 async function fetchIndividualLabel(packetId: string, apiPassword: string): Promise<{ buffer: Buffer | null; error?: string }> {
     const sanitizedId = String(packetId).replace(/[^a-zA-Z0-9-]/g, '');
 
+    // Standard A6 on A4 format used in the working individual API
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <packetLabelPdf>
   <apiPassword>${apiPassword}</apiPassword>
   <packetId>${sanitizedId}</packetId>
   <offset>0</offset>
-  <format>105x148mm</format>
+  <format>A6 on A4</format>
 </packetLabelPdf>`;
 
     try {
@@ -35,31 +36,22 @@ async function fetchIndividualLabel(packetId: string, apiPassword: string): Prom
             return { buffer: null, error: errorMsg };
         }
 
-        let pdfBase64 = '';
-        const tags = ['response', 'labelContents', 'result', 'content', 'packetLabelPdfResult'];
-        for (const tag of tags) {
-            const regex = new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`);
-            const match = text.match(regex);
-            if (match && match[1].trim().length > 100) {
-                pdfBase64 = match[1].trim().replace(/[\s\r\n]/g, '');
-                break;
-            }
-        }
+        // Logic from working get-packeta-label.ts
+        const pdfMatch = text.match(/<response>([^<]+)<\/response>/) ||
+            text.match(/<labelContents>([^<]+)<\/labelContents>/) ||
+            text.match(/<result>([^<]+)<\/result>/) ||
+            text.match(/<content>([^<]+)<\/content>/) ||
+            text.match(/<packetLabelPdfResult>([^<]+)<\/packetLabelPdfResult>/);
 
-        if (!pdfBase64) {
-            const greedyMatch = text.match(/>([\s\r\n]*[A-Za-z0-9+/=]{100,})</);
-            if (greedyMatch) {
-                pdfBase64 = greedyMatch[1].replace(/[\s\r\n]/g, '');
-            }
-        }
-
-        if (!pdfBase64) {
+        if (!pdfMatch || !pdfMatch[1]) {
             console.error(`Failed to extract base64 for ${sanitizedId}.`);
             return { buffer: null, error: 'Nepodařilo se extrahovat PDF z odpovědi' };
         }
 
+        const pdfBase64 = pdfMatch[1].trim().replace(/[\s\r\n]/g, '');
         const pdfBuffer = Buffer.from(pdfBase64, 'base64');
         const header = pdfBuffer.slice(0, 5).toString();
+
         if (header !== '%PDF-') {
             console.error(`Invalid PDF header for ${sanitizedId}: "${header}"`);
             return { buffer: null, error: 'Neplatný PDF formát' };
@@ -67,7 +59,7 @@ async function fetchIndividualLabel(packetId: string, apiPassword: string): Prom
 
         return { buffer: pdfBuffer };
     } catch (e: any) {
-        console.error(`Network or parsing error for ${sanitizedId}:`, e);
+        console.error(`Network error for ${sanitizedId}:`, e);
         return { buffer: null, error: e.message || 'Chyba sítě' };
     }
 }
@@ -92,13 +84,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
         console.log(`Starting resilient bulk merge for ${packetIds.length} labels (${format || 'sequential'})...`);
 
-        // Fetch all labels in parallel
-        const results = await Promise.all(
-            packetIds.map(async id => {
-                const res = await fetchIndividualLabel(id.trim(), apiPassword);
-                return { id: id.trim(), ...res };
-            })
-        );
+        // Fetch all labels SEQUENTIALLY to avoid rate limits/anti-flood on Packeta side
+        const results = [];
+        for (const id of packetIds) {
+            const res = await fetchIndividualLabel(id.trim(), apiPassword);
+            results.push({ id: id.trim(), ...res });
+        }
 
         const validResults = results.filter(r => r.buffer !== null);
         const failedResults = results.filter(r => r.buffer === null);
