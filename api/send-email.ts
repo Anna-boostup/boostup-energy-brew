@@ -143,6 +143,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             break;
     }
 
+    const logoUrl = `${BASE_URL}/logo-green.png?v=3`;
+
     const emailHtml = `
     <!DOCTYPE html>
     <html>
@@ -159,14 +161,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         <!-- Header -->
                         <tr>
                             <td align="center" style="padding:40px 20px;background-color:white;border-bottom:1px solid #f0f0f0">
-                                <img src="cid:logo" alt="" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
+                                <img src="${logoUrl}" alt="BoostUp" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         
                         ${heroImageUrl ? `
                         <tr>
                             <td>
-                                <img src="cid:hero" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
+                                <img src="${heroImageUrl}" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         ` : ''}
@@ -198,55 +200,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     try {
-        const attachments = [];
-
-        // Load logo locally
-        try {
-            const logoPath = path.join(process.cwd(), 'public', 'logo-green.png');
-            const logoBuffer = fs.readFileSync(logoPath);
-            attachments.push({
-                filename: 'logo.png',
-                content: logoBuffer.toString('base64'),
-                cid: 'logo'
-            });
-        } catch (logoErr) {
-            console.error('Failed to load logo locally:', logoErr);
-            // Fallback to fetch if local fails
-            const logoRes = await fetch(`${BASE_URL}/logo-green.png?v=2`);
-            const logoBuffer = await logoRes.arrayBuffer();
-            attachments.push({
-                filename: 'logo.png',
-                content: Buffer.from(logoBuffer).toString('base64'),
-                cid: 'logo'
-            });
-        }
-
-        // Load hero image locally if needed
-        if (heroImageUrl) {
-            try {
-                const imageName = heroImageUrl.split('/').pop()?.split('?')[0];
-                if (imageName) {
-                    const heroPath = path.join(process.cwd(), 'public', imageName);
-                    const heroBuffer = fs.readFileSync(heroPath);
-                    attachments.push({
-                        filename: `${heroCid}.png`,
-                        content: heroBuffer.toString('base64'),
-                        cid: 'hero'
-                    });
-                }
-            } catch (heroErr) {
-                console.error('Failed to load hero image locally:', heroErr);
-                // Fallback to fetch
-                const heroRes = await fetch(heroImageUrl);
-                const heroBuffer = await heroRes.arrayBuffer();
-                attachments.push({
-                    filename: `${heroCid}.png`,
-                    content: Buffer.from(heroBuffer).toString('base64'),
-                    cid: 'hero'
-                });
-            }
-        }
-
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -258,7 +211,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 to,
                 subject,
                 html: emailHtml,
-                attachments
+                attachments: [] // No more image attachments needed
             })
         });
 
