@@ -1,6 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import fs from 'fs';
-import path from 'path';
 
 const COLORS = {
     cream: '#f4f1e6',
@@ -143,7 +141,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             break;
     }
 
-    const logoUrl = `${BASE_URL}/logo-green.png?v=3`;
 
     const emailHtml = `
     <!DOCTYPE html>
@@ -161,14 +158,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         <!-- Header -->
                         <tr>
                             <td align="center" style="padding:40px 20px;background-color:white;border-bottom:1px solid #f0f0f0">
-                                <img src="${logoUrl}" alt="BoostUp" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
+                                <img src="cid:logo" alt="BoostUp" width="180" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         
                         ${heroImageUrl ? `
                         <tr>
                             <td>
-                                <img src="${heroImageUrl}" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
+                                <img src="cid:hero" alt="" width="600" border="0" style="width:600px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none">
                             </td>
                         </tr>
                         ` : ''}
@@ -200,6 +197,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     try {
+        // Build inline attachments using Resend's contentId feature.
+        // When contentId is set, Resend uses Content-Disposition: inline,
+        // so images appear in the email body but NOT in the attachment list.
+        const attachments: Array<{ path: string; filename: string; contentId: string }> = [
+            {
+                path: `${BASE_URL}/logo-green.png`,
+                filename: 'logo.png',
+                contentId: 'logo',
+            }
+        ];
+
+        if (heroImageUrl) {
+            attachments.push({
+                path: heroImageUrl,
+                filename: `${heroCid}.png`,
+                contentId: 'hero',
+            });
+        }
+
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -211,7 +227,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 to,
                 subject,
                 html: emailHtml,
-                attachments: [] // No more image attachments needed
+                attachments
             })
         });
 
