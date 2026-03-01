@@ -4,6 +4,7 @@ import bottlesHero from "@/assets/hero-vse.png";
 import { useState } from "react";
 import IngredientDialog from "./IngredientDialog";
 import { useContent } from "@/context/ContentContext";
+import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
 
 const HeroSection = () => {
   const { content: siteContent } = useContent();
@@ -23,29 +24,36 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 pt-8 pb-32 relative z-10">
         {/* Announcement Badge */}
-        <div className="flex justify-center mb-10">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide animate-fade-up shadow-button animate-bounce-subtle">
-            <Zap className="w-5 h-5 text-lime" />
-            {content.announcement}
-            <Sparkles className="w-5 h-5 text-lime" />
+        {isBadgeVisible(siteContent, 'hero.announcement') && (
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide animate-fade-up shadow-button animate-bounce-subtle"
+              style={getTextStyle(siteContent, 'hero.announcement')}>
+              <Zap className="w-5 h-5 text-lime" />
+              {content.announcement}
+              <Sparkles className="w-5 h-5 text-lime" />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Centered Text Content */}
         <div className="text-center animate-fade-up z-10 mb-12">
           <h1 className="font-display text-foreground mb-8 tracking-tight">
-            <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-foreground/90 mb-4 animate-slide-in-left uppercase tracking-[0.2em]">
+            <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-foreground/90 mb-4 animate-slide-in-left uppercase tracking-[0.2em]"
+              style={getTextStyle(siteContent, 'hero.headline.part1')}>
               {content.headline.part1}
             </span>
-            <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gradient-energy animate-slide-in-left animation-delay-200 leading-[1.1] uppercase">
+            <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gradient-energy animate-slide-in-left animation-delay-200 leading-[1.1] uppercase"
+              style={getTextStyle(siteContent, 'hero.headline.gradient')}>
               {content.headline.gradient}
             </span>
-            <span className="block text-lg sm:text-2xl md:text-3xl font-bold text-foreground/80 mt-6 animate-slide-in-left animation-delay-400 leading-tight max-w-4xl mx-auto italic">
+            <span className="block text-lg sm:text-2xl md:text-3xl font-bold text-foreground/90 mt-6 animate-slide-in-left animation-delay-400 leading-tight max-w-4xl mx-auto italic"
+              style={getTextStyle(siteContent, 'hero.headline.part2')}>
               {content.headline.part2}
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-foreground/80 italic max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-up animation-delay-500">
+          <p className="text-xl md:text-2xl text-foreground/90 italic max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-up animation-delay-500"
+            style={getTextStyle(siteContent, 'hero.description')}>
             {siteContent.hero.description}
           </p>
 

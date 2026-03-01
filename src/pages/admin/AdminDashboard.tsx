@@ -33,7 +33,7 @@ const AdminDashboard = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalRevenue.toLocaleString('cs-CZ')} Kč</div>
-                        <p className="text-xs text-muted-foreground">Lokální data</p>
+                        <p className="text-xs text-foreground/70">Lokální data</p>
                     </CardContent>
                 </Card>
 
@@ -45,20 +45,20 @@ const AdminDashboard = () => {
                     <CardContent>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-amber-600">Nové / Zaplacené</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700">Nové / Zaplacené</p>
                                 <div className="text-xl font-bold">{newOrdersCount}</div>
-                                <p className="text-[10px] text-muted-foreground">+{todayOrders} dnes</p>
+                                <p className="text-[10px] text-foreground/70">+{todayOrders} dnes</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-600">Rozpracované</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-700">Rozpracované</p>
                                 <div className="text-xl font-bold">{processingCount}</div>
                             </div>
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600">Vyřízené</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">Vyřízené</p>
                                 <div className="text-xl font-bold">{shippedCount}</div>
                             </div>
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Stornované</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-600">Stornované</p>
                                 <div className="text-xl font-bold">{cancelledCount}</div>
                             </div>
                         </div>
@@ -97,15 +97,15 @@ const AdminDashboard = () => {
                     </CardHeader>
                     <CardContent>
                         {orders.length === 0 ? (
-                            <p className="text-muted-foreground">Zatím žádné objednávky.</p>
+                            <p className="text-foreground/70">Zatím žádné objednávky.</p>
                         ) : (
                             <div className="space-y-4">
                                 {orders.slice(0, 10).map((order) => (
                                     <div key={order.id} className="flex flex-col md:flex-row md:items-center justify-between border-b pb-4 last:border-0 last:pb-0 gap-4">
                                         <div className="grid gap-1">
                                             <p className="font-bold text-sm">#{order.id}</p>
-                                            <p className="text-xs text-muted-foreground">{order.customer.name} ({order.customer.email})</p>
-                                            <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleString('cs-CZ')}</p>
+                                            <p className="text-xs text-foreground/70">{order.customer.name} ({order.customer.email})</p>
+                                            <p className="text-xs text-foreground/70">{new Date(order.date).toLocaleString('cs-CZ')}</p>
                                         </div>
                                         <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
                                             <div className="flex flex-col gap-1 items-end">
@@ -118,10 +118,10 @@ const AdminDashboard = () => {
                                                 <Badge
                                                     variant={order.status === 'shipped' ? 'default' : 'outline'}
                                                     className={
-                                                        order.status === 'shipped' ? 'bg-emerald-600 text-white border-none' :
-                                                            order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50' :
-                                                                order.status === 'cancelled' ? 'border-slate-200 text-slate-500 bg-slate-50' :
-                                                                    'border-amber-200 text-amber-700 bg-amber-50'
+                                                        order.status === 'shipped' ? 'bg-emerald-700 text-white border-none' :
+                                                            order.status === 'processing' ? 'border-blue-200 text-blue-800 bg-blue-50' :
+                                                                order.status === 'cancelled' ? 'border-slate-300 text-slate-600 bg-slate-50' :
+                                                                    'border-amber-300 text-amber-800 bg-amber-50'
                                                     }
                                                 >
                                                     {order.status === 'shipped' ? 'Stav: Vyřízena' :
@@ -133,7 +133,7 @@ const AdminDashboard = () => {
                                             <div className="flex gap-2">
                                                 <Dialog>
                                                     <DialogTrigger asChild>
-                                                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" aria-label={`Zobrazit detail objednávky ${order.id}`}>
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </DialogTrigger>
@@ -143,15 +143,16 @@ const AdminDashboard = () => {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                                        className="h-8 w-8 p-0 text-green-700 hover:text-green-800 hover:bg-green-50"
                                                         onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
+                                                        aria-label={`Tisk štítku Zásilkovny pro objednávku ${order.id}`}
                                                         title="Tisk štítku Zásilkovny"
                                                     >
                                                         <Printer className="h-4 w-4" />
                                                     </Button>
                                                 )}
                                                 <InvoiceModal order={order}>
-                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-900 hover:bg-slate-100" aria-label={`Zobrazit fakturu pro objednávku ${order.id}`}>
                                                         <FileText className="h-4 w-4" />
                                                     </Button>
                                                 </InvoiceModal>

@@ -10,7 +10,7 @@ const PaymentError = () => {
     const errorMessage = searchParams.get('message') || 'Při zpracování platby došlo k neočekávané chybě.';
 
     return (
-        <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-4">
+        <main className="min-h-screen bg-secondary/30 flex items-center justify-center p-4">
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -30,7 +30,7 @@ const PaymentError = () => {
                         </div>
                     </div>
 
-                    <p className="text-muted-foreground">
+                    <p className="text-foreground/80">
                         Zkuste to prosím znovu nebo zvolte jinou platební metodu. Pokud se problém opakuje, kontaktujte naši podporu.
                     </p>
 
@@ -54,7 +54,7 @@ const PaymentError = () => {
                         </Button>
                         <Button
                             variant="ghost"
-                            className="text-muted-foreground flex items-center justify-center gap-2"
+                            className="text-foreground/70 flex items-center justify-center gap-2"
                         >
                             <MessageSquare className="w-4 h-4" />
                             Kontaktovat podporu
@@ -62,7 +62,7 @@ const PaymentError = () => {
                     </div>
                 </div>
             </motion.div>
-        </div>
+        </main>
     );
 };
 

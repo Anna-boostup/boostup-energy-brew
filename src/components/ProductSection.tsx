@@ -365,7 +365,7 @@ const ProductSection = () => {
                         </div>
                       )}
                       {pack}x
-                      <span className="block text-xs sm:text-sm font-semibold opacity-80">
+                      <span className="block text-xs sm:text-sm font-semibold">
                         {packPrices[pack]} Kč
                       </span>
                       {pack === 21 && (
@@ -381,7 +381,7 @@ const ProductSection = () => {
 
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
-                <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
+                <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
@@ -397,7 +397,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Jednorázový nákup</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground/90" : "text-foreground/70"}`}>Standardní cena</div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground" : "text-foreground/80"}`}>Standardní cena</div>
                       </div>
                     </div>
                   </button>
@@ -427,7 +427,7 @@ const ProductSection = () => {
 
               {/* Flavor Mode Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">CHCI</h3>
+                <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">CHCI</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
@@ -440,7 +440,7 @@ const ProductSection = () => {
                     <Droplet className="w-5 h-5" />
                     <div className="text-left">
                       <div className="font-bold text-sm sm:text-base">Jednu příchuť</div>
-                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "opacity-95" : "text-foreground/70"}`}>Vyberu si níže</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "text-primary-foreground" : "text-foreground/80"}`}>Vyberu si níže</div>
                     </div>
                   </button>
 
@@ -454,7 +454,7 @@ const ProductSection = () => {
                     <Blend className="w-5 h-5" />
                     <div className="text-left">
                       <div className="font-bold text-sm sm:text-base">Mix příchutí</div>
-                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "opacity-95" : "text-foreground/70"}`}>Všechny 3 najednou</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "text-cream" : "text-foreground/80"}`}>Všechny 3 najednou</div>
                     </div>
                   </button>
                 </div>
@@ -463,7 +463,7 @@ const ProductSection = () => {
                 {flavorMode === "mix" && (
                   <div className="mt-6 animate-fade-up">
                     <div className="flex justify-between items-center mb-6">
-                      <h3 className="font-display text-sm font-bold text-foreground/80 tracking-widest">NAMÍCHEJ SI VLASTNÍ MIX</h3>
+                      <h3 className="font-display text-sm font-bold text-foreground tracking-widest">NAMÍCHEJ SI VLASTNÍ MIX</h3>
                       <div className={`text-sm font-bold px-3 py-1 rounded-full ${isMixValid ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground"}`}>
                         Vybráno: {currentMixCount} / {selectedPack} ks
                       </div>
@@ -488,7 +488,7 @@ const ProductSection = () => {
                                   </span>
                                 ))}
                               </div>
-                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>
+                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white' : 'text-foreground/90 font-medium'}`}>
                                 {(() => {
                                   const eff = getEffectiveProduct(flavor.id);
                                   return eff?.description || content.flavors[flavor.id]?.description || flavor.description;
@@ -530,7 +530,7 @@ const ProductSection = () => {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+                                  className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white hover:text-white' : 'text-foreground/70 hover:text-foreground'}`}
                                   aria-label={`Informace o příchuti ${flavor.name}`}
                                 >
                                   <Info className="w-4 h-4" />
@@ -557,7 +557,7 @@ const ProductSection = () => {
               {/* Flavor Selection (Single) */}
               {flavorMode === "single" && (
                 <div className="animate-fade-up">
-                  <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
+                  <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
                   <div className="space-y-3">
                     {flavors.map((flavor, index) => (
                       <div key={flavor.id} className="relative group/flavor">
@@ -590,7 +590,7 @@ const ProductSection = () => {
                                 </span>
                               ))}
                             </div>
-                            <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
+                            <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'text-white' : 'text-foreground/80 font-medium'}`}>
                               {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || content.flavors[flavor.id]?.description || flavor.description}
                             </div>
                           </div>

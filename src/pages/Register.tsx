@@ -104,16 +104,16 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4 py-12">
+        <main className="min-h-screen flex items-center justify-center bg-secondary/30 px-4 py-12">
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-display font-bold text-primary">Registrace</h1>
-                    <p className="text-muted-foreground">Vytvořte si účet a získejte výhody</p>
+                    <p className="text-foreground/80">Vytvořte si účet a získejte výhody</p>
                 </div>
 
                 <form onSubmit={handleRegister} className="space-y-4">
                     <div className="space-y-3">
-                        <Label>Typ účtu</Label>
+                        <Label className="text-foreground/90">Typ účtu</Label>
                         <RadioGroup defaultValue="personal" onValueChange={(v) => setAccountType(v as "personal" | "company")} className="flex gap-4">
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="personal" id="r1" />
@@ -127,7 +127,7 @@ const Register = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="fullName">Jméno a příjmení</Label>
+                        <Label htmlFor="fullName" className="text-foreground/90">Jméno a příjmení</Label>
                         <Input
                             id="fullName"
                             placeholder="Jan Novák"
@@ -138,7 +138,7 @@ const Register = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email" className="text-foreground/90">Email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -150,7 +150,7 @@ const Register = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="password">Heslo</Label>
+                        <Label htmlFor="password" className="text-foreground/90">Heslo</Label>
                         <Input
                             id="password"
                             type="password"
@@ -165,7 +165,7 @@ const Register = () => {
                     {accountType === "company" && (
                         <div className="space-y-4 pt-2 border-t">
                             <div className="space-y-2">
-                                <Label htmlFor="companyName">Název firmy</Label>
+                                <Label htmlFor="companyName" className="text-foreground/90">Název firmy</Label>
                                 <Input
                                     id="companyName"
                                     placeholder="Moje Firma s.r.o."
@@ -176,7 +176,7 @@ const Register = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="ico">IČO</Label>
+                                    <Label htmlFor="ico" className="text-foreground/90">IČO</Label>
                                     <Input
                                         id="ico"
                                         placeholder="12345678"
@@ -186,7 +186,7 @@ const Register = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="dic">DIČ</Label>
+                                    <Label htmlFor="dic" className="text-foreground/90">DIČ</Label>
                                     <Input
                                         id="dic"
                                         placeholder="CZ12345678"
@@ -204,14 +204,14 @@ const Register = () => {
                     </Button>
                 </form>
 
-                <div className="text-center text-sm text-muted-foreground">
+                <div className="text-center text-sm text-foreground/80">
                     Již máte účet?{" "}
                     <Link to="/login" className="text-primary font-bold hover:underline">
                         Přihlaste se
                     </Link>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 

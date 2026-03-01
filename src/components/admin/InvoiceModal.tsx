@@ -43,13 +43,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                 <div className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-50 shadow-sm no-print">
                     <div className="flex items-center gap-4">
                         <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Zavřít fakturu">
                                 <X className="h-4 w-4" />
                             </Button>
                         </DialogTrigger>
                         <div className="flex flex-col">
                             <span className="text-lg font-bold">Faktura #{order.id.slice(0, 8)}</span>
-                            <p className="text-xs text-muted-foreground">{order.customer.name}</p>
+                            <p className="text-xs text-foreground/70">{order.customer.name}</p>
                         </div>
                     </div>
 

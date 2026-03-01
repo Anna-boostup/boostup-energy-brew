@@ -311,5 +311,33 @@ export const SITE_CONTENT = {
             ],
             ingredients: ["Vitamín B6", "Vitamín B12", "Vitamín C"]
         }
-    }
+    },
+
+    typography: {
+        headingFont: 'Poppins',
+        bodyFont: 'Poppins',
+        headingWeight: '800',
+        bodyWeight: '400',
+        headingLetterSpacing: '0.05em',
+        bodyLetterSpacing: '0em',
+        headingLineHeight: '1.1',
+        bodyLineHeight: '1.6',
+        baseFontSize: '16',
+    },
+
+    // Per-field text styles (font, size, bold, italic per CMS field)
+    textStyles: {} as Record<string, {
+        fontSize?: string;
+        fontWeight?: string;
+        fontStyle?: string;
+        fontFamily?: string;
+    }>,
+
+    // Badge visibility (defaults to shown; set to false to hide)
+    badgeVisible: {
+        'hero.announcement': true,
+        'mission.badge': true,
+        'cta.badge': true,
+        'contact.title': true,
+    } as Record<string, boolean>,
 };

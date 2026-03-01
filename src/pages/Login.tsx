@@ -116,16 +116,16 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
+        <main className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-display font-bold text-primary">Přihlášení</h1>
-                    <p className="text-muted-foreground">Vítejte zpět v BoostUp</p>
+                    <p className="text-foreground/80">Vítejte zpět v BoostUp</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email" className="text-foreground/90">Email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -137,11 +137,11 @@ const Login = () => {
                     </div>
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <Label htmlFor="password">Heslo</Label>
+                            <Label htmlFor="password" className="text-foreground/90">Heslo</Label>
                             <button
                                 type="button"
                                 onClick={handleForgotPassword}
-                                className="text-xs text-primary hover:underline font-medium"
+                                className="text-xs text-primary hover:underline font-bold"
                                 disabled={loading}
                             >
                                 Zapomenuté heslo?
@@ -166,7 +166,7 @@ const Login = () => {
                         <span className="w-full border-t" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-2 text-muted-foreground">Nebo</span>
+                        <span className="bg-white px-2 text-foreground/70">Nebo</span>
                     </div>
                 </div>
 
@@ -218,14 +218,14 @@ const Login = () => {
                     ⚡ Poslat přihlašovací odkaz (Magic Link)
                 </Button>
 
-                <div className="text-center text-sm text-muted-foreground">
+                <div className="text-center text-sm text-foreground/80">
                     Nemáte účet?{" "}
                     <Link to="/register" className="text-primary font-bold hover:underline">
                         Zaregistrujte se
                     </Link>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 

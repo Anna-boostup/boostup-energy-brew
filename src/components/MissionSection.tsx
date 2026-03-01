@@ -1,5 +1,6 @@
 import { useContent } from "@/context/ContentContext";
 import { Zap, Clock, Shield, Leaf, Sparkles } from "lucide-react";
+import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
 
 const MissionSection = () => {
   const { content: SITE_CONTENT } = useContent();
@@ -41,19 +42,22 @@ const MissionSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-5 py-2 bg-lime/20 text-lime rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up">
-            <Sparkles className="w-4 h-4" />
-            {content.badge}
-          </span>
+          {isBadgeVisible(SITE_CONTENT, 'mission.badge') && (
+            <span className="inline-flex items-center gap-2 px-5 py-2 bg-lime/20 text-lime rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up"
+              style={getTextStyle(SITE_CONTENT, 'mission.badge')}>
+              <Sparkles className="w-4 h-4" />
+              {content.badge}
+            </span>
+          )}
 
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black mb-8 leading-tight animate-fade-up animation-delay-100">
-            {content.headline.part1}
-            <span className="block text-lime">{content.headline.highlight}</span>
+            <span style={getTextStyle(SITE_CONTENT, 'mission.headline.part1')}>{content.headline.part1}</span>
+            <span className="block text-lime" style={getTextStyle(SITE_CONTENT, 'mission.headline.highlight')}>{content.headline.highlight}</span>
           </h2>
 
-          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground/90 leading-relaxed animate-fade-up animation-delay-200">
+          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground leading-relaxed animate-fade-up animation-delay-200">
             {(content.paragraphs || []).map((text, i) => (
-              <p key={i} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
+              <p key={i} style={getTextStyle(SITE_CONTENT, `mission.paragraph.${i}`)} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
             ))}
           </div>
         </div>
@@ -88,7 +92,7 @@ const MissionSection = () => {
                   <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground/90 leading-relaxed">{feature.description}</p>
+                  <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );

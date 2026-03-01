@@ -576,7 +576,7 @@ const CheckoutPage = () => {
                                             </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div className="space-y-2">
-                                                    <label htmlFor="ico" className="text-sm font-bold text-foreground/70 ml-1">IČO *</label>
+                                                    <label htmlFor="ico" className="text-sm font-bold text-foreground/90 ml-1">IČO *</label>
                                                     <input
                                                         id="ico"
                                                         name="ico"
@@ -589,7 +589,7 @@ const CheckoutPage = () => {
                                                     {errors.ico && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.ico}</p>}
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label htmlFor="dic" className="text-sm font-bold text-foreground/70 ml-1">DIČ</label>
+                                                    <label htmlFor="dic" className="text-sm font-bold text-foreground/90 ml-1">DIČ</label>
                                                     <input
                                                         id="dic"
                                                         name="dic"
@@ -603,7 +603,7 @@ const CheckoutPage = () => {
                                         </div>
                                     )}
                                     <div className="space-y-2">
-                                        <label htmlFor="firstName" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Jméno *</label>
+                                        <label htmlFor="firstName" className="text-sm font-bold text-foreground/90 ml-1 uppercase">Jméno *</label>
                                         <input
                                             id="firstName"
                                             name="firstName"
@@ -616,7 +616,7 @@ const CheckoutPage = () => {
                                         {errors.firstName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.firstName}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="lastName" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Příjmení *</label>
+                                        <label htmlFor="lastName" className="text-sm font-bold text-foreground/90 ml-1 uppercase">Příjmení *</label>
                                         <input
                                             id="lastName"
                                             name="lastName"
@@ -629,7 +629,7 @@ const CheckoutPage = () => {
                                         {errors.lastName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.lastName}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="email" className="text-sm font-bold text-foreground/70 ml-1">EMAIL *</label>
+                                        <label htmlFor="email" className="text-sm font-bold text-foreground/90 ml-1">EMAIL *</label>
                                         <input
                                             id="email"
                                             type="email"
@@ -643,7 +643,7 @@ const CheckoutPage = () => {
                                         {errors.email && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.email}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="phone" className="text-sm font-bold text-foreground/70 ml-1">TELEFON *</label>
+                                        <label htmlFor="phone" className="text-sm font-bold text-foreground/90 ml-1">TELEFON *</label>
                                         <input
                                             id="phone"
                                             type="tel"
@@ -697,7 +697,7 @@ const CheckoutPage = () => {
                                         {errors.city && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.city}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="zip" className="text-sm font-bold text-foreground/70 ml-1">PSČ *</label>
+                                        <label htmlFor="zip" className="text-sm font-bold text-foreground/90 ml-1">PSČ *</label>
                                         <input
                                             id="zip"
                                             name="zip"
@@ -768,7 +768,7 @@ const CheckoutPage = () => {
                                             {formData.isCompany && (
                                                 <>
                                                     <div className="space-y-2 md:col-span-2">
-                                                        <label htmlFor="billingCompanyName" className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
+                                                        <label htmlFor="billingCompanyName" className="text-sm font-bold text-foreground/90 ml-1">NÁZEV FIRMY</label>
                                                         <input
                                                             id="billingCompanyName"
                                                             name="companyName"
@@ -779,7 +779,7 @@ const CheckoutPage = () => {
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label htmlFor="billingDic" className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
+                                                        <label htmlFor="billingDic" className="text-sm font-bold text-foreground/90 ml-1">DIČ (VOLITELNÉ)</label>
                                                         <input
                                                             id="billingDic"
                                                             name="dic"
@@ -795,7 +795,7 @@ const CheckoutPage = () => {
                                             {/* Personal Fields (ICO option) */}
                                             {!formData.isCompany && (
                                                 <div className="space-y-2 md:col-span-2">
-                                                    <label className="text-sm font-bold text-muted-foreground ml-1">IČO (VOLITELNÉ)</label>
+                                                    <label className="text-sm font-bold text-foreground/90 ml-1">IČO (VOLITELNÉ)</label>
                                                     <input
                                                         name="ico"
                                                         value={formData.ico}
@@ -808,7 +808,7 @@ const CheckoutPage = () => {
 
                                             <div className="grid grid-cols-3 gap-4 sm:col-span-2 pt-2 border-t">
                                                 <div className="col-span-2 space-y-2">
-                                                    <label htmlFor="billingStreet" className="text-sm font-bold text-muted-foreground ml-1 uppercase">ULICE (FAKTURAČNÍ)</label>
+                                                    <label htmlFor="billingStreet" className="text-sm font-bold text-foreground/90 ml-1 uppercase">ULICE (FAKTURAČNÍ)</label>
                                                     <input
                                                         id="billingStreet"
                                                         name="billingStreet"
@@ -819,7 +819,7 @@ const CheckoutPage = () => {
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label htmlFor="billingHouseNumber" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Č. POPISNÉ *</label>
+                                                    <label htmlFor="billingHouseNumber" className="text-sm font-bold text-foreground/90 ml-1 uppercase">Č. POPISNÉ *</label>
                                                     <input
                                                         id="billingHouseNumber"
                                                         name="billingHouseNumber"
@@ -833,7 +833,7 @@ const CheckoutPage = () => {
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <label htmlFor="billingCity" className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ) *</label>
+                                                <label htmlFor="billingCity" className="text-sm font-bold text-foreground/90 ml-1">MĚSTO (FAKTURAČNÍ) *</label>
                                                 <input
                                                     id="billingCity"
                                                     name="billingCity"
@@ -846,7 +846,7 @@ const CheckoutPage = () => {
                                                 {errors.billingCity && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.billingCity}</p>}
                                             </div>
                                             <div className="space-y-2">
-                                                <label htmlFor="billingZip" className="text-sm font-bold text-muted-foreground ml-1">PSČ (FAKTURAČNÍ) *</label>
+                                                <label htmlFor="billingZip" className="text-sm font-bold text-foreground/90 ml-1">PSČ (FAKTURAČNÍ) *</label>
                                                 <input
                                                     id="billingZip"
                                                     name="billingZip"
@@ -869,7 +869,7 @@ const CheckoutPage = () => {
                                             {formData.isCompany && (
                                                 <>
                                                     <div className="space-y-2 md:col-span-2">
-                                                        <label htmlFor="billingCompanyName2" className="text-sm font-bold text-muted-foreground ml-1">NÁZEV FIRMY</label>
+                                                        <label htmlFor="billingCompanyName2" className="text-sm font-bold text-foreground/90 ml-1">NÁZEV FIRMY</label>
                                                         <input
                                                             id="billingCompanyName2"
                                                             name="companyName"
@@ -880,7 +880,7 @@ const CheckoutPage = () => {
                                                         />
                                                     </div>
                                                     <div className="space-y-2 md:col-span-2">
-                                                        <label htmlFor="billingDic2" className="text-sm font-bold text-muted-foreground ml-1">DIČ (VOLITELNÉ)</label>
+                                                        <label htmlFor="billingDic2" className="text-sm font-bold text-foreground/90 ml-1">DIČ (VOLITELNÉ)</label>
                                                         <input
                                                             id="billingDic2"
                                                             name="dic"
@@ -896,7 +896,7 @@ const CheckoutPage = () => {
                                             {/* Personal Fields (ICO option) */}
                                             {!formData.isCompany && (
                                                 <div className="space-y-2 md:col-span-2">
-                                                    <label htmlFor="billingIco2" className="text-sm font-bold text-muted-foreground ml-1">IČO (VOLITELNÉ)</label>
+                                                    <label htmlFor="billingIco2" className="text-sm font-bold text-foreground/90 ml-1">IČO (VOLITELNÉ)</label>
                                                     <input
                                                         id="billingIco2"
                                                         name="ico"
@@ -1019,7 +1019,7 @@ const CheckoutPage = () => {
                                                 </svg>
                                                 <span className="text-2xl font-black tracking-tighter">Pay</span>
                                             </div>
-                                            <span className="font-bold text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50">Apple Pay</span>
+                                            <span className="font-bold text-[11px] uppercase tracking-[0.2em] text-muted-foreground/80">Apple Pay</span>
                                         </button>
                                         <button
                                             type="button"
@@ -1035,7 +1035,7 @@ const CheckoutPage = () => {
                                                 </svg>
                                                 <span className="text-2xl font-black tracking-tighter">Pay</span>
                                             </div>
-                                            <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50">Google Pay</span>
+                                            <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80">Google Pay</span>
                                         </button>
                                     </div>
                                     {/* Card */}

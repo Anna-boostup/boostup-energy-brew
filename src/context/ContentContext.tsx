@@ -75,6 +75,21 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     });
                 }
 
+                const mergedTypography = {
+                    ...SITE_CONTENT.typography,
+                    ...(dbContent.typography || {})
+                };
+
+                const mergedTextStyles = {
+                    ...SITE_CONTENT.textStyles,
+                    ...(dbContent.textStyles || {})
+                };
+
+                const mergedBadgeVisible = {
+                    ...SITE_CONTENT.badgeVisible,
+                    ...(dbContent.badgeVisible || {})
+                };
+
                 setContent({
                     ...SITE_CONTENT,
                     ...dbContent,
@@ -83,7 +98,10 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     cta: mergedCTA,
                     contact: mergedContact,
                     footer: mergedFooter,
-                    flavors: mergedFlavors
+                    flavors: mergedFlavors,
+                    typography: mergedTypography,
+                    textStyles: mergedTextStyles,
+                    badgeVisible: mergedBadgeVisible,
                 });
             }
         } catch (err) {

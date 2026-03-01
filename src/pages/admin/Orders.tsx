@@ -36,10 +36,10 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
         <div className="flex justify-between items-start">
             <div>
                 <p className="font-bold">#{order.id.slice(0, 8)}</p>
-                <p className="text-xs text-muted-foreground">{new Date(order.date).toLocaleDateString()}</p>
+                <p className="text-xs text-foreground/70">{new Date(order.date).toLocaleDateString()}</p>
             </div>
             <div className="flex flex-col gap-1 items-end">
-                <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-100 border-emerald-200' : ''}>
+                <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-100 border-emerald-300' : ''}>
                     {order.status === 'pending' ? 'Platba: Čeká' :
                         order.status === 'cancelled' ? 'Platba: Storno' :
                             'Platba: Zaplaceno'}
@@ -67,7 +67,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
         </div>
 
         <div className="border-t pt-2">
-            <p className="text-xs font-semibold mb-1 text-muted-foreground">Položky:</p>
+            <p className="text-xs font-semibold mb-1 text-foreground/70">Položky:</p>
             {order.items.map((item: any, idx: number) => (
                 <div key={idx} className="text-sm flex justify-between">
                     <span>{item.quantity}x {item.name}</span>
@@ -173,7 +173,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                 <TableBody>
                     {data.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                            <TableCell colSpan={8} className="text-center py-8 text-foreground/70">
                                 Žádné objednávky v této kategorii.
                             </TableCell>
                         </TableRow>
@@ -334,7 +334,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                             </Button>
                                         )}
                                         <InvoiceModal order={order}>
-                                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-950 hover:bg-slate-100" aria-label="Zobrazit fakturu">
+                                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-950 hover:bg-slate-100" aria-label={`Zobrazit fakturu pro objednávku ${order.id.slice(0, 8)}`}>
                                                 <FileText className="h-4 w-4" />
                                             </Button>
                                         </InvoiceModal>
@@ -350,7 +350,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
         {/* Mobile View */}
         <div className="md:hidden">
             {data.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">Žádné objednávky.</p>
+                <p className="text-center py-8 text-foreground/70">Žádné objednávky.</p>
             ) : (
                 data.map((order) => (
                     <MobileOrderCard key={order.id} order={order} onStatusChange={onStatusChange} />

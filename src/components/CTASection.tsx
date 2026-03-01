@@ -2,6 +2,7 @@ import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Zap, Mail, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
 
 const CTASection = () => {
   const { content: SITE_CONTENT } = useContent();
@@ -33,19 +34,23 @@ const CTASection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-lime/20 backdrop-blur-sm rounded-full text-lime text-sm font-black mb-10 border border-lime/30 animate-fade-up animate-bounce-subtle">
-            <Sparkles className="w-5 h-5" />
-            <span>{content.badge}</span>
-            <Zap className="w-5 h-5" />
-          </div>
+          {isBadgeVisible(SITE_CONTENT, 'cta.badge') && (
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-lime/20 backdrop-blur-sm rounded-full text-lime text-sm font-black mb-10 border border-lime/30 animate-fade-up animate-bounce-subtle"
+              style={getTextStyle(SITE_CONTENT, 'cta.badge')}>
+              <Sparkles className="w-5 h-5" />
+              <span>{content.badge}</span>
+              <Zap className="w-5 h-5" />
+            </div>
+          )}
 
           {/* Headline */}
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-primary-foreground mb-8 leading-tight animate-fade-up animation-delay-100">
-            {content.headline.part1}
-            <span className="block text-lime animate-slide-in-left animation-delay-300">{content.headline.highlight}</span>
+            <span style={getTextStyle(SITE_CONTENT, 'cta.headline.part1')}>{content.headline.part1}</span>
+            <span className="block text-lime animate-slide-in-left animation-delay-300" style={getTextStyle(SITE_CONTENT, 'cta.headline.highlight')}>{content.headline.highlight}</span>
           </h2>
 
-          <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto animate-fade-up animation-delay-200">
+          <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto animate-fade-up animation-delay-200"
+            style={getTextStyle(SITE_CONTENT, 'cta.description')}>
             {content.description}
           </p>
 

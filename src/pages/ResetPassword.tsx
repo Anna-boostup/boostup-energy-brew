@@ -78,16 +78,16 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
+        <main className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-display font-bold text-primary">Nové heslo</h1>
-                    <p className="text-muted-foreground">Zadejte své nové přístupové heslo</p>
+                    <p className="text-foreground/80">Zadejte své nové přístupové heslo</p>
                 </div>
 
                 <form onSubmit={handleReset} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="password">Nové heslo</Label>
+                        <Label htmlFor="password" className="text-foreground/90">Nové heslo</Label>
                         <Input
                             id="password"
                             type="password"
@@ -98,7 +98,7 @@ const ResetPassword = () => {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Potvrzení hesla</Label>
+                        <Label htmlFor="confirmPassword" className="text-foreground/90">Potvrzení hesla</Label>
                         <Input
                             id="confirmPassword"
                             type="password"
@@ -113,7 +113,7 @@ const ResetPassword = () => {
                     </Button>
                 </form>
             </div>
-        </div>
+        </main>
     );
 };
 

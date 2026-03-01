@@ -16,7 +16,7 @@ const Footer = () => {
             <Link to="/" className="inline-block mb-8">
               <img src={logoWhite} alt="BoostUp" className="h-10 w-auto" />
             </Link>
-            <p className="text-primary-foreground/60 text-lg leading-relaxed mb-8 max-w-sm">
+            <p className="text-primary-foreground/90 text-lg leading-relaxed mb-8 max-w-sm">
               {content.brand.description}
             </p>
             <div className="flex gap-4">
@@ -49,7 +49,7 @@ const Footer = () => {
                             document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                           }
                         }}
-                        className="text-primary-foreground/80 hover:text-lime transition-colors text-lg"
+                        className="text-primary-foreground hover:text-lime transition-colors text-lg"
                       >
                         {item.label}
                       </Link>
@@ -58,7 +58,7 @@ const Footer = () => {
                         href={item.href}
                         target={item.href.startsWith('http') ? "_blank" : undefined}
                         rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
-                        className="text-primary-foreground/80 hover:text-lime transition-colors text-lg"
+                        className="text-primary-foreground hover:text-lime transition-colors text-lg"
                       >
                         {item.label}
                       </a>
@@ -72,7 +72,7 @@ const Footer = () => {
           {/* Contact */}
           <div>
             <h4 className="font-display font-black text-xl mb-8 tracking-wider">{content.contact.title}</h4>
-            <ul className="space-y-4 text-primary-foreground/80 text-lg">
+            <ul className="space-y-4 text-primary-foreground text-lg">
               <li>
                 <a href={`mailto:${content.contact.email}`} className="hover:text-lime transition-colors">
                   {content.contact.email}

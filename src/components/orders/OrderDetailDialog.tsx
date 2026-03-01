@@ -78,13 +78,13 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
             <div className="flex items-center justify-between p-5 border-b bg-white sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-4">
                     <DialogClose asChild>
-                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors">
-                            <X className="h-5 w-5 text-slate-500" />
+                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors" aria-label="Zavřít detail objednávky">
+                            <X className="h-5 w-5 text-slate-600" />
                         </Button>
                     </DialogClose>
                     <div className="flex flex-col gap-0.5">
                         <DialogTitle className="text-xl font-extrabold tracking-tight text-slate-900">Objednávka #{order.id.slice(0, 8)}</DialogTitle>
-                        <p className="text-xs font-medium text-slate-500">{new Date(order.date || order.created_at).toLocaleString('cs-CZ')}</p>
+                        <p className="text-xs font-medium text-slate-600">{new Date(order.date || order.created_at).toLocaleString('cs-CZ')}</p>
                     </div>
                 </div>
 
@@ -134,7 +134,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                 {/* Status Badges Row */}
                 <div className="flex justify-between items-center border-b pb-4">
                     <div className="space-y-1">
-                        <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Aktuální stav</p>
+                        <p className="text-sm font-semibold uppercase tracking-wider text-foreground/70">Aktuální stav</p>
                     </div>
                     <div className="flex gap-2">
                         <Badge variant={order.status === 'pending' ? 'outline' : 'secondary'} className={`text-xs px-3 py-1 ${order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' : ''}`}>

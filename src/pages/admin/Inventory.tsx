@@ -20,7 +20,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                                     sku.includes('silky') ? "🌿 Silky Leaf" : sku
                         )}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-foreground/90 font-medium">
                         {sku.includes('-')
                             ? `📦 Balení ${sku.split('-')[1]} ks`
                             : "🍾 Samostatná lahev (pro Mixy)"}
@@ -38,6 +38,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                 variant="outline"
                 onClick={onHistory}
                 className="flex-1"
+                aria-label={`Historie pohybů pro ${sku}`}
                 title="Historie"
             >
                 <History className="h-3 w-3 mr-1" />
@@ -48,6 +49,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                 variant="outline"
                 className="flex-1"
                 onClick={onEdit}
+                aria-label={`Upravit detaily pro ${sku}`}
                 title="Upravit detaily"
             >
                 <Edit className="h-3 w-3 mr-1" />
@@ -57,6 +59,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                 size="sm"
                 className="bg-green-600 hover:bg-green-700 text-white flex-1"
                 onClick={onRestock}
+                aria-label={`Naskladnit ${sku}`}
                 title="Naskladnit"
             >
                 <Plus className="h-3 w-3 mr-1" />
@@ -121,7 +124,7 @@ const Inventory = () => {
                                                             sku.includes('silky') ? "🌿 Silky Leaf" : sku
                                                 )}
                                             </span>
-                                            <span className="text-xs text-muted-foreground">
+                                            <span className="text-xs text-foreground/90 font-medium">
                                                 {sku.includes('-')
                                                     ? `📦 Balení ${sku.split('-')[1]} ks`
                                                     : "🍾 Samostatná lahev (pro Mixy)"}
@@ -139,6 +142,7 @@ const Inventory = () => {
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => setHistorySku(sku)}
+                                                aria-label={`Historie pohybů pro ${sku}`}
                                                 title="Historie pohybů"
                                             >
                                                 <History className="h-4 w-4" />
@@ -147,6 +151,7 @@ const Inventory = () => {
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => setEditSku(sku)}
+                                                aria-label={`Upravit detaily pro ${sku}`}
                                                 title="Upravit detaily"
                                             >
                                                 <Edit className="h-4 w-4" />
@@ -155,6 +160,7 @@ const Inventory = () => {
                                                 size="sm"
                                                 className="bg-green-600 hover:bg-green-700 text-white"
                                                 onClick={() => setRestockSku(sku)}
+                                                aria-label={`Naskladnit ${sku}`}
                                                 title="Naskladnit"
                                             >
                                                 <Plus className="h-4 w-4" />

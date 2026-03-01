@@ -56,6 +56,7 @@ import ManufactureInventory from "./pages/admin/ManufactureInventory";
 import AdminProfile from "./pages/admin/AdminProfile";
 import Orders from "./pages/admin/Orders";
 import ContentManagement from "./pages/admin/ContentManagement";
+import AdminHelp from "./pages/admin/AdminHelp";
 
 import TermsOfService from "./pages/legal/TermsOfService";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -74,6 +75,10 @@ import { CookieBanner } from "./components/CookieBanner";
 
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
+import { useDynamicFonts } from './hooks/useDynamicFonts';
+
+// Applies typography CSS variables from the CMS content
+const FontLoader = () => { useDynamicFonts(); return null; };
 
 const queryClient = new QueryClient();
 
@@ -83,6 +88,7 @@ const App = () => (
       <HelmetProvider>
         <AuthProvider>
           <ContentProvider>
+            <FontLoader />
             <CookieProvider>
               <InventoryProvider>
                 <ManufactureProvider>
@@ -141,6 +147,7 @@ const App = () => (
                           <Route path="manufacture" element={<ManufactureInventory />} />
                           <Route path="content" element={<ContentManagement />} />
                           <Route path="profile" element={<AdminProfile />} />
+                          <Route path="help" element={<AdminHelp />} />
                         </Route>
 
                         {/* Legal Routes */}

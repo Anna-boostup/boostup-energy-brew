@@ -45,7 +45,7 @@ const ConceptSection = () => {
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100">
             {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
           </h2>
-          <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto animate-fade-up animation-delay-200">
+          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-200">
             {content.description}
           </p>
         </div>
@@ -75,7 +75,7 @@ const ConceptSection = () => {
                 }}
                 role="button"
                 tabIndex={0}
-                aria-label={`Zjistit více o ${concept.title}: ${concept.subtitle}`}
+                aria-label={`${concept.title}: ${concept.subtitle}. Zjistit více.`}
               >
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
@@ -95,7 +95,7 @@ const ConceptSection = () => {
                   <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
                     {concept.title}
                   </h3>
-                  <p className="text-sm text-foreground/80 group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase">
+                  <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase">
                     {concept.subtitle}
                   </p>
                   <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed">
