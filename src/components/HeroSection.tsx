@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
-import bottlesHero from "@/assets/bottles-hero-final.png";
+import bottlesHero from "@/assets/hero-vse.png";
 import { useState } from "react";
 import IngredientDialog from "./IngredientDialog";
 import { useContent } from "@/context/ContentContext";

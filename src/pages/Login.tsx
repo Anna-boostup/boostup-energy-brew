@@ -86,11 +86,19 @@ const Login = () => {
 
         setLoading(true);
         try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/reset-password`,
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: email,
+                    type: 'reset_password'
+                })
             });
 
-            if (error) throw error;
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || 'Nepodařilo se odeslat email');
+            }
 
             toast({
                 title: "Odkaz odeslán",
@@ -176,25 +184,33 @@ const Login = () => {
                             return;
                         }
                         setLoading(true);
-                        const { error } = await supabase.auth.signInWithOtp({
-                            email,
-                            options: {
-                                emailRedirectTo: window.location.origin,
-                            },
-                        });
-                        setLoading(false);
+                        try {
+                            const response = await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: email,
+                                    type: 'magic_link'
+                                })
+                            });
 
-                        if (error) {
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                throw new Error(errorData.error?.message || 'Nepodařilo se odeslat magic link');
+                            }
+
+                            toast({
+                                title: "Odkaz odeslán! 🚀",
+                                description: "Zkontrolujte si emailovou schránku.",
+                            });
+                        } catch (error: any) {
                             toast({
                                 title: "Chyba",
                                 description: error.message,
                                 variant: "destructive",
                             });
-                        } else {
-                            toast({
-                                title: "Odkaz odeslán! 🚀",
-                                description: "Zkontrolujte si emailovou schránku.",
-                            });
+                        } finally {
+                            setLoading(false);
                         }
                     }}
                     disabled={loading}

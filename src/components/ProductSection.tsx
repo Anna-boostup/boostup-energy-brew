@@ -3,10 +3,13 @@ import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
-import bottlesHero from "@/assets/bottles-hero-final.png"; // Import hero image
-import pack3Silky from "@/assets/3pack.png"; // Import specific 3-pack image
-import pack3Lemon from "@/assets/3PackLemon.png"; // Import specific 3-pack image
-import pack3Red from "@/assets/3PackRed.png"; // Import specific 3-pack image
+import bottlesHero from "@/assets/hero-vse.png"; // Import new high-res hero
+import bottleLemon from "@/assets/bottle-lemon.png";
+import bottleRed from "@/assets/bottle-red.png";
+import bottleSilky from "@/assets/bottle-silky.png";
+import pack3Silky from "@/assets/3pack.png"; // Keeping old static fallbacks for now just in case
+import pack3Lemon from "@/assets/3PackLemon.png";
+import pack3Red from "@/assets/3PackRed.png";
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
@@ -140,16 +143,12 @@ const ProductSection = () => {
       if (!isBrokenImage(eff?.image_url)) return eff!.image_url!;
     }
 
-    // Static Fallbacks for 3-pack (if no valid image uploaded)
-    if (flavorMode === "single" && selectedFlavor && selectedPack === 3) {
-      if (selectedFlavor === 'lemon') return pack3Lemon;
-      if (selectedFlavor === 'red') return pack3Red;
-      if (selectedFlavor === 'silky') return pack3Silky;
-    }
+    // Static Fallbacks for specific flavors
+    if (selectedFlavor === 'lemon') return bottleLemon;
+    if (selectedFlavor === 'red') return bottleRed;
+    if (selectedFlavor === 'silky') return bottleSilky;
 
-    if (!selectedFlavor) return bottlesHero;
-
-    return bottleSingle;
+    return bottlesHero;
   };
 
   const productImageSrc = getProductImage();
@@ -269,7 +268,7 @@ const ProductSection = () => {
       flavor: flavorMode === "mix" ? "MIX" : flavorName,
       pack: selectedPack,
       flavorMode: flavorMode,
-      image: bottleSingle,
+      image: flavorMode === "mix" ? bottlesHero : (selectedFlavor === 'lemon' ? bottleLemon : (selectedFlavor === 'red' ? bottleRed : bottleSilky)),
       mixConfiguration: mixConfig,
       subscriptionInterval: purchaseType === 'subscription' ? 'monthly' : undefined
     });
@@ -304,19 +303,10 @@ const ProductSection = () => {
                 <div className="relative animate-float">
                   <div className="relative">
                     {flavorMode === "mix" ? (
-                      <MixStack
-                        images={[
-                          !isBrokenImage(getEffectiveProduct('lemon')?.image_url)
-                            ? getEffectiveProduct('lemon')!.image_url!
-                            : bottleSingle,
-                          !isBrokenImage(getEffectiveProduct('red')?.image_url)
-                            ? getEffectiveProduct('red')!.image_url!
-                            : bottleSingle,
-                          !isBrokenImage(getEffectiveProduct('silky')?.image_url)
-                            ? getEffectiveProduct('silky')!.image_url!
-                            : bottleSingle
-                        ]}
-                        className="scale-90 md:scale-100"
+                      <img
+                        src={bottlesHero}
+                        alt="BoostUp Mix"
+                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-2xl transition-all duration-500 hover:scale-105"
                       />
                     ) : (
                       <img

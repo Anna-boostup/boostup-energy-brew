@@ -67,8 +67,23 @@ const Register = () => {
 
                 if (profileError) {
                     console.error("Profile creation error:", profileError);
-                    // Don't throw here, auth was successful. 
-                    // We might want to show a warning or retry logic in a real app.
+                }
+
+                // 3. Trigger our branded confirmation email
+                try {
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: email,
+                            type: 'confirm_signup',
+                            customerName: fullName
+                        })
+                    });
+                } catch (emailError) {
+                    console.error("Failed to trigger branded email:", emailError);
+                    // We don't block registration if email trigger fails, 
+                    // but it's good to know.
                 }
 
                 toast({
