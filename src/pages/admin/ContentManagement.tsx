@@ -142,6 +142,16 @@ const ContentManagement = () => {
                                 />
                             </div>
 
+                            <div className="grid gap-2">
+                                <Label htmlFor="hero-testimonial">Podnadpis pod tlačítky (Testimonial)</Label>
+                                <Input
+                                    id="hero-testimonial"
+                                    value={localContent.hero.testimonial || ''}
+                                    onChange={(e) => updateField(['hero', 'testimonial'], e.target.value)}
+                                    placeholder="Zadejte text pod tlačítka..."
+                                />
+                            </div>
+
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-6">
                                 <div className="grid gap-2">
                                     <Label>Tlačítko Primární</Label>
@@ -590,7 +600,7 @@ const ContentManagement = () => {
                     web automaticky použije původní texty ze souboru <code>site-content.ts</code>.
                 </p>
             </div>
-        </div>
+        </div >
     );
 };
 

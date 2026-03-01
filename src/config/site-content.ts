@@ -26,6 +26,7 @@ export const SITE_CONTENT = {
             part2: "Efektivita, rychlost a přesnost i pod tlakem."
         },
         description: "Až 6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata.",
+        testimonial: "Testováno mezi profesionály pracujícími pod vysokým tlakem.",
         cta: {
             primary: "Chci koupit",
             secondary: "Chci objevit více",

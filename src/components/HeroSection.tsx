@@ -93,6 +93,14 @@ const HeroSection = () => {
               {content.cta.concept3b}
             </Button>
           </div>
+
+          {content.testimonial && (
+            <div className="mt-8 animate-fade-up animation-delay-800">
+              <h4 className="text-xl md:text-2xl font-bold text-foreground/70 italic max-w-2xl mx-auto leading-relaxed">
+                {content.testimonial}
+              </h4>
+            </div>
+          )}
         </div>
 
         {/* Product Image - Centered below text */}
