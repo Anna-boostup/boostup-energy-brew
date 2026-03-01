@@ -5,6 +5,11 @@
       "destination": "/index.html"
     }
   ],
+  "functions": {
+    "api/send-email.ts": {
+      "includeFiles": "public/**"
+    }
+  },
   "crons": [
     {
       "path": "/api/sync-packeta-status",

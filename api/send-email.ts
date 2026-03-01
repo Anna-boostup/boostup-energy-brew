@@ -205,9 +205,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const attachments: Array<{ content: string; filename: string; contentId: string }> = [];
 
         try {
-            const logoPath = path.join(process.cwd(), 'public', 'logo-green.png');
-            const logoContent = fs.readFileSync(logoPath).toString('base64');
-            attachments.push({ content: logoContent, filename: 'logo.png', contentId: 'logo' });
+            // Try multiple path strategies since Vercel's cwd() can vary
+            const candidates = [
+                path.join(process.cwd(), 'public', 'logo-green.png'),
+                path.join(__dirname, '..', 'public', 'logo-green.png'),
+                path.join(__dirname, 'public', 'logo-green.png'),
+            ];
+            console.log('CWD:', process.cwd(), '| __dirname:', __dirname);
+            let logoContent: string | null = null;
+            for (const p of candidates) {
+                try {
+                    logoContent = fs.readFileSync(p).toString('base64');
+                    console.log('Logo loaded from:', p);
+                    break;
+                } catch {
+                    console.log('Logo not found at:', p);
+                }
+            }
+            if (logoContent) {
+                attachments.push({ content: logoContent, filename: 'logo.png', contentId: 'logo' });
+            } else {
+                console.error('Logo not found in any candidate path - email will have missing logo');
+            }
         } catch (e) {
             console.error('Failed to read logo file:', e);
         }
