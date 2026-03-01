@@ -74,6 +74,39 @@ const Login = () => {
         }
     };
 
+    const handleForgotPassword = async () => {
+        if (!email) {
+            toast({
+                title: "Zadejte email",
+                description: "Pro obnovu hesla musíte vyplnit emailovou adresu.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+
+            if (error) throw error;
+
+            toast({
+                title: "Odkaz odeslán",
+                description: "Zkontrolujte svůj email pro instrukce k obnově hesla.",
+            });
+        } catch (error: any) {
+            toast({
+                title: "Chyba",
+                description: error.message,
+                variant: "destructive",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6">
@@ -95,7 +128,17 @@ const Login = () => {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="password">Heslo</Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="password">Heslo</Label>
+                            <button
+                                type="button"
+                                onClick={handleForgotPassword}
+                                className="text-xs text-primary hover:underline font-medium"
+                                disabled={loading}
+                            >
+                                Zapomenuté heslo?
+                            </button>
+                        </div>
                         <Input
                             id="password"
                             type="password"
