@@ -40,6 +40,7 @@ export interface Order {
         ico?: string;
         dic?: string;
         billingStreet?: string;
+        billingHouseNumber?: string;
         billingCity?: string;
         billingZip?: string;
     };
