@@ -81,6 +81,8 @@ const CheckoutPage = () => {
         password: ''
     });
 
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     // Pre-fill data from profile
     useEffect(() => {
         if (!user) return;
@@ -152,34 +154,61 @@ const CheckoutPage = () => {
         };
 
         const missingFields: string[] = [];
+        const newErrors: Record<string, string> = {};
 
         requiredFields.forEach(field => {
             const value = formData[field];
             if (field === 'phone') {
                 // Check if phone has more than just the prefix
                 if (!value || value.toString().trim() === '+420') {
+                    const msg = `Pole ${fieldLabels[field]} je povinné`;
                     missingFields.push(fieldLabels[field]);
+                    newErrors[field] = msg;
                 }
             } else if (!value) {
+                const msg = `Pole ${fieldLabels[field]} je povinné`;
                 missingFields.push(fieldLabels[field]);
+                newErrors[field] = msg;
             }
         });
 
         if (!billingSameAsDelivery) {
-            if (!formData.billingHouseNumber) missingFields.push('Fakturační číslo popisné');
-            if (!formData.billingCity) missingFields.push('Fakturační město');
-            if (!formData.billingZip) missingFields.push('Fakturační PSČ');
+            if (!formData.billingHouseNumber) {
+                newErrors.billingHouseNumber = 'Povinné pole';
+                missingFields.push('Fakturační číslo popisné');
+            }
+            if (!formData.billingCity) {
+                newErrors.billingCity = 'Povinné pole';
+                missingFields.push('Fakturační město');
+            }
+            if (!formData.billingZip) {
+                newErrors.billingZip = 'Povinné pole';
+                missingFields.push('Fakturační PSČ');
+            }
         }
 
-        if (formData.isCompany && !formData.companyName) missingFields.push('Název firmy');
-        if (formData.isCompany && !formData.ico) missingFields.push('IČO');
+        if (formData.isCompany) {
+            if (!formData.companyName) {
+                newErrors.companyName = 'Povinné pole';
+                missingFields.push('Název firmy');
+            }
+            if (!formData.ico) {
+                newErrors.ico = 'Povinné pole';
+                missingFields.push('IČO');
+            }
+        }
 
-        if (!formData.paymentMethod) missingFields.push(fieldLabels.paymentMethod);
+        if (!formData.paymentMethod) {
+            newErrors.paymentMethod = 'Prosím vyberte způsob platby';
+            missingFields.push(fieldLabels.paymentMethod);
+        }
 
-        if (missingFields.length > 0) {
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
             toast({
                 title: "Chybějící údaje",
-                description: `Prosím vyplňte povinná pole: ${missingFields.join(', ')}`,
+                description: `Prosím opravte chyby ve formuláři.`,
                 variant: "destructive"
             });
             return;
@@ -451,6 +480,15 @@ const CheckoutPage = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
+        // Clear error when user changes the field
+        if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
+
         if (name === 'phone') {
             const filteredValue = value.replace(/[^\d+\s]/g, '');
             setFormData(prev => ({ ...prev, [name]: filteredValue }));
@@ -517,8 +555,9 @@ const CheckoutPage = () => {
                                                     onChange={handleChange}
                                                     required={formData.isCompany}
                                                     placeholder="Např. BoostUp s.r.o."
-                                                    className="w-full bg-background border-2 border-primary/30 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.companyName ? 'border-destructive' : 'border-primary/30 focus:border-primary'}`}
                                                 />
+                                                {errors.companyName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.companyName}</p>}
                                             </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div className="space-y-2">
@@ -530,8 +569,9 @@ const CheckoutPage = () => {
                                                         onChange={handleChange}
                                                         required={formData.isCompany}
                                                         placeholder="12345678"
-                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                        className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.ico ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                                     />
+                                                    {errors.ico && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.ico}</p>}
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label htmlFor="dic" className="text-sm font-bold text-muted-foreground ml-1">DIČ</label>
@@ -556,8 +596,9 @@ const CheckoutPage = () => {
                                             onChange={handleChange}
                                             required
                                             placeholder="Jan"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.firstName ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                         />
+                                        {errors.firstName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.firstName}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="lastName" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Příjmení *</label>
@@ -568,8 +609,9 @@ const CheckoutPage = () => {
                                             onChange={handleChange}
                                             required
                                             placeholder="Novák"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.lastName ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                         />
+                                        {errors.lastName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.lastName}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="email" className="text-sm font-bold text-muted-foreground ml-1">EMAIL *</label>
@@ -581,8 +623,9 @@ const CheckoutPage = () => {
                                             onChange={handleChange}
                                             required
                                             placeholder="jan.novak@email.cz"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.email ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                         />
+                                        {errors.email && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.email}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="phone" className="text-sm font-bold text-muted-foreground ml-1">TELEFON *</label>
@@ -594,8 +637,9 @@ const CheckoutPage = () => {
                                             onChange={handleChange}
                                             required
                                             placeholder="+420 000 000 000"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.phone ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                         />
+                                        {errors.phone && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.phone}</p>}
                                         <p className="text-[10px] text-muted-foreground italic ml-1">Včetně předvolby (např. +420)</p>
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 sm:col-span-2">
@@ -619,8 +663,9 @@ const CheckoutPage = () => {
                                                 onChange={handleChange}
                                                 required
                                                 placeholder="123"
-                                                className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.houseNumber ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                             />
+                                            {errors.houseNumber && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.houseNumber}</p>}
                                         </div>
                                     </div>
                                     <div className="space-y-2">
@@ -632,8 +677,9 @@ const CheckoutPage = () => {
                                             onChange={handleChange}
                                             required
                                             placeholder="Brno"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.city ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                         />
+                                        {errors.city && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.city}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="zip" className="text-sm font-bold text-muted-foreground ml-1">PSČ *</label>
@@ -644,8 +690,9 @@ const CheckoutPage = () => {
                                             onChange={handleChange}
                                             required
                                             placeholder="602 00"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.zip ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                         />
+                                        {errors.zip && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.zip}</p>}
                                     </div>
 
                                     {!user && (
@@ -763,12 +810,13 @@ const CheckoutPage = () => {
                                                         onChange={handleChange}
                                                         required={!billingSameAsDelivery}
                                                         placeholder="123"
-                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                        className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.billingHouseNumber ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                                     />
+                                                    {errors.billingHouseNumber && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.billingHouseNumber}</p>}
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <label htmlFor="billingCity" className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ)</label>
+                                                <label htmlFor="billingCity" className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ) *</label>
                                                 <input
                                                     id="billingCity"
                                                     name="billingCity"
@@ -776,11 +824,12 @@ const CheckoutPage = () => {
                                                     onChange={handleChange}
                                                     required={!billingSameAsDelivery}
                                                     placeholder="Brno"
-                                                    className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.billingCity ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                                 />
+                                                {errors.billingCity && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.billingCity}</p>}
                                             </div>
                                             <div className="space-y-2">
-                                                <label htmlFor="billingZip" className="text-sm font-bold text-muted-foreground ml-1">PSČ (FAKTURAČNÍ)</label>
+                                                <label htmlFor="billingZip" className="text-sm font-bold text-muted-foreground ml-1">PSČ (FAKTURAČNÍ) *</label>
                                                 <input
                                                     id="billingZip"
                                                     name="billingZip"
@@ -788,8 +837,9 @@ const CheckoutPage = () => {
                                                     onChange={handleChange}
                                                     required={!billingSameAsDelivery}
                                                     placeholder="602 00"
-                                                    className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    className={`w-full bg-background border-2 rounded-xl px-4 py-3 outline-none transition-all ${errors.billingZip ? 'border-destructive' : 'border-border focus:border-primary'}`}
                                                 />
+                                                {errors.billingZip && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.billingZip}</p>}
                                             </div>
                                         </div>
                                     </div>
@@ -931,10 +981,12 @@ const CheckoutPage = () => {
 
                             {/* Payment Method */}
                             <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-border shadow-sm">
-                                <h2 className="text-xl sm:text-2xl font-display font-bold flex items-center gap-3 mb-6 sm:mb-8">
+                                <h2 className="text-xl sm:text-2xl font-display font-bold flex items-center gap-3 mb-4 sm:mb-6">
                                     <CreditCard className="w-6 h-6 text-primary" />
                                     Způsob platby
                                 </h2>
+
+                                {errors.paymentMethod && <p className="text-destructive text-sm font-bold mb-4 animate-in fade-in slide-in-from-top-1">{errors.paymentMethod}</p>}
 
                                 <div className="space-y-4">
                                     {/* Wallets */}
