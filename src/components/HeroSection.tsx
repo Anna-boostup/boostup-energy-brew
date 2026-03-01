@@ -45,8 +45,8 @@ const HeroSection = () => {
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-up animation-delay-500">
-            {content.description}
+          <p className="text-xl md:text-2xl text-foreground/80 italic max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-up animation-delay-500">
+            {siteContent.hero.description}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center relative z-20">
@@ -61,7 +61,7 @@ const HeroSection = () => {
                 }
               }}
             >
-              {content.cta.primary}
+              {siteContent.hero.cta.primary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
             </Button>
 
@@ -76,7 +76,7 @@ const HeroSection = () => {
                 }
               }}
             >
-              {content.cta.secondary}
+              {siteContent.hero.cta.secondary}
             </Button>
 
             <Button
@@ -90,14 +90,14 @@ const HeroSection = () => {
                 }
               }}
             >
-              {content.cta.concept3b}
+              {siteContent.hero.cta.concept3b}
             </Button>
           </div>
 
-          {content.testimonial && (
+          {siteContent.hero.testimonial && (
             <div className="mt-8 animate-fade-up animation-delay-800">
-              <h4 className="text-xl md:text-2xl font-bold text-foreground/70 italic max-w-2xl mx-auto leading-relaxed">
-                {content.testimonial}
+              <h4 className="text-xl md:text-2xl text-foreground/80 italic max-w-3xl mx-auto leading-relaxed">
+                {siteContent.hero.testimonial}
               </h4>
             </div>
           )}
