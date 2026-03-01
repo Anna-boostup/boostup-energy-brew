@@ -60,6 +60,7 @@ const CheckoutPage = () => {
         email: '',
         phone: '+420 ',
         street: '',
+        houseNumber: '',
         city: '',
         zip: '',
         // Billing fields
@@ -68,12 +69,13 @@ const CheckoutPage = () => {
         ico: '',
         dic: '',
         billingStreet: '',
+        billingHouseNumber: '',
         billingCity: '',
         billingZip: '',
 
         deliveryMethod: 'card',
         packetaPointId: '',
-        paymentMethod: 'card',
+        paymentMethod: '',
         subMethod: '',
         createAccount: false,
         password: ''
@@ -107,6 +109,7 @@ const CheckoutPage = () => {
                     email: data.email || prev.email,
                     phone: delivery.phone || prev.phone,
                     street: delivery.street || '',
+                    houseNumber: delivery.houseNumber || '',
                     city: delivery.city || '',
                     zip: delivery.zip || '',
 
@@ -115,6 +118,7 @@ const CheckoutPage = () => {
                     ico: billing.ico || '',
                     dic: billing.dic || '',
                     billingStreet: billing.street || '',
+                    billingHouseNumber: billing.houseNumber || '',
                     billingCity: billing.city || '',
                     billingZip: billing.zip || ''
                 }));
@@ -130,6 +134,56 @@ const CheckoutPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // 0. Field Validation
+        const requiredFields: (keyof typeof formData)[] = [
+            'firstName', 'lastName', 'email', 'phone', 'houseNumber', 'city', 'zip'
+        ];
+
+        const fieldLabels: Record<string, string> = {
+            firstName: 'Jméno',
+            lastName: 'Příjmení',
+            email: 'Email',
+            phone: 'Telefon',
+            houseNumber: 'Číslo popisné',
+            city: 'Město',
+            zip: 'PSČ',
+            paymentMethod: 'Způsob platby'
+        };
+
+        const missingFields: string[] = [];
+
+        requiredFields.forEach(field => {
+            const value = formData[field];
+            if (field === 'phone') {
+                // Check if phone has more than just the prefix
+                if (!value || value.toString().trim() === '+420') {
+                    missingFields.push(fieldLabels[field]);
+                }
+            } else if (!value) {
+                missingFields.push(fieldLabels[field]);
+            }
+        });
+
+        if (!billingSameAsDelivery) {
+            if (!formData.billingHouseNumber) missingFields.push('Fakturační číslo popisné');
+            if (!formData.billingCity) missingFields.push('Fakturační město');
+            if (!formData.billingZip) missingFields.push('Fakturační PSČ');
+        }
+
+        if (formData.isCompany && !formData.companyName) missingFields.push('Název firmy');
+        if (formData.isCompany && !formData.ico) missingFields.push('IČO');
+
+        if (!formData.paymentMethod) missingFields.push(fieldLabels.paymentMethod);
+
+        if (missingFields.length > 0) {
+            toast({
+                title: "Chybějící údaje",
+                description: `Prosím vyplňte povinná pole: ${missingFields.join(', ')}`,
+                variant: "destructive"
+            });
+            return;
+        }
 
         // Calculate total required ingredients
         const requiredStock: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
@@ -218,6 +272,10 @@ const CheckoutPage = () => {
                 if (amount > 0) decrementStock(flavor, amount);
             });
 
+            // Calculate shipping cost
+            const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
+            const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+
             // 3. Create Order Record
             const newOrder: Order = {
                 id: orderNumber,
@@ -233,14 +291,15 @@ const CheckoutPage = () => {
                     street: formData.street,
                     city: formData.city,
                     zip: formData.zip,
-                    // Add Billing Info to delivery_info or separate field? 
-                    // The DB schema has delivery_info JSONB. I'll add billing fields there.
+                    houseNumber: formData.houseNumber,
+                    // Add Billing Info
                     billingSameAsDelivery: billingSameAsDelivery,
                     isCompany: formData.isCompany,
                     companyName: formData.companyName,
                     ico: formData.ico,
                     dic: formData.dic,
                     billingStreet: billingSameAsDelivery ? formData.street : formData.billingStreet,
+                    billingHouseNumber: billingSameAsDelivery ? formData.houseNumber : formData.billingHouseNumber,
                     billingCity: billingSameAsDelivery ? formData.city : formData.billingCity,
                     billingZip: billingSameAsDelivery ? formData.zip : formData.billingZip,
 
@@ -256,7 +315,7 @@ const CheckoutPage = () => {
                     price: item.price,
                     mixConfiguration: item.mixConfiguration
                 })),
-                total: cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0),
+                total: cartTotal + shippingCost,
                 status: 'paid', // Initial status, maybe should be pending if payment fails/is transfer
                 is_subscription_order: cart.some(item => !!item.subscriptionInterval)
             };
@@ -311,7 +370,9 @@ const CheckoutPage = () => {
             if (formData.paymentMethod === 'transfer_manual') {
                 // For manual transfer, we don't go to gateway
                 clearCart();
-                const totalWithShipping = cartTotal + (formData.deliveryMethod === 'zasilkovna' ? 79 : 0);
+                const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
+                const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+                const totalWithShipping = cartTotal + shippingCost;
                 sendOrderConfirmationEmail(
                     formData.email,
                     orderNumber,
@@ -537,17 +598,30 @@ const CheckoutPage = () => {
                                         />
                                         <p className="text-[10px] text-muted-foreground italic ml-1">Včetně předvolby (např. +420)</p>
                                     </div>
-                                    <div className="sm:col-span-2 space-y-2">
-                                        <label htmlFor="street" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Ulice a číslo popisné *</label>
-                                        <input
-                                            id="street"
-                                            name="street"
-                                            value={formData.street}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Lidická 123"
-                                            className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
-                                        />
+                                    <div className="grid grid-cols-3 gap-4 sm:col-span-2">
+                                        <div className="col-span-2 space-y-2">
+                                            <label htmlFor="street" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Ulice</label>
+                                            <input
+                                                id="street"
+                                                name="street"
+                                                value={formData.street}
+                                                onChange={handleChange}
+                                                placeholder="Lidická"
+                                                className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="houseNumber" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Č. popisné *</label>
+                                            <input
+                                                id="houseNumber"
+                                                name="houseNumber"
+                                                value={formData.houseNumber}
+                                                onChange={handleChange}
+                                                required
+                                                placeholder="123"
+                                                className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="city" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Město *</label>
@@ -668,17 +742,30 @@ const CheckoutPage = () => {
                                                 </div>
                                             )}
 
-                                            <div className="sm:col-span-2 space-y-2 pt-2 border-t">
-                                                <label htmlFor="billingStreet" className="text-sm font-bold text-muted-foreground ml-1">ULICE A ČÍSLO POPISNÉ (FAKTURAČNÍ)</label>
-                                                <input
-                                                    id="billingStreet"
-                                                    name="billingStreet"
-                                                    value={formData.billingStreet}
-                                                    onChange={handleChange}
-                                                    required={!billingSameAsDelivery}
-                                                    placeholder="Lidická 123"
-                                                    className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
-                                                />
+                                            <div className="grid grid-cols-3 gap-4 sm:col-span-2 pt-2 border-t">
+                                                <div className="col-span-2 space-y-2">
+                                                    <label htmlFor="billingStreet" className="text-sm font-bold text-muted-foreground ml-1 uppercase">ULICE (FAKTURAČNÍ)</label>
+                                                    <input
+                                                        id="billingStreet"
+                                                        name="billingStreet"
+                                                        value={formData.billingStreet}
+                                                        onChange={handleChange}
+                                                        placeholder="Lidická"
+                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label htmlFor="billingHouseNumber" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Č. POPISNÉ *</label>
+                                                    <input
+                                                        id="billingHouseNumber"
+                                                        name="billingHouseNumber"
+                                                        value={formData.billingHouseNumber}
+                                                        onChange={handleChange}
+                                                        required={!billingSameAsDelivery}
+                                                        placeholder="123"
+                                                        className="w-full bg-background border-2 border-border rounded-xl px-4 py-3 focus:border-primary outline-none transition-all"
+                                                    />
+                                                </div>
                                             </div>
                                             <div className="space-y-2">
                                                 <label htmlFor="billingCity" className="text-sm font-bold text-muted-foreground ml-1">MĚSTO (FAKTURAČNÍ)</label>
@@ -767,6 +854,27 @@ const CheckoutPage = () => {
                                 </h2>
 
                                 <div className="space-y-4">
+                                    <label className={`block border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.deliveryMethod === 'personal' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                id="deliveryPersonal"
+                                                type="radio"
+                                                name="deliveryMethod"
+                                                value="personal"
+                                                checked={formData.deliveryMethod === 'personal'}
+                                                onChange={handleChange}
+                                                className="w-4 h-4 text-primary"
+                                            />
+                                            <div className="flex-1">
+                                                <div className="font-bold flex justify-between">
+                                                    <span>Osobní vyzvednutí</span>
+                                                    <span>0 Kč</span>
+                                                </div>
+                                                <p className="text-sm text-muted-foreground">Po předchozí domluvě na e-mailu objednavky@drinkboostup.cz</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
                                     <label className={`block border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.deliveryMethod === 'zasilkovna' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
                                         <div className="flex items-center gap-3">
                                             <input
@@ -1116,10 +1224,11 @@ const CheckoutPage = () => {
                                 </div>
                                 <div className="pt-4 mt-2 border-t-2 border-primary flex justify-between items-end">
                                     <span className="font-display font-bold text-xl uppercase italic">Celkem</span>
-                                    <span className="text-3xl font-display font-bold text-gradient-energy leading-none">
+                                    <span className="font-bold">
                                         {(() => {
                                             const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                                            return cartTotal + (isFreeShipping ? 0 : 79);
+                                            const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+                                            return cartTotal + shippingCost;
                                         })()} Kč
                                     </span>
                                 </div>
