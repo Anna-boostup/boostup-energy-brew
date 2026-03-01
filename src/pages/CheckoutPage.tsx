@@ -717,6 +717,7 @@ const CheckoutPage = () => {
                                                     id="createAccount"
                                                     checked={formData.createAccount}
                                                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, createAccount: checked as boolean }))}
+                                                    aria-label="Vytvořit účet pro příští nákupy"
                                                 />
                                                 <Label htmlFor="createAccount" className="font-bold cursor-pointer text-sm">Chci si vytvořit účet pro příští nákupy</Label>
                                             </div>
@@ -754,6 +755,7 @@ const CheckoutPage = () => {
                                             id="billingSame"
                                             checked={billingSameAsDelivery}
                                             onCheckedChange={(checked) => setBillingSameAsDelivery(checked as boolean)}
+                                            aria-label="Fakturační údaje stejné jako doručovací"
                                         />
                                         <Label htmlFor="billingSame" className="font-bold cursor-pointer">Stejné jako doručovací</Label>
                                     </div>
