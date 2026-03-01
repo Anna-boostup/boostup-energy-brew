@@ -499,7 +499,7 @@ const CheckoutPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-secondary/30 py-6 sm:py-12">
+        <main className="min-h-screen bg-secondary/30 py-6 sm:py-12">
             <div className="container mx-auto px-4">
                 <div className="mb-12">
                     <button
@@ -561,7 +561,7 @@ const CheckoutPage = () => {
                                             </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div className="space-y-2">
-                                                    <label htmlFor="ico" className="text-sm font-bold text-muted-foreground ml-1">IČO *</label>
+                                                    <label htmlFor="ico" className="text-sm font-bold text-foreground/70 ml-1">IČO *</label>
                                                     <input
                                                         id="ico"
                                                         name="ico"
@@ -574,7 +574,7 @@ const CheckoutPage = () => {
                                                     {errors.ico && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.ico}</p>}
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label htmlFor="dic" className="text-sm font-bold text-muted-foreground ml-1">DIČ</label>
+                                                    <label htmlFor="dic" className="text-sm font-bold text-foreground/70 ml-1">DIČ</label>
                                                     <input
                                                         id="dic"
                                                         name="dic"
@@ -588,7 +588,7 @@ const CheckoutPage = () => {
                                         </div>
                                     )}
                                     <div className="space-y-2">
-                                        <label htmlFor="firstName" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Jméno *</label>
+                                        <label htmlFor="firstName" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Jméno *</label>
                                         <input
                                             id="firstName"
                                             name="firstName"
@@ -601,7 +601,7 @@ const CheckoutPage = () => {
                                         {errors.firstName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.firstName}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="lastName" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Příjmení *</label>
+                                        <label htmlFor="lastName" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Příjmení *</label>
                                         <input
                                             id="lastName"
                                             name="lastName"
@@ -614,7 +614,7 @@ const CheckoutPage = () => {
                                         {errors.lastName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.lastName}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="email" className="text-sm font-bold text-muted-foreground ml-1">EMAIL *</label>
+                                        <label htmlFor="email" className="text-sm font-bold text-foreground/70 ml-1">EMAIL *</label>
                                         <input
                                             id="email"
                                             type="email"
@@ -628,7 +628,7 @@ const CheckoutPage = () => {
                                         {errors.email && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.email}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="phone" className="text-sm font-bold text-muted-foreground ml-1">TELEFON *</label>
+                                        <label htmlFor="phone" className="text-sm font-bold text-foreground/70 ml-1">TELEFON *</label>
                                         <input
                                             id="phone"
                                             type="tel"
@@ -644,7 +644,7 @@ const CheckoutPage = () => {
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 sm:col-span-2">
                                         <div className="col-span-2 space-y-2">
-                                            <label htmlFor="street" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Ulice</label>
+                                            <label htmlFor="street" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Ulice</label>
                                             <input
                                                 id="street"
                                                 name="street"
@@ -655,7 +655,7 @@ const CheckoutPage = () => {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label htmlFor="houseNumber" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Č. popisné *</label>
+                                            <label htmlFor="houseNumber" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Č. popisné *</label>
                                             <input
                                                 id="houseNumber"
                                                 name="houseNumber"
@@ -669,7 +669,7 @@ const CheckoutPage = () => {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="city" className="text-sm font-bold text-muted-foreground ml-1 uppercase">Město *</label>
+                                        <label htmlFor="city" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Město *</label>
                                         <input
                                             id="city"
                                             name="city"
@@ -682,7 +682,7 @@ const CheckoutPage = () => {
                                         {errors.city && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.city}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="zip" className="text-sm font-bold text-muted-foreground ml-1">PSČ *</label>
+                                        <label htmlFor="zip" className="text-sm font-bold text-foreground/70 ml-1">PSČ *</label>
                                         <input
                                             id="zip"
                                             name="zip"
@@ -708,7 +708,7 @@ const CheckoutPage = () => {
 
                                             {formData.createAccount && (
                                                 <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                                    <label htmlFor="password" className="text-sm font-bold text-muted-foreground ml-1">HESLO *</label>
+                                                    <label htmlFor="password" className="text-sm font-bold text-foreground/70 ml-1">HESLO *</label>
                                                     <input
                                                         id="password"
                                                         type="password"
@@ -1362,7 +1362,7 @@ const CheckoutPage = () => {
                     paymentId={`GP-${pendingOrder.id}`}
                 />
             )}
-        </div>
+        </main>
     );
 };
 

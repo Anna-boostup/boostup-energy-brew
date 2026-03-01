@@ -95,10 +95,10 @@ const ConceptSection = () => {
                   <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
                     {concept.title}
                   </h3>
-                  <p className="text-sm text-foreground/60 group-hover:text-primary-foreground/70 mb-4 font-bold tracking-widest uppercase">
+                  <p className="text-sm text-foreground/80 group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase">
                     {concept.subtitle}
                   </p>
-                  <p className="text-foreground/70 group-hover:text-primary-foreground/80 flex-grow text-lg leading-relaxed">
+                  <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed">
                     {concept.description}
                   </p>
 
@@ -146,7 +146,7 @@ const ConceptSection = () => {
                     <DialogTitle className="text-3xl font-display font-black text-foreground">
                       {selectedConcept.title}
                     </DialogTitle>
-                    <p className="text-sm text-muted-foreground font-bold tracking-widest">
+                    <p className="text-sm text-foreground/70 font-bold tracking-widest">
                       {selectedConcept.subtitle}
                     </p>
                   </div>
@@ -175,7 +175,7 @@ const ConceptSection = () => {
                       );
                     }
                     return (
-                      <p key={i} className="text-muted-foreground">
+                      <p key={i} className="text-foreground/80">
                         {trimmedLine}
                       </p>
                     );

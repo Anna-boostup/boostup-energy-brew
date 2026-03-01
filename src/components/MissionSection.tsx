@@ -88,7 +88,7 @@ const MissionSection = () => {
                   <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground/75 leading-relaxed">{feature.description}</p>
+                  <p className="text-sm text-primary-foreground/90 leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );

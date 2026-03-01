@@ -336,7 +336,7 @@ const ProductSection = () => {
             <div className="flex-1 space-y-8 max-w-lg animate-fade-up animation-delay-400">
               {/* Pack Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-foreground/60 mb-4 tracking-widest">VYBERTE BALENÍ</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">VYBERTE BALENÍ</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
                   {packs.map((pack, index) => (
@@ -376,7 +376,7 @@ const ProductSection = () => {
 
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
-                <h3 className="font-display text-sm font-bold text-foreground/60 mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
@@ -392,7 +392,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Jednorázový nákup</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground/80" : "text-muted-foreground"}`}>Standardní cena</div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground/90" : "text-foreground/70"}`}>Standardní cena</div>
                       </div>
                     </div>
                   </button>
@@ -413,7 +413,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Předplatné</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white/80" : "text-muted-foreground"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
                       </div>
                     </div>
                   </button>
@@ -422,7 +422,7 @@ const ProductSection = () => {
 
               {/* Flavor Mode Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-foreground/60 mb-4 tracking-widest">CHCI</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">CHCI</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
@@ -435,7 +435,7 @@ const ProductSection = () => {
                     <Droplet className="w-5 h-5" />
                     <div className="text-left">
                       <div className="font-bold text-sm sm:text-base">Jednu příchuť</div>
-                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "opacity-80" : "text-muted-foreground"}`}>Vyberu si níže</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "opacity-95" : "text-foreground/70"}`}>Vyberu si níže</div>
                     </div>
                   </button>
 
@@ -449,7 +449,7 @@ const ProductSection = () => {
                     <Blend className="w-5 h-5" />
                     <div className="text-left">
                       <div className="font-bold text-sm sm:text-base">Mix příchutí</div>
-                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "opacity-90" : "text-muted-foreground"}`}>Všechny 3 najednou</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "opacity-95" : "text-foreground/70"}`}>Všechny 3 najednou</div>
                     </div>
                   </button>
                 </div>
@@ -458,7 +458,7 @@ const ProductSection = () => {
                 {flavorMode === "mix" && (
                   <div className="mt-6 animate-fade-up">
                     <div className="flex justify-between items-center mb-6">
-                      <h3 className="font-display text-sm font-bold text-muted-foreground tracking-widest">NAMÍCHEJ SI VLASTNÍ MIX</h3>
+                      <h3 className="font-display text-sm font-bold text-foreground/80 tracking-widest">NAMÍCHEJ SI VLASTNÍ MIX</h3>
                       <div className={`text-sm font-bold px-3 py-1 rounded-full ${isMixValid ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground"}`}>
                         Vybráno: {currentMixCount} / {selectedPack} ks
                       </div>
@@ -552,7 +552,7 @@ const ProductSection = () => {
               {/* Flavor Selection (Single) */}
               {flavorMode === "single" && (
                 <div className="animate-fade-up">
-                  <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
+                  <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
                   <div className="space-y-3">
                     {flavors.map((flavor, index) => (
                       <div key={flavor.id} className="relative group/flavor">

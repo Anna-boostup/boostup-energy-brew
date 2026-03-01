@@ -100,7 +100,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="pt-12 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-primary-foreground/60 text-sm font-bold tracking-widest">
+          <p className="text-primary-foreground/90 text-sm font-bold tracking-widest">
             {content.bottom.copyright}
           </p>
           <div className="flex gap-8">
@@ -108,7 +108,7 @@ const Footer = () => {
               <Link
                 key={link.label}
                 to={link.href}
-                className="text-primary-foreground/60 hover:text-primary-foreground transition-colors text-sm font-bold tracking-widest uppercase"
+                className="text-primary-foreground/90 hover:text-primary-foreground transition-colors text-sm font-bold tracking-widest uppercase"
               >
                 {link.label}
               </Link>
