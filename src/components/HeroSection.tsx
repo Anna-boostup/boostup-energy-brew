@@ -34,7 +34,7 @@ const HeroSection = () => {
         {/* Centered Text Content */}
         <div className="text-center animate-fade-up z-10 mb-12">
           <h1 className="font-display text-foreground mb-8 tracking-tight">
-            <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-muted-foreground mb-4 animate-slide-in-left uppercase tracking-[0.2em]">
+            <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-foreground/70 mb-4 animate-slide-in-left uppercase tracking-[0.2em]">
               {content.headline.part1}
             </span>
             <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gradient-energy animate-slide-in-left animation-delay-200 leading-[1.1] uppercase">
@@ -96,9 +96,10 @@ const HeroSection = () => {
 
           {siteContent.hero.testimonial && (
             <div className="mt-8 animate-fade-up animation-delay-800">
-              <h4 className="text-xl md:text-2xl text-foreground/80 italic max-w-3xl mx-auto leading-relaxed">
+              <h2 className="sr-only">Recenze a doporučení</h2>
+              <p className="text-xl md:text-2xl text-foreground/90 italic max-w-3xl mx-auto leading-relaxed">
                 {siteContent.hero.testimonial}
-              </h4>
+              </p>
             </div>
           )}
         </div>
@@ -138,11 +139,12 @@ const HeroSection = () => {
                   setSelectedIngredient(key);
                   setIsDialogOpen(true);
                 }}
+                aria-label={`Zjistit více o ${badge}`}
                 className="flex items-center gap-3 px-6 py-4 bg-background/90 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-card hover:shadow-lg hover:scale-105 transition-all cursor-pointer border border-transparent hover:border-primary/20 group"
               >
                 <div className={`w-4 h-4 rounded-full ${colors[idx % colors.length]} animate-pulse group-hover:scale-125 transition-transform`} style={{ animationDelay: `${idx * 200}ms` }} />
                 <span className="text-sm font-bold text-foreground">{badge}</span>
-                <span className="ml-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity font-black">ZJISTIT VÍCE</span>
+                <span className="ml-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity font-black" aria-hidden="true">ZJISTIT VÍCE</span>
               </button>
             );
           })}

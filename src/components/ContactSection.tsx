@@ -63,7 +63,7 @@ const ContactSection = () => {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-foreground mb-8 leading-tight">
                 {content.headline}
               </h2>
-              <p className="text-lg text-muted-foreground mb-12 leading-relaxed">
+              <p className="text-lg text-foreground/70 mb-12 leading-relaxed">
                 {content.description}
               </p>
 
@@ -76,7 +76,7 @@ const ContactSection = () => {
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.phone.label}</p>
+                    <p className="text-sm font-bold text-foreground/60 uppercase tracking-widest mb-1">{content.info.phone.label}</p>
                     <p className="text-xl font-display font-bold group-hover:text-primary transition-colors">{content.info.phone.value}</p>
                   </div>
                 </a>
@@ -89,7 +89,7 @@ const ContactSection = () => {
                     <Mail className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.email.label}</p>
+                    <p className="text-sm font-bold text-foreground/60 uppercase tracking-widest mb-1">{content.info.email.label}</p>
                     <p className="text-xl font-display font-bold group-hover:text-primary transition-colors">{content.info.email.value}</p>
                   </div>
                 </a>
@@ -104,7 +104,7 @@ const ContactSection = () => {
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">{content.info.address.label}</p>
+                    <p className="text-sm font-bold text-foreground/60 uppercase tracking-widest mb-1">{content.info.address.label}</p>
                     <p className="text-xl font-display font-bold leading-relaxed group-hover:text-primary transition-colors">
                       {content.info.address.value.line1}<br />
                       {content.info.address.value.line2}
@@ -152,9 +152,12 @@ const ContactSection = () => {
                     placeholder={content.form.message.placeholder}
                   ></textarea>
                 </div>
-                <Button variant="hero" type="submit" className="w-full group" disabled={isSubmitting}>
+                <Button variant="hero" type="submit" className="w-full group" disabled={isSubmitting} aria-label={isSubmitting ? "Odesílání..." : undefined}>
                   {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Odesílání...</span>
+                    </div>
                   ) : (
                     <>
                       {content.form.submit}

@@ -51,7 +51,7 @@ const MissionSection = () => {
             <span className="block text-lime">{content.headline.highlight}</span>
           </h2>
 
-          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground/80 leading-relaxed animate-fade-up animation-delay-200">
+          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground/90 leading-relaxed animate-fade-up animation-delay-200">
             {(content.paragraphs || []).map((text, i) => (
               <p key={i} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
             ))}
@@ -85,10 +85,10 @@ const MissionSection = () => {
                   </div>
 
                   {/* Title */}
-                  <h4 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h4>
+                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground/60 leading-relaxed">{feature.description}</p>
+                  <p className="text-sm text-primary-foreground/75 leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );

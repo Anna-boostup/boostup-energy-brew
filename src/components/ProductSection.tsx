@@ -288,6 +288,7 @@ const ProductSection = () => {
         {/* ... (SVG background elements omitted for brevity, but they're usually at the top of the section) ... */}
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 overflow-x-hidden">
+          <h2 className="sr-only">Naše produkty a konfigurátor balení</h2>
 
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
             {/* Image section */}
@@ -335,7 +336,7 @@ const ProductSection = () => {
             <div className="flex-1 space-y-8 max-w-lg animate-fade-up animation-delay-400">
               {/* Pack Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE BALENÍ</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/60 mb-4 tracking-widest">VYBERTE BALENÍ</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
                   {packs.map((pack, index) => (
@@ -375,7 +376,7 @@ const ProductSection = () => {
 
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
-                <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/60 mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
@@ -421,7 +422,7 @@ const ProductSection = () => {
 
               {/* Flavor Mode Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/60 mb-4 tracking-widest">CHCI</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
@@ -497,6 +498,7 @@ const ProductSection = () => {
                                 className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
                                 style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={mixCounts[flavor.id] === 0}
+                                aria-label={`Odebrat ${flavor.name}`}
                               >
                                 <Minus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
@@ -508,6 +510,7 @@ const ProductSection = () => {
                                 className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
                                 style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={currentMixCount >= (selectedPack || 0)}
+                                aria-label={`Přidat ${flavor.name}`}
                               >
                                 <Plus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
@@ -523,6 +526,7 @@ const ProductSection = () => {
                                   variant="ghost"
                                   size="icon"
                                   className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+                                  aria-label={`Informace o příchuti ${flavor.name}`}
                                 >
                                   <Info className="w-4 h-4" />
                                 </Button>
@@ -595,6 +599,7 @@ const ProductSection = () => {
                                 size="icon"
                                 className={`h-8 w-8 rounded-full ${selectedFlavor === flavor.id ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                                 onClick={(e) => e.stopPropagation()}
+                                aria-label={`Informace o příchuti ${flavor.name}`}
                               >
                                 <Info className="w-4 h-4" />
                               </Button>
@@ -620,13 +625,15 @@ const ProductSection = () => {
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                      aria-label="Snížit množství"
                     >
                       <Minus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>
-                    <span className="w-8 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
+                    <span className="w-12 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                      aria-label="Zvýšit množství"
                     >
                       <Plus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>

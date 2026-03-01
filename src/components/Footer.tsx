@@ -20,13 +20,13 @@ const Footer = () => {
               {content.brand.description}
             </p>
             <div className="flex gap-4">
-              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
                 <Facebook className="w-6 h-6" />
               </a>
-              <a href={SITE_CONTENT.social.youtube} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+              <a href={SITE_CONTENT.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
                 <Youtube className="w-6 h-6" />
               </a>
             </div>
@@ -49,7 +49,7 @@ const Footer = () => {
                             document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                           }
                         }}
-                        className="text-primary-foreground/60 hover:text-lime transition-colors text-lg"
+                        className="text-primary-foreground/80 hover:text-lime transition-colors text-lg"
                       >
                         {item.label}
                       </Link>
@@ -58,7 +58,7 @@ const Footer = () => {
                         href={item.href}
                         target={item.href.startsWith('http') ? "_blank" : undefined}
                         rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
-                        className="text-primary-foreground/60 hover:text-lime transition-colors text-lg"
+                        className="text-primary-foreground/80 hover:text-lime transition-colors text-lg"
                       >
                         {item.label}
                       </a>
@@ -72,7 +72,7 @@ const Footer = () => {
           {/* Contact */}
           <div>
             <h4 className="font-display font-black text-xl mb-8 tracking-wider">{content.contact.title}</h4>
-            <ul className="space-y-4 text-primary-foreground/60 text-lg">
+            <ul className="space-y-4 text-primary-foreground/80 text-lg">
               <li>
                 <a href={`mailto:${content.contact.email}`} className="hover:text-lime transition-colors">
                   {content.contact.email}
@@ -100,7 +100,7 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="pt-12 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-primary-foreground/40 text-sm font-bold tracking-widest">
+          <p className="text-primary-foreground/60 text-sm font-bold tracking-widest">
             {content.bottom.copyright}
           </p>
           <div className="flex gap-8">
@@ -108,7 +108,7 @@ const Footer = () => {
               <Link
                 key={link.label}
                 to={link.href}
-                className="text-primary-foreground/40 hover:text-primary-foreground transition-colors text-sm font-bold tracking-widest uppercase"
+                className="text-primary-foreground/60 hover:text-primary-foreground transition-colors text-sm font-bold tracking-widest uppercase"
               >
                 {link.label}
               </Link>

@@ -46,7 +46,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-foreground/70 hover:text-foreground transition-colors"
                 >
                   {link.label}
                 </a>
@@ -137,6 +137,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <button
               className="p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Zavřít menu" : "Otevřít menu"}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -228,9 +229,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             </nav>
 
             <div className="flex gap-4">
-              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
-              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
-              <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
         )}

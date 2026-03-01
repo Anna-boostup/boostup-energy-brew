@@ -45,7 +45,7 @@ const ConceptSection = () => {
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100">
             {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-up animation-delay-200">
+          <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto animate-fade-up animation-delay-200">
             {content.description}
           </p>
         </div>
@@ -64,9 +64,18 @@ const ConceptSection = () => {
             return (
               <div
                 key={concept.id}
-                className="group relative animate-fade-up cursor-pointer"
+                className="group relative animate-fade-up cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
                 style={{ animationDelay: `${400 + index * 150}ms` }}
                 onClick={() => setSelectedConcept({ ...concept, ...colors, Icon })}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedConcept({ ...concept, ...colors, Icon });
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Zjistit více o ${concept.title}: ${concept.subtitle}`}
               >
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
@@ -86,10 +95,10 @@ const ConceptSection = () => {
                   <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
                     {concept.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary-foreground/70 mb-4 font-bold tracking-widest">
+                  <p className="text-sm text-foreground/60 group-hover:text-primary-foreground/70 mb-4 font-bold tracking-widest uppercase">
                     {concept.subtitle}
                   </p>
-                  <p className="text-muted-foreground group-hover:text-primary-foreground/80 flex-grow text-lg leading-relaxed">
+                  <p className="text-foreground/70 group-hover:text-primary-foreground/80 flex-grow text-lg leading-relaxed">
                     {concept.description}
                   </p>
 
