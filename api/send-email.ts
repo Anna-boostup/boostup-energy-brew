@@ -1,4 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import fs from 'fs';
+import path from 'path';
 
 const COLORS = {
     cream: '#f4f1e6',
@@ -197,23 +199,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
 
     try {
-        // Build inline attachments using Resend's contentId feature.
-        // When contentId is set, Resend uses Content-Disposition: inline,
-        // so images appear in the email body but NOT in the attachment list.
-        const attachments: Array<{ path: string; filename: string; contentId: string }> = [
-            {
-                path: `${BASE_URL}/logo-green.png`,
-                filename: 'logo.png',
-                contentId: 'logo',
-            }
-        ];
+        // Build inline attachments using Resend's contentId + content (Base64) approach.
+        // We read the image directly from the filesystem to avoid network fetching.
+        // Using path: URL would fail because test.drinkboostup.cz is behind Vercel auth.
+        const attachments: Array<{ content: string; filename: string; contentId: string }> = [];
+
+        try {
+            const logoPath = path.join(process.cwd(), 'public', 'logo-green.png');
+            const logoContent = fs.readFileSync(logoPath).toString('base64');
+            attachments.push({ content: logoContent, filename: 'logo.png', contentId: 'logo' });
+        } catch (e) {
+            console.error('Failed to read logo file:', e);
+        }
 
         if (heroImageUrl) {
-            attachments.push({
-                path: heroImageUrl,
-                filename: `${heroCid}.png`,
-                contentId: 'hero',
-            });
+            try {
+                const imageName = heroImageUrl.split('/').pop()?.split('?')[0];
+                if (imageName) {
+                    const heroPath = path.join(process.cwd(), 'public', imageName);
+                    const heroContent = fs.readFileSync(heroPath).toString('base64');
+                    attachments.push({ content: heroContent, filename: `${heroCid}.png`, contentId: 'hero' });
+                }
+            } catch (e) {
+                console.error('Failed to read hero image file:', e);
+            }
         }
 
         const response = await fetch('https://api.resend.com/emails', {
