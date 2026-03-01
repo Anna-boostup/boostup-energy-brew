@@ -29,6 +29,7 @@ export interface Order {
         street: string;
         city: string;
         zip: string;
+        houseNumber: string;
         deliveryMethod: string;
         paymentMethod: string;
         packetaPointId?: string;

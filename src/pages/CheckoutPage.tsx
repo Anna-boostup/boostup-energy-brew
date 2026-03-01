@@ -18,6 +18,21 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import GoPayMockGateway from '@/components/GoPayMockGateway';
 
+// Image Fallbacks
+import bottleLemon from "@/assets/bottle-lemon.png";
+import bottleRed from "@/assets/bottle-red.png";
+import bottleSilky from "@/assets/bottle-silky.png";
+import bottlesHero from "@/assets/hero-vse.png";
+
+const getFallbackImage = (item: any) => {
+    if (item.flavorMode === 'mix') return bottlesHero;
+    const name = (item.name || "").toLowerCase();
+    if (name.includes('lemon')) return bottleLemon;
+    if (name.includes('red')) return bottleRed;
+    if (name.includes('silky')) return bottleSilky;
+    return bottlesHero;
+};
+
 // ---- Email Helper — calls our Vercel serverless function (avoids CORS) ----
 const sendOrderConfirmationEmail = async (
     to: string,
@@ -1232,7 +1247,15 @@ const CheckoutPage = () => {
                                 {cart.map(item => (
                                     <div key={item.id} className="flex gap-4">
                                         <div className="w-16 h-16 bg-white rounded-xl border border-border/50 flex flex-shrink-0 items-center justify-center p-1">
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                            <img
+                                                src={item.image}
+                                                alt={item.name}
+                                                className="w-full h-full object-contain"
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.src = getFallbackImage(item);
+                                                }}
+                                            />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-xs truncate">{item.name}</p>

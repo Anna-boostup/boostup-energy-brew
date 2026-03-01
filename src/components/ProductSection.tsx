@@ -122,9 +122,14 @@ const ProductSection = () => {
     // Known broken placeholders from previous migrations/seeds
     const brokenPlaceholders = [
       'https://drinkboostup.cz/bottles.png',
-      'bottles.png'
+      'bottles.png',
+      'Lemon',
+      'Red',
+      'Silky',
+      'null',
+      'undefined'
     ];
-    return brokenPlaceholders.includes(url);
+    return brokenPlaceholders.includes(url) || url.length < 5; // Very short strings are likely not paths
   };
 
   const getProductImage = () => {
@@ -268,7 +273,7 @@ const ProductSection = () => {
       flavor: flavorMode === "mix" ? "MIX" : flavorName,
       pack: selectedPack,
       flavorMode: flavorMode,
-      image: flavorMode === "mix" ? bottlesHero : (selectedFlavor === 'lemon' ? bottleLemon : (selectedFlavor === 'red' ? bottleRed : bottleSilky)),
+      image: productImageSrc,
       mixConfiguration: mixConfig,
       subscriptionInterval: purchaseType === 'subscription' ? 'monthly' : undefined
     });

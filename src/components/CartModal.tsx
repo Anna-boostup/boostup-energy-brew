@@ -5,6 +5,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 
+// Image Fallbacks
+import bottleLemon from "@/assets/bottle-lemon.png";
+import bottleRed from "@/assets/bottle-red.png";
+import bottleSilky from "@/assets/bottle-silky.png";
+import bottlesHero from "@/assets/hero-vse.png";
+
+const getFallbackImage = (item: CartItem) => {
+    if (item.flavorMode === 'mix') return bottlesHero;
+    const name = (item.name || "").toLowerCase();
+    if (name.includes('lemon')) return bottleLemon;
+    if (name.includes('red')) return bottleRed;
+    if (name.includes('silky')) return bottleSilky;
+    return bottlesHero;
+};
+
 interface CartModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -21,6 +36,10 @@ const CartItemRow = React.memo(({ item, updateQuantity, removeFromCart }: {
                 src={item.image}
                 alt={item.name}
                 className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500"
+                onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = getFallbackImage(item);
+                }}
             />
         </div>
         <div className="flex-1 min-w-0">
