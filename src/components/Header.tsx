@@ -1,5 +1,5 @@
 import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User, Package, CreditCard } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import logoGreen from "@/assets/logo-green.png";
@@ -92,7 +92,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 } else {
-                  setIsCartOpen(true);
+                  startTransition(() => {
+                    setIsCartOpen(true);
+                  });
                 }
               }}
             >
@@ -122,7 +124,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 } else {
-                  setIsCartOpen(true);
+                  startTransition(() => {
+                    setIsCartOpen(true);
+                  });
                 }
               }}
             >
@@ -217,7 +221,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                   } else {
-                    setIsCartOpen(true);
+                    startTransition(() => {
+                      setIsCartOpen(true);
+                    });
                   }
                   setIsMenuOpen(false);
                 }}

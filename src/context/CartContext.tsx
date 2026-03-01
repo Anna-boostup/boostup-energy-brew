@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useMemo, useCallback } from 'react';
 
 export interface CartItem {
     id: string;
@@ -90,42 +90,51 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
 
     useEffect(() => {
-        localStorage.setItem('boostup_cart', JSON.stringify(state.items));
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('boostup_cart', JSON.stringify(state.items));
+        }, 500); // Debounce storage updates
+        return () => clearTimeout(timeoutId);
     }, [state.items]);
 
-    const addToCart = (item: CartItem) => {
+    const addToCart = useCallback((item: CartItem) => {
         dispatch({ type: 'ADD_TO_CART', payload: item });
-    };
+    }, []);
 
-    const removeFromCart = (id: string) => {
+    const removeFromCart = useCallback((id: string) => {
         dispatch({ type: 'REMOVE_FROM_CART', payload: id });
-    };
+    }, []);
 
-    const updateQuantity = (id: string, quantity: number) => {
+    const updateQuantity = useCallback((id: string, quantity: number) => {
         dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
-    };
+    }, []);
 
-    const clearCart = () => {
+    const clearCart = useCallback(() => {
         dispatch({ type: 'CLEAR_CART' });
-    };
+    }, []);
 
-    const cartTotal = parseFloat(state.items.reduce((total, item) => {
-        // Apply 15% discount for subscriptions
-        const price = item.subscriptionInterval ? item.price * 0.85 : item.price;
-        return total + (price * item.quantity);
-    }, 0).toFixed(2));
-    const cartCount = state.items.reduce((count, item) => count + item.quantity, 0);
+    const cartTotal = useMemo(() => {
+        return parseFloat(state.items.reduce((total, item) => {
+            const price = item.subscriptionInterval ? item.price * 0.85 : item.price;
+            return total + (price * item.quantity);
+        }, 0).toFixed(2));
+    }, [state.items]);
+
+    const cartCount = useMemo(() => {
+        return state.items.reduce((count, item) => count + item.quantity, 0)
+    }, [state.items]);
+
+    const value = useMemo(() => ({
+        cart: state.items,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        cartTotal,
+        cartCount
+    }), [state.items, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount]);
 
     return (
-        <CartContext.Provider value={{
-            cart: state.items,
-            addToCart,
-            removeFromCart,
-            updateQuantity,
-            clearCart,
-            cartTotal,
-            cartCount
-        }}>
+        <CartContext.Provider value={value}>
             {children}
         </CartContext.Provider>
     );
