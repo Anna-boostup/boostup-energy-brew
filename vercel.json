@@ -5,6 +5,9 @@
       "destination": "/index.html"
     }
   ],
+  "github": {
+    "enabled": false
+  },
   "functions": {
     "api/send-email.ts": {
       "includeFiles": "public/**"
