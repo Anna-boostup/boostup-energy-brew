@@ -1,5 +1,6 @@
 import { useContent } from "@/context/ContentContext";
 import { Zap, Clock, Shield, Leaf, Sparkles } from "lucide-react";
+import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
 
 const MissionSection = () => {
   const { content: SITE_CONTENT } = useContent();
@@ -10,6 +11,13 @@ const MissionSection = () => {
     "Dlouhotrvající": Clock,
     "Přírodní složení": Leaf,
     "Bez kompromisů": Shield
+  };
+
+  const iconBgMap: Record<string, string> = {
+    "Čistá energie": "bg-lime",
+    "Dlouhotrvající": "bg-orange",
+    "Přírodní složení": "bg-olive-light",
+    "Bez kompromisů": "bg-terracotta"
   };
 
   return (
@@ -34,19 +42,22 @@ const MissionSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-5 py-2 bg-lime/20 text-lime rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up">
-            <Sparkles className="w-4 h-4" />
-            {content.badge}
-          </span>
+          {isBadgeVisible(SITE_CONTENT, 'mission.badge') && (
+            <span className="inline-flex items-center gap-2 px-5 py-2 bg-lime/20 text-lime rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up"
+              style={getTextStyle(SITE_CONTENT, 'mission.badge')}>
+              <Sparkles className="w-4 h-4" />
+              {content.badge}
+            </span>
+          )}
 
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black mb-8 leading-tight animate-fade-up animation-delay-100">
-            {content.headline.part1}
-            <span className="block text-lime">{content.headline.highlight}</span>
+            <span style={getTextStyle(SITE_CONTENT, 'mission.headline.part1')}>{content.headline.part1}</span>
+            <span className="block text-lime" style={getTextStyle(SITE_CONTENT, 'mission.headline.highlight')}>{content.headline.highlight}</span>
           </h2>
 
-          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground/80 leading-relaxed animate-fade-up animation-delay-200">
+          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground leading-relaxed animate-fade-up animation-delay-200">
             {(content.paragraphs || []).map((text, i) => (
-              <p key={i} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
+              <p key={i} style={getTextStyle(SITE_CONTENT, `mission.paragraph.${i}`)} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
             ))}
           </div>
         </div>
@@ -60,15 +71,15 @@ const MissionSection = () => {
             return (
               <div
                 key={feature.title}
-                className="relative group animate-fade-up hover-lift"
+                className="relative group animate-fade-up cursor-default"
                 style={{ animationDelay: `${300 + index * 100}ms` }}
               >
-                {/* Glow effect */}
-                <div className={`absolute inset-0 ${feature.color} opacity-0 group-hover:opacity-30 rounded-3xl blur-xl transition-opacity duration-500`} />
+                {/* Intense Background Glow */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border border-primary-foreground/10 hover:border-primary-foreground/20 transition-all duration-500 h-full flex flex-col items-center text-center">
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 hover-lift h-full flex flex-col items-center text-center backdrop-blur-md">
                   {/* Icon */}
-                  <div className={`w-16 h-16 ${feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
+                  <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
@@ -78,10 +89,10 @@ const MissionSection = () => {
                   </div>
 
                   {/* Title */}
-                  <h4 className="font-bold text-lg text-primary-foreground mb-2">{feature.title}</h4>
+                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground/60">{feature.description}</p>
+                  <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );

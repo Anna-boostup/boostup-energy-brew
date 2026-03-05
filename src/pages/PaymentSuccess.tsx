@@ -30,7 +30,7 @@ const PaymentSuccess = () => {
     }, [navigate]);
 
     return (
-        <div className="min-h-screen bg-secondary/30 flex items-center justify-center p-4">
+        <main className="min-h-screen bg-secondary/30 flex items-center justify-center p-4">
             <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -73,7 +73,7 @@ const PaymentSuccess = () => {
                                 <>DĚKUJEME ZA <span className="text-gradient-energy">OBJEDNÁVKU</span></>
                             )}
                         </h1>
-                        <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                        <p className="text-lg text-foreground/80 max-w-md mx-auto">
                             {isPending
                                 ? "Vaše objednávka byla přijata. Prosíme o provedení platby podle pokynů níže."
                                 : "Vaše platba byla úspěšně přijata. Potvrzení jsme vám právě odeslali na email."
@@ -129,7 +129,7 @@ const PaymentSuccess = () => {
                     </div>
                 </div>
             </motion.div>
-        </div>
+        </main>
     );
 };
 

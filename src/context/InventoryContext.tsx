@@ -29,6 +29,7 @@ export interface Order {
         street: string;
         city: string;
         zip: string;
+        houseNumber: string;
         deliveryMethod: string;
         paymentMethod: string;
         packetaPointId?: string;
@@ -39,6 +40,7 @@ export interface Order {
         ico?: string;
         dic?: string;
         billingStreet?: string;
+        billingHouseNumber?: string;
         billingCity?: string;
         billingZip?: string;
     };
@@ -47,10 +49,17 @@ export interface Order {
         name: string;
         quantity: number;
         price: number;
+        mixConfiguration?: {
+            lemon: number;
+            red: number;
+            silky: number;
+        };
     }[];
     total: number;
-    status: 'pending' | 'paid' | 'shipped';
+    status: 'pending' | 'paid' | 'processing' | 'shipped' | 'cancelled';
     is_subscription_order?: boolean;
+    packeta_barcode?: string;
+    packeta_packet_id?: string;
 }
 
 export interface StockMovement {
@@ -78,6 +87,7 @@ interface InventoryContextType {
     addOrder: (order: Order) => Promise<boolean>;
     updateOrderStatus: (orderId: string, status: Order['status']) => void;
     updateProduct: (sku: string, updates: Partial<Product>) => Promise<void>;
+    updateOrderPacketaInfo: (orderId: string, barcode: string, packetId: string) => Promise<void>;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -177,12 +187,12 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const mappedOrders = data.map((o: any) => ({
                 ...o,
                 date: o.created_at,
-                // Ensure customer object is reconstructed from flattened columns if needed
-                // But we stored it as columns customer_name, customer_email
                 customer: {
                     name: o.customer_name,
                     email: o.customer_email
-                }
+                },
+                packeta_barcode: o.packeta_barcode,
+                packeta_packet_id: o.packeta_packet_id,
             }));
             setOrders(mappedOrders);
         }
@@ -268,6 +278,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             items: order.items,
             delivery_info: order.delivery_info,
             is_subscription_order: order.is_subscription_order || false,
+            packeta_barcode: order.packeta_barcode || null,
+            packeta_packet_id: order.packeta_packet_id || null,
         });
 
         if (error) {
@@ -283,6 +295,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (error) {
             console.error('Error updating order status:', error);
             alert("Chyba při aktualizaci stavu: " + error.message);
+        } else {
+            // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
+            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
         }
     };
 
@@ -298,6 +313,24 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
     };
 
+    const updateOrderPacketaInfo = async (orderId: string, barcode: string, packetId: string) => {
+        const { error } = await supabase
+            .from('orders')
+            .update({
+                packeta_barcode: barcode,
+                packeta_packet_id: packetId
+            })
+            .eq('id', orderId);
+
+        if (error) {
+            console.error('Error updating packeta info:', error);
+            throw error;
+        }
+
+        // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, packeta_barcode: barcode, packeta_packet_id: packetId } : o));
+    };
+
     return (
         <InventoryContext.Provider value={{
             stock,
@@ -310,7 +343,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             getStock,
             addOrder,
             updateOrderStatus,
-            updateProduct
+            updateProduct,
+            updateOrderPacketaInfo
         }}>
             {children}
         </InventoryContext.Provider>

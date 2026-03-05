@@ -35,7 +35,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
                 </div>
                 <div>
                     <h3 className="text-xl font-display font-bold">Pokyny k platbě</h3>
-                    <p className="text-sm text-muted-foreground">Prosíme o úhradu převodem na účet</p>
+                    <p className="text-sm text-foreground/80">Prosíme o úhradu převodem na účet</p>
                 </div>
             </div>
 
@@ -96,7 +96,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
                             includeMargin={false}
                         />
                     </div>
-                    <p className="mt-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center leading-tight">
+                    <p className="mt-4 text-[10px] font-bold text-foreground/70 uppercase tracking-widest text-center leading-tight">
                         Naskenujte v bankovní aplikaci<br />pro rychlou platbu
                     </p>
                 </div>

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
-import bottlesHero from "@/assets/bottles-hero-final.png"; // Import hero image
-import pack3Silky from "@/assets/3pack.png"; // Import specific 3-pack image
-import pack3Lemon from "@/assets/3PackLemon.png"; // Import specific 3-pack image
-import pack3Red from "@/assets/3PackRed.png"; // Import specific 3-pack image
+import bottlesHero from "@/assets/hero-vse.png"; // Import new high-res hero
+import bottleLemon from "@/assets/bottle-lemon.png";
+import bottleRed from "@/assets/bottle-red.png";
+import bottleSilky from "@/assets/bottle-silky.png";
+import pack3Silky from "@/assets/3pack.png"; // Keeping old static fallbacks for now just in case
+import pack3Lemon from "@/assets/3PackLemon.png";
+import pack3Red from "@/assets/3PackRed.png";
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +66,7 @@ const getMixDescription = (pack: Pack): string => {
 };
 
 const ProductSection = () => {
+  const { content } = useContent();
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [flavorMode, setFlavorMode] = useState<FlavorMode | null>(null);
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
@@ -117,9 +122,14 @@ const ProductSection = () => {
     // Known broken placeholders from previous migrations/seeds
     const brokenPlaceholders = [
       'https://drinkboostup.cz/bottles.png',
-      'bottles.png'
+      'bottles.png',
+      'Lemon',
+      'Red',
+      'Silky',
+      'null',
+      'undefined'
     ];
-    return brokenPlaceholders.includes(url);
+    return brokenPlaceholders.includes(url) || url.length < 5; // Very short strings are likely not paths
   };
 
   const getProductImage = () => {
@@ -138,16 +148,12 @@ const ProductSection = () => {
       if (!isBrokenImage(eff?.image_url)) return eff!.image_url!;
     }
 
-    // Static Fallbacks for 3-pack (if no valid image uploaded)
-    if (flavorMode === "single" && selectedFlavor && selectedPack === 3) {
-      if (selectedFlavor === 'lemon') return pack3Lemon;
-      if (selectedFlavor === 'red') return pack3Red;
-      if (selectedFlavor === 'silky') return pack3Silky;
-    }
+    // Static Fallbacks for specific flavors
+    if (selectedFlavor === 'lemon') return bottleLemon;
+    if (selectedFlavor === 'red') return bottleRed;
+    if (selectedFlavor === 'silky') return bottleSilky;
 
-    if (!selectedFlavor) return bottlesHero;
-
-    return bottleSingle;
+    return bottlesHero;
   };
 
   const productImageSrc = getProductImage();
@@ -167,6 +173,12 @@ const ProductSection = () => {
   }, [selectedPack]);
 
   const currentFlavor = selectedFlavor ? flavors.find(f => f.id === selectedFlavor)! : flavors[0]; // Fallback
+
+  // Get dynamic flavor data from CMS
+  const cmsFlavor = selectedFlavor ? content.flavors[selectedFlavor] : content.flavors[flavors[0].id];
+  const flavorName = cmsFlavor?.name || currentFlavor.name;
+  const flavorDesc = cmsFlavor?.description || currentFlavor.description;
+  const flavorLabels = cmsFlavor?.labels || currentFlavor.labels;
 
   // Calculate price with potential subscription discount
   const getDynamicPrice = () => {
@@ -258,17 +270,17 @@ const ProductSection = () => {
       name: displayName,
       price: displayPrice,
       quantity: quantity,
-      flavor: flavorMode === "mix" ? "MIX" : currentFlavor.name,
+      flavor: flavorMode === "mix" ? "MIX" : flavorName,
       pack: selectedPack,
       flavorMode: flavorMode,
-      image: bottleSingle,
+      image: productImageSrc,
       mixConfiguration: mixConfig,
       subscriptionInterval: purchaseType === 'subscription' ? 'monthly' : undefined
     });
 
     toast({
       title: purchaseType === 'subscription' ? "Předplatné přidáno!" : "Přidáno do košíku",
-      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : currentFlavor.name} (${selectedPack} ks)${purchaseType === 'subscription' ? " - Měsíčně (-15%)" : ""}`,
+      description: `${quantity}x ${flavorMode === "mix" ? "MIX" : flavorName} (${selectedPack} ks)${purchaseType === 'subscription' ? " - Měsíčně (-15%)" : ""}`,
       duration: 3000,
       className: purchaseType === 'subscription' ? "border-amber-500 bg-amber-50" : ""
     });
@@ -281,6 +293,7 @@ const ProductSection = () => {
         {/* ... (SVG background elements omitted for brevity, but they're usually at the top of the section) ... */}
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 overflow-x-hidden">
+          <h2 className="sr-only">Naše produkty a konfigurátor balení</h2>
 
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
             {/* Image section */}
@@ -296,24 +309,15 @@ const ProductSection = () => {
                 <div className="relative animate-float">
                   <div className="relative">
                     {flavorMode === "mix" ? (
-                      <MixStack
-                        images={[
-                          !isBrokenImage(getEffectiveProduct('lemon')?.image_url)
-                            ? getEffectiveProduct('lemon')!.image_url!
-                            : bottleSingle,
-                          !isBrokenImage(getEffectiveProduct('red')?.image_url)
-                            ? getEffectiveProduct('red')!.image_url!
-                            : bottleSingle,
-                          !isBrokenImage(getEffectiveProduct('silky')?.image_url)
-                            ? getEffectiveProduct('silky')!.image_url!
-                            : bottleSingle
-                        ]}
-                        className="scale-90 md:scale-100"
+                      <img
+                        src={bottlesHero}
+                        alt="BoostUp Mix"
+                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-2xl transition-all duration-500 hover:scale-105"
                       />
                     ) : (
                       <img
                         src={productImageSrc}
-                        alt={selectedFlavor ? currentFlavor.name : "BoostUp Energy Brew"}
+                        alt={selectedFlavor ? flavorName : "BoostUp Energy Brew"}
                         className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
                       />
                     )}
@@ -337,23 +341,38 @@ const ProductSection = () => {
             <div className="flex-1 space-y-8 max-w-lg animate-fade-up animation-delay-400">
               {/* Pack Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE BALENÍ</h3>
+                <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">VYBERTE BALENÍ</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
                   {packs.map((pack, index) => (
                     <button
                       key={pack}
                       onClick={() => setSelectedPack(pack)}
-                      className={`py-4 sm:py-5 px-4 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
-                        ? "bg-primary text-primary-foreground shadow-button"
-                        : "bg-card text-foreground border-2 border-border hover:border-primary"
+                      className={`relative py-4 sm:py-5 px-4 rounded-2xl border-2 font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
+                        ? "bg-primary border-primary text-primary-foreground shadow-button"
+                        : "border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
+                      {pack === 12 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
+                          -10% SLEVA
+                        </div>
+                      )}
+                      {pack === 21 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
+                          NEJVÝHODNĚJŠÍ -30%
+                        </div>
+                      )}
                       {pack}x
-                      <span className="block text-xs sm:text-sm font-semibold opacity-80">
+                      <span className="block text-xs sm:text-sm font-semibold">
                         {packPrices[pack]} Kč
                       </span>
+                      {pack === 21 && (
+                        <span className="block text-[9px] font-bold text-green-600 mt-1 uppercase leading-none">
+                          + Doprava zdarma
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -362,14 +381,14 @@ const ProductSection = () => {
 
               {/* Purchase Mode Selection (One-time vs Subscription) */}
               <div>
-                <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
+                <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
                     onClick={() => setPurchaseType('onetime')}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${purchaseType === 'onetime'
-                      ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
-                      : "border-border bg-card text-foreground hover:border-primary/50"
+                      ? "bg-primary border-primary text-primary-foreground shadow-button scale-[1.02]"
+                      : "border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60"
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -378,7 +397,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Jednorázový nákup</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground/80" : "text-muted-foreground"}`}>Standardní cena</div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'onetime' ? "text-primary-foreground" : "text-foreground/80"}`}>Standardní cena</div>
                       </div>
                     </div>
                   </button>
@@ -386,8 +405,8 @@ const ProductSection = () => {
                   <button
                     onClick={() => setPurchaseType('subscription')}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${purchaseType === 'subscription'
-                      ? "bg-amber-500 text-white shadow-button scale-[1.02] border-amber-500"
-                      : "border-border bg-card hover:border-amber-500/50"
+                      ? "bg-amber-500 border-amber-500 text-white shadow-button scale-[1.02]"
+                      : "border-primary/40 bg-transparent hover:border-amber-500/60"
                       }`}
                   >
                     <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
@@ -399,7 +418,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Předplatné</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white/80" : "text-muted-foreground"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
                       </div>
                     </div>
                   </button>
@@ -408,34 +427,34 @@ const ProductSection = () => {
 
               {/* Flavor Mode Selection */}
               <div>
-                <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">CHCI</h3>
+                <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">CHCI</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
 
                   <button
                     onClick={() => setFlavorMode("single")}
-                    className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
-                      ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
-                      : "bg-card text-foreground border-2 border-border hover:border-primary"
+                    className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
+                      ? "bg-primary border-primary text-primary-foreground shadow-button scale-[1.02]"
+                      : "border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60"
                       }`}
                   >
                     <Droplet className="w-5 h-5" />
                     <div className="text-left">
                       <div className="font-bold text-sm sm:text-base">Jednu příchuť</div>
-                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "opacity-80" : "text-muted-foreground"}`}>Vyberu si níže</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "text-primary-foreground" : "text-foreground/80"}`}>Vyberu si níže</div>
                     </div>
                   </button>
 
                   <button
                     onClick={() => setFlavorMode("mix")}
-                    className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "mix"
-                      ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream shadow-button scale-[1.02]"
-                      : "bg-card text-foreground border-2 border-border hover:border-primary"
+                    className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "mix"
+                      ? "bg-gradient-to-r from-lime via-terracotta to-olive border-transparent text-cream shadow-button scale-[1.02]"
+                      : "border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60"
                       }`}
                   >
                     <Blend className="w-5 h-5" />
                     <div className="text-left">
                       <div className="font-bold text-sm sm:text-base">Mix příchutí</div>
-                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "opacity-90" : "text-muted-foreground"}`}>Všechny 3 najednou</div>
+                      <div className={`text-[10px] sm:text-xs ${flavorMode === "mix" ? "text-cream" : "text-foreground/80"}`}>Všechny 3 najednou</div>
                     </div>
                   </button>
                 </div>
@@ -444,7 +463,7 @@ const ProductSection = () => {
                 {flavorMode === "mix" && (
                   <div className="mt-6 animate-fade-up">
                     <div className="flex justify-between items-center mb-6">
-                      <h3 className="font-display text-sm font-bold text-muted-foreground tracking-widest">NAMÍCHEJ SI VLASTNÍ MIX</h3>
+                      <h3 className="font-display text-sm font-bold text-foreground tracking-widest">NAMÍCHEJ SI VLASTNÍ MIX</h3>
                       <div className={`text-sm font-bold px-3 py-1 rounded-full ${isMixValid ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground"}`}>
                         Vybráno: {currentMixCount} / {selectedPack} ks
                       </div>
@@ -460,14 +479,19 @@ const ProductSection = () => {
                             <div className="text-left min-w-0 flex-1">
                               <div className="font-bold text-base leading-tight">
                                 {(() => {
-                                  const eff = getEffectiveProduct(flavor.id);
-                                  return eff ? cleanName(eff.name) : flavor.name;
+                                  // Prioritized CMS name, fallback to technical data
+                                  return content.flavors[flavor.id]?.name || (getEffectiveProduct(flavor.id) ? cleanName(getEffectiveProduct(flavor.id)!.name) : flavor.name);
                                 })()}
+                                {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
+                                  <span key={label} className="ml-2 text-[8px] uppercase font-bold px-1 py-0.5 rounded-full bg-white/10 border border-white/5 inline-block align-middle">
+                                    {label}
+                                  </span>
+                                ))}
                               </div>
-                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white/80' : 'text-muted-foreground'}`}>
+                              <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white' : 'text-foreground/90 font-medium'}`}>
                                 {(() => {
                                   const eff = getEffectiveProduct(flavor.id);
-                                  return eff?.description || flavor.description;
+                                  return eff?.description || content.flavors[flavor.id]?.description || flavor.description;
                                 })()}
                               </div>
                             </div>
@@ -479,6 +503,7 @@ const ProductSection = () => {
                                 className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
                                 style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={mixCounts[flavor.id] === 0}
+                                aria-label={`Odebrat ${flavor.name}`}
                               >
                                 <Minus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
@@ -490,6 +515,7 @@ const ProductSection = () => {
                                 className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
                                 style={{ color: 'hsl(var(--foreground))' }}
                                 disabled={currentMixCount >= (selectedPack || 0)}
+                                aria-label={`Přidat ${flavor.name}`}
                               >
                                 <Plus className="w-3.5 h-3.5" style={{ color: 'hsl(var(--foreground))' }} />
                               </button>
@@ -504,7 +530,8 @@ const ProductSection = () => {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white/80 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+                                  className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white hover:text-white' : 'text-foreground/70 hover:text-foreground'}`}
+                                  aria-label={`Informace o příchuti ${flavor.name}`}
                                 >
                                   <Info className="w-4 h-4" />
                                 </Button>
@@ -530,25 +557,24 @@ const ProductSection = () => {
               {/* Flavor Selection (Single) */}
               {flavorMode === "single" && (
                 <div className="animate-fade-up">
-                  <h3 className="font-display text-sm font-bold text-muted-foreground mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
+                  <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
                   <div className="space-y-3">
                     {flavors.map((flavor, index) => (
                       <div key={flavor.id} className="relative group/flavor">
                         <button
                           onClick={() => setSelectedFlavor(flavor.id)}
-                          className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all duration-300 hover-lift ${selectedFlavor === flavor.id
-                            ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-lg scale-[1.02]`
-                            : `bg-card border-2 ${flavor.borderColor} hover:scale-[1.01]`
+                          className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all duration-300 hover-lift ${selectedFlavor === flavor.id
+                            ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} border-transparent shadow-lg scale-[1.02]`
+                            : `border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60 hover:scale-[1.01]`
                             }`}
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
                           <div className="text-left min-w-0 flex-1">
                             <div className="flex items-baseline gap-2">
                               <span className="font-bold text-base leading-tight">
-                                {(() => {
-                                  const eff = getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id);
-                                  return eff ? cleanName(eff.name) : flavor.name;
-                                })()}
+                                <span className="font-bold text-base leading-tight">
+                                  {content.flavors[flavor.id]?.name || (getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id) ? cleanName(getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)!.name) : flavor.name)}
+                                </span>
                               </span>
                               {(() => {
                                 const eff = getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id);
@@ -558,14 +584,14 @@ const ProductSection = () => {
                                   </span>
                                 );
                               })()}
-                              {flavor.labels && flavor.labels.map(label => (
+                              {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
                                 <span key={label} className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
                                   {label}
                                 </span>
                               ))}
                             </div>
-                            <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'opacity-90' : 'text-muted-foreground'}`}>
-                              {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || flavor.description}
+                            <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${selectedFlavor === flavor.id ? 'text-white' : 'text-foreground/80 font-medium'}`}>
+                              {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || content.flavors[flavor.id]?.description || flavor.description}
                             </div>
                           </div>
                         </button>
@@ -578,6 +604,7 @@ const ProductSection = () => {
                                 size="icon"
                                 className={`h-8 w-8 rounded-full ${selectedFlavor === flavor.id ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
                                 onClick={(e) => e.stopPropagation()}
+                                aria-label={`Informace o příchuti ${flavor.name}`}
                               >
                                 <Info className="w-4 h-4" />
                               </Button>
@@ -603,13 +630,15 @@ const ProductSection = () => {
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                      aria-label="Snížit množství"
                     >
                       <Minus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>
-                    <span className="w-8 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
+                    <span className="w-12 text-center font-bold text-2xl" style={{ color: 'hsl(var(--foreground))' }}>{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all duration-300"
+                      aria-label="Zvýšit množství"
                     >
                       <Plus className="w-5 h-5" style={{ color: 'hsl(var(--foreground))' }} />
                     </button>

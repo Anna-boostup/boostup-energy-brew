@@ -61,6 +61,35 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     ...(dbContent.footer || {})
                 };
 
+                const mergedFlavors = { ...SITE_CONTENT.flavors };
+                if (dbContent.flavors) {
+                    Object.keys(dbContent.flavors).forEach(key => {
+                        if (mergedFlavors[key]) {
+                            mergedFlavors[key] = {
+                                ...mergedFlavors[key],
+                                ...dbContent.flavors[key]
+                            };
+                        } else {
+                            mergedFlavors[key] = dbContent.flavors[key];
+                        }
+                    });
+                }
+
+                const mergedTypography = {
+                    ...SITE_CONTENT.typography,
+                    ...(dbContent.typography || {})
+                };
+
+                const mergedTextStyles = {
+                    ...SITE_CONTENT.textStyles,
+                    ...(dbContent.textStyles || {})
+                };
+
+                const mergedBadgeVisible = {
+                    ...SITE_CONTENT.badgeVisible,
+                    ...(dbContent.badgeVisible || {})
+                };
+
                 setContent({
                     ...SITE_CONTENT,
                     ...dbContent,
@@ -68,7 +97,11 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     mission: mergedMission,
                     cta: mergedCTA,
                     contact: mergedContact,
-                    footer: mergedFooter
+                    footer: mergedFooter,
+                    flavors: mergedFlavors,
+                    typography: mergedTypography,
+                    textStyles: mergedTextStyles,
+                    badgeVisible: mergedBadgeVisible,
                 });
             }
         } catch (err) {

@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /profile/
 Disallow: /checkout/
 
-Sitemap: https://boostup.cz/sitemap.xml
+Sitemap: https://drinkboostup.cz/sitemap.xml

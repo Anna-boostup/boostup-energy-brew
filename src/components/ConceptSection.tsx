@@ -3,6 +3,7 @@ import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
 import { Button } from "./ui/button";
 import EnergyChart from "./EnergyChart";
 import { useState } from "react";
+import { getTextStyle } from "@/lib/textStyles";
 import {
   Dialog,
   DialogContent,
@@ -45,7 +46,7 @@ const ConceptSection = () => {
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100">
             {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-up animation-delay-200">
+          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-200">
             {content.description}
           </p>
         </div>
@@ -64,15 +65,25 @@ const ConceptSection = () => {
             return (
               <div
                 key={concept.id}
-                className="group relative animate-fade-up cursor-pointer"
+                className="group relative animate-fade-up cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
                 style={{ animationDelay: `${400 + index * 150}ms` }}
                 onClick={() => setSelectedConcept({ ...concept, ...colors, Icon })}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedConcept({ ...concept, ...colors, Icon });
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`${concept.title}: ${concept.subtitle}. Zjistit více.`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-500 blur-xl scale-105`} />
+                {/* Intense Background Glow */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover:border-transparent transition-all duration-500 h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground hover-lift">
+                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500">
                   {/* Icon */}
-                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
+                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg`}>
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />
                   </div>
 
@@ -82,19 +93,19 @@ const ConceptSection = () => {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2">
+                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
                     {concept.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary-foreground/70 mb-4 font-bold tracking-widest">
+                  <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
                     {concept.subtitle}
                   </p>
-                  <p className="text-muted-foreground group-hover:text-primary-foreground/80 flex-grow text-lg">
+                  <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
                     {concept.description}
                   </p>
 
                   {/* Hover indicator */}
-                  <div className="mt-8 flex items-center gap-2 text-primary group-hover:text-lime font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span>Zjistit více</span>
+                  <div className="mt-8 flex items-center gap-2 text-primary group-hover:text-lime font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <span className="text-sm tracking-wide">ZJISTIT VÍCE</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                   </div>
                 </div>
@@ -136,7 +147,7 @@ const ConceptSection = () => {
                     <DialogTitle className="text-3xl font-display font-black text-foreground">
                       {selectedConcept.title}
                     </DialogTitle>
-                    <p className="text-sm text-muted-foreground font-bold tracking-widest">
+                    <p className="text-sm text-foreground/70 font-bold tracking-widest">
                       {selectedConcept.subtitle}
                     </p>
                   </div>
@@ -146,7 +157,7 @@ const ConceptSection = () => {
                 </div>
               </DialogHeader>
               <DialogDescription asChild>
-                <div className="text-foreground space-y-4 text-base leading-relaxed">
+                <div className="text-foreground space-y-4 text-base leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                   {selectedConcept.fullDescription.split('\n').map((line: string, i: number) => {
                     const trimmedLine = line.trim();
                     if (!trimmedLine) return null;
@@ -165,7 +176,7 @@ const ConceptSection = () => {
                       );
                     }
                     return (
-                      <p key={i} className="text-muted-foreground">
+                      <p key={i} className="text-foreground/80">
                         {trimmedLine}
                       </p>
                     );

@@ -10,7 +10,7 @@ const PrivacyPolicy = () => {
 
                 <h2>1. Správce osobních údajů</h2>
                 <p>
-                    Správcem osobních údajů je společnost <strong>BOOSTUP ENERGY S.R.O.</strong>, se sídlem Lidická 700/19, Brno, IČO: 24045560 (dále jen „správce“). Kontaktní e-mail: <a href="mailto:hello@boostup.cz">hello@boostup.cz</a>.
+                    Správcem osobních údajů je společnost <strong>BOOSTUP SUPPLEMENTS S.R.O.</strong>, se sídlem Lidická 700/19, Brno, IČO: 24045560 (dále jen „správce“). Kontaktní e-mail: <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a>.
                 </p>
 
                 <h2>2. Účely a právní základ zpracování</h2>

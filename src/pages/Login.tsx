@@ -74,17 +74,58 @@ const Login = () => {
         }
     };
 
+    const handleForgotPassword = async () => {
+        if (!email) {
+            toast({
+                title: "Zadejte email",
+                description: "Pro obnovu hesla musíte vyplnit emailovou adresu.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: email,
+                    type: 'reset_password'
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || 'Nepodařilo se odeslat email');
+            }
+
+            toast({
+                title: "Odkaz odeslán",
+                description: "Zkontrolujte svůj email pro instrukce k obnově hesla.",
+            });
+        } catch (error: any) {
+            toast({
+                title: "Chyba",
+                description: error.message,
+                variant: "destructive",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
+        <main className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-display font-bold text-primary">Přihlášení</h1>
-                    <p className="text-muted-foreground">Vítejte zpět v BoostUp</p>
+                    <p className="text-foreground/80">Vítejte zpět v BoostUp</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email" className="text-foreground/90">Email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -95,7 +136,17 @@ const Login = () => {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="password">Heslo</Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="password" className="text-foreground/90">Heslo</Label>
+                            <button
+                                type="button"
+                                onClick={handleForgotPassword}
+                                className="text-xs text-primary hover:underline font-bold"
+                                disabled={loading}
+                            >
+                                Zapomenuté heslo?
+                            </button>
+                        </div>
                         <Input
                             id="password"
                             type="password"
@@ -115,7 +166,7 @@ const Login = () => {
                         <span className="w-full border-t" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-2 text-muted-foreground">Nebo</span>
+                        <span className="bg-white px-2 text-foreground/70">Nebo</span>
                     </div>
                 </div>
 
@@ -133,25 +184,33 @@ const Login = () => {
                             return;
                         }
                         setLoading(true);
-                        const { error } = await supabase.auth.signInWithOtp({
-                            email,
-                            options: {
-                                emailRedirectTo: window.location.origin,
-                            },
-                        });
-                        setLoading(false);
+                        try {
+                            const response = await fetch('/api/send-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: email,
+                                    type: 'magic_link'
+                                })
+                            });
 
-                        if (error) {
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                throw new Error(errorData.error?.message || 'Nepodařilo se odeslat magic link');
+                            }
+
+                            toast({
+                                title: "Odkaz odeslán! 🚀",
+                                description: "Zkontrolujte si emailovou schránku.",
+                            });
+                        } catch (error: any) {
                             toast({
                                 title: "Chyba",
                                 description: error.message,
                                 variant: "destructive",
                             });
-                        } else {
-                            toast({
-                                title: "Odkaz odeslán! 🚀",
-                                description: "Zkontrolujte si emailovou schránku.",
-                            });
+                        } finally {
+                            setLoading(false);
                         }
                     }}
                     disabled={loading}
@@ -159,14 +218,14 @@ const Login = () => {
                     ⚡ Poslat přihlašovací odkaz (Magic Link)
                 </Button>
 
-                <div className="text-center text-sm text-muted-foreground">
+                <div className="text-center text-sm text-foreground/80">
                     Nemáte účet?{" "}
                     <Link to="/register" className="text-primary font-bold hover:underline">
                         Zaregistrujte se
                     </Link>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 

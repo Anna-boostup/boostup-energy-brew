@@ -13,6 +13,7 @@ import PaymentError from "./pages/PaymentError";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Logout from "./pages/Logout";
+import ResetPassword from "./pages/ResetPassword";
 // import Profile from "./pages/Profile"; // Deprecated
 import ProtectedRoute from "./components/ProtectedRoute";
 import AccountLayout from "./pages/account/AccountLayout";
@@ -55,20 +56,29 @@ import ManufactureInventory from "./pages/admin/ManufactureInventory";
 import AdminProfile from "./pages/admin/AdminProfile";
 import Orders from "./pages/admin/Orders";
 import ContentManagement from "./pages/admin/ContentManagement";
+import AdminHelp from "./pages/admin/AdminHelp";
 
 import TermsOfService from "./pages/legal/TermsOfService";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import CookiesPolicy from "./pages/legal/CookiesPolicy";
 import Returns from "./pages/legal/Returns";
 import RecurringPaymentTerms from "./pages/legal/RecurringPaymentTerms";
+import ShippingAndPayment from "./pages/legal/ShippingAndPayment";
 
 import { CartProvider } from "./context/CartContext";
 import { InventoryProvider } from "./context/InventoryContext";
 import { ManufactureProvider } from "./context/ManufactureContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ContentProvider } from "./context/ContentContext";
+import { CookieProvider } from "./context/CookieContext";
+import { CookieBanner } from "./components/CookieBanner";
 
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
+import { useDynamicFonts } from './hooks/useDynamicFonts';
+
+// Applies typography CSS variables from the CMS content
+const FontLoader = () => { useDynamicFonts(); return null; };
 
 const queryClient = new QueryClient();
 
@@ -78,76 +88,84 @@ const App = () => (
       <HelmetProvider>
         <AuthProvider>
           <ContentProvider>
-            <InventoryProvider>
-              <ManufactureProvider>
-                <CartProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <ScrollToTop />
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/logout" element={<Logout />} />
+            <FontLoader />
+            <CookieProvider>
+              <InventoryProvider>
+                <ManufactureProvider>
+                  <CartProvider>
+                    <Toaster />
+                    <Sonner />
+                    <BrowserRouter>
+                      <ScrollToTop />
+                      <CookieBanner />
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/logout" element={<Logout />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
-                      {/* Account Routes */}
-                      {/* Account Routes (Personal) */}
-                      <Route path="/account" element={
-                        <ProtectedRoute>
-                          <RoleGuard allowedType="personal">
-                            <AccountLayout />
-                          </RoleGuard>
-                        </ProtectedRoute>
-                      }>
-                        <Route index element={<Navigate to="/account/profile" replace />} />
-                        <Route path="profile" element={<AccountProfile />} />
-                        <Route path="orders" element={<AccountOrders />} />
-                        <Route path="subscriptions" element={<Subscriptions />} />
-                      </Route>
+                        {/* Account Routes */}
+                        {/* Account Routes (Personal) */}
+                        <Route path="/account" element={
+                          <ProtectedRoute>
+                            <RoleGuard allowedType="personal">
+                              <AccountLayout />
+                            </RoleGuard>
+                          </ProtectedRoute>
+                        }>
+                          <Route index element={<Navigate to="/account/profile" replace />} />
+                          <Route path="profile" element={<AccountProfile />} />
+                          <Route path="orders" element={<AccountOrders />} />
+                          <Route path="subscriptions" element={<Subscriptions />} />
+                        </Route>
 
-                      {/* Company Account Routes */}
-                      <Route path="/company-account" element={
-                        <ProtectedRoute>
-                          <RoleGuard allowedType="company">
-                            <CompanyAccountLayout />
-                          </RoleGuard>
-                        </ProtectedRoute>
-                      }>
-                        <Route index element={<Navigate to="/company-account/profile" replace />} />
-                        <Route path="profile" element={<CompanyProfile />} />
-                        {/* Reusing Orders component but it will need to context aware or just show same orders */}
-                        <Route path="orders" element={<AccountOrders />} />
-                        <Route path="subscriptions" element={<Subscriptions />} />
-                      </Route>
+                        {/* Company Account Routes */}
+                        <Route path="/company-account" element={
+                          <ProtectedRoute>
+                            <RoleGuard allowedType="company">
+                              <CompanyAccountLayout />
+                            </RoleGuard>
+                          </ProtectedRoute>
+                        }>
+                          <Route index element={<Navigate to="/company-account/profile" replace />} />
+                          <Route path="profile" element={<CompanyProfile />} />
+                          {/* Reusing Orders component but it will need to context aware or just show same orders */}
+                          <Route path="orders" element={<AccountOrders />} />
+                          <Route path="subscriptions" element={<Subscriptions />} />
+                        </Route>
 
-                      <Route path="/checkout" element={<CheckoutPage />} />
-                      <Route path="/payment/success" element={<PaymentSuccess />} />
-                      <Route path="/payment/error" element={<PaymentError />} />
+                        <Route path="/checkout" element={<CheckoutPage />} />
+                        <Route path="/payment/success" element={<PaymentSuccess />} />
+                        <Route path="/payment/error" element={<PaymentError />} />
 
-                      {/* Admin Routes */}
-                      <Route path="/admin" element={<AdminLayout />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="orders" element={<Orders />} />
-                        <Route path="inventory" element={<Inventory />} />
-                        <Route path="manufacture" element={<ManufactureInventory />} />
-                        <Route path="content" element={<ContentManagement />} />
-                        <Route path="profile" element={<AdminProfile />} />
-                      </Route>
+                        {/* Admin Routes */}
+                        <Route path="/admin" element={<AdminLayout />}>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="orders" element={<Orders />} />
+                          <Route path="inventory" element={<Inventory />} />
+                          <Route path="manufacture" element={<ManufactureInventory />} />
+                          <Route path="content" element={<ContentManagement />} />
+                          <Route path="profile" element={<AdminProfile />} />
+                          <Route path="help" element={<AdminHelp />} />
+                        </Route>
 
-                      {/* Legal Routes */}
-                      <Route path="/obchodni-podminky" element={<TermsOfService />} />
-                      <Route path="/ochrana-osobnich-udaju" element={<PrivacyPolicy />} />
-                      <Route path="/reklamace" element={<Returns />} />
-                      <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
+                        {/* Legal Routes */}
+                        <Route path="/obchodni-podminky" element={<TermsOfService />} />
+                        <Route path="/ochrana-osobnich-udaju" element={<PrivacyPolicy />} />
+                        <Route path="/cookies" element={<CookiesPolicy />} />
+                        <Route path="/doprava-a-platba" element={<ShippingAndPayment />} />
+                        <Route path="/reklamace" element={<Returns />} />
+                        <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
 
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </BrowserRouter>
-                </CartProvider>
-              </ManufactureProvider>
-            </InventoryProvider>
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </BrowserRouter>
+                  </CartProvider>
+                </ManufactureProvider>
+              </InventoryProvider>
+            </CookieProvider>
           </ContentProvider>
         </AuthProvider>
       </HelmetProvider>

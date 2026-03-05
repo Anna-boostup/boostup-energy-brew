@@ -12,10 +12,10 @@ export const SEO = ({
     title,
     description = "Přírodní energie na celý den. 6 hodin soustředění bez nervozity a crash efektu.",
     image = "/og-image.jpg",
-    url = "https://boostup.cz",
+    url = "https://drinkboostup.cz",
     type = "website"
 }: SEOProps) => {
-    const siteTitle = "BoostUp Energy";
+    const siteTitle = "BoostUp Supplements";
     const fullTitle = `${title} | ${siteTitle}`;
 
     return (

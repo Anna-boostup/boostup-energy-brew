@@ -1,8 +1,22 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
+    }
+  ],
+  "github": {
+    "enabled": false
+  },
+  "functions": {
+    "api/send-email.ts": {
+      "includeFiles": "public/**"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/sync-packeta-status",
+      "schedule": "0 16 * * *"
     }
   ]
 }

@@ -22,8 +22,8 @@ export const FLAVORS: FlavorConfig[] = [
         borderColor: "border-lime",
         textColor: "text-foreground",
         description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
-        ingredients: "Voda, citronová šťáva (15%), kofein (150mg/shot), L-theanin, vitamín B6, B12, stévie, přírodní aroma.", // Updated with more realistic placeholder
-        labels: ["Bez cukru", "Vegan"]
+        ingredients: "Voda, citronová šťáva (15%), kofein (150mg/shot), L-theanin, vitamín B6, B12, stévie, přírodní aroma.",
+        labels: ["Bez cukru", "Vegan", "Energie"]
     },
     {
         id: "red",
@@ -34,7 +34,7 @@ export const FLAVORS: FlavorConfig[] = [
         textColor: "text-cream",
         description: "Červené ovoce a guarana pro tvůj rychlý a efektivní start",
         ingredients: "Voda, šťáva z červeného ovoce, guarana extrakt, kofein (120mg/shot), vitamín C, stévie.",
-        labels: ["Vitamíny", "Rychlý nástup"]
+        labels: ["Vitamíny", "Rychlý nástup", "Výkon"]
     },
     {
         id: "silky",
@@ -45,7 +45,7 @@ export const FLAVORS: FlavorConfig[] = [
         textColor: "text-cream",
         description: "Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii",
         ingredients: "Voda, extrakt ze zeleného čaje, meduňka, L-theanin, přírodní sladidla.",
-        labels: ["Antioxidanty", "Klidná síla"]
+        labels: ["Antioxidanty", "Klidná síla", "Soustředění"]
     }
 ];
 

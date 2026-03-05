@@ -21,11 +21,12 @@ export const SITE_CONTENT = {
     hero: {
         announcement: "BRZY NA TRHU",
         headline: {
-            part1: "ENERGIE",
-            gradient: "NA CELÝ DEN",
-            part2: "přirozeně."
+            part1: "OBJEVTE NOVÝ STANDARD",
+            gradient: "STABILNÍHO SOUSTŘEDĚNÍ",
+            part2: "Efektivita, rychlost a přesnost i pod tlakem."
         },
-        description: "6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata.",
+        description: "Až 6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata.",
+        testimonial: "Testováno mezi profesionály pracujícími pod vysokým tlakem.",
         cta: {
             primary: "Chci koupit",
             secondary: "Chci objevit více",
@@ -212,10 +213,10 @@ export const SITE_CONTENT = {
             {
                 title: "PODPORA",
                 items: [
-                    { label: "VOP", href: "/vop" },
-                    { label: "Ochrana soukromí", href: "/privacy" },
+                    { label: "VOP", href: "/obchodni-podminky" },
+                    { label: "Ochrana soukromí", href: "/ochrana-osobnich-udaju" },
                     { label: "Cookies", href: "/cookies" },
-                    { label: "Doprava a platba", href: "/shipping" }
+                    { label: "Doprava a platba", href: "/doprava-a-platba" }
                 ]
             }
         ],
@@ -229,21 +230,114 @@ export const SITE_CONTENT = {
             }
         },
         bottom: {
-            copyright: "© 2024 BOOSTUP ENERGY S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
+            copyright: "© 2024 BOOSTUP SUPPLEMENTS S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
             legal: [
-                { label: "Terms", href: "#" },
-                { label: "Privacy", href: "#" }
+                { label: "Obchodní podmínky", href: "/obchodni-podminky" },
+                { label: "Ochrana osobních údajů", href: "/ochrana-osobnich-udaju" }
             ]
         }
     },
 
     bankInfo: {
-        accountNumber: "2402922119",
-        bankCode: "2010", // Fio banka as placeholder or actual?
-        bankName: "Fio banka",
-        iban: "CZ1220100000002402922119",
-        accountName: "BOOSTUP ENERGY S.R.O.",
+        accountNumber: "6654376004",
+        bankCode: "5500",
+        bankName: "Raiffeisenbank",
+        iban: "CZ4755000000006654376004",
+        accountName: "BOOSTUP SUPPLEMENTS S.R.O.",
         currency: "CZK",
         qrMessage: "Objednávka"
-    }
+    },
+
+    flavors: {
+        lemon: {
+            name: "LEMON BLAST",
+            description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
+            labels: ["Bez cukru", "Vegan", "Energie"]
+        },
+        red: {
+            name: "RED RUSH",
+            description: "Červené ovoce a guarana pro tvůj rychlý a efektivní start",
+            labels: ["Vitamíny", "Rychlý nástup", "Výkon"]
+        },
+        silky: {
+            name: "SILKY LEAF",
+            description: "Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii",
+            labels: ["Antioxidanty", "Klidná síla", "Soustředění"]
+        }
+    },
+
+    ingredientDetails: {
+        stimulants: {
+            title: "Přírodní stimulanty",
+            subtitle: "Čistá energie z přírody",
+            description: "Využíváme sílu ověřených přírodních látek, které dodávají energii postupně, bez prudkých výkyvů a následné vyčerpanosti.",
+            benefits: [
+                "Zvýšení bdělosti a pozornosti",
+                "Podpora mentálního výkonu",
+                "Postupné uvolňování bez nervozity"
+            ],
+            ingredients: ["Přírodní kofein", "Guarana", "L-Theanin"]
+        },
+        electrolytes: {
+            title: "Elektrolyty",
+            subtitle: "Optimální hydratace buněk",
+            description: "Zásadní minerály pro správnou funkci svalů, nervové soustavy a udržení hloubkové hydratace během celého dne.",
+            benefits: [
+                "Prevence svalových křečí",
+                "Lepší přenos nervových vzruchů",
+                "Udržení energie v buňkách"
+            ],
+            ingredients: ["Hořčík", "Draslík", "Sodík", "Vápník"]
+        },
+        adaptogens: {
+            title: "Adaptogeny",
+            subtitle: "Odolnost vůči stresu",
+            description: "Byliny a houby, které pomáhají organismu adaptovat se na fyzický a psychický stres a udržovat vnitřní rovnováhu.",
+            benefits: [
+                "Snížení hladiny kortizolu",
+                "Podpora imunitního systému",
+                "Zlepšení nálady a regenerace"
+            ],
+            ingredients: ["Ashwagandha", "Rhodiola Rosea", "Meduňka"]
+        },
+        vitamins: {
+            title: "Vitamíny",
+            subtitle: "Palivo pro váš metabolismus",
+            description: "Komplex vitamínů skupiny B a C, které jsou klíčové pro transformaci potravy na energii a ochranu před oxidativním stresem.",
+            benefits: [
+                "Podpora energetického metabolismu",
+                "Snížení míry únavy a vyčerpání",
+                "Ochrana DNA a buněk"
+            ],
+            ingredients: ["Vitamín B6", "Vitamín B12", "Vitamín C"]
+        }
+    },
+
+    typography: {
+        headingFont: 'Poppins',
+        bodyFont: 'Poppins',
+        headingWeight: '800',
+        bodyWeight: '400',
+        headingLetterSpacing: '0.05em',
+        bodyLetterSpacing: '0em',
+        headingLineHeight: '1.1',
+        bodyLineHeight: '1.6',
+        baseFontSize: '16',
+    },
+
+    // Per-field text styles (font, size, bold, italic per CMS field)
+    textStyles: {} as Record<string, {
+        fontSize?: string;
+        fontWeight?: string;
+        fontStyle?: string;
+        fontFamily?: string;
+    }>,
+
+    // Badge visibility (defaults to shown; set to false to hide)
+    badgeVisible: {
+        'hero.announcement': true,
+        'mission.badge': true,
+        'cta.badge': true,
+        'contact.title': true,
+    } as Record<string, boolean>,
 };

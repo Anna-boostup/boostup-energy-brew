@@ -1,8 +1,8 @@
 import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User, Package, CreditCard } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import logoBlack from "@/assets/logo-black.png";
+import logoGreen from "@/assets/logo-green.png";
 import logoWhite from "@/assets/logo-white.png";
 import CartModal from "./CartModal";
 import { useCart } from "@/context/CartContext";
@@ -28,7 +28,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src={logoBlack} alt="BoostUp" className="h-8 w-auto dark:hidden" />
+            <img src={logoGreen} alt="BoostUp" className="h-8 w-auto dark:hidden" />
             <img src={logoWhite} alt="BoostUp" className="h-8 w-auto hidden dark:block" />
           </Link>
 
@@ -46,7 +46,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-foreground/70 hover:text-foreground transition-colors"
                 >
                   {link.label}
                 </a>
@@ -85,10 +85,21 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
 
             <button
               className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground h-9 px-3 gap-2 relative rounded-full"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => {
+                if (cartCount === 0) {
+                  const element = document.getElementById('produkty');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                } else {
+                  startTransition(() => {
+                    setIsCartOpen(true);
+                  });
+                }
+              }}
             >
               <ShoppingCart className="w-4 h-4" />
-              Košík
+              {cartCount === 0 ? "Nakoupit" : "Košík"}
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-in zoom-in">
                   {cartCount}
@@ -106,7 +117,18 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
               variant="ghost"
               size="icon"
               className="relative rounded-full"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => {
+                if (cartCount === 0) {
+                  const element = document.getElementById('produkty');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                } else {
+                  startTransition(() => {
+                    setIsCartOpen(true);
+                  });
+                }
+              }}
             >
               <ShoppingCart className="w-6 h-6" />
               {cartCount > 0 && (
@@ -119,6 +141,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <button
               className="p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Zavřít menu" : "Otevřít menu"}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -192,20 +215,29 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
 
               <button
                 onClick={() => {
-                  setIsCartOpen(true);
+                  if (cartCount === 0) {
+                    const element = document.getElementById('produkty');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  } else {
+                    startTransition(() => {
+                      setIsCartOpen(true);
+                    });
+                  }
                   setIsMenuOpen(false);
                 }}
                 className="flex items-center gap-2 text-lg font-medium py-2 text-primary"
               >
                 <ShoppingCart className="w-5 h-5" />
-                Košík ({cartCount})
+                {cartCount === 0 ? "Nakoupit" : `Košík (${cartCount})`}
               </button>
             </nav>
 
             <div className="flex gap-4">
-              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
-              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
-              <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
+              <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
         )}
