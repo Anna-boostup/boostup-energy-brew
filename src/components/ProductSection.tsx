@@ -305,8 +305,7 @@ const ProductSection = () => {
                     ? "bg-gradient-to-br from-lime via-terracotta to-olive opacity-20"
                     : `bg-gradient-to-br ${currentFlavor.color}`
                   } opacity-30 blur-3xl scale-125 transition-all duration-700 animate-pulse-glow`} />
-
-                <div className="relative animate-float">
+                <div className="relative">
                   <div className="relative">
                     {flavorMode === "mix" ? (
                       <img
