@@ -414,7 +414,7 @@
 
 /* Hover effects */
 .hover-lift {
-  @apply transition-all duration-500 ease-out border-2 border-transparent;
+  @apply transition-all duration-500 ease-out;
 }
 
 .hover-lift:hover {
