@@ -3,6 +3,7 @@ import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
 import { Button } from "./ui/button";
 import EnergyChart from "./EnergyChart";
 import { useState } from "react";
+import { getTextStyle } from "@/lib/textStyles";
 import {
   Dialog,
   DialogContent,
@@ -95,10 +96,10 @@ const ConceptSection = () => {
                   <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
                     {concept.title}
                   </h3>
-                  <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase">
+                  <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
                     {concept.subtitle}
                   </p>
-                  <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed">
+                  <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
                     {concept.description}
                   </p>
 
@@ -156,7 +157,7 @@ const ConceptSection = () => {
                 </div>
               </DialogHeader>
               <DialogDescription asChild>
-                <div className="text-foreground space-y-4 text-base leading-relaxed">
+                <div className="text-foreground space-y-4 text-base leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                   {selectedConcept.fullDescription.split('\n').map((line: string, i: number) => {
                     const trimmedLine = line.trim();
                     if (!trimmedLine) return null;

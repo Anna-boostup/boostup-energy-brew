@@ -429,6 +429,19 @@ const ContentManagement = () => {
                                             style={ts(`concept3b.${concept.id}.description`)}
                                             onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.description`, s)}
                                         />
+                                        <StyledTextField
+                                            label="Text v popupu (Detail)"
+                                            value={concept.fullDescription}
+                                            onChange={(v) => {
+                                                const newConcepts = [...localContent.concept3b.concepts];
+                                                newConcepts[i] = { ...newConcepts[i], fullDescription: v };
+                                                updateField(['concept3b', 'concepts'], newConcepts);
+                                            }}
+                                            style={ts(`concept3b.${concept.id}.fullDescription`)}
+                                            onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.fullDescription`, s)}
+                                            multiline
+                                            rows={5}
+                                        />
                                     </div>
                                 ))}
                             </div>
