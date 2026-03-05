@@ -350,7 +350,7 @@ const ProductSection = () => {
                       onClick={() => setSelectedPack(pack)}
                       className={`relative py-4 sm:py-5 px-4 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
                         ? "bg-primary text-primary-foreground shadow-button"
-                        : "bg-card text-muted-foreground border-2 border-primary/20 hover:border-primary/50"
+                        : "bg-card text-muted-foreground border-2 border-primary/40 hover:border-primary/60"
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
@@ -388,7 +388,7 @@ const ProductSection = () => {
                     onClick={() => setPurchaseType('onetime')}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${purchaseType === 'onetime'
                       ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
-                      : "border-primary/20 bg-card text-muted-foreground hover:border-primary/50"
+                      : "border-primary/40 bg-card text-muted-foreground hover:border-primary/60"
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -406,7 +406,7 @@ const ProductSection = () => {
                     onClick={() => setPurchaseType('subscription')}
                     className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${purchaseType === 'subscription'
                       ? "bg-amber-500 text-white shadow-button scale-[1.02] border-amber-500"
-                      : "border-primary/20 bg-card hover:border-amber-500/50"
+                      : "border-primary/40 bg-card hover:border-amber-500/60"
                       }`}
                   >
                     <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
@@ -434,7 +434,7 @@ const ProductSection = () => {
                     onClick={() => setFlavorMode("single")}
                     className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "single"
                       ? "bg-primary text-primary-foreground shadow-button scale-[1.02]"
-                      : "bg-card text-muted-foreground border-2 border-primary/20 hover:border-primary/50"
+                      : "bg-card text-muted-foreground border-2 border-primary/40 hover:border-primary/60"
                       }`}
                   >
                     <Droplet className="w-5 h-5" />
@@ -448,7 +448,7 @@ const ProductSection = () => {
                     onClick={() => setFlavorMode("mix")}
                     className={`p-4 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover-lift ${flavorMode === "mix"
                       ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream shadow-button scale-[1.02]"
-                      : "bg-card text-muted-foreground border-2 border-primary/20 hover:border-primary/50"
+                      : "bg-card text-muted-foreground border-2 border-primary/40 hover:border-primary/60"
                       }`}
                   >
                     <Blend className="w-5 h-5" />
@@ -565,7 +565,7 @@ const ProductSection = () => {
                           onClick={() => setSelectedFlavor(flavor.id)}
                           className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all duration-300 hover-lift ${selectedFlavor === flavor.id
                             ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-lg scale-[1.02]`
-                            : `bg-card text-muted-foreground border-2 border-primary/20 hover:border-primary/50 hover:scale-[1.01]`
+                            : `bg-card text-muted-foreground border-2 border-primary/40 hover:border-primary/60 hover:scale-[1.01]`
                             }`}
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
