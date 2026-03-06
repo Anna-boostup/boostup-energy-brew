@@ -27,9 +27,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img src={logoGreen} alt="BoostUp" className="h-8 w-auto dark:hidden" />
-            <img src={logoWhite} alt="BoostUp" className="h-8 w-auto hidden dark:block" />
+          <Link to="/" className="relative z-10 hidden sm:block">
+            <img src={logoGreen} alt="BoostUp - přírodní energetický shot" className="h-8 w-auto dark:hidden" />
+            <img src={logoWhite} alt="BoostUp - přírodní energetický shot" className="h-8 w-auto hidden dark:block" />
           </Link>
 
           {/* Desktop Navigation */}
