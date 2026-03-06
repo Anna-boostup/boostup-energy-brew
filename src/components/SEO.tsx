@@ -6,6 +6,7 @@ interface SEOProps {
     image?: string;
     url?: string;
     type?: string;
+    googleVerification?: string;
 }
 
 export const SEO = ({
@@ -13,7 +14,8 @@ export const SEO = ({
     description = "Přírodní energie na celý den. 6 hodin soustředění bez nervozity a crash efektu.",
     image = "https://drinkboostup.cz/og-image.jpg",
     url = "https://drinkboostup.cz",
-    type = "website"
+    type = "website",
+    googleVerification = "ZUV9w82flSkJabmd855ZDSmaKWNTzQDlsWHOuPKwEYw"
 }: SEOProps) => {
     const siteTitle = "BoostUp Supplements";
     const fullTitle = `${title} | ${siteTitle}`;
@@ -71,6 +73,7 @@ export const SEO = ({
             <title>{fullTitle}</title>
             <meta name="description" content={description} />
             <link rel="canonical" href={url} />
+            {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content={type} />
