@@ -122,7 +122,7 @@ const HeroSection = () => {
             <img
               src={bottlesHero}
               alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
-              className="relative w-full max-w-2xl mx-auto hover:scale-105 transition-transform duration-700 ease-out animate-float-slow"
+              className="relative w-full max-w-2xl mx-auto"
               style={{
                 filter: 'drop-shadow(0 30px 60px rgba(61, 90, 47, 0.4)) drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2))'
               }}

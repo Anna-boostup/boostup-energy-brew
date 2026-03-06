@@ -28,19 +28,19 @@ const MixStack = ({ images, className }: { images: string[], className?: string 
       <img
         src={images[2]}
         alt="Mix Right"
-        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90 transition-all duration-500"
+        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90"
       />
       {/* Left Bottle (Red) */}
       <img
         src={images[1]}
         alt="Mix Left"
-        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 transition-all duration-500 absolute"
+        className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 absolute"
       />
       {/* Middle Bottle (Lemon) - Front */}
       <img
         src={images[0]}
         alt="Mix Middle"
-        className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 transition-all duration-500 hover:scale-105 absolute"
+        className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 absolute"
       />
     </div>
   );
@@ -305,20 +305,19 @@ const ProductSection = () => {
                     ? "bg-gradient-to-br from-lime via-terracotta to-olive opacity-20"
                     : `bg-gradient-to-br ${currentFlavor.color}`
                   } opacity-30 blur-3xl scale-125 transition-all duration-700 animate-pulse-glow`} />
-
-                <div className="relative animate-float">
+                <div className="relative">
                   <div className="relative">
                     {flavorMode === "mix" ? (
                       <img
                         src={bottlesHero}
                         alt="BoostUp Mix"
-                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-2xl transition-all duration-500 hover:scale-105"
+                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-2xl"
                       />
                     ) : (
                       <img
                         src={productImageSrc}
                         alt={selectedFlavor ? flavorName : "BoostUp Energy Brew"}
-                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transition-all duration-500 hover:scale-110 ${!selectedFlavor ? 'scale-110' : ''}`}
+                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl`}
                       />
                     )}
                   </div>
