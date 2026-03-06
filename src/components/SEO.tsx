@@ -11,18 +11,66 @@ interface SEOProps {
 export const SEO = ({
     title,
     description = "Přírodní energie na celý den. 6 hodin soustředění bez nervozity a crash efektu.",
-    image = "/og-image.jpg",
+    image = "https://drinkboostup.cz/og-image.jpg",
     url = "https://drinkboostup.cz",
     type = "website"
 }: SEOProps) => {
     const siteTitle = "BoostUp Supplements";
     const fullTitle = `${title} | ${siteTitle}`;
 
+    // Schema.org JSON-LD for Organization and Product
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "https://drinkboostup.cz/#organization",
+                "name": "BoostUp",
+                "url": "https://drinkboostup.cz",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://drinkboostup.cz/logo-green.png"
+                },
+                "sameAs": [
+                    "https://www.instagram.com/boostup_energy/",
+                    "https://www.facebook.com/boostupenergybrew"
+                ]
+            },
+            {
+                "@type": "Product",
+                "name": "BoostUp Pure Shot 60ml",
+                "description": "Čistá energie z čajového extraktu s elektrolyty a adaptogeny.",
+                "brand": {
+                    "@type": "Brand",
+                    "name": "BoostUp"
+                },
+                "image": "https://drinkboostup.cz/hero-vse.png",
+                "offers": {
+                    "@type": "Offer",
+                    "url": "https://drinkboostup.cz/#produkty",
+                    "priceCurrency": "CZK",
+                    "price": "59.00",
+                    "availability": "https://schema.org/InStock"
+                }
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://drinkboostup.cz/#website",
+                "url": "https://drinkboostup.cz",
+                "name": "BoostUp",
+                "publisher": {
+                    "@id": "https://drinkboostup.cz/#organization"
+                }
+            }
+        ]
+    };
+
     return (
         <Helmet>
             {/* Standard metadata */}
             <title>{fullTitle}</title>
             <meta name="description" content={description} />
+            <link rel="canonical" href={url} />
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content={type} />
@@ -37,6 +85,11 @@ export const SEO = ({
             <meta property="twitter:title" content={fullTitle} />
             <meta property="twitter:description" content={description} />
             <meta property="twitter:image" content={image} />
+
+            {/* Structured Data */}
+            <script type="application/ld+json">
+                {JSON.stringify(structuredData)}
+            </script>
         </Helmet>
     );
 };
