@@ -83,12 +83,12 @@ const ConceptSection = () => {
 
                 <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500">
                   {/* Icon */}
-                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg`}>
+                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />
                   </div>
 
                   {/* Stats badge */}
-                  <div className="absolute top-6 right-6 px-4 py-2 bg-lime text-foreground text-xs font-black rounded-full group-hover:bg-lime group-hover:scale-110 transition-all duration-300 shadow-md">
+                  <div className="absolute top-6 right-6 px-4 py-2 bg-lime text-foreground text-xs font-black rounded-full shadow-md">
                     {concept.stats}
                   </div>
 
