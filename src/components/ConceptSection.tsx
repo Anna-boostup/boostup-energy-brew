@@ -43,7 +43,7 @@ const ConceptSection = () => {
             <Sparkles className="w-4 h-4" />
             {content.badge}
           </span>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100" style={getTextStyle(SITE_CONTENT, 'concept3b.headline')}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100" style={getTextStyle(SITE_CONTENT, 'concept3b.headline')}>
             {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
           </h2>
           <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-200" style={getTextStyle(SITE_CONTENT, 'concept3b.description')}>
@@ -87,10 +87,7 @@ const ConceptSection = () => {
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />
                   </div>
 
-                  {/* Stats badge */}
-                  <div className="absolute top-6 right-6 px-4 py-2 bg-lime text-foreground text-xs font-black rounded-full shadow-md" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.stats`)}>
-                    {concept.stats}
-                  </div>
+                  {/* Content */}
 
                   {/* Content */}
                   <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.title`)}>
@@ -152,11 +149,9 @@ const ConceptSection = () => {
                       {selectedConcept.subtitle}
                     </p>
                   </div>
-                  <div className="ml-auto px-4 py-2 bg-lime text-foreground text-sm font-black rounded-full shadow-md" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.stats`)}>
-                    {selectedConcept.stats}
-                  </div>
                 </div>
               </DialogHeader>
+
               <DialogDescription asChild>
                 <div className="text-foreground space-y-4 text-base leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                   {selectedConcept.fullDescription.split('\n').map((line: string, i: number) => {
@@ -188,7 +183,7 @@ const ConceptSection = () => {
           )}
         </DialogContent>
       </Dialog>
-    </section>
+    </section >
   );
 };
 

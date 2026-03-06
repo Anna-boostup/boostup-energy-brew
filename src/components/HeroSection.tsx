@@ -26,7 +26,7 @@ const HeroSection = () => {
         {/* Announcement Badge */}
         {isBadgeVisible(siteContent, 'hero.announcement') && (
           <div className="flex justify-center mb-10">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide animate-fade-up shadow-button animate-bounce-subtle"
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold text-sm tracking-wide animate-fade-up shadow-button"
               style={getTextStyle(siteContent, 'hero.announcement')}>
               <Zap className="w-5 h-5 text-lime" />
               {content.announcement}
@@ -113,8 +113,10 @@ const HeroSection = () => {
         </div>
 
         {/* Product Image - Centered below text */}
-        <div className="relative animate-fade-up animation-delay-300 mb-16">
+        <div className="relative animate-fade-up animation-delay-300 mb-8 sm:mb-16">
           <div className="relative max-w-3xl mx-auto">
+            {/* Top radial gradient for depth - slightly lightened for #17 */}
+            <div className="absolute top-0 inset-x-0 h-[600px] bg-gradient-to-b from-lime/10 to-transparent pointer-events-none opacity-80" />
             {/* Multiple glow layers for depth */}
             <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 animate-pulse-glow pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 animate-pulse-glow animation-delay-200 pointer-events-none" />
