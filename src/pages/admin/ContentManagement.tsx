@@ -393,8 +393,19 @@ const ContentManagement = () => {
                             <div className="space-y-6 pt-6 border-t">
                                 {localContent.concept3b.concepts.map((concept, i) => (
                                     <div key={concept.id} className="p-4 rounded-lg bg-secondary/30 space-y-4">
-                                        <div className="font-bold text-lg">{concept.title}</div>
+                                        <div className="font-bold text-lg mb-4">{concept.title}</div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <StyledTextField
+                                                label="Název (Např. BRAIN)"
+                                                value={concept.title}
+                                                onChange={(v) => {
+                                                    const newConcepts = [...localContent.concept3b.concepts];
+                                                    newConcepts[i] = { ...newConcepts[i], title: v };
+                                                    updateField(['concept3b', 'concepts'], newConcepts);
+                                                }}
+                                                style={ts(`concept3b.${concept.id}.title`)}
+                                                onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.title`, s)}
+                                            />
                                             <StyledTextField
                                                 label="Podnadpis"
                                                 value={concept.subtitle}
@@ -406,8 +417,10 @@ const ContentManagement = () => {
                                                 style={ts(`concept3b.${concept.id}.subtitle`)}
                                                 onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.subtitle`, s)}
                                             />
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <StyledTextField
-                                                label="Statistiky"
+                                                label="Statistiky (Puk v rohu)"
                                                 value={concept.stats}
                                                 onChange={(v) => {
                                                     const newConcepts = [...localContent.concept3b.concepts];
@@ -417,20 +430,20 @@ const ContentManagement = () => {
                                                 style={ts(`concept3b.${concept.id}.stats`)}
                                                 onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.stats`, s)}
                                             />
+                                            <StyledTextField
+                                                label="Krátký popis (Karta)"
+                                                value={concept.description}
+                                                onChange={(v) => {
+                                                    const newConcepts = [...localContent.concept3b.concepts];
+                                                    newConcepts[i] = { ...newConcepts[i], description: v };
+                                                    updateField(['concept3b', 'concepts'], newConcepts);
+                                                }}
+                                                style={ts(`concept3b.${concept.id}.description`)}
+                                                onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.description`, s)}
+                                            />
                                         </div>
                                         <StyledTextField
-                                            label="Krátký popis"
-                                            value={concept.description}
-                                            onChange={(v) => {
-                                                const newConcepts = [...localContent.concept3b.concepts];
-                                                newConcepts[i] = { ...newConcepts[i], description: v };
-                                                updateField(['concept3b', 'concepts'], newConcepts);
-                                            }}
-                                            style={ts(`concept3b.${concept.id}.description`)}
-                                            onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.description`, s)}
-                                        />
-                                        <StyledTextField
-                                            label="Text v popupu (Detail)"
+                                            label="Hlavní text v Popup okně (Detail)"
                                             value={concept.fullDescription}
                                             onChange={(v) => {
                                                 const newConcepts = [...localContent.concept3b.concepts];
@@ -440,7 +453,7 @@ const ContentManagement = () => {
                                             style={ts(`concept3b.${concept.id}.fullDescription`)}
                                             onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.fullDescription`, s)}
                                             multiline
-                                            rows={5}
+                                            rows={8}
                                         />
                                     </div>
                                 ))}

@@ -39,14 +39,14 @@ const ConceptSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header with hero image */}
         <div className="text-center mb-20">
-          <span className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up shadow-button">
+          <span className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-primary-foreground rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up shadow-button" style={getTextStyle(SITE_CONTENT, 'concept3b.badge')}>
             <Sparkles className="w-4 h-4" />
             {content.badge}
           </span>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-100" style={getTextStyle(SITE_CONTENT, 'concept3b.headline')}>
             {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
           </h2>
-          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-200">
+          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-200" style={getTextStyle(SITE_CONTENT, 'concept3b.description')}>
             {content.description}
           </p>
         </div>
@@ -88,12 +88,12 @@ const ConceptSection = () => {
                   </div>
 
                   {/* Stats badge */}
-                  <div className="absolute top-6 right-6 px-4 py-2 bg-lime text-foreground text-xs font-black rounded-full shadow-md">
+                  <div className="absolute top-6 right-6 px-4 py-2 bg-lime text-foreground text-xs font-black rounded-full shadow-md" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.stats`)}>
                     {concept.stats}
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors">
+                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.title`)}>
                     {concept.title}
                   </h3>
                   <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
@@ -126,6 +126,7 @@ const ConceptSection = () => {
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }
             }}
+            style={getTextStyle(SITE_CONTENT, 'concept3b.cta')}
           >
             {content.cta}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
@@ -144,14 +145,14 @@ const ConceptSection = () => {
                     <selectedConcept.Icon className={`w-8 h-8 ${selectedConcept.textColor}`} />
                   </div>
                   <div>
-                    <DialogTitle className="text-3xl font-display font-black text-foreground">
+                    <DialogTitle className="text-3xl font-display font-black text-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.title`)}>
                       {selectedConcept.title}
                     </DialogTitle>
-                    <p className="text-sm text-foreground/70 font-bold tracking-widest">
+                    <p className="text-sm text-foreground/70 font-bold tracking-widest" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.subtitle`)}>
                       {selectedConcept.subtitle}
                     </p>
                   </div>
-                  <div className="ml-auto px-4 py-2 bg-lime text-foreground text-sm font-black rounded-full shadow-md">
+                  <div className="ml-auto px-4 py-2 bg-lime text-foreground text-sm font-black rounded-full shadow-md" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.stats`)}>
                     {selectedConcept.stats}
                   </div>
                 </div>
@@ -163,20 +164,20 @@ const ConceptSection = () => {
                     if (!trimmedLine) return null;
                     if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
                       return (
-                        <h4 key={i} className="font-bold text-lg mt-6 mb-2 text-foreground">
+                        <h4 key={i} className="font-bold text-lg mt-6 mb-2 text-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                           {trimmedLine.replace(/\*\*/g, '')}
                         </h4>
                       );
                     }
                     if (trimmedLine.startsWith('•')) {
                       return (
-                        <p key={i} className="pl-4 text-muted-foreground">
+                        <p key={i} className="pl-4 text-muted-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                           {trimmedLine}
                         </p>
                       );
                     }
                     return (
-                      <p key={i} className="text-foreground/80">
+                      <p key={i} className="text-foreground/80 leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                         {trimmedLine}
                       </p>
                     );
