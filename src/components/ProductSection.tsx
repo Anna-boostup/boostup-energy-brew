@@ -326,7 +326,7 @@ const ProductSection = () => {
                     <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${flavorMode === "mix"
                       ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream"
                       : `${currentFlavor.bgColor} ${currentFlavor.textColor}`
-                      } px-6 py-3 rounded-2xl font-bold shadow-lg animate-bounce-subtle`}>
+                      } px-6 py-3 rounded-2xl font-bold shadow-lg`}>
                       <span className="text-lg">{selectedPack}x</span>
                       <span className="text-sm ml-1">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
                     </div>

@@ -39,29 +39,31 @@ const Footer = () => {
               <ul className="space-y-4">
                 {(group.items || []).map((item) => (
                   <li key={item.label}>
-                    {item.href.startsWith('/') && !item.href.includes('://') ? (
-                      <Link
-                        to={item.href}
-                        onClick={(e) => {
-                          if (window.location.pathname === '/' && item.href.includes('#')) {
-                            e.preventDefault();
-                            const id = item.href.split('#')[1];
-                            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }}
-                        className="text-primary-foreground hover:text-lime transition-colors text-lg"
-                      >
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <a
-                        href={item.href}
-                        target={item.href.startsWith('http') ? "_blank" : undefined}
-                        rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
-                        className="text-primary-foreground hover:text-lime transition-colors text-lg"
-                      >
-                        {item.label}
-                      </a>
+                    {item.label !== "Naše mise" && (
+                      item.href.startsWith('/') && !item.href.includes('://') ? (
+                        <Link
+                          to={item.href}
+                          onClick={(e) => {
+                            if (window.location.pathname === '/' && item.href.includes('#')) {
+                              e.preventDefault();
+                              const id = item.href.split('#')[1];
+                              document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                          className="text-primary-foreground hover:text-lime transition-colors text-lg"
+                        >
+                          {item.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={item.href}
+                          target={item.href.startsWith('http') ? "_blank" : undefined}
+                          rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
+                          className="text-primary-foreground hover:text-lime transition-colors text-lg"
+                        >
+                          {item.label}
+                        </a>
+                      )
                     )}
                   </li>
                 ))}

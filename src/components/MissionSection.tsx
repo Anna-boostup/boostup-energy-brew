@@ -43,7 +43,7 @@ const MissionSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           {isBadgeVisible(SITE_CONTENT, 'mission.badge') && (
-            <span className="inline-flex items-center gap-2 px-5 py-2 bg-lime/20 text-lime rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up"
+            <span className="inline-flex items-center gap-2 px-5 py-2 bg-olive text-primary-foreground rounded-full text-sm font-bold mb-6 tracking-wide animate-fade-up shadow-sm border border-lime/20"
               style={getTextStyle(SITE_CONTENT, 'mission.badge')}>
               <Sparkles className="w-4 h-4" />
               {content.badge}

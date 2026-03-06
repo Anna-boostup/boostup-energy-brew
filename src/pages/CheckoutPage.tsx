@@ -563,7 +563,7 @@ const CheckoutPage = () => {
                                     {formData.isCompany && (
                                         <div className="sm:col-span-2 space-y-4 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2">
-                                                <label className="text-sm font-bold text-muted-foreground ml-1 text-primary">NÁZEV FIRMY *</label>
+                                                <label className="text-[10px] font-bold text-muted-foreground ml-1 text-primary uppercase tracking-wider">Název firmy *</label>
                                                 <input
                                                     name="companyName"
                                                     value={formData.companyName}
@@ -576,7 +576,7 @@ const CheckoutPage = () => {
                                             </div>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div className="space-y-2">
-                                                    <label htmlFor="ico" className="text-sm font-bold text-foreground/90 ml-1">IČO *</label>
+                                                    <label htmlFor="ico" className="text-[10px] font-bold text-foreground/90 ml-1 uppercase tracking-wider">Ičo *</label>
                                                     <input
                                                         id="ico"
                                                         name="ico"
@@ -603,7 +603,7 @@ const CheckoutPage = () => {
                                         </div>
                                     )}
                                     <div className="space-y-2">
-                                        <label htmlFor="firstName" className="text-sm font-bold text-foreground/90 ml-1 uppercase">Jméno *</label>
+                                        <label htmlFor="firstName" className="text-[10px] font-bold text-foreground/90 ml-1 uppercase tracking-wider">Jméno *</label>
                                         <input
                                             id="firstName"
                                             name="firstName"
@@ -616,7 +616,7 @@ const CheckoutPage = () => {
                                         {errors.firstName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.firstName}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="lastName" className="text-sm font-bold text-foreground/90 ml-1 uppercase">Příjmení *</label>
+                                        <label htmlFor="lastName" className="text-[10px] font-bold text-foreground/90 ml-1 uppercase tracking-wider">Příjmení *</label>
                                         <input
                                             id="lastName"
                                             name="lastName"
@@ -629,7 +629,7 @@ const CheckoutPage = () => {
                                         {errors.lastName && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.lastName}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="email" className="text-sm font-bold text-foreground/90 ml-1">EMAIL *</label>
+                                        <label htmlFor="email" className="text-[10px] font-bold text-foreground/90 ml-1 uppercase tracking-wider">Email *</label>
                                         <input
                                             id="email"
                                             type="email"
@@ -643,7 +643,7 @@ const CheckoutPage = () => {
                                         {errors.email && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.email}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="phone" className="text-sm font-bold text-foreground/90 ml-1">TELEFON *</label>
+                                        <label htmlFor="phone" className="text-[10px] font-bold text-foreground/90 ml-1 uppercase tracking-wider">Telefon *</label>
                                         <input
                                             id="phone"
                                             type="tel"
@@ -657,8 +657,8 @@ const CheckoutPage = () => {
                                         {errors.phone && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.phone}</p>}
                                         <p className="text-[10px] text-muted-foreground italic ml-1">Včetně předvolby (např. +420)</p>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-4 sm:col-span-2">
-                                        <div className="col-span-2 space-y-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:col-span-2">
+                                        <div className="sm:col-span-2 space-y-2">
                                             <label htmlFor="street" className="text-sm font-bold text-foreground/70 ml-1 uppercase">Ulice</label>
                                             <input
                                                 id="street"
@@ -697,7 +697,7 @@ const CheckoutPage = () => {
                                         {errors.city && <p className="text-destructive text-[10px] font-bold mt-1 ml-1">{errors.city}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="zip" className="text-sm font-bold text-foreground/90 ml-1">PSČ *</label>
+                                        <label htmlFor="zip" className="text-[10px] font-bold text-foreground/90 ml-1 uppercase tracking-wider">Psč *</label>
                                         <input
                                             id="zip"
                                             name="zip"
