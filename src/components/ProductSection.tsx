@@ -27,19 +27,19 @@ const MixStack = ({ images, className }: { images: string[], className?: string 
       {/* Right Bottle (Silky) */}
       <img
         src={images[2]}
-        alt="Mix Right"
+        alt="BoostUp Silky - energetický shot z čajového extraktu"
         className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90"
       />
       {/* Left Bottle (Red) */}
       <img
         src={images[1]}
-        alt="Mix Left"
+        alt="BoostUp Red - přírodní energy shot s příchutí lesních plodů"
         className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 absolute"
       />
       {/* Middle Bottle (Lemon) - Front */}
       <img
         src={images[0]}
-        alt="Mix Middle"
+        alt="BoostUp Lemon - osvěžující energetický shot s citrusy"
         className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 absolute"
       />
     </div>
@@ -310,13 +310,13 @@ const ProductSection = () => {
                     {flavorMode === "mix" ? (
                       <img
                         src={bottlesHero}
-                        alt="BoostUp Mix"
+                        alt="BoostUp Mix balení - kombinace všech příchutí energetických shotů"
                         className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-2xl"
                       />
                     ) : (
                       <img
                         src={productImageSrc}
-                        alt={selectedFlavor ? flavorName : "BoostUp Energy Brew"}
+                        alt={selectedFlavor ? `BoostUp ${flavorName} - přírodní energy shot` : "BoostUp Supplements - Pure Shot 60ml"}
                         className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl`}
                       />
                     )}
