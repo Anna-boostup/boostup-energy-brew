@@ -175,7 +175,7 @@ export default function CompanyProfile() {
                                     <input
                                         type="checkbox"
                                         id="billingSame"
-                                        className="rounded border-gray-300"
+                                        className="rounded border-border"
                                         checked={billingSame}
                                         onChange={(e) => setBillingSame(e.target.checked)}
                                     />

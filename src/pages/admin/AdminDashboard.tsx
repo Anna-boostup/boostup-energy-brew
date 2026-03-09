@@ -26,7 +26,7 @@ const AdminDashboard = () => {
             <h2 className="text-3xl font-bold tracking-tight">Přehled</h2>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="bg-emerald-50/30 border-emerald-100">
+                <Card className="bg-lime/5 border-lime/10">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Celkové tržby</CardTitle>
                         <span className="font-bold text-muted-foreground">Kč</span>
@@ -45,20 +45,20 @@ const AdminDashboard = () => {
                     <CardContent>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700">Nové / Zaplacené</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-orange-dark">Nové / Zaplacené</p>
                                 <div className="text-xl font-bold">{newOrdersCount}</div>
                                 <p className="text-[10px] text-foreground/70">+{todayOrders} dnes</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-700">Rozpracované</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-olive">Rozpracované</p>
                                 <div className="text-xl font-bold">{processingCount}</div>
                             </div>
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">Vyřízené</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-lime-dark">Vyřízené</p>
                                 <div className="text-xl font-bold">{shippedCount}</div>
                             </div>
                             <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-600">Stornované</p>
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">Stornované</p>
                                 <div className="text-xl font-bold">{cancelledCount}</div>
                             </div>
                         </div>
@@ -111,17 +111,17 @@ const AdminDashboard = () => {
                                             <div className="flex flex-col gap-1 items-end">
                                                 <Badge
                                                     variant={order.status === 'pending' ? 'outline' : 'secondary'}
-                                                    className={order.status !== 'pending' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-none' : 'border-amber-200 text-amber-700'}
+                                                    className={order.status !== 'pending' ? 'bg-lime/10 text-lime-dark hover:bg-lime/20 border-none' : 'border-orange/20 text-orange-dark'}
                                                 >
                                                     {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
                                                 </Badge>
                                                 <Badge
                                                     variant={order.status === 'shipped' ? 'default' : 'outline'}
                                                     className={
-                                                        order.status === 'shipped' ? 'bg-emerald-700 text-white border-none' :
-                                                            order.status === 'processing' ? 'border-blue-200 text-blue-800 bg-blue-50' :
-                                                                order.status === 'cancelled' ? 'border-slate-300 text-slate-600 bg-slate-50' :
-                                                                    'border-amber-300 text-amber-800 bg-amber-50'
+                                                        order.status === 'shipped' ? 'bg-olive text-white border-none' :
+                                                            order.status === 'processing' ? 'border-olive/20 text-olive bg-olive/5' :
+                                                                order.status === 'cancelled' ? 'border-border text-muted-foreground bg-muted/30' :
+                                                                    'border-orange/30 text-orange-dark bg-orange/5'
                                                     }
                                                 >
                                                     {order.status === 'shipped' ? 'Stav: Vyřízena' :
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-8 w-8 p-0 text-green-700 hover:text-green-800 hover:bg-green-50"
+                                                        className="h-8 w-8 p-0 text-olive hover:text-olive-dark hover:bg-olive/5"
                                                         onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
                                                         aria-label={`Tisk štítku Zásilkovny pro objednávku ${order.id}`}
                                                         title="Tisk štítku Zásilkovny"
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
                                                     </Button>
                                                 )}
                                                 <InvoiceModal order={order}>
-                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-900 hover:bg-slate-100" aria-label={`Zobrazit fakturu pro objednávku ${order.id}`}>
+                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-muted" aria-label={`Zobrazit fakturu pro objednávku ${order.id}`}>
                                                         <FileText className="h-4 w-4" />
                                                     </Button>
                                                 </InvoiceModal>
