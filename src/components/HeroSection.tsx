@@ -61,6 +61,20 @@ const HeroSection = () => {
             <Button
               variant="default"
               size="xl"
+              className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
+              onClick={() => {
+                const element = document.getElementById('mise');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+            >
+              {siteContent.hero.cta.secondary}
+            </Button>
+
+            <Button
+              variant="default"
+              size="xl"
               className="group min-w-[200px] shadow-button hover:shadow-lg transition-all animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
               onClick={() => {
                 const element = document.getElementById('produkty');
@@ -71,20 +85,6 @@ const HeroSection = () => {
             >
               {siteContent.hero.cta.primary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
-            </Button>
-
-            <Button
-              variant="default"
-              size="xl"
-              className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
-              onClick={() => {
-                const element = document.getElementById('mise');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }}
-            >
-              {siteContent.hero.cta.secondary}
             </Button>
 
             <Button
