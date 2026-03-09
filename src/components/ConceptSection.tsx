@@ -30,7 +30,7 @@ const ConceptSection = () => {
   };
 
   return (
-    <section id="3b" className="py-28 bg-[#1a320f] relative overflow-hidden">
+    <section id="3b" className="py-28 bg-background relative overflow-hidden">
       {/* Background decorative */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-secondary/50 to-transparent" />
       <div className="absolute bottom-20 left-20 w-80 h-80 bg-lime/10 rounded-full blur-3xl animate-pulse-glow" />
@@ -81,7 +81,7 @@ const ConceptSection = () => {
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500">
+                <div className={`relative p-8 lg:p-10 rounded-3xl border-2 border-border hover-lift shadow-sm h-full flex flex-col transition-all duration-500 ${concept.id === 'balance' ? 'bg-[#1a320f] text-cream border-lime' : 'bg-card text-foreground group-hover:bg-foreground group-hover:text-primary-foreground'}`}>
                   {/* Icon */}
                   <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />
@@ -96,7 +96,7 @@ const ConceptSection = () => {
                   <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
                     {concept.subtitle}
                   </p>
-                  <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
+                  <p className={`flex-grow text-lg leading-relaxed ${concept.id === 'balance' ? 'text-cream/90' : 'text-foreground/90 group-hover:text-primary-foreground'}`} style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
                     {concept.description}
                   </p>
 
