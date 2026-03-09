@@ -152,6 +152,12 @@ const ConceptSection = () => {
                 </div>
               </DialogHeader>
 
+              <div className="mb-6">
+                <p className="text-xl font-medium text-foreground leading-relaxed italic border-l-4 border-primary pl-4" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.description`)}>
+                  {selectedConcept.description}
+                </p>
+              </div>
+
               <DialogDescription asChild>
                 <div className="text-foreground space-y-4 text-base leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
                   {selectedConcept.fullDescription.split('\n').map((line: string, i: number) => {
