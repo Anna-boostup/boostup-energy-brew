@@ -11,7 +11,7 @@ const CTASection = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <section className="py-28 bg-gradient-to-br from-primary via-olive-dark to-foreground relative overflow-hidden">
+    <section className="py-28 bg-secondary/30 relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-lime/10 via-transparent to-terracotta/10" />
@@ -35,7 +35,7 @@ const CTASection = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           {isBadgeVisible(SITE_CONTENT, 'cta.badge') && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-lime/20 backdrop-blur-sm rounded-full text-lime text-sm font-black mb-10 border border-lime/30 animate-fade-up"
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-full text-sm font-black mb-10 shadow-button animate-fade-up"
               style={getTextStyle(SITE_CONTENT, 'cta.badge')}>
               <Sparkles className="w-5 h-5" />
               <span>{content.badge}</span>
@@ -44,12 +44,12 @@ const CTASection = () => {
           )}
 
           {/* Headline */}
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-primary-foreground mb-8 leading-tight animate-fade-up animation-delay-100">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-8 leading-tight animate-fade-up animation-delay-100">
             <span style={getTextStyle(SITE_CONTENT, 'cta.headline.part1')}>{content.headline.part1}</span>
             <span className="block text-lime animate-slide-in-left animation-delay-300" style={getTextStyle(SITE_CONTENT, 'cta.headline.highlight')}>{content.headline.highlight}</span>
           </h2>
 
-          <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto animate-fade-up animation-delay-200"
+          <p className="text-lg md:text-xl text-foreground/80 mb-12 max-w-2xl mx-auto animate-fade-up animation-delay-200"
             style={getTextStyle(SITE_CONTENT, 'cta.description')}>
             {content.description}
           </p>
@@ -60,15 +60,15 @@ const CTASection = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className={`flex flex-col sm:flex-row items-center gap-4 p-2 rounded-2xl sm:rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
+            <div className={`flex flex-col sm:flex-row items-center gap-4 p-2 rounded-2xl sm:rounded-full bg-white border-2 transition-all duration-500 ${isHovered ? 'border-primary shadow-lg shadow-primary/10 scale-[1.02]' : 'border-border'}`}>
               <div className="flex-1 flex items-center gap-3 px-5">
-                <Mail className={`w-6 h-6 transition-colors duration-300 ${isHovered ? 'text-lime' : 'text-primary-foreground/60'}`} />
+                <Mail className={`w-6 h-6 transition-colors duration-300 ${isHovered ? 'text-primary' : 'text-muted-foreground'}`} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={content.placeholder}
-                  className="w-full py-4 bg-transparent text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none text-lg font-medium"
+                  className="w-full py-4 bg-transparent text-foreground placeholder:text-muted-foreground/50 focus:outline-none text-lg font-medium"
                 />
               </div>
               <Button
@@ -83,7 +83,7 @@ const CTASection = () => {
           </div>
 
           {/* Social proof */}
-          <div className="flex flex-wrap justify-center gap-10 text-primary-foreground/70 animate-fade-up animation-delay-600">
+          <div className="flex flex-wrap justify-center gap-10 text-foreground/70 animate-fade-up animation-delay-600">
             <div className="flex items-center gap-3">
               <div className="flex -space-x-3">
                 {[...Array(4)].map((_, i) => (

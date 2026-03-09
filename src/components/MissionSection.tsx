@@ -21,7 +21,7 @@ const MissionSection = () => {
   };
 
   return (
-    <section id="mise" className="py-28 bg-foreground text-primary-foreground relative overflow-hidden">
+    <section id="mise" className="py-28 bg-background relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-80 h-80 bg-lime/10 rounded-full blur-3xl animate-pulse-glow" />
@@ -50,14 +50,14 @@ const MissionSection = () => {
             </span>
           )}
 
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black mb-8 leading-tight animate-fade-up animation-delay-100">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-foreground mb-8 leading-tight animate-fade-up animation-delay-100">
             <span style={getTextStyle(SITE_CONTENT, 'mission.headline.part1')}>{content.headline.part1}</span>
             <span className="block text-lime" style={getTextStyle(SITE_CONTENT, 'mission.headline.highlight')}>{content.headline.highlight}</span>
           </h2>
 
-          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground leading-relaxed animate-fade-up animation-delay-200">
+          <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-foreground/80 leading-relaxed animate-fade-up animation-delay-200">
             {(content.paragraphs || []).map((text, i) => (
-              <p key={i} style={getTextStyle(SITE_CONTENT, `mission.paragraph.${i}`)} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold">Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
+              <p key={i} style={getTextStyle(SITE_CONTENT, `mission.paragraph.${i}`)} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-foreground font-bold">Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
             ))}
           </div>
         </div>
@@ -65,8 +65,9 @@ const MissionSection = () => {
         {/* Features Grid - Large stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {(content.features || []).map((feature, index) => {
+            const isNatural = feature.title === "Přírodní složení";
             const Icon = iconMap[feature.title] || Zap;
-            const textColor = feature.color === 'bg-lime' || feature.color === 'bg-orange' ? 'text-foreground' : 'text-cream';
+            const textColor = isNatural ? 'text-cream' : (feature.color === 'bg-lime' || feature.color === 'bg-orange' ? 'text-foreground' : 'text-cream');
 
             return (
               <div
@@ -77,9 +78,9 @@ const MissionSection = () => {
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 hover-lift h-full flex flex-col items-center text-center backdrop-blur-md">
+                <div className={`relative p-6 lg:p-8 rounded-3xl border-2 hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500 ${isNatural ? 'bg-[#1a320f] text-cream border-lime shadow-lg' : 'bg-primary-foreground/5 border-primary-foreground/10 text-foreground'}`}>
                   {/* Icon */}
-                  <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
+                  <div className={`w-16 h-16 ${isNatural ? 'bg-olive' : (iconBgMap[feature.title] || feature.color)} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
@@ -89,10 +90,10 @@ const MissionSection = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
+                  <h3 className={`font-bold text-lg mb-2 group-hover:text-lime transition-colors ${isNatural ? 'text-cream' : 'text-foreground'}`}>{feature.title}</h3>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>
+                  <p className={`text-sm leading-relaxed ${isNatural ? 'text-cream/90' : 'text-foreground/70'}`}>{feature.description}</p>
                 </div>
               </div>
             );
