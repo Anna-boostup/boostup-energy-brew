@@ -47,9 +47,9 @@ export const SITE_CONTENT = {
             highlight: "MISE"
         },
         paragraphs: [
-            "Každý z nás zná ten den, kdy se snažíte soustředit, dodělat úkol, ale prostě to nejde. Káva už nepomáhá a klasické energeťáky?",
-            "Ty vás sice nakopnou, ale za půl hodiny jste zase dolů. Chtěli jsme to změnit.",
-            "Proto jsme vytvořili BoostUp – čistý, efektivní shot, který vás drží v kondici celé hodiny."
+            "Každý z nás zná ten den, kdy se snažíte soustředit, dodělat úkol, ale mentální kapacita už nestačí. Káva už nepomáhá a klasické energetické nápoje?",
+            "Ty sice přinesou rychlý příliv energie, ale za pár minut pocítíte útlum. Chtěli jsme to změnit.",
+            "Proto jsme vytvořili BoostUp – čistý, efektivní shot, který vás udrží v optimální kondici po dlouhé hodiny."
         ],
         features: [
             {
@@ -95,9 +95,9 @@ export const SITE_CONTENT = {
           BRAIN představuje první pilíř našeho konceptu 3B zaměřený na optimalizaci kognitivních funkcí.
           
           **Co obsahuje:**
-          • L-Theanin pro klidnou koncentraci bez nervozity
-          • Guarana s postupným uvolňováním energie
-          • B-vitamíny pro zdravou funkci nervové soustavy
+          • L-theanin pro klidnou koncentraci bez nervozity
+          • Guarana pro postupné uvolňování energie
+          • B-komplex pro optimální funkci nervové soustavy
           
           **Přínosy:**
           • Zvýšená mentální ostrost a jasnost myšlení
@@ -230,7 +230,7 @@ export const SITE_CONTENT = {
             }
         },
         bottom: {
-            copyright: "© 2024 BOOSTUP SUPPLEMENTS S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
+            copyright: "© 2026 BOOSTUP SUPPLEMENTS S.R.O. VŠECHNA PRÁVA VYHRAZENA.",
             legal: [
                 { label: "Obchodní podmínky", href: "/obchodni-podminky" },
                 { label: "Ochrana osobních údajů", href: "/ochrana-osobnich-udaju" }
@@ -298,7 +298,7 @@ export const SITE_CONTENT = {
                 "Podpora imunitního systému",
                 "Zlepšení nálady a regenerace"
             ],
-            ingredients: ["Ashwagandha", "Rhodiola Rosea", "Meduňka"]
+            ingredients: ["Ašvaganda", "Rozchodnice růžová", "Meduňka"]
         },
         vitamins: {
             title: "Vitamíny",
