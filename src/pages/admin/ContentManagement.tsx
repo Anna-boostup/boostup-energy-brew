@@ -608,6 +608,18 @@ const ContentManagement = () => {
                                                 onChange={(e) => updateField(['flavors', key, 'description'], e.target.value)}
                                             />
                                         </div>
+                                        <div className="grid gap-2">
+                                            <div className="flex justify-between items-center">
+                                                <Label>Nutriční hodnoty</Label>
+                                                <span className="text-[10px] text-muted-foreground">Formát: Název: Hodnota</span>
+                                            </div>
+                                            <Textarea
+                                                rows={3}
+                                                value={flavor.nutritionalFacts || ""}
+                                                onChange={(e) => updateField(['flavors', key, 'nutritionalFacts'], e.target.value)}
+                                                placeholder="Energie: 15 kcal..."
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="space-y-4">

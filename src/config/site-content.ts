@@ -252,17 +252,20 @@ export const SITE_CONTENT = {
         lemon: {
             name: "LEMON BLAST",
             description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
-            labels: ["Bez cukru", "Vegan", "Energie"]
+            labels: ["Bez cukru", "Vegan", "Energie"],
+            nutritionalFacts: "Energie: 15 kcal / 63 kJ\nTuky: 0 g\nSacharidy: 1.2 g\nCukry: 0.1 g\nBílkoviny: 0.1 g\nSůl: 0.05 g"
         },
         red: {
             name: "RED RUSH",
             description: "Červené ovoce a guarana pro tvůj rychlý a efektivní start",
-            labels: ["Vitamíny", "Rychlý nástup", "Výkon"]
+            labels: ["Vitamíny", "Rychlý nástup", "Výkon"],
+            nutritionalFacts: "Energie: 18 kcal / 75 kJ\nTuky: 0 g\nSacharidy: 2.1 g\nCukry: 0.5 g\nBílkoviny: 0.1 g\nSůl: 0.05 g"
         },
         silky: {
             name: "SILKY LEAF",
             description: "Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii",
-            labels: ["Antioxidanty", "Klidná síla", "Soustředění"]
+            labels: ["Antioxidanty", "Klidná síla", "Soustředění"],
+            nutritionalFacts: "Energie: 12 kcal / 50 kJ\nTuky: 0 g\nSacharidy: 0.8 g\nCukry: 0.1 g\nBílkoviny: 0.2 g\nSůl: 0.05 g"
         }
     },
 
