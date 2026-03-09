@@ -340,13 +340,6 @@
   }
 }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
-}
 
 .animate-fade-up {
   animation: fade-up 0.8s ease-out forwards;
@@ -364,9 +357,6 @@
   animation: pulse-glow 4s ease-in-out infinite;
 }
 
-.animate-bounce-subtle {
-  animation: bounce-subtle 2s ease-in-out infinite;
-}
 
 .animate-rotate-slow {
   animation: rotate-slow 20s linear infinite;

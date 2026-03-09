@@ -8,7 +8,7 @@ const Logout = () => {
         <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
             <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl space-y-8 text-center animate-fade-up">
                 <div className="flex justify-center">
-                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center animate-bounce-subtle">
+                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
                         <LogOut className="w-10 h-10 text-primary" />
                     </div>
                 </div>
