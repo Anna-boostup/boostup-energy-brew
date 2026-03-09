@@ -78,7 +78,7 @@ const MissionSection = () => {
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className={`relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500 ${isNatural ? 'group-hover:bg-[#1a320f] group-hover:border-transparent' : ''}`}>
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 group-hover:border-transparent hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500">
                   {/* Icon */}
                   <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
@@ -90,10 +90,10 @@ const MissionSection = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className={`font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors ${isNatural ? 'group-hover:text-cream' : ''}`}>{feature.title}</h3>
+                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
 
                   {/* Description */}
-                  <p className={`text-sm text-primary-foreground leading-relaxed ${isNatural ? 'group-hover:text-cream/90' : ''}`}>{feature.description}</p>
+                  <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );
