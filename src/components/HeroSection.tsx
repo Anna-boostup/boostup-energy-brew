@@ -118,14 +118,14 @@ const HeroSection = () => {
             {/* Top radial gradient for depth - slightly lightened for #17 */}
             <div className="absolute top-0 inset-x-0 h-[600px] bg-gradient-to-b from-lime/10 to-transparent pointer-events-none opacity-80" />
             {/* Multiple glow layers for depth */}
-            <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 animate-pulse-glow pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 animate-pulse-glow animation-delay-200 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 pointer-events-none" />
 
             {/* Product Image */}
             <img
               src={bottlesHero}
               alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
-              className="relative w-full max-w-2xl mx-auto drop-shadow-2xl"
+              className="relative w-full max-w-2xl mx-auto drop-shadow-xl"
             />
           </div>
         </div>

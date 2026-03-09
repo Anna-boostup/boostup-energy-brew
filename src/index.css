@@ -192,29 +192,6 @@
 }
 
 /* Animations */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px) rotate(-3deg);
-  }
-
-  50% {
-    transform: translateY(-15px) rotate(-3deg);
-  }
-}
-
-@keyframes float-slow {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-}
 
 @keyframes fade-up {
   from {
