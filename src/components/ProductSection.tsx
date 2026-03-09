@@ -192,7 +192,7 @@ const ProductSection = () => {
   };
 
   const basePrice = getDynamicPrice();
-  const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.85) : basePrice;
+  const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.90) : basePrice;
 
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
   const isMixValid = selectedPack ? currentMixCount === selectedPack : false;
@@ -288,7 +288,7 @@ const ProductSection = () => {
 
   return (
     <TooltipProvider>
-      <section id="produkty" className="py-28 bg-secondary/30 relative overflow-hidden">
+      <section id="produkty" className="py-28 bg-[#1a320f] relative overflow-hidden">
         {/* Animated background elements */}
         {/* ... (SVG background elements omitted for brevity, but they're usually at the top of the section) ... */}
 
@@ -353,14 +353,19 @@ const ProductSection = () => {
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
+                      {pack === 3 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-olive text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
+                          76 KČ / SHOT
+                        </div>
+                      )}
                       {pack === 12 && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                          -10% SLEVA
+                          70,80 KČ / SHOT
                         </div>
                       )}
                       {pack === 21 && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                          NEJVÝHODNĚJŠÍ -30%
+                          66,60 KČ / SHOT
                         </div>
                       )}
                       {pack}x
@@ -409,7 +414,7 @@ const ProductSection = () => {
                       }`}
                   >
                     <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
-                      -15% SLEVA
+                      -10% SLEVA
                     </div>
                     <div className="flex items-center gap-3">
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'subscription' ? "border-white" : "border-muted-foreground"}`}>
@@ -417,7 +422,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Předplatné</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-10%</span></div>
                       </div>
                     </div>
                   </button>

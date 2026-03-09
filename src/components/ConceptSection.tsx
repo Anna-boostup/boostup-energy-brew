@@ -30,7 +30,7 @@ const ConceptSection = () => {
   };
 
   return (
-    <section id="3b" className="py-28 bg-background relative overflow-hidden">
+    <section id="3b" className="py-28 bg-[#1a320f] relative overflow-hidden">
       {/* Background decorative */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-secondary/50 to-transparent" />
       <div className="absolute bottom-20 left-20 w-80 h-80 bg-lime/10 rounded-full blur-3xl animate-pulse-glow" />
