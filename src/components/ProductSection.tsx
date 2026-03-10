@@ -304,20 +304,20 @@ const ProductSection = () => {
                   : !selectedFlavor
                     ? "bg-gradient-to-br from-lime via-terracotta to-olive opacity-20"
                     : `bg-gradient-to-br ${currentFlavor.color}`
-                  } opacity-30 blur-3xl scale-125 transition-all duration-700 animate-pulse-glow`} />
+                  } opacity-30 blur-3xl scale-125 transition-all duration-700`} />
                 <div className="relative">
                   <div className="relative">
                     {flavorMode === "mix" ? (
                       <img
                         src={bottlesHero}
                         alt="BoostUp Mix balení - kombinace všech příchutí energetických shotů"
-                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-2xl"
+                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-xl"
                       />
                     ) : (
                       <img
                         src={productImageSrc}
                         alt={selectedFlavor ? `BoostUp ${flavorName} - přírodní energy shot` : "BoostUp Supplements - Pure Shot 60ml"}
-                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl`}
+                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-xl`}
                       />
                     )}
                   </div>
@@ -332,7 +332,7 @@ const ProductSection = () => {
                     </div>
                   )}
                 </div>
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-48 h-8 bg-foreground/20 rounded-full blur-xl" />
+                {/* Odstraněno: Umělý stín (blur oval) pod lahvičkou, který tvořil dojem vznášení */}
               </div>
             </div>
 

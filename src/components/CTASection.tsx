@@ -35,7 +35,7 @@ const CTASection = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           {isBadgeVisible(SITE_CONTENT, 'cta.badge') && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-lime/20 backdrop-blur-sm rounded-full text-lime text-sm font-black mb-10 border border-lime/30 animate-fade-up animate-bounce-subtle"
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-lime/20 backdrop-blur-sm rounded-full text-lime text-sm font-black mb-10 border border-lime/30 animate-fade-up"
               style={getTextStyle(SITE_CONTENT, 'cta.badge')}>
               <Sparkles className="w-5 h-5" />
               <span>{content.badge}</span>
