@@ -12,6 +12,11 @@ import { useInventory } from "@/context/InventoryContext";
 
 import { SITE_CONTENT } from "@/config/site-content";
 
+export type OrderType = {
+  id: string;
+  [key: string]: any;
+};
+
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { toast } = useToast();
     const { updateOrderPacketaInfo, updateOrderStatus } = useInventory();

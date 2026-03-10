@@ -35,98 +35,96 @@ const HeroSection = () => {
           </div>
         )}
 
-        {/* Centered Text Content */}
-        <div className="text-center animate-fade-up z-10 mb-12">
-          <h1 className="font-display text-foreground mb-8 tracking-tight">
-            <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-foreground/90 mb-4 animate-slide-in-left uppercase tracking-[0.2em]"
-              style={getTextStyle(siteContent, 'hero.headline.part1')}>
-              {content.headline.part1}
-            </span>
-            <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gradient-energy animate-slide-in-left animation-delay-200 leading-[1.1] uppercase"
-              style={getTextStyle(siteContent, 'hero.headline.gradient')}>
-              {content.headline.gradient}
-            </span>
-            <span className="block text-lg sm:text-2xl md:text-3xl font-bold text-foreground/90 mt-6 animate-slide-in-left animation-delay-400 leading-tight max-w-4xl mx-auto italic"
-              style={getTextStyle(siteContent, 'hero.headline.part2')}>
-              {content.headline.part2}
-            </span>
-          </h1>
+        {/* Two-column layout: Text left, Bottle right */}
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 min-h-[70vh]">
+          {/* Left: Text Content */}
+          <div className="flex-1 text-left animate-fade-up z-10">
+            <h1 className="font-display text-foreground mb-8 tracking-tight">
+              <span className="block text-xl sm:text-3xl md:text-4xl font-medium text-foreground/90 mb-4 animate-slide-in-left uppercase tracking-[0.2em]"
+                style={getTextStyle(siteContent, 'hero.headline.part1')}>
+                {content.headline.part1}
+              </span>
+              <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gradient-energy animate-slide-in-left animation-delay-200 leading-[1.1] uppercase"
+                style={getTextStyle(siteContent, 'hero.headline.gradient')}>
+                {content.headline.gradient}
+              </span>
+              <span className="block text-lg sm:text-2xl md:text-3xl font-bold text-foreground/90 mt-6 animate-slide-in-left animation-delay-400 leading-tight max-w-xl italic"
+                style={getTextStyle(siteContent, 'hero.headline.part2')}>
+                {content.headline.part2}
+              </span>
+            </h1>
 
-          <p className="text-xl md:text-2xl text-foreground/90 italic max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-up animation-delay-500"
-            style={getTextStyle(siteContent, 'hero.description')}>
-            {siteContent.hero.description}
-          </p>
+            <p className="text-xl md:text-2xl text-foreground/90 italic max-w-xl mb-10 leading-relaxed animate-fade-up animation-delay-500"
+              style={getTextStyle(siteContent, 'hero.description')}>
+              {siteContent.hero.description}
+            </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center relative z-20">
-            <Button
-              variant="default"
-              size="xl"
-              className="group min-w-[200px] shadow-button hover:shadow-lg transition-all animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
-              onClick={() => {
-                const element = document.getElementById('produkty');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }}
-            >
-              {siteContent.hero.cta.primary}
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 mb-12 animate-fade-up animation-delay-600 items-start relative z-20">
+              <Button
+                variant="default"
+                size="xl"
+                className="group min-w-[200px] shadow-button hover:shadow-lg transition-all animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
+                onClick={() => {
+                  const element = document.getElementById('produkty');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+              >
+                {siteContent.hero.cta.primary}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
+              </Button>
 
-            <Button
-              variant="default"
-              size="xl"
-              className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
-              onClick={() => {
-                const element = document.getElementById('mise');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }}
-            >
-              {siteContent.hero.cta.secondary}
-            </Button>
+              <Button
+                variant="default"
+                size="xl"
+                className="bg-secondary text-foreground border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
+                onClick={() => {
+                  const element = document.getElementById('mise');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+              >
+                {siteContent.hero.cta.secondary}
+              </Button>
 
-            <Button
-              variant="default"
-              size="xl"
-              className="bg-secondary text-terracotta border-2 border-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
-              onClick={() => {
-                const element = document.getElementById('3b');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }}
-            >
-              {siteContent.hero.cta.concept3b}
-            </Button>
+              <Button
+                variant="default"
+                size="xl"
+                className="bg-secondary text-terracotta border-2 border-terracotta hover:bg-terracotta hover:text-white transition-all duration-300 min-w-[200px] shadow-button hover:shadow-lg animate-energy-pulse rounded-full hover:scale-105 cursor-pointer"
+                onClick={() => {
+                  const element = document.getElementById('3b');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+              >
+                {siteContent.hero.cta.concept3b}
+              </Button>
+            </div>
+
+            {siteContent.hero.testimonial && (
+              <div className="mt-8 animate-fade-up animation-delay-800">
+                <h2 className="sr-only">Recenze a doporučení</h2>
+                <p className="text-xl md:text-2xl text-foreground/90 italic max-w-xl leading-relaxed">
+                  {siteContent.hero.testimonial}
+                </p>
+              </div>
+            )}
           </div>
 
-          {siteContent.hero.testimonial && (
-            <div className="mt-8 animate-fade-up animation-delay-800">
-              <h2 className="sr-only">Recenze a doporučení</h2>
-              <p className="text-xl md:text-2xl text-foreground/90 italic max-w-3xl mx-auto leading-relaxed">
-                {siteContent.hero.testimonial}
-              </p>
+          {/* Right: Product Bottle Image */}
+          <div className="flex-1 relative animate-fade-up animation-delay-300 flex items-center justify-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 pointer-events-none" />
+              <img
+                src={bottleHero}
+                alt="BoostUp Pure Shot - Silky Leaf energetický nápoj"
+                className="relative w-64 md:w-80 lg:w-96 h-auto drop-shadow-xl -scale-x-100"
+              />
             </div>
-          )}
-        </div>
-
-        {/* Product Image - Centered below text */}
-        <div className="relative animate-fade-up animation-delay-300 mb-8 sm:mb-16">
-          <div className="relative max-w-3xl mx-auto">
-            {/* Top radial gradient for depth - slightly lightened for #17 */}
-            <div className="absolute top-0 inset-x-0 h-[600px] bg-gradient-to-b from-lime/10 to-transparent pointer-events-none opacity-80" />
-            {/* Multiple glow layers for depth */}
-            <div className="absolute inset-0 bg-gradient-to-t from-lime/30 via-olive/15 to-terracotta/15 blur-3xl scale-125 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-br from-orange/20 to-transparent blur-2xl scale-110 pointer-events-none" />
-
-            {/* Product Image */}
-            <img
-              src={bottlesHero}
-              alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
-              className="relative w-full max-w-2xl mx-auto drop-shadow-xl"
-            />
           </div>
         </div>
 
