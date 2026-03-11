@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://drinkboostup.cz/</loc>
+    <loc>https://www.drinkboostup.cz/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://drinkboostup.cz/obchodni-podminky</loc>
+    <loc>https://www.drinkboostup.cz/obchodni-podminky</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://drinkboostup.cz/ochrana-osobnich-udaju</loc>
+    <loc>https://www.drinkboostup.cz/ochrana-osobnich-udaju</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://drinkboostup.cz/reklamace</loc>
+    <loc>https://www.drinkboostup.cz/reklamace</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://drinkboostup.cz/cookies</loc>
+    <loc>https://www.drinkboostup.cz/cookies</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://drinkboostup.cz/doprava-a-platba</loc>
+    <loc>https://www.drinkboostup.cz/doprava-a-platba</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://drinkboostup.cz/podminky-opakovane-platby</loc>
+    <loc>https://www.drinkboostup.cz/podminky-opakovane-platby</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
