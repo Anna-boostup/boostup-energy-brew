@@ -18,11 +18,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import GoPayMockGateway from '@/components/GoPayMockGateway';
 
-// Image Fallbacks
-import bottleLemon from "@/assets/bottle-lemon.png";
-import bottleRed from "@/assets/bottle-red.png";
-import bottleSilky from "@/assets/bottle-silky.png";
-import bottlesHero from "@/assets/hero-vse.png";
+import bottleLemon from "@/assets/bottle-lemon.webp";
+import bottleRed from "@/assets/bottle-red.webp";
+import bottleSilky from "@/assets/bottle-silky.webp";
+import bottlesHero from "@/assets/hero-vse.webp";
 
 const getFallbackImage = (item: any) => {
     if (item.flavorMode === 'mix') return bottlesHero;

@@ -12,7 +12,7 @@ interface SEOProps {
 export const SEO = ({
     title,
     description = "Přírodní energie na celý den. 6 hodin soustředění bez nervozity a crash efektu.",
-    image = "https://www.drinkboostup.cz/og-image.jpg",
+    image = "https://www.drinkboostup.cz/hero-vse.jpg",
     url = "https://www.drinkboostup.cz",
     type = "website",
     googleVerification = "ZUV9w82flSkJabmd855ZDSmaKWNTzQDlsWHOuPKwEYw"
@@ -46,7 +46,7 @@ export const SEO = ({
                     "@type": "Brand",
                     "name": "BoostUp"
                 },
-                "image": "https://www.drinkboostup.cz/hero-vse.png",
+                "image": "https://www.drinkboostup.cz/hero-vse.jpg",
                 "aggregateRating": {
                     "@type": "AggregateRating",
                     "ratingValue": "4.9",
