@@ -69,7 +69,42 @@ export const SEO = ({
                     "priceCurrency": "CZK",
                     "price": "59.00",
                     "priceValidUntil": "2026-12-31",
-                    "availability": "https://schema.org/InStock"
+                    "availability": "https://schema.org/InStock",
+                    "shippingDetails": {
+                        "@type": "OfferShippingDetails",
+                        "shippingRate": {
+                            "@type": "MonetaryAmount",
+                            "value": "79",
+                            "currency": "CZK"
+                        },
+                        "shippingDestination": {
+                            "@type": "DefinedRegion",
+                            "addressCountry": "CZ"
+                        },
+                        "deliveryTime": {
+                            "@type": "ShippingDeliveryTime",
+                            "handlingTime": {
+                                "@type": "QuantitativeValue",
+                                "minValue": 0,
+                                "maxValue": 1,
+                                "unitCode": "DAY"
+                            },
+                            "transitTime": {
+                                "@type": "QuantitativeValue",
+                                "minValue": 1,
+                                "maxValue": 3,
+                                "unitCode": "DAY"
+                            }
+                        }
+                    },
+                    "hasMerchantReturnPolicy": {
+                        "@type": "MerchantReturnPolicy",
+                        "applicableCountry": "CZ",
+                        "returnPolicyCategory": "https://schema.org/MerchantReturnPolicyFullRefund",
+                        "merchantReturnDays": 14,
+                        "returnMethod": "https://schema.org/ReturnByMail",
+                        "returnFees": "https://schema.org/ReturnFeesCustomerPays"
+                    }
                 }
             },
             {
