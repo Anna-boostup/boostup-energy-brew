@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+
 import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
 import bottlesHero from "@/assets/hero-vse.webp"; 
 import bottleLemon from "@/assets/bottle-lemon.webp";
+import bottleLemonMobile from "@/assets/bottle-lemon-mobile.webp";
 import bottleRed from "@/assets/bottle-red.webp";
+import bottleRedMobile from "@/assets/bottle-red-mobile.webp";
 import bottleSilky from "@/assets/bottle-silky.webp";
+import bottleSilkyMobile from "@/assets/bottle-silky-mobile.webp";
 import pack3Silky from "@/assets/3pack.webp"; 
 import pack3Lemon from "@/assets/3PackLemon.webp";
 import pack3Red from "@/assets/3PackRed.webp";
@@ -383,21 +386,33 @@ const ProductSection = () => {
                   <div className="relative">
                     {flavorMode === "mix" ? (
                       <img
-                        src={bottlesHero}
-                        alt="BoostUp Mix balení - kombinace všech příchutí energetických shotů"
-                        className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-xl"
+                        src={bottleRed}
+                        srcSet={`${bottleRedMobile} 500w, ${bottleRed} 1000w`}
+                        sizes="(max-width: 640px) 100vw, 384px"
+                        alt="BoostUp Pure Shot - Red Power"
+                        className="w-full h-full object-contain drop-shadow-2xl"
                         loading="lazy"
-                        width={450}
-                        height={450}
+                        width={300}
+                        height={400}
                       />
                     ) : (
                       <img
                         src={productImageSrc}
-                        alt={selectedFlavor ? `BoostUp ${flavorName} - přírodní energy shot` : "BoostUp Supplements - Pure Shot 60ml"}
-                        className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-xl`}
+                        srcSet={
+                          selectedFlavor === 'lemon'
+                            ? `${bottleLemonMobile} 500w, ${bottleLemon} 1000w`
+                            : selectedFlavor === 'red'
+                              ? `${bottleRedMobile} 500w, ${bottleRed} 1000w`
+                              : selectedFlavor === 'silky'
+                                ? `${bottleSilkyMobile} 500w, ${bottleSilky} 1000w`
+                                : `${bottlesHero} 1000w` // Fallback for no selected flavor
+                        }
+                        sizes="(max-width: 640px) 100vw, 384px"
+                        alt={selectedFlavor ? `BoostUp Pure Shot - ${flavorName}` : "BoostUp Supplements - Pure Shot 60ml"}
+                        className="w-full h-full object-contain drop-shadow-2xl"
                         loading="lazy"
-                        width={400}
-                        height={500}
+                        width={300}
+                        height={400}
                       />
                     )}
                   </div>
