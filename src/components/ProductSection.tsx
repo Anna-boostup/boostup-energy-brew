@@ -3,13 +3,13 @@ import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
-import bottlesHero from "@/assets/hero-vse.png"; // Import new high-res hero
-import bottleLemon from "@/assets/bottle-lemon.png";
-import bottleRed from "@/assets/bottle-red.png";
-import bottleSilky from "@/assets/bottle-silky.png";
-import pack3Silky from "@/assets/3pack.png"; // Keeping old static fallbacks for now just in case
-import pack3Lemon from "@/assets/3PackLemon.png";
-import pack3Red from "@/assets/3PackRed.png";
+import bottlesHero from "@/assets/hero-vse.webp"; 
+import bottleLemon from "@/assets/bottle-lemon.webp";
+import bottleRed from "@/assets/bottle-red.webp";
+import bottleSilky from "@/assets/bottle-silky.webp";
+import pack3Silky from "@/assets/3pack.webp"; 
+import pack3Lemon from "@/assets/3PackLemon.webp";
+import pack3Red from "@/assets/3PackRed.webp";
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
@@ -44,18 +44,27 @@ const MixStack = ({ images, className }: { images: string[], className?: string 
         src={images[2]}
         alt="BoostUp Silky - energetický shot z čajového extraktu"
         className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90"
+        loading="lazy"
+        width={300}
+        height={400}
       />
       {/* Left Bottle (Red) */}
       <img
         src={images[1]}
         alt="BoostUp Red - přírodní energy shot s příchutí lesních plodů"
         className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 absolute"
+        loading="lazy"
+        width={300}
+        height={400}
       />
       {/* Middle Bottle (Lemon) - Front */}
       <img
         src={images[0]}
         alt="BoostUp Lemon - osvěžující energetický shot s citrusy"
         className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 absolute"
+        loading="lazy"
+        width={400}
+        height={500}
       />
     </div>
   );
@@ -377,12 +386,18 @@ const ProductSection = () => {
                         src={bottlesHero}
                         alt="BoostUp Mix balení - kombinace všech příchutí energetických shotů"
                         className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-xl"
+                        loading="lazy"
+                        width={450}
+                        height={450}
                       />
                     ) : (
                       <img
                         src={productImageSrc}
                         alt={selectedFlavor ? `BoostUp ${flavorName} - přírodní energy shot` : "BoostUp Supplements - Pure Shot 60ml"}
                         className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-xl`}
+                        loading="lazy"
+                        width={400}
+                        height={500}
                       />
                     )}
                   </div>

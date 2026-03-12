@@ -1,8 +1,8 @@
 import { useContent } from "@/context/ContentContext";
 import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
 import { Button } from "./ui/button";
-import EnergyChart from "./EnergyChart";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+const EnergyChart = lazy(() => import("./EnergyChart"));
 import { getTextStyle } from "@/lib/textStyles";
 import {
   Dialog,
@@ -52,8 +52,10 @@ const ConceptSection = () => {
         </div>
 
         {/* Energy Chart */}
-        <div className="mb-20 animate-fade-up animation-delay-300">
-          <EnergyChart />
+        <div className="mb-20 animate-fade-up animation-delay-300 min-h-[400px]">
+          <Suspense fallback={<div className="h-[400px] w-full flex items-center justify-center bg-secondary/20 rounded-3xl animate-pulse">Načítání grafu...</div>}>
+            <EnergyChart />
+          </Suspense>
         </div>
 
         {/* 3B Cards */}

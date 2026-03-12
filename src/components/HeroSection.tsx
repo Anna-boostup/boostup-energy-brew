@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
-import bottlesHero from "@/assets/hero-vse.png";
+import bottlesHero from "@/assets/hero-vse.webp";
 import { useState } from "react";
 import IngredientDialog from "./IngredientDialog";
 import { useContent } from "@/context/ContentContext";
@@ -126,6 +126,8 @@ const HeroSection = () => {
               src={bottlesHero}
               alt="BoostUp Pure Shot - 3 příchutě energetického nápoje"
               className="relative w-full max-w-2xl mx-auto drop-shadow-xl"
+              width={800}
+              height={600}
             />
           </div>
         </div>
