@@ -215,8 +215,10 @@ export const SITE_CONTENT = {
                 items: [
                     { label: "VOP", href: "/obchodni-podminky" },
                     { label: "Ochrana soukromí", href: "/ochrana-osobnich-udaju" },
+                    { label: "Reklamace", href: "/reklamace" },
                     { label: "Cookies", href: "/cookies" },
-                    { label: "Doprava a platba", href: "/doprava-a-platba" }
+                    { label: "Doprava a platba", href: "/doprava-a-platba" },
+                    { label: "Opakované platby", href: "/podminky-opakovane-platby" }
                 ]
             }
         ],
