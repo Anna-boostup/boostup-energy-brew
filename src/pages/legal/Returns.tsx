@@ -15,7 +15,7 @@ const Returns = () => {
                 </p>
                 <br />
                 <strong>Postup při reklamaci / vrácení:</strong>
-                <ul className="list-disc pl-6 space-y-2 mt-4 text-slate-300">
+                <ul className="list-disc pl-6 space-y-2 mt-4 text-muted-foreground">
                     <li>
                         <strong>Informujte nás:</strong> Napište nám na e-mail <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a> nebo zavolejte.
                         Popište závadu a uveďte číslo objednávky.

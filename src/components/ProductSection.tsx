@@ -3,13 +3,13 @@ import { useContent } from "@/context/ContentContext";
 import { Button } from "./ui/button";
 import { Minus, Plus, ShoppingBag, Check, Sparkles, Blend, Droplet, Info, Mail } from "lucide-react";
 import bottleSingle from "@/assets/bottle-single.jpg";
-import bottlesHero from "@/assets/hero-vse.png"; // Import new high-res hero
-import bottleLemon from "@/assets/bottle-lemon.png";
-import bottleRed from "@/assets/bottle-red.png";
-import bottleSilky from "@/assets/bottle-silky.png";
-import pack3Silky from "@/assets/3pack.png"; // Keeping old static fallbacks for now just in case
-import pack3Lemon from "@/assets/3PackLemon.png";
-import pack3Red from "@/assets/3PackRed.png";
+import bottlesHero from "@/assets/hero-vse.webp"; 
+import bottleLemon from "@/assets/bottle-lemon.webp";
+import bottleRed from "@/assets/bottle-red.webp";
+import bottleSilky from "@/assets/bottle-silky.webp";
+import pack3Silky from "@/assets/3pack.webp"; 
+import pack3Lemon from "@/assets/3PackLemon.webp";
+import pack3Red from "@/assets/3PackRed.webp";
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext"; // Added import from InventoryContext
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Dynamic component for the "Mix" display
 const MixStack = ({ images, className }: { images: string[], className?: string }) => {
@@ -29,20 +44,79 @@ const MixStack = ({ images, className }: { images: string[], className?: string 
         src={images[2]}
         alt="BoostUp Silky - energetický shot z čajového extraktu"
         className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl translate-x-16 rotate-[15deg] z-0 opacity-90"
+        loading="lazy"
+        width={300}
+        height={400}
       />
       {/* Left Bottle (Red) */}
       <img
         src={images[1]}
         alt="BoostUp Red - přírodní energy shot s příchutí lesních plodů"
         className="w-44 md:w-56 lg:w-64 h-auto drop-shadow-2xl -translate-x-16 -rotate-[15deg] z-10 opacity-90 absolute"
+        loading="lazy"
+        width={300}
+        height={400}
       />
       {/* Middle Bottle (Lemon) - Front */}
       <img
         src={images[0]}
         alt="BoostUp Lemon - osvěžující energetický shot s citrusy"
         className="w-56 md:w-72 lg:w-80 h-auto drop-shadow-2xl z-20 absolute"
+        loading="lazy"
+        width={400}
+        height={500}
       />
     </div>
+  );
+};
+
+// Nutritional Facts Table Component
+const NutritionalFactsDialog = ({ flavorName, data }: { flavorName: string, data: string }) => {
+  const rows = data.split('\n').map(line => {
+    const [label, value] = line.split(':');
+    return { label: label?.trim(), value: value?.trim() };
+  }).filter(row => row.label && row.value);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="text-[10px] font-bold underline decoration-dotted underline-offset-2 opacity-60 hover:opacity-100 transition-opacity uppercase tracking-wider py-1 px-1">
+          Nutriční hodnoty
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md bg-card border-2 border-border rounded-3xl p-8 shadow-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-display font-black text-foreground mb-2">
+            NUTRIČNÍ HODNOTY
+          </DialogTitle>
+          <p className="text-sm font-bold text-primary tracking-widest uppercase">{flavorName}</p>
+        </DialogHeader>
+
+        <div className="mt-6 rounded-2xl border border-border overflow-hidden bg-background">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-bold text-xs text-foreground py-3">Typ</TableHead>
+                <TableHead className="font-bold text-xs text-foreground text-right py-3">Množství (60ml)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((row, i) => (
+                <TableRow key={i} className="border-border hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-medium text-sm py-3">{row.label}</TableCell>
+                  <TableCell className="text-right font-bold text-sm py-3">{row.value}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <p className="mt-6 text-[10px] text-muted-foreground leading-relaxed">
+          * Referenční hodnota příjmu u průměrné dospělé osoby (8 400 kJ / 2 000 kcal).
+          Skladujte v suchu při teplotě do 25 °C. Po otevření ihned spotřebujte.
+        </p>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -192,7 +266,7 @@ const ProductSection = () => {
   };
 
   const basePrice = getDynamicPrice();
-  const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.85) : basePrice;
+  const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.90) : basePrice;
 
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
   const isMixValid = selectedPack ? currentMixCount === selectedPack : false;
@@ -312,12 +386,18 @@ const ProductSection = () => {
                         src={bottlesHero}
                         alt="BoostUp Mix balení - kombinace všech příchutí energetických shotů"
                         className="w-80 md:w-96 lg:w-[450px] h-auto drop-shadow-xl"
+                        loading="lazy"
+                        width={450}
+                        height={450}
                       />
                     ) : (
                       <img
                         src={productImageSrc}
                         alt={selectedFlavor ? `BoostUp ${flavorName} - přírodní energy shot` : "BoostUp Supplements - Pure Shot 60ml"}
                         className={`w-64 md:w-80 lg:w-96 h-auto drop-shadow-xl`}
+                        loading="lazy"
+                        width={400}
+                        height={500}
                       />
                     )}
                   </div>
@@ -353,14 +433,19 @@ const ProductSection = () => {
                         }`}
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
+                      {pack === 3 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-olive text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
+                          76 KČ / SHOT
+                        </div>
+                      )}
                       {pack === 12 && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                          -10% SLEVA
+                          70,80 KČ / SHOT
                         </div>
                       )}
                       {pack === 21 && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                          NEJVÝHODNĚJŠÍ -30%
+                          66,60 KČ / SHOT
                         </div>
                       )}
                       {pack}x
@@ -409,7 +494,7 @@ const ProductSection = () => {
                       }`}
                   >
                     <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
-                      -15% SLEVA
+                      -10% SLEVA
                     </div>
                     <div className="flex items-center gap-3">
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'subscription' ? "border-white" : "border-muted-foreground"}`}>
@@ -417,7 +502,7 @@ const ProductSection = () => {
                       </div>
                       <div className="text-left">
                         <div className="font-bold text-sm sm:text-base">Předplatné</div>
-                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-15%</span></div>
+                        <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-10%</span></div>
                       </div>
                     </div>
                   </button>
@@ -475,7 +560,7 @@ const ProductSection = () => {
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
                           <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <div className="text-left min-w-0 flex-1">
+                            <div className="text-left min-w-0 flex-1 pr-10">
                               <div className="font-bold text-base leading-tight">
                                 {(() => {
                                   // Prioritized CMS name, fallback to technical data
@@ -523,22 +608,28 @@ const ProductSection = () => {
 
 
 
-                            {/* Info Tooltip */}
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className={`h-8 w-8 rounded-full p-0 hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white hover:text-white' : 'text-foreground/70 hover:text-foreground'}`}
-                                  aria-label={`Informace o příchuti ${flavor.name}`}
-                                >
-                                  <Info className="w-4 h-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent side="left" className="max-w-xs">
-                                <p>{getEffectiveProduct(flavor.id)?.tooltip || flavor.description}</p>
-                              </TooltipContent>
-                            </Tooltip>
+                            {/* Info Tooltip & Nutrition */}
+                            <div className="flex flex-col items-end gap-1">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className={`h-8 w-8 rounded-full p-0 flex items-center justify-center hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white hover:text-white' : 'text-foreground/70 hover:text-foreground'}`}
+                                    aria-label={`Informace o příchuti ${flavor.name}`}
+                                  >
+                                    <Info className="w-4 h-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="left" className="max-w-xs">
+                                  <p>{getEffectiveProduct(flavor.id)?.tooltip || flavor.description}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                              <NutritionalFactsDialog
+                                flavorName={content.flavors[flavor.id]?.name || flavor.name}
+                                data={content.flavors[flavor.id]?.nutritionalFacts || (flavor as any).nutritionalFacts || ""}
+                              />
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -562,7 +653,7 @@ const ProductSection = () => {
                       <div key={flavor.id} className="relative group/flavor">
                         <button
                           onClick={() => setSelectedFlavor(flavor.id)}
-                          className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all duration-300 hover-lift ${selectedFlavor === flavor.id
+                          className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between gap-4 transition-all duration-300 hover-lift ${selectedFlavor === flavor.id
                             ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} border-transparent shadow-lg scale-[1.02]`
                             : `border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60 hover:scale-[1.01]`
                             }`}
@@ -593,26 +684,30 @@ const ProductSection = () => {
                               {products.find(p => p.sku === (selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id))?.description || content.flavors[flavor.id]?.description || flavor.description}
                             </div>
                           </div>
+                          {/* Info Tooltip & Nutrition */}
+                          <div className="flex flex-col items-center gap-1 shrink-0">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className={`h-8 w-8 rounded-full ${selectedFlavor === flavor.id ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  aria-label={`Informace o příchuti ${flavor.name}`}
+                                >
+                                  <Info className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="max-w-xs">
+                                <p>{getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)?.tooltip || flavor.description}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <NutritionalFactsDialog
+                              flavorName={content.flavors[flavor.id]?.name || flavor.name}
+                              data={content.flavors[flavor.id]?.nutritionalFacts || (flavor as any).nutritionalFacts || ""}
+                            />
+                          </div>
                         </button>
-                        {/* Info Tooltip */}
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`h-8 w-8 rounded-full ${selectedFlavor === flavor.id ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
-                                onClick={(e) => e.stopPropagation()}
-                                aria-label={`Informace o příchuti ${flavor.name}`}
-                              >
-                                <Info className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="left" className="max-w-xs">
-                              <p>{getEffectiveProduct(selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id)?.tooltip || flavor.description}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
                       </div>
                     ))}
                   </div>

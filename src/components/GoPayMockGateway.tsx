@@ -71,7 +71,7 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                     className="bg-white w-full max-w-lg rounded-[2rem] overflow-hidden shadow-2xl flex flex-col"
                 >
                     {/* GoPay Header */}
-                    <div className="bg-[#f0f0f0] p-6 flex items-center justify-between border-b">
+                    <div className="bg-muted/30 p-6 flex items-center justify-between border-b border-border">
                         <div className="flex items-center gap-3">
                             <div className="bg-white p-2 rounded-xl shadow-sm">
                                 <svg viewBox="0 0 100 30" className="h-6 w-auto">
@@ -79,15 +79,15 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                                     <text x="30" y="22" className="font-bold text-xl" fill="#333">GoPay</text>
                                 </svg>
                             </div>
-                            <div className="h-4 w-[1px] bg-gray-300"></div>
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Testovací prostředí</span>
+                            <div className="h-4 w-[1px] bg-border"></div>
+                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Testovací prostředí</span>
                         </div>
                         <button
                             onClick={onCancel}
-                            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                            className="p-2 hover:bg-muted rounded-full transition-colors"
                             aria-label="Zrušit platbu a zavřít bránu"
                         >
-                            <X className="w-5 h-5 text-gray-400" />
+                            <X className="w-5 h-5 text-muted-foreground/60" />
                         </button>
                     </div>
 
@@ -96,22 +96,22 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                             <div className="space-y-8">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h2 className="text-2xl font-bold text-gray-900">Platební brána</h2>
-                                        <p className="text-gray-500 text-sm mt-1">BoostUp Energy | Obj. {orderData.orderNumber}</p>
+                                        <h2 className="text-2xl font-bold text-foreground">Platební brána</h2>
+                                        <p className="text-muted-foreground text-sm mt-1">BoostUp Energy | Obj. {orderData.orderNumber}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-3xl font-black text-gray-900">{orderData.amount} Kč</p>
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase">Včetně DPH</p>
+                                        <p className="text-3xl font-black text-foreground">{orderData.amount} Kč</p>
+                                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase">Včetně DPH</p>
                                     </div>
                                 </div>
 
-                                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex gap-4">
-                                    <div className="bg-blue-500 p-2 rounded-lg h-fit text-white">
+                                <div className="bg-olive/5 border border-olive/10 rounded-2xl p-4 flex gap-4">
+                                    <div className="bg-olive p-2 rounded-lg h-fit text-white">
                                         <CreditCard className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-blue-900">Vybraná metoda: Kartou online</p>
-                                        <p className="text-blue-700 text-sm">Simulujeme reálnou interakci s bránou GoPay pro účely testování.</p>
+                                        <p className="font-bold text-olive-dark">Vybraná metoda: Kartou online</p>
+                                        <p className="text-olive text-sm">Simulujeme reálnou interakci s bránou GoPay pro účely testování.</p>
                                     </div>
                                 </div>
 
@@ -125,11 +125,11 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                                     <Button
                                         onClick={handleFail}
                                         variant="outline"
-                                        className="w-full h-14 border-2 border-gray-200 text-gray-400 rounded-2xl font-bold hover:bg-gray-50 transition-all"
+                                        className="w-full h-14 border-2 border-border text-muted-foreground/60 rounded-2xl font-bold hover:bg-muted/30 transition-all"
                                     >
                                         Simulovat zamítnutí
                                     </Button>
-                                    <p className="text-center text-[10px] text-gray-400 uppercase font-bold tracking-widest pt-2 flex items-center justify-center gap-2">
+                                    <p className="text-center text-[10px] text-muted-foreground/60 uppercase font-bold tracking-widest pt-2 flex items-center justify-center gap-2">
                                         <Lock size={12} /> Zabezpečený přenos dat
                                     </p>
                                 </div>
@@ -140,8 +140,8 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                             <div className="flex flex-col items-center justify-center py-12 space-y-6">
                                 <Loader2 className="w-16 h-16 text-[#ec1c24] animate-spin" />
                                 <div className="text-center">
-                                    <h3 className="text-xl font-bold text-gray-900">Probíhá ověření platby</h3>
-                                    <p className="text-gray-500 mt-2">Komunikujeme s vaší bankou...</p>
+                                    <h3 className="text-xl font-bold text-foreground">Probíhá ověření platby</h3>
+                                    <p className="text-muted-foreground mt-2">Komunikujeme s vaší bankou...</p>
                                 </div>
                             </div>
                         )}
@@ -154,22 +154,22 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                             >
                                 {result === 'success' ? (
                                     <>
-                                        <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                        <div className="w-20 h-20 bg-lime rounded-full flex items-center justify-center text-white">
                                             <CheckCircle2 className="w-12 h-12" />
                                         </div>
                                         <div className="text-center">
-                                            <h3 className="text-xl font-bold text-gray-900">Platba byla úspěšná</h3>
-                                            <p className="text-gray-500 mt-2">Přesměrováváme vás zpět do e-shopu...</p>
+                                            <h3 className="text-xl font-bold text-foreground">Platba byla úspěšná</h3>
+                                            <p className="text-muted-foreground mt-2">Přesměrováváme vás zpět do e-shopu...</p>
                                         </div>
                                     </>
                                 ) : (
                                     <>
-                                        <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center text-white">
+                                        <div className="w-20 h-20 bg-terracotta rounded-full flex items-center justify-center text-white">
                                             <AlertCircle className="w-12 h-12" />
                                         </div>
                                         <div className="text-center">
-                                            <h3 className="text-xl font-bold text-gray-900">Platba selhala</h3>
-                                            <p className="text-gray-500 mt-2">Bankovní transakce byla zamítnuta.</p>
+                                            <h3 className="text-xl font-bold text-foreground">Platba selhala</h3>
+                                            <p className="text-muted-foreground mt-2">Bankovní transakce byla zamítnuta.</p>
                                         </div>
                                     </>
                                 )}
@@ -178,7 +178,7 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                     </div>
 
                     {/* Footer Info */}
-                    <div className="bg-gray-50 p-6 flex justify-center items-center gap-6 border-t mt-auto">
+                    <div className="bg-muted/50 p-6 flex justify-center items-center gap-6 border-t border-border mt-auto">
                         <div className="flex items-center gap-1.5 opacity-40 grayscale">
                             <svg className="h-4 w-auto" viewBox="0 0 100 30" fill="currentColor"><path d="M10 20 C 10 10, 40 10, 40 20" /></svg>
                             <span className="text-[10px] font-bold uppercase tracking-tighter">Verified by Visa</span>
@@ -188,8 +188,8 @@ const GoPayMockGateway: React.FC<GoPayMockGatewayProps> = ({
                             <span className="text-[10px] font-bold uppercase tracking-tighter">ID Check</span>
                         </div>
                         <div className="flex items-center gap-1.5 opacity-60">
-                            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                            <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-900">PCI-DSS Compliant</span>
+                            <ShieldCheck className="w-4 h-4 text-lime-dark" />
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-olive-dark">PCI-DSS Compliant</span>
                         </div>
                     </div>
                 </motion.div>

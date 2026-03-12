@@ -27,7 +27,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                     </span>
                 </div>
             </div>
-            <div className={`text-right font-bold text-xl ${qty < 10 ? "text-red-600" : ""}`}>
+            <div className={`text-right font-bold text-xl ${qty < 10 ? "text-terracotta" : ""}`}>
                 {qty} ks
             </div>
         </div>
@@ -57,7 +57,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
             </Button>
             <Button
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                className="bg-lime hover:bg-lime-dark text-white flex-1"
                 onClick={onRestock}
                 aria-label={`Naskladnit ${sku}`}
                 title="Naskladnit"
@@ -132,7 +132,7 @@ const Inventory = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <span className={`font-bold ${qty < 10 ? "text-red-600" : ""}`}>
+                                        <span className={`font-bold ${qty < 10 ? "text-terracotta" : ""}`}>
                                             {qty} ks
                                         </span>
                                     </TableCell>
@@ -158,7 +158,7 @@ const Inventory = () => {
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                className="bg-green-600 hover:bg-green-700 text-white"
+                                                className="bg-lime hover:bg-lime-dark text-white"
                                                 onClick={() => setRestockSku(sku)}
                                                 aria-label={`Naskladnit ${sku}`}
                                                 title="Naskladnit"

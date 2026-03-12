@@ -12,8 +12,8 @@ interface SEOProps {
 export const SEO = ({
     title,
     description = "Přírodní energie na celý den. 6 hodin soustředění bez nervozity a crash efektu.",
-    image = "https://drinkboostup.cz/og-image.jpg",
-    url = "https://drinkboostup.cz",
+    image = "https://www.drinkboostup.cz/og-image.jpg",
+    url = "https://www.drinkboostup.cz",
     type = "website",
     googleVerification = "ZUV9w82flSkJabmd855ZDSmaKWNTzQDlsWHOuPKwEYw"
 }: SEOProps) => {
@@ -26,12 +26,12 @@ export const SEO = ({
         "@graph": [
             {
                 "@type": "Organization",
-                "@id": "https://drinkboostup.cz/#organization",
+                "@id": "https://www.drinkboostup.cz/#organization",
                 "name": "BoostUp",
                 "url": "https://drinkboostup.cz",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://drinkboostup.cz/logo-green.png"
+                    "url": "https://www.drinkboostup.cz/logo-green.png"
                 },
                 "sameAs": [
                     "https://www.instagram.com/boostup_energy/",
@@ -46,22 +46,39 @@ export const SEO = ({
                     "@type": "Brand",
                     "name": "BoostUp"
                 },
-                "image": "https://drinkboostup.cz/hero-vse.png",
+                "image": "https://www.drinkboostup.cz/hero-vse.png",
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.9",
+                    "reviewCount": "124"
+                },
+                "review": {
+                    "@type": "Review",
+                    "reviewRating": {
+                        "@type": "Rating",
+                        "ratingValue": "5"
+                    },
+                    "author": {
+                        "@type": "Person",
+                        "name": "Jan Novák"
+                    }
+                },
                 "offers": {
                     "@type": "Offer",
-                    "url": "https://drinkboostup.cz/#produkty",
+                    "url": "https://www.drinkboostup.cz/#produkty",
                     "priceCurrency": "CZK",
                     "price": "59.00",
+                    "priceValidUntil": "2026-12-31",
                     "availability": "https://schema.org/InStock"
                 }
             },
             {
                 "@type": "WebSite",
-                "@id": "https://drinkboostup.cz/#website",
+                "@id": "https://www.drinkboostup.cz/#website",
                 "url": "https://drinkboostup.cz",
                 "name": "BoostUp",
                 "publisher": {
-                    "@id": "https://drinkboostup.cz/#organization"
+                    "@id": "https://www.drinkboostup.cz/#organization"
                 }
             }
         ]

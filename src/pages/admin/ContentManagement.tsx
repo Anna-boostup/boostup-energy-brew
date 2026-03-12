@@ -442,19 +442,43 @@ const ContentManagement = () => {
                                                 onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.description`, s)}
                                             />
                                         </div>
-                                        <StyledTextField
-                                            label="Hlavní text v Popup okně (Detail)"
-                                            value={concept.fullDescription}
-                                            onChange={(v) => {
-                                                const newConcepts = [...localContent.concept3b.concepts];
-                                                newConcepts[i] = { ...newConcepts[i], fullDescription: v };
-                                                updateField(['concept3b', 'concepts'], newConcepts);
-                                            }}
-                                            style={ts(`concept3b.${concept.id}.fullDescription`)}
-                                            onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.fullDescription`, s)}
-                                            multiline
-                                            rows={8}
-                                        />
+                                        <div className="space-y-4">
+                                            <StyledTextField
+                                                label="Hlavní text v Popup okně (Detail)"
+                                                value={concept.fullDescription}
+                                                onChange={(v) => {
+                                                    const newConcepts = [...localContent.concept3b.concepts];
+                                                    newConcepts[i] = { ...newConcepts[i], fullDescription: v };
+                                                    updateField(['concept3b', 'concepts'], newConcepts);
+                                                }}
+                                                style={ts(`concept3b.${concept.id}.fullDescription`)}
+                                                onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.fullDescription`, s)}
+                                                multiline
+                                                rows={8}
+                                            />
+                                            <div className="flex flex-wrap items-center justify-between gap-4 px-2">
+                                                <div className="text-[11px] text-muted-foreground space-y-1">
+                                                    <p>• Pro <strong>odrážku</strong> začněte řádek znakem <code>•</code> (Alt + 0149)</p>
+                                                    <p>• Pro <strong>tučné písmo</strong> použijte <code>**text**</code></p>
+                                                </div>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8 text-[11px] font-bold gap-2"
+                                                    onClick={() => {
+                                                        const newConcepts = [...localContent.concept3b.concepts];
+                                                        const currentText = newConcepts[i].fullDescription.trim();
+                                                        newConcepts[i] = {
+                                                            ...newConcepts[i],
+                                                            fullDescription: currentText + (currentText ? '\n' : '') + '• '
+                                                        };
+                                                        updateField(['concept3b', 'concepts'], newConcepts);
+                                                    }}
+                                                >
+                                                    + PŘIDAT ODRÁŽKU
+                                                </Button>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -582,6 +606,18 @@ const ContentManagement = () => {
                                                 rows={2}
                                                 value={flavor.description}
                                                 onChange={(e) => updateField(['flavors', key, 'description'], e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <div className="flex justify-between items-center">
+                                                <Label>Nutriční hodnoty</Label>
+                                                <span className="text-[10px] text-muted-foreground">Formát: Název: Hodnota</span>
+                                            </div>
+                                            <Textarea
+                                                rows={3}
+                                                value={flavor.nutritionalFacts || ""}
+                                                onChange={(e) => updateField(['flavors', key, 'nutritionalFacts'], e.target.value)}
+                                                placeholder="Energie: 15 kcal..."
                                             />
                                         </div>
                                     </div>

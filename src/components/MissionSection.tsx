@@ -57,7 +57,7 @@ const MissionSection = () => {
 
           <div className="max-w-3xl mx-auto space-y-6 text-lg md:text-xl text-primary-foreground leading-relaxed animate-fade-up animation-delay-200">
             {(content.paragraphs || []).map((text, i) => (
-              <p key={i} style={getTextStyle(SITE_CONTENT, `mission.paragraph.${i}`)} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold">Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
+              <p key={i} style={getTextStyle(SITE_CONTENT, `mission.paragraph.${i}`)} dangerouslySetInnerHTML={{ __html: text.replace("Káva už nepomáhá", '<span class="text-lime font-bold">Káva už nepomáhá</span>').replace("Chtěli jsme to změnit.", '<span class="text-primary-foreground font-bold"> Chtěli jsme to změnit.</span>').replace("BoostUp", '<span class="text-orange font-black">BoostUp</span>') }} />
             ))}
           </div>
         </div>
@@ -65,6 +65,7 @@ const MissionSection = () => {
         {/* Features Grid - Large stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {(content.features || []).map((feature, index) => {
+            const isNatural = feature.title === "Přírodní složení";
             const Icon = iconMap[feature.title] || Zap;
             const textColor = feature.color === 'bg-lime' || feature.color === 'bg-orange' ? 'text-foreground' : 'text-cream';
 
@@ -77,22 +78,22 @@ const MissionSection = () => {
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 hover-lift h-full flex flex-col items-center text-center backdrop-blur-md">
+                <div className={`relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 group-hover:border-transparent hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500 ${isNatural ? 'group-hover:bg-[#1a320f]' : ''}`}>
                   {/* Icon */}
                   <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
                   {/* Stat */}
-                  <div className="text-4xl lg:text-5xl font-black text-lime mb-2 group-hover:scale-110 transition-transform duration-300">
+                  <div className={`text-4xl lg:text-5xl font-black text-lime mb-2 group-hover:scale-110 transition-transform duration-300`}>
                     {feature.stat}
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
+                  <h3 className={`font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors ${isNatural ? 'group-hover:text-cream' : ''}`}>{feature.title}</h3>
 
                   {/* Description */}
-                  <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>
+                  <p className={`text-sm text-primary-foreground leading-relaxed ${isNatural ? 'group-hover:text-cream/90' : ''}`}>{feature.description}</p>
                 </div>
               </div>
             );

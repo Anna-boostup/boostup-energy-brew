@@ -1,8 +1,8 @@
 import { useContent } from "@/context/ContentContext";
 import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
 import { Button } from "./ui/button";
-import EnergyChart from "./EnergyChart";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+const EnergyChart = lazy(() => import("./EnergyChart"));
 import { getTextStyle } from "@/lib/textStyles";
 import {
   Dialog,
@@ -52,8 +52,10 @@ const ConceptSection = () => {
         </div>
 
         {/* Energy Chart */}
-        <div className="mb-20 animate-fade-up animation-delay-300">
-          <EnergyChart />
+        <div className="mb-20 animate-fade-up animation-delay-300 min-h-[400px]">
+          <Suspense fallback={<div className="h-[400px] w-full flex items-center justify-center bg-secondary/20 rounded-3xl animate-pulse">Načítání grafu...</div>}>
+            <EnergyChart />
+          </Suspense>
         </div>
 
         {/* 3B Cards */}
@@ -81,7 +83,7 @@ const ConceptSection = () => {
                 {/* Intense Background Glow */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
 
-                <div className="relative p-8 lg:p-10 rounded-3xl bg-card border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500">
+                <div className={`relative p-8 lg:p-10 rounded-3xl border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500 bg-card text-foreground`}>
                   {/* Icon */}
                   <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                     <Icon className={`w-10 h-10 ${colors.textColor}`} />
@@ -96,7 +98,7 @@ const ConceptSection = () => {
                   <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
                     {concept.subtitle}
                   </p>
-                  <p className="text-foreground/90 group-hover:text-primary-foreground flex-grow text-lg leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
+                  <p className={`flex-grow text-lg leading-relaxed text-foreground/90 group-hover:text-primary-foreground`} style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
                     {concept.description}
                   </p>
 
@@ -151,6 +153,12 @@ const ConceptSection = () => {
                   </div>
                 </div>
               </DialogHeader>
+
+              <div className="mb-6">
+                <p className="text-xl font-medium text-foreground leading-relaxed italic border-l-4 border-primary pl-4" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.description`)}>
+                  {selectedConcept.description}
+                </p>
+              </div>
 
               <DialogDescription asChild>
                 <div className="text-foreground space-y-4 text-base leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
