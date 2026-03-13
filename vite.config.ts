@@ -26,6 +26,13 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === "production",
+        drop_debugger: mode === "production",
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {
@@ -39,5 +46,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
     chunkSizeWarningLimit: 1000,
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096,
   },
 }));
