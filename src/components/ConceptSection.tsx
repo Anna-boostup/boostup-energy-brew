@@ -1,16 +1,11 @@
 import { useContent } from "@/context/ContentContext";
-import { Brain, Heart, Scale, ArrowRight, Sparkles, X } from "lucide-react";
+import { Brain, Heart, Scale, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, lazy, Suspense } from "react";
 const EnergyChart = lazy(() => import("./EnergyChart"));
 import { getTextStyle } from "@/lib/textStyles";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "./ui/dialog";
+import { ConceptCard } from "./concept/ConceptCard";
+import { ConceptDetailDialog } from "./concept/ConceptDetailDialog";
 
 const ConceptSection = () => {
   const { content: SITE_CONTENT } = useContent();
@@ -65,50 +60,15 @@ const ConceptSection = () => {
             const colors = colorMap[concept.id];
 
             return (
-              <div
+              <ConceptCard
                 key={concept.id}
-                className="group relative animate-fade-up cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
-                style={{ animationDelay: `${400 + index * 150}ms` }}
+                concept={concept}
+                index={index}
+                SITE_CONTENT={SITE_CONTENT}
+                iconMap={iconMap}
+                colorMap={colorMap}
                 onClick={() => setSelectedConcept({ ...concept, ...colors, Icon })}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedConcept({ ...concept, ...colors, Icon });
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={`${concept.title}: ${concept.subtitle}. Zjistit více.`}
-              >
-                {/* Intense Background Glow */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
-
-                <div className={`relative p-8 lg:p-10 rounded-3xl border-2 border-border hover-lift shadow-sm h-full flex flex-col group-hover:bg-foreground group-hover:text-primary-foreground transition-all duration-500 bg-card text-foreground`}>
-                  {/* Icon */}
-                  <div className={`w-18 h-18 rounded-2xl ${colors.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
-                    <Icon className={`w-10 h-10 ${colors.textColor}`} />
-                  </div>
-
-                  {/* Content */}
-
-                  {/* Content */}
-                  <h3 className="text-3xl md:text-4xl font-display font-black mb-2 group-hover:text-lime transition-colors" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.title`)}>
-                    {concept.title}
-                  </h3>
-                  <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
-                    {concept.subtitle}
-                  </p>
-                  <p className={`flex-grow text-lg leading-relaxed text-foreground/90 group-hover:text-primary-foreground`} style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
-                    {concept.description}
-                  </p>
-
-                  {/* Hover indicator */}
-                  <div className="mt-8 flex items-center gap-2 text-primary group-hover:text-lime font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <span className="text-sm tracking-wide">ZJISTIT VÍCE</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                  </div>
-                </div>
-              </div>
+              />
             );
           })}
         </div>
@@ -134,63 +94,11 @@ const ConceptSection = () => {
       </div>
 
       {/* Detail Modal */}
-      <Dialog open={!!selectedConcept} onOpenChange={() => setSelectedConcept(null)}>
-        <DialogContent className="sm:max-w-2xl bg-card border-2 border-border">
-          {selectedConcept && (
-            <>
-              <DialogHeader className="text-left">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-16 h-16 rounded-2xl ${selectedConcept.bgColor} flex items-center justify-center shadow-lg`}>
-                    <selectedConcept.Icon className={`w-8 h-8 ${selectedConcept.textColor}`} />
-                  </div>
-                  <div>
-                    <DialogTitle className="text-3xl font-display font-black text-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.title`)}>
-                      {selectedConcept.title}
-                    </DialogTitle>
-                    <p className="text-sm text-foreground/70 font-bold tracking-widest" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.subtitle`)}>
-                      {selectedConcept.subtitle}
-                    </p>
-                  </div>
-                </div>
-              </DialogHeader>
-
-              <div className="mb-6">
-                <p className="text-xl font-medium text-foreground leading-relaxed italic border-l-4 border-primary pl-4" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.description`)}>
-                  {selectedConcept.description}
-                </p>
-              </div>
-
-              <DialogDescription asChild>
-                <div className="text-foreground space-y-4 text-base leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
-                  {selectedConcept.fullDescription.split('\n').map((line: string, i: number) => {
-                    const trimmedLine = line.trim();
-                    if (!trimmedLine) return null;
-                    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-                      return (
-                        <h4 key={i} className="font-bold text-lg mt-6 mb-2 text-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
-                          {trimmedLine.replace(/\*\*/g, '')}
-                        </h4>
-                      );
-                    }
-                    if (trimmedLine.startsWith('•')) {
-                      return (
-                        <p key={i} className="pl-4 text-muted-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
-                          {trimmedLine}
-                        </p>
-                      );
-                    }
-                    return (
-                      <p key={i} className="text-foreground/80 leading-relaxed" style={getTextStyle(SITE_CONTENT, `concept3b.${selectedConcept.id}.fullDescription`)}>
-                        {trimmedLine}
-                      </p>
-                    );
-                  })}
-                </div>
-              </DialogDescription>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <ConceptDetailDialog
+        selectedConcept={selectedConcept}
+        onClose={() => setSelectedConcept(null)}
+        SITE_CONTENT={SITE_CONTENT}
+      />
     </section >
   );
 };

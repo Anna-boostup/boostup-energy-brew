@@ -182,7 +182,7 @@ const ProductSection = () => {
       pack: selectedPack,
       flavorMode: flavorMode,
       image: productImageSrc,
-      mixConfiguration: mixConfig,
+      mixConfiguration: mixConfig as { lemon: number; red: number; silky: number },
       subscriptionInterval: purchaseType === 'subscription' ? 'monthly' : undefined
     });
 
@@ -196,33 +196,25 @@ const ProductSection = () => {
 
   return (
     <TooltipProvider>
-      <section id="produkty" className="py-28 bg-secondary/30 relative overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 overflow-x-hidden">
+      <section id="produkty" className="py-16 md:py-20 bg-secondary/30 relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="sr-only">Naše produkty a konfigurátor balení</h2>
 
-          <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
             {/* Image section */}
-            <div className="flex-1 flex items-center justify-center animate-fade-up animation-delay-200">
-              <div className="relative">
+            <div className="w-full lg:w-1/2 flex items-center justify-center animate-fade-up animation-delay-200">
+              <div className="relative w-full max-w-[400px] flex justify-center">
                 <div className={`absolute inset-0 ${flavorMode === "mix"
-                  ? "bg-gradient-to-br from-lime via-terracotta to-olive"
+                  ? "bg-gradient-to-br from-lime via-terracotta to-olive text-cream"
                   : !selectedFlavor
                     ? "bg-gradient-to-br from-lime via-terracotta to-olive opacity-20"
                     : `bg-gradient-to-br ${currentFlavor.color}`
-                  } opacity-30 blur-3xl scale-125 transition-all duration-700`} />
-                <div className="relative">
-                  <div className="relative">
+                  } opacity-20 blur-3xl scale-110 transition-all duration-700`} />
+                
+                <div className="relative w-full flex justify-center py-8">
+                  <div className="relative w-full max-w-[300px] md:max-w-[340px]">
                     {flavorMode === "mix" ? (
-                      <img
-                        src={bottleRed}
-                        srcSet={`${bottleRedMobile} 500w, ${bottleRed} 1000w`}
-                        sizes="(max-width: 640px) 100vw, 384px"
-                        alt="BoostUp Pure Shot - Red Power"
-                        className="w-full h-full object-contain drop-shadow-2xl"
-                        loading="lazy"
-                        width={300}
-                        height={400}
-                      />
+                      <MixStack images={[bottleLemon, bottleRed, bottleSilky]} className="w-full" />
                     ) : (
                       <img
                         src={productImageSrc}
@@ -235,23 +227,21 @@ const ProductSection = () => {
                                 ? `${bottleSilkyMobile} 500w, ${bottleSilky} 1000w`
                                 : `${bottlesHero} 1000w`
                         }
-                        sizes="(max-width: 640px) 100vw, 384px"
+                        sizes="(max-width: 640px) 100vw, 340px"
                         alt={selectedFlavor ? `BoostUp Pure Shot - ${flavorName}` : "BoostUp Supplements - Pure Shot 60ml"}
-                        className="w-full h-full object-contain drop-shadow-2xl"
+                        className="w-full h-auto object-contain drop-shadow-2xl transition-all duration-500 hover:scale-[1.03]"
                         loading="lazy"
-                        width={300}
-                        height={400}
                       />
                     )}
                   </div>
 
                   {(selectedFlavor || flavorMode === "mix") && (
-                    <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 ${flavorMode === "mix"
+                    <div className={`absolute -bottom-4 left-1/2 -translate-x-1/2 ${flavorMode === "mix"
                       ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream"
                       : `${currentFlavor.bgColor} ${currentFlavor.textColor}`
-                      } px-6 py-3 rounded-2xl font-bold shadow-lg`}>
-                      <span className="text-lg">{selectedPack}x</span>
-                      <span className="text-sm ml-1">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
+                      } px-5 py-2.5 rounded-2xl font-bold shadow-lg z-30 flex items-baseline gap-1 animate-in zoom-in-50 duration-300`}>
+                      <span className="text-lg leading-none">{selectedPack}x</span>
+                      <span className="text-[10px] uppercase tracking-wider">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
                     </div>
                   )}
                 </div>
@@ -285,7 +275,7 @@ const ProductSection = () => {
               {flavorMode === "single" && (
                 <FlavorSelector
                   selectedFlavor={selectedFlavor}
-                  onSelectFlavor={setSelectedFlavor}
+                  onSelectFlavor={(id) => setSelectedFlavor(id as Flavor)}
                   selectedPack={selectedPack}
                   content={content}
                   getEffectiveProduct={getEffectiveProduct}
