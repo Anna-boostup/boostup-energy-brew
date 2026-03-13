@@ -1,9 +1,10 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import MissionSection from "@/components/MissionSection";
-import ProductSection from "@/components/ProductSection";
 import { lazy, Suspense } from "react";
 import { LazySection } from "@/components/LazySection";
+
+const MissionSection = lazy(() => import("@/components/MissionSection"));
+const ProductSection = lazy(() => import("@/components/ProductSection"));
 
 const ConceptSection = lazy(() => import("@/components/ConceptSection"));
 const CTASection = lazy(() => import("@/components/CTASection"));
@@ -23,8 +24,18 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
-        <MissionSection />
-        <ProductSection />
+        
+        <LazySection minHeight="600px">
+          <Suspense fallback={<div className="h-[600px] bg-secondary/5 animate-pulse rounded-3xl" />}>
+            <MissionSection />
+          </Suspense>
+        </LazySection>
+
+        <LazySection minHeight="1200px">
+          <Suspense fallback={<div className="h-[1200px] bg-secondary/5 animate-pulse rounded-3xl" />}>
+            <ProductSection />
+          </Suspense>
+        </LazySection>
         
         <LazySection minHeight="800px">
           <Suspense fallback={<div className="h-[800px] bg-secondary/5 animate-pulse rounded-3xl" />}>

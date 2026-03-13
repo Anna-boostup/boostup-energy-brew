@@ -30,9 +30,11 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['lucide-react', 'framer-motion'],
+          'vendor-lucide': ['lucide-react'],
+          'vendor-framer': ['framer-motion'],
           'vendor-charts': ['recharts'],
-          'vendor-data': ['@supabase/supabase-js', '@tanstack/react-query'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-tanstack': ['@tanstack/react-query'],
         },
       },
     },

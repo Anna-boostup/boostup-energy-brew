@@ -230,6 +230,8 @@ const ProductSection = () => {
                         sizes="(max-width: 640px) 100vw, 340px"
                         alt={selectedFlavor ? `BoostUp Pure Shot - ${flavorName}` : "BoostUp Supplements - Pure Shot 60ml"}
                         className="w-full h-auto object-contain drop-shadow-2xl transition-all duration-500 hover:scale-[1.03]"
+                        width={340}
+                        height={450}
                         loading="lazy"
                       />
                     )}
