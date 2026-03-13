@@ -1,15 +1,25 @@
-import { Instagram, Facebook, Linkedin, ShoppingCart, Menu, X, User, Package, CreditCard } from "lucide-react";
-import { useState, useEffect, startTransition } from "react";
+import { 
+  Instagram, 
+  Facebook, 
+  Linkedin, 
+  ShoppingCart, 
+  Menu, 
+  X, 
+  User, 
+  Package, 
+  CreditCard 
+} from "lucide-react";
+import { useState, startTransition, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { useContent } from "@/context/ContentContext";
+
 import { Button } from "./ui/button";
 import logoGreen from "@/assets/logo-green.png";
 import logoWhite from "@/assets/logo-white.png";
-import CartModal from "./CartModal";
-import { useCart } from "@/context/CartContext";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/context/AuthContext";
 
-import { useContent } from "@/context/ContentContext";
+const CartModal = lazy(() => import("./CartModal"));
 
 interface HeaderProps {
   variant?: 'default' | 'simple';
@@ -28,8 +38,8 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="relative z-10 hidden sm:block">
-            <img src={logoGreen} alt="BoostUp - přírodní energetický shot" className="h-8 w-auto dark:hidden" />
-            <img src={logoWhite} alt="BoostUp - přírodní energetický shot" className="h-8 w-auto hidden dark:block" />
+            <img src={logoGreen} alt="BoostUp - přírodní energetický shot" className="h-8 w-auto dark:hidden" width={178} height={32} />
+            <img src={logoWhite} alt="BoostUp - přírodní energetický shot" className="h-8 w-auto hidden dark:block" width={222} height={40} />
           </Link>
 
           {/* Desktop Navigation */}
@@ -242,7 +252,11 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
           </div>
         )}
       </div>
-      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      {isCartOpen && (
+        <Suspense fallback={null}>
+          <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+        </Suspense>
+      )}
     </header>
   );
 };

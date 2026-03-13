@@ -128,8 +128,8 @@ const HeroSection = () => {
               srcSet={`${bottlesHeroMobile} 600w, ${bottlesHero} 1200w`}
               sizes="(max-width: 600px) 100vw, 800px"
               className="relative w-full max-w-2xl mx-auto drop-shadow-xl"
-              width={800}
-              height={600}
+              width={672}
+              height={504}
               loading="eager"
               {...({ fetchPriority: "high" } as any)}
               alt="BoostUp Supplements - Pure Shot Bottles"
