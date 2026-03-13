@@ -29,12 +29,9 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-framer': ['framer-motion'],
-          'vendor-charts': ['recharts'],
-          'vendor-ui-libs': ['lucide-react', 'date-fns', 'class-variance-authority', 'clsx', 'tailwind-merge'],
-          'vendor-query': ['@tanstack/react-query'],
+          'vendor-ui': ['lucide-react', 'framer-motion', '@radix-ui/react-dialog'],
+          'vendor-data': ['@supabase/supabase-js', '@tanstack/react-query'],
         },
       },
     },
