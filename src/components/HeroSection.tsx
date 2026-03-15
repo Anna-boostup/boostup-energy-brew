@@ -78,11 +78,12 @@ const HeroSection = () => {
           </div>
 
           {/* Right column - 40% */}
-          <div className="w-full lg:w-[40%] flex justify-center lg:justify-end animate-fade-up animation-delay-300">
+          <div className="w-full lg:w-[40%] flex justify-center lg:justify-start animate-fade-up animation-delay-300 lg:-ml-8">
             <img
               src={bottleHero}
               alt="BoostUp Pure Shot - prémiový energetický shot"
-              className="w-[320px] sm:w-[380px] md:w-[450px] lg:w-[500px] xl:w-[560px] drop-shadow-2xl object-contain"
+              className="w-[320px] sm:w-[400px] md:w-[480px] lg:h-[calc(100vh-10rem)] lg:w-auto lg:max-w-none drop-shadow-2xl object-contain"
+              style={{ transform: 'rotate(15deg)' }}
               loading="eager"
               {...({ fetchPriority: "high" } as any)}
             />
