@@ -6,7 +6,7 @@ import { CartItem } from '@/context/CartContext';
 import bottleLemon from "@/assets/bottle-lemon.webp";
 import bottleRed from "@/assets/bottle-red.webp";
 import bottleSilky from "@/assets/bottle-silky.webp";
-import bottlesHero from "@/assets/hero-vse.webp";
+const bottlesHero = "/hero-vse.webp";
 
 const getFallbackImage = (item: CartItem) => {
     if (item.flavorMode === 'mix') return bottlesHero;

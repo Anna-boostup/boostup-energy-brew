@@ -21,7 +21,7 @@ import GoPayMockGateway from '@/components/GoPayMockGateway';
 import bottleLemon from "@/assets/bottle-lemon.webp";
 import bottleRed from "@/assets/bottle-red.webp";
 import bottleSilky from "@/assets/bottle-silky.webp";
-import bottlesHero from "@/assets/hero-vse.webp";
+const bottlesHero = "/hero-vse.webp";
 
 const getFallbackImage = (item: any) => {
     if (item.flavorMode === 'mix') return bottlesHero;
