@@ -11,8 +11,8 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="min-h-screen pt-20 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
-      <div className="container mx-auto px-4 pt-12 md:pt-20 pb-16 relative z-10">
+    <section className="pt-20 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
+      <div className="container mx-auto px-4 pt-4 md:pt-8 pb-16 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
           
           {/* Left column - 60% */}
@@ -74,6 +74,26 @@ const HeroSection = () => {
               >
                 Chci objevit více
               </Button>
+            </div>
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-3 mt-6 justify-center lg:justify-start">
+              {[
+                { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f' },
+                { label: 'STIMULACE', color: '#dfdf57' },
+                { label: 'ODOLNOST', color: '#aa263e' },
+                { label: 'ROVNOVÁHA', color: '#f29739' },
+              ].map((tag) => (
+                <button
+                  key={tag.label}
+                  onClick={() => {}}
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer"
+                  style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent' }}
+                >
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: tag.color }} />
+                  {tag.label}
+                </button>
+              ))}
             </div>
           </div>
 
