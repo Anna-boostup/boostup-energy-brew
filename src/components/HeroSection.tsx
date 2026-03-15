@@ -97,8 +97,8 @@ const HeroSection = () => {
             <button
               key={label}
               onClick={() => {}}
-              className="px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer"
-              style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6', fontFamily: 'Poppins, sans-serif' }}
+              className="px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer border"
+              style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent', fontFamily: 'Poppins, sans-serif' }}
             >
               {label}
             </button>
