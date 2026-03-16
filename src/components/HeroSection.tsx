@@ -16,7 +16,7 @@ const HeroSection = () => {
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
           
           {/* Left column - 60% */}
-          <div className="w-full lg:w-[60%] text-center lg:text-left animate-fade-up">
+          <div className="w-full lg:w-[60%] text-center lg:text-left animate-fade-up lg:pl-12 xl:pl-20">
             <h1 className="font-display tracking-tight mb-2">
               <span 
                 className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1] mb-1"
