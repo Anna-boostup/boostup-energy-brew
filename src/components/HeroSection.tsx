@@ -83,7 +83,7 @@ const HeroSection = () => {
             <img
               src={bottleHero}
               alt="BoostUp Pure Shot - prémiový energetický shot"
-              className="w-[320px] sm:w-[400px] md:w-[480px] lg:max-h-[70vh] lg:w-auto lg:max-w-none object-contain"
+              className="w-[360px] sm:w-[450px] md:w-[520px] lg:max-h-[80vh] lg:w-auto lg:max-w-none object-contain"
               style={{ transform: 'rotate(15deg)' }}
               loading="eager"
               {...({ fetchPriority: "high" } as any)}
