@@ -1,6 +1,6 @@
 import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
-import bottleHero from "@/assets/hero-vse.webp";
+import bottleHero from "@/assets/hero-vse.jpg";
 
 const HeroSection = () => {
   const scrollTo = (id: string) => {
