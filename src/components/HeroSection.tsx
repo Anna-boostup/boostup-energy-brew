@@ -96,15 +96,25 @@ const HeroSection = () => {
         </div>
 
         {/* Tags row - full width below both columns */}
-        <div className="flex flex-wrap gap-4 mt-10 justify-center">
-          {['SOUSTŘEDĚNÍ', 'STIMULACE', 'ODOLNOST', 'ROVNOVÁHA'].map((label) => (
+        <div className="flex flex-wrap gap-4 mt-4 justify-center">
+          {[
+            { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f' },
+            { label: 'STIMULACE', color: '#dfdf57' },
+            { label: 'ODOLNOST', color: '#f29739' },
+            { label: 'ROVNOVÁHA', color: '#aa263e' },
+          ].map((item) => (
             <button
-              key={label}
+              key={item.label}
               onClick={() => {}}
-              className="px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer border"
-              style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent', fontFamily: 'Poppins, sans-serif' }}
+              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer border-0"
+              style={{
+                background: 'linear-gradient(135deg, #f4f1e6, #d1c390)',
+                color: '#3d5a2f',
+                fontFamily: 'Poppins, sans-serif',
+              }}
             >
-              {label}
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+              {item.label}
             </button>
           ))}
         </div>
