@@ -40,7 +40,7 @@ const HeroSection = () => {
             {/* Benefits */}
             <div className="flex flex-col gap-4 mt-8 mb-10 items-center lg:items-start">
               {[
-                { icon: <Zap className="w-5 h-5" style={{ color: '#f29739' }} />, bold: 'Až 6 hodin energie', text: 'bez pádu na konci', bg: '#f0efd8' },
+                { icon: <Zap className="w-5 h-5" style={{ color: '#f29739' }} />, bold: 'Až 6 hodin energie', text: 'bez pádu na konci', bg: '#fdf0e0' },
                 { icon: <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Přírodní extrakty', text: 'bez cukru, bez umělých sladidel', bg: '#e8eedf' },
                 { icon: <Brain className="w-5 h-5" style={{ color: '#c27088' }} />, bold: 'Klid pod tlakem', text: 'výkon bez chaosu', bg: '#f0e4e4' },
                 { icon: <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Vyvinuto s odborníky', text: 'na Mendelově univerzitě', bg: '#e8eedf' },
