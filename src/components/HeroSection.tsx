@@ -38,19 +38,23 @@ const HeroSection = () => {
             </h1>
 
             {/* Benefits */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8 mb-10 justify-center lg:justify-start">
-              <div className="flex items-center gap-2 text-sm" style={{ color: '#3d5a2f' }}>
-                <Zap className="w-4 h-4 flex-shrink-0" style={{ color: '#dfdf57' }} />
-                <span>Až 6 hodin soustředění</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm" style={{ color: '#3d5a2f' }}>
-                <Target className="w-4 h-4 flex-shrink-0" style={{ color: '#dfdf57' }} />
-                <span>Soustředění bez chaosu</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm" style={{ color: '#3d5a2f' }}>
-                <Settings className="w-4 h-4 flex-shrink-0" style={{ color: '#dfdf57' }} />
-                <span>Chytřejší práce s energií</span>
-              </div>
+            <div className="flex flex-col gap-4 mt-8 mb-10 items-center lg:items-start">
+              {[
+                { icon: <Zap className="w-5 h-5" style={{ color: '#dfdf57' }} />, bold: 'Až 6 hodin energie', text: 'bez pádu na konci', bg: '#f0efd8' },
+                { icon: <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Přírodní extrakty', text: 'bez cukru, bez umělých sladidel', bg: '#e8eedf' },
+                { icon: <Brain className="w-5 h-5" style={{ color: '#c27088' }} />, bold: 'Klid pod tlakem', text: 'výkon bez chaosu', bg: '#f0e4e4' },
+                { icon: <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Vyvinuto s odborníky', text: 'na Mendelově univerzitě', bg: '#e8eedf' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: item.bg }}>
+                    {item.icon}
+                  </div>
+                  <p className="text-sm md:text-base" style={{ color: '#3d5a2f' }}>
+                    <span className="font-bold">{item.bold}</span>
+                    <span className="font-normal"> — {item.text}</span>
+                  </p>
+                </div>
+              ))}
             </div>
 
             {/* CTA buttons */}
