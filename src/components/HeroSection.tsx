@@ -60,16 +60,6 @@ const HeroSection = () => {
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
-                size="xl"
-                className="group rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
-                style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
-                onClick={() => scrollTo('produkty')}
-              >
-                Chci koupit
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
-              </Button>
-
-              <Button
                 variant="outline"
                 size="xl"
                 className="rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
@@ -77,6 +67,16 @@ const HeroSection = () => {
                 onClick={() => scrollTo('mise')}
               >
                 Chci objevit více
+              </Button>
+
+              <Button
+                size="xl"
+                className="group rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
+                style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
+                onClick={() => scrollTo('produkty')}
+              >
+                Chci koupit
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
               </Button>
             </div>
 
