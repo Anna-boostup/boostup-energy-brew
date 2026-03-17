@@ -85,10 +85,10 @@ const HeroSection = () => {
           {/* Right column - 40% */}
           <div className="w-full lg:w-[40%] flex justify-center items-center animate-fade-up animation-delay-300 lg:-ml-16 relative">
             {/* Smoke/fog effect behind bottle */}
-            <div className="absolute inset-0 pointer-events-none" style={{ filter: 'blur(60px)', opacity: 0.35 }}>
-              <div className="absolute top-[20%] left-[10%] w-[60%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #dfdf57, transparent 70%)' }} />
-              <div className="absolute top-[35%] left-[25%] w-[50%] h-[35%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 70%)' }} />
-              <div className="absolute top-[50%] left-[15%] w-[55%] h-[30%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 70%)' }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ filter: 'blur(50px)', opacity: 0.55 }}>
+              <div className="absolute top-[15%] left-[5%] w-[70%] h-[45%] rounded-full" style={{ background: 'radial-gradient(ellipse, #dfdf57, transparent 65%)' }} />
+              <div className="absolute top-[30%] left-[20%] w-[65%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 65%)' }} />
+              <div className="absolute top-[45%] left-[10%] w-[70%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 65%)' }} />
             </div>
             <img
               src={bottleHero}
