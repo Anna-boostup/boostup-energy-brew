@@ -8,8 +8,11 @@ import PaymentInstructions from '@/components/PaymentInstructions';
 const PaymentSuccess = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const status = searchParams.get('status') || 'success';
-    const isPending = status === 'pending';
+    const stripeStatus = searchParams.get('redirect_status');
+    const urlStatus = searchParams.get('status');
+    // If Stripe explicitly returns 'succeeded', we consider it success, same as manual urlStatus
+    const status = stripeStatus === 'succeeded' ? 'success' : stripeStatus || urlStatus || 'success';
+    const isPending = status === 'pending' || status === 'requires_action' || status === 'requires_payment_method';
     const [countdown, setCountdown] = useState(isPending ? 120 : 10);
 
     const orderNumber = searchParams.get('orderNumber') || 'BUP-' + Math.random().toString(36).substr(2, 9).toUpperCase();

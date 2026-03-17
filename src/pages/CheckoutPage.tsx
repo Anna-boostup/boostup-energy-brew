@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import PacketaWidget from '@/components/PacketaWidget';
 import { useToast } from '@/hooks/use-toast';
+import { StripePaymentModal } from '@/components/stripe/StripePaymentModal';
 
 import bottleLemon from "@/assets/bottle-lemon.webp";
 import bottleRed from "@/assets/bottle-red.webp";
@@ -61,6 +62,8 @@ const CheckoutPage = () => {
     // Payment States
     const [isRedirecting, setIsRedirecting] = useState(false);
     const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
+    const [clientSecret, setClientSecret] = useState<string | null>(null);
+    const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
 
     // Billing Address State
     const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
@@ -419,30 +422,30 @@ const CheckoutPage = () => {
                 return;
             }
 
-            // For other methods (card), initialize Stripe Checkout via our Vercel Serverless Function
+            // For other methods (card), initialize Stripe PaymentIntent via our Vercel Serverless Function
             setPendingOrder(newOrder);
-            setIsRedirecting(true);
+            setIsRedirecting(true); // show loader on button
             
             try {
-                const stripeRes = await fetch('/api/create-stripe-session', {
+                const stripeRes = await fetch('/api/create-payment-intent', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         orderNumber: newOrder.id,
                         customerEmail: formData.email,
-                        items: newOrder.items,
                         total: newOrder.total,
                     }),
                 });
 
                 const stripeData = await stripeRes.json();
 
-                if (stripeRes.ok && stripeData.url) {
-                    // Redirect to Stripe Checkout
-                    window.location.href = stripeData.url;
-                    return; // Stop here, user leaves the page
+                if (stripeRes.ok && stripeData.clientSecret) {
+                    setClientSecret(stripeData.clientSecret);
+                    setIsRedirecting(false);
+                    // Do not clear the cart yet! Keep it until payment is confirmed or webhook handles it
+                    setIsStripeModalOpen(true);
                 } else {
-                    throw new Error(stripeData.error || 'Nepodařilo se vygenerovat platební odkaz');
+                    throw new Error(stripeData.error || 'Nepodařilo se inicializovat platbu');
                 }
             } catch (stripeError: any) {
                 console.error('Stripe initialization error:', stripeError);
@@ -1313,33 +1316,15 @@ const CheckoutPage = () => {
                 </div>
             </div>
 
-            {/* Redirection Overlay */}
-            {isRedirecting && (
-                <div className="fixed inset-0 z-[150] bg-background/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
-                    <div className="max-w-md w-full space-y-8">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse-glow" />
-                            <div className="bg-white p-6 rounded-[2rem] shadow-2xl relative">
-                                <CreditCard className="w-16 h-16 mx-auto text-primary" />
-                                <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden mt-6">
-                                    <motion.div
-                                        className="h-full bg-primary"
-                                        initial={{ width: 0 }}
-                                        animate={{ width: "100%" }}
-                                        transition={{ duration: 2.2, ease: "easeInOut" }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="space-y-3">
-                            <h2 className="text-2xl font-black uppercase tracking-tight">Ověřování spojení...</h2>
-                            <p className="text-muted-foreground font-medium">Přesměrováváme vás na zabezpečenou platební bránu Stripe.</p>
-                        </div>
-                        <div className="flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
-                            <Lock size={12} /> SSL ENCRYPTED CONNECTION
-                        </div>
-                    </div>
-                </div>
+            {/* STRIPE ELEMENTS MODAL */}
+            {clientSecret && pendingOrder && (
+                <StripePaymentModal
+                   clientSecret={clientSecret}
+                   isOpen={isStripeModalOpen}
+                   onClose={() => setIsStripeModalOpen(false)}
+                   orderNumber={pendingOrder.id}
+                   amount={pendingOrder.total}
+                />
             )}
         </main>
     );

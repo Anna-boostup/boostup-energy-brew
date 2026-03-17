@@ -55,9 +55,9 @@ export default async function handler(req: Request) {
 
     try {
         switch (event.type) {
-            case 'checkout.session.completed': {
-                const session = event.data.object as Stripe.Checkout.Session;
-                const orderId = session.metadata?.orderId;
+            case 'payment_intent.succeeded': {
+                const intent = event.data.object as Stripe.PaymentIntent;
+                const orderId = intent.metadata?.orderId;
                 
                 console.log(`[Stripe Webhook] Payment successful for order ${orderId}`);
 
