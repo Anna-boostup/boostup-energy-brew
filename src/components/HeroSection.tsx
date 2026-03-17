@@ -83,11 +83,17 @@ const HeroSection = () => {
           </div>
 
           {/* Right column - 40% */}
-          <div className="w-full lg:w-[40%] flex justify-center items-center animate-fade-up animation-delay-300 lg:-ml-16">
+          <div className="w-full lg:w-[40%] flex justify-center items-center animate-fade-up animation-delay-300 lg:-ml-16 relative">
+            {/* Smoke/fog effect behind bottle */}
+            <div className="absolute inset-0 pointer-events-none" style={{ filter: 'blur(60px)', opacity: 0.35 }}>
+              <div className="absolute top-[20%] left-[10%] w-[60%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #dfdf57, transparent 70%)' }} />
+              <div className="absolute top-[35%] left-[25%] w-[50%] h-[35%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 70%)' }} />
+              <div className="absolute top-[50%] left-[15%] w-[55%] h-[30%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 70%)' }} />
+            </div>
             <img
               src={bottleHero}
               alt="BoostUp Pure Shot - prémiový energetický shot"
-              className="w-[360px] sm:w-[450px] md:w-[520px] lg:max-h-[80vh] lg:w-auto lg:max-w-none object-contain"
+              className="w-[360px] sm:w-[450px] md:w-[520px] lg:max-h-[80vh] lg:w-auto lg:max-w-none object-contain relative z-10"
               style={{ transform: 'rotate(15deg)' }}
               loading="eager"
               {...({ fetchPriority: "high" } as any)}
