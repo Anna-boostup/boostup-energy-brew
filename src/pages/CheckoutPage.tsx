@@ -1338,8 +1338,6 @@ const CheckoutPage = () => {
                     </div>
                 </div>
             )}
-
-            )}
         </main>
     );
 };
