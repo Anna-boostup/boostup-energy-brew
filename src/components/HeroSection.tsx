@@ -1,4 +1,4 @@
-import { ArrowRight, Zap, Target, Settings } from "lucide-react";
+import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
 import bottleHero from "@/assets/bottle-silky-hero.png";
 
