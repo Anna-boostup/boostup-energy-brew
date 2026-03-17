@@ -108,7 +108,7 @@ const HeroSection = () => {
               onClick={() => {}}
               className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer border-0"
               style={{
-                background: 'linear-gradient(135deg, #f4f1e6, #f1e8c3)',
+                background: 'linear-gradient(135deg, #f1e8c3, #f4f1e6)',
                 color: '#3d5a2f',
                 fontFamily: 'Poppins, sans-serif',
               }}
