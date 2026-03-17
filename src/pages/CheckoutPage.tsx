@@ -10,13 +10,8 @@ import {
     Minus, Plus, Trash2, Lock
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import mockPaymentService from '@/services/mockPayment';
-import { Button } from '@/components/ui/button';
-import PacketaWidget from '@/components/PacketaWidget';
-import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import GoPayMockGateway from '@/components/GoPayMockGateway';
 
 import bottleLemon from "@/assets/bottle-lemon.webp";
 import bottleRed from "@/assets/bottle-red.webp";
@@ -60,9 +55,8 @@ const CheckoutPage = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedPoint, setSelectedPoint] = useState<any>(null);
 
-    // Payment Simulation States
+    // Payment States
     const [isRedirecting, setIsRedirecting] = useState(false);
-    const [showMockGateway, setShowMockGateway] = useState(false);
     const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
 
     // Billing Address State
@@ -359,14 +353,9 @@ const CheckoutPage = () => {
                     mixConfiguration: item.mixConfiguration
                 })),
                 total: cartTotal + shippingCost,
-                status: 'paid', // Initial status, maybe should be pending if payment fails/is transfer
+                status: 'pending', // Initial status, will be updated by Stripe webhook or admin manually for transfer
                 is_subscription_order: cart.some(item => !!item.subscriptionInterval)
             };
-
-            // Adjust initial status based on payment method
-            if (formData.paymentMethod === 'transfer_fast' || formData.paymentMethod === 'transfer_manual') {
-                newOrder.status = 'pending';
-            }
 
             // 3.5 Create Packeta Shipment if applicable
             if (formData.deliveryMethod === 'zasilkovna' && formData.packetaPointId) {
@@ -409,7 +398,7 @@ const CheckoutPage = () => {
                 return;
             }
 
-            // --- Payment Simulation Logic ---
+            // --- Stripe Payment Logic ---
             if (formData.paymentMethod === 'transfer_manual') {
                 // For manual transfer, we don't go to gateway
                 clearCart();
@@ -427,15 +416,41 @@ const CheckoutPage = () => {
                 return;
             }
 
-            // For other methods (card, fast transfer, etc.), simulate gateway
+            // For other methods (card), initialize Stripe Checkout via our Vercel Serverless Function
             setPendingOrder(newOrder);
             setIsRedirecting(true);
+            
+            try {
+                const stripeRes = await fetch('/api/create-stripe-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderNumber: newOrder.id,
+                        customerEmail: formData.email,
+                        items: newOrder.items,
+                        total: newOrder.total,
+                    }),
+                });
 
-            // Wait for "redirection" animation
-            setTimeout(() => {
+                const stripeData = await stripeRes.json();
+
+                if (stripeRes.ok && stripeData.url) {
+                    // Redirect to Stripe Checkout
+                    window.location.href = stripeData.url;
+                    return; // Stop here, user leaves the page
+                } else {
+                    throw new Error(stripeData.error || 'Nepodařilo se vygenerovat platební odkaz');
+                }
+            } catch (stripeError: any) {
+                console.error('Stripe initialization error:', stripeError);
+                toast({
+                    title: "Chyba platby",
+                    description: stripeError.message || "Nepodařilo se inicializovat platební bránu.",
+                    variant: "destructive"
+                });
+                setIsProcessing(false);
                 setIsRedirecting(false);
-                setShowMockGateway(true);
-            }, 2500);
+            }
 
         } catch (error) {
             console.error('Checkout error:', error);
@@ -445,50 +460,8 @@ const CheckoutPage = () => {
                 variant: "destructive"
             });
             setIsProcessing(false);
+            setIsRedirecting(false);
         }
-    };
-
-    const handlePaymentSuccess = async (paymentId: string) => {
-        if (!pendingOrder) return;
-
-        try {
-            clearCart();
-            const totalWithShipping = pendingOrder.total;
-
-            await sendOrderConfirmationEmail(
-                pendingOrder.customer.email || formData.email,
-                pendingOrder.id,
-                pendingOrder.customer.name,
-                pendingOrder.items,
-                totalWithShipping
-            );
-
-            navigate(`/payment/success?paymentId=${paymentId}&orderNumber=${pendingOrder.id}&amount=${totalWithShipping}`);
-        } catch (error) {
-            console.error('Finalization error:', error);
-        } finally {
-            setShowMockGateway(false);
-            setIsProcessing(false);
-        }
-    };
-
-    const handlePaymentError = (message: string) => {
-        setShowMockGateway(false);
-        setIsProcessing(false);
-        toast({
-            title: "Platba neproběhla",
-            description: message,
-            variant: "destructive"
-        });
-    };
-
-    const handlePaymentCancel = () => {
-        setShowMockGateway(false);
-        setIsProcessing(false);
-        toast({
-            title: "Platba zrušena",
-            description: "Platba byla zrušena uživatelem.",
-        });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -1344,13 +1317,10 @@ const CheckoutPage = () => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse-glow" />
                             <div className="bg-white p-6 rounded-[2rem] shadow-2xl relative">
-                                <svg viewBox="0 0 100 30" className="h-10 w-auto mx-auto mb-4">
-                                    <path d="M15 5h10v20h-10z" fill="#ec1c24" />
-                                    <text x="30" y="22" className="font-bold text-2xl" fill="#333">GoPay</text>
-                                </svg>
+                                <CreditCard className="w-16 h-16 mx-auto text-primary" />
                                 <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden mt-6">
                                     <motion.div
-                                        className="h-full bg-[#ec1c24]"
+                                        className="h-full bg-primary"
                                         initial={{ width: 0 }}
                                         animate={{ width: "100%" }}
                                         transition={{ duration: 2.2, ease: "easeInOut" }}
@@ -1360,7 +1330,7 @@ const CheckoutPage = () => {
                         </div>
                         <div className="space-y-3">
                             <h2 className="text-2xl font-black uppercase tracking-tight">Ověřování spojení...</h2>
-                            <p className="text-muted-foreground font-medium">Přesměrováváme vás na zabezpečenou platební bránu GoPay.</p>
+                            <p className="text-muted-foreground font-medium">Přesměrováváme vás na zabezpečenou platební bránu Stripe.</p>
                         </div>
                         <div className="flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
                             <Lock size={12} /> SSL ENCRYPTED CONNECTION
@@ -1369,22 +1339,6 @@ const CheckoutPage = () => {
                 </div>
             )}
 
-            {/* Mock Gateway */}
-            {pendingOrder && (
-                <GoPayMockGateway
-                    isOpen={showMockGateway}
-                    onClose={() => setShowMockGateway(false)}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                    onCancel={handlePaymentCancel}
-                    orderData={{
-                        orderNumber: pendingOrder.id,
-                        amount: pendingOrder.total,
-                        items: pendingOrder.items,
-                        customer: pendingOrder.customer
-                    }}
-                    paymentId={`GP-${pendingOrder.id}`}
-                />
             )}
         </main>
     );
