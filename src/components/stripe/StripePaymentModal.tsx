@@ -61,7 +61,7 @@ const CheckoutForm = ({ amount, orderNumber }: { amount: number, orderNumber: st
       )}
 
       <Button
-        disabled={isProcessing || !stripe || !elements}
+        disabled={isProcessing}
         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg rounded-xl shadow-lg relative overflow-hidden group"
         type="submit"
       >
