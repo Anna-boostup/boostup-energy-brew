@@ -19,7 +19,7 @@ const HeroSection = () => {
           <div className="w-full lg:w-[60%] text-center lg:text-left animate-fade-up lg:pl-12 xl:pl-20">
             <h1 className="font-display tracking-tight mb-2">
               <span 
-                className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1] mb-1"
+                className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase leading-[1.1] mb-1"
                 style={{ color: '#3d5a2f' }}
               >
                 OBJEVTE NOVÝ STANDARD
