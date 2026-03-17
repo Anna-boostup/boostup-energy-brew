@@ -1,62 +1,129 @@
-import { useState } from "react";
-import IngredientDialog from "./IngredientDialog";
-import { useContent } from "@/context/ContentContext";
-
-// Sub-components
-import HeroBackground from "./hero/HeroBackground";
-import AnnouncementBadge from "./hero/AnnouncementBadge";
-import HeroContent from "./hero/HeroContent";
-import HeroCTA from "./hero/HeroCTA";
-import HeroImage from "./hero/HeroImage";
-import TrustBadges from "./hero/TrustBadges";
+import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
+import { Button } from "./ui/button";
+import bottleHero from "@/assets/hero-vse.webp";
 
 const HeroSection = () => {
-  const { content: siteContent } = useContent();
-  const content = siteContent.hero;
-  const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const scrollTo = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
-    <section className="min-h-screen pt-20 relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary/30">
-      <HeroBackground />
-
-      <div className="container mx-auto px-4 pt-8 pb-32 relative z-10">
-        <AnnouncementBadge siteContent={siteContent} content={content} />
-
-        <div className="text-center animate-fade-up z-10 mb-12">
-          <HeroContent siteContent={siteContent} content={content} />
+    <section className="pt-14 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
+      <div className="container mx-auto px-4 pt-0 pb-16 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
           
-          <HeroCTA cta={siteContent.hero.cta} />
+          {/* Left column - 60% */}
+          <div className="w-full lg:w-[60%] text-center lg:text-left animate-fade-up lg:pl-12 xl:pl-20">
+            <h1 className="font-display tracking-tight mb-2">
+              <span 
+                className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase leading-[1.1] mb-1"
+                style={{ color: '#3d5a2f' }}
+              >
+                OBJEVTE NOVÝ STANDARD
+              </span>
+              <span 
+                className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1]"
+                style={{
+                  background: 'linear-gradient(to right, #dfdf57, #f29739, #aa263e)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                STABILNÍHO SOUSTŘEDĚNÍ
+              </span>
+            </h1>
 
-          {siteContent.hero.testimonial && (
-            <div className="mt-8 animate-fade-up animation-delay-800">
-              <h2 className="sr-only">Recenze a doporučení</h2>
-              <p className="text-xl md:text-2xl text-foreground/90 italic max-w-3xl mx-auto leading-relaxed">
-                {siteContent.hero.testimonial}
-              </p>
+            {/* Benefits */}
+            <div className="flex flex-col gap-4 mt-8 mb-10 items-center lg:items-start">
+              {[
+                { icon: <Zap className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Až 6 hodin energie', text: 'bez pádu na konci', bg: '#e8eedf' },
+                { icon: <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Přírodní extrakty', text: 'bez cukru, bez umělých sladidel', bg: '#e8eedf' },
+                { icon: <Brain className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Klid pod tlakem', text: 'výkon bez chaosu', bg: '#e8eedf' },
+                { icon: <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Vyvinuto s odborníky', text: 'na Mendelově univerzitě', bg: '#e8eedf' },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: item.bg }}>
+                    {item.icon}
+                  </div>
+                  <p className="text-sm md:text-base" style={{ color: '#3d5a2f' }}>
+                    <span className="font-bold">{item.bold}</span>
+                    <span className="font-normal"> — {item.text}</span>
+                  </p>
+                </div>
+              ))}
             </div>
-          )}
+
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Button
+                variant="outline"
+                size="xl"
+                className="rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
+                style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent' }}
+                onClick={() => scrollTo('mise')}
+              >
+                Chci objevit více
+              </Button>
+
+              <Button
+                size="xl"
+                className="group rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
+                style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
+                onClick={() => scrollTo('produkty')}
+              >
+                Chci koupit
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
+              </Button>
+            </div>
+
+          </div>
+
+          {/* Right column - 40% */}
+          <div className="w-full lg:w-[40%] flex justify-center items-center animate-fade-up animation-delay-300 lg:-ml-16 relative">
+            {/* Smoke/fog effect behind bottle */}
+            <div className="absolute inset-0 pointer-events-none" style={{ filter: 'blur(50px)', opacity: 0.55 }}>
+              <div className="absolute top-[15%] left-[5%] w-[70%] h-[45%] rounded-full" style={{ background: 'radial-gradient(ellipse, #dfdf57, transparent 65%)' }} />
+              <div className="absolute top-[30%] left-[20%] w-[65%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 65%)' }} />
+              <div className="absolute top-[45%] left-[10%] w-[70%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 65%)' }} />
+            </div>
+            <img
+              src={bottleHero}
+              alt="BoostUp Pure Shot - prémiový energetický shot"
+              className="w-[360px] sm:w-[450px] md:w-[520px] lg:max-h-[80vh] lg:w-auto lg:max-w-none object-contain relative z-10"
+              style={{ transform: 'rotate(15deg)' }}
+              loading="eager"
+              {...({ fetchPriority: "high" } as any)}
+            />
+          </div>
         </div>
 
-        <HeroImage />
-
-        <TrustBadges 
-          badges={content.trustBadges} 
-          onSelectIngredient={setSelectedIngredient} 
-          setIsDialogOpen={setIsDialogOpen} 
-        />
-
-        <IngredientDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          data={selectedIngredient ? (siteContent.ingredientDetails as any)[selectedIngredient] : null}
-          colorClass={
-            selectedIngredient === 'stimulants' ? 'bg-lime' :
-              selectedIngredient === 'electrolytes' ? 'bg-blue-400' :
-                selectedIngredient === 'adaptogens' ? 'bg-terracotta' :
-                  selectedIngredient === 'vitamins' ? 'bg-orange' : 'bg-primary'
-          }
-        />
+        {/* Tags row - full width below both columns */}
+        <div className="flex flex-wrap gap-4 mt-4 justify-center">
+          {[
+            { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f' },
+            { label: 'STIMULACE', color: '#dfdf57' },
+            { label: 'ODOLNOST', color: '#f29739' },
+            { label: 'ROVNOVÁHA', color: '#aa263e' },
+          ].map((item) => (
+            <button
+              key={item.label}
+              onClick={() => {}}
+              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer border-0"
+              style={{
+                background: 'linear-gradient(135deg, #f1e8c3, #f4f1e6)',
+                color: '#3d5a2f',
+                fontFamily: 'Poppins, sans-serif',
+              }}
+            >
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+              {item.label}
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   );
