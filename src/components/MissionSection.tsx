@@ -76,7 +76,7 @@ const MissionSection = () => {
                 style={{ animationDelay: `${300 + index * 100}ms` }}
               >
                 {/* Intense Background Glow */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${isNatural ? '' : feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} style={isNatural ? { backgroundColor: '#1a320f' } : undefined} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${isNatural ? '' : feature.color} opacity-0 group-hover:opacity-50 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} style={isNatural ? { background: 'radial-gradient(circle, #3d5a2f 0%, #1a320f 70%)' } : undefined} />
 
                 <div className={`relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 group-hover:border-transparent hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500 ${isNatural ? 'group-hover:bg-[#1a320f]' : ''}`}>
                   {/* Icon */}
