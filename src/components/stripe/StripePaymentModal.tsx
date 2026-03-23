@@ -21,6 +21,13 @@ interface StripePaymentModalProps {
   amount: number;
 }
 
+const CheckoutForm = ({ amount, orderNumber }: { amount: number, orderNumber: string }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isStripeReady, setIsStripeReady] = useState(false);
+
   // Diagnostic Logging
   useEffect(() => {
     const pk = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
