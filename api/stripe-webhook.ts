@@ -55,14 +55,13 @@ export default async function handler(req: Request) {
 
     try {
         switch (event.type) {
-            case 'payment_intent.succeeded': {
-                const intent = event.data.object as Stripe.PaymentIntent;
-                const orderId = intent.metadata?.orderId;
+            case 'checkout.session.completed': {
+                const session = event.data.object as Stripe.Checkout.Session;
+                const orderId = session.metadata?.orderId;
                 
-                console.log(`[Stripe Webhook] Payment successful for order ${orderId}`);
+                console.log(`[Stripe Webhook] Checkout session completed for order ${orderId}`);
 
                 if (orderId) {
-                    // Update order status in Supabase
                     const { error } = await supabase
                         .from('orders')
                         .update({ status: 'paid' })
@@ -72,13 +71,31 @@ export default async function handler(req: Request) {
                          console.error(`Failed to update order status for ${orderId}:`, error);
                          return new Response('Database Error', { status: 500, headers: corsHeaders });
                     }
-                    
-                    console.log(`[Stripe Webhook] Order ${orderId} marked as paid.`);
+                    console.log(`[Stripe Webhook] Order ${orderId} marked as paid (Checkout).`);
+                }
+                break;
+            }
+            case 'payment_intent.succeeded': {
+                const intent = event.data.object as Stripe.PaymentIntent;
+                const orderId = intent.metadata?.orderId;
+                
+                console.log(`[Stripe Webhook] Payment successful for order ${orderId}`);
+
+                if (orderId) {
+                    const { error } = await supabase
+                        .from('orders')
+                        .update({ status: 'paid' })
+                        .eq('id', orderId);
+
+                    if (error) {
+                         console.error(`Failed to update order status for ${orderId}:`, error);
+                         return new Response('Database Error', { status: 500, headers: corsHeaders });
+                    }
+                    console.log(`[Stripe Webhook] Order ${orderId} marked as paid (Intent).`);
                 }
                 break;
             }
             case 'payment_intent.payment_failed': {
-                 // Option to handle failures (e.g., mark as failed or cancelled)
                  const intent = event.data.object as Stripe.PaymentIntent;
                  console.log(`[Stripe Webhook] Payment intent failed: ${intent.id}`);
                  break;
