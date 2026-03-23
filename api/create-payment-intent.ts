@@ -1,6 +1,9 @@
 import { Stripe } from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+const secretKey = process.env.STRIPE_SECRET_KEY || '';
+console.log(`[Stripe Backend] Initializing Stripe with key type: ${secretKey.startsWith('sk_test') ? 'sk_test_***' : secretKey.startsWith('sk_live') ? 'sk_live_***' : 'unknown/missing'}`);
+
+const stripe = new Stripe(secretKey, {
     apiVersion: '2023-10-16', // Add a default API version to avoid warnings
 });
 
