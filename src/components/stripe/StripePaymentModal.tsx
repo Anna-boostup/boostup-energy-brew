@@ -84,8 +84,15 @@ interface StripePaymentModalProps {
           id="payment-element" 
           options={{ layout: 'tabs' }} 
           onReady={() => setIsStripeReady(true)}
+          onChange={(event) => {
+             console.log('[Stripe PaymentElement Change]', event);
+             if (event.error) {
+               console.error('[Stripe PaymentElement Error]', event.error);
+               setErrorMessage(`Chyba platebního modulu: ${event.error.message}`);
+             }
+          }}
         />
-        {!isStripeReady && (
+        {!isStripeReady && !errorMessage && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
@@ -95,7 +102,7 @@ interface StripePaymentModalProps {
       {errorMessage && (
         <div className="text-red-500 text-sm mt-2 flex items-start gap-2 bg-red-50 p-3 rounded-lg border border-red-100 animate-in fade-in slide-in-from-top-1">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          <span>{errorMessage}</span>
+          <span className="break-all">{errorMessage}</span>
         </div>
       )}
 
