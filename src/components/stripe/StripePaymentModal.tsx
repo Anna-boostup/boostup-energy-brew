@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, Stripe as StripeType } from '@stripe/stripe-js';
 import {
   Elements,
   PaymentElement,
@@ -8,9 +8,10 @@ import {
 } from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, Lock } from 'lucide-react';
+import { X, Loader2, Lock, AlertCircle } from 'lucide-react';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
+const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 
 interface StripePaymentModalProps {
   clientSecret: string;
@@ -25,44 +26,71 @@ const CheckoutForm = ({ amount, orderNumber }: { amount: number, orderNumber: st
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isStripeReady, setIsStripeReady] = useState(false);
+
+  // Debugging
+  useEffect(() => {
+    console.log('[CheckoutForm] Stripe state:', { hasStripe: !!stripe, hasElements: !!elements });
+  }, [stripe, elements]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
+      console.warn('[CheckoutForm] Stripe or Elements not ready');
       return;
     }
 
     setIsProcessing(true);
+    setErrorMessage(null);
 
     const origin = window.location.origin;
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${amount}`,
-      },
-    });
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${amount}`,
+        },
+      });
 
-    if (error) {
-      setErrorMessage(error.message ?? 'Došlo k neznámé chybě při zpracování platby.');
+      if (error) {
+        console.error('[CheckoutForm] Payment confirmation error:', error);
+        setErrorMessage(error.message ?? 'Došlo k neznámé chybě při zpracování platby.');
+        setIsProcessing(false);
+      }
+    } catch (e: any) {
+      console.error('[CheckoutForm] Unexpected error:', e);
+      setErrorMessage('Neočekávaná chyba při komunikaci se Stripe.');
       setIsProcessing(false);
-    } else {
-      // successful payment will redirect automatically to return_url
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement id="payment-element" options={{ layout: 'tabs' }} />
+      <div className="min-h-[200px] relative">
+        <PaymentElement 
+          id="payment-element" 
+          options={{ layout: 'tabs' }} 
+          onReady={() => setIsStripeReady(true)}
+        />
+        {!isStripeReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        )}
+      </div>
       
       {errorMessage && (
-        <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
+        <div className="text-red-500 text-sm mt-2 flex items-start gap-2 bg-red-50 p-3 rounded-lg border border-red-100 animate-in fade-in slide-in-from-top-1">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>{errorMessage}</span>
+        </div>
       )}
 
       <Button
-        disabled={isProcessing}
-        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg rounded-xl shadow-lg relative overflow-hidden group"
+        disabled={isProcessing || !isStripeReady || !stripe}
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg rounded-xl shadow-lg relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
         type="submit"
       >
         {isProcessing ? (
@@ -70,7 +98,7 @@ const CheckoutForm = ({ amount, orderNumber }: { amount: number, orderNumber: st
         ) : (
           <span className="flex items-center justify-center gap-2">
             <Lock className="w-5 h-5" />
-            Zaplatit {amount} Kč
+            {!isStripeReady ? 'Načítání platební brány...' : `Zaplatit ${amount} Kč`}
           </span>
         )}
       </Button>
@@ -106,7 +134,7 @@ export const StripePaymentModal = ({
       colorText: '#30313d',
       colorDanger: '#df1b41',
       spacingUnit: '4px',
-      borderRadius: '8px',
+      borderRadius: '12px',
     },
   };
 
@@ -150,13 +178,24 @@ export const StripePaymentModal = ({
               <span className="text-2xl font-black text-foreground">{amount} Kč</span>
             </div>
 
-            {clientSecret ? (
+            {!publishableKey ? (
+              <div className="py-8 px-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm">
+                <div className="flex gap-3 items-start">
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                  <div>
+                    <p className="font-bold mb-1">Chybí Stripe konfiguace</p>
+                    <p>V souboru <code>.env</code> chybí klíč <code>VITE_STRIPE_PUBLISHABLE_KEY</code>. Prosím doplňte jej pro zobrazení platební brány.</p>
+                  </div>
+                </div>
+              </div>
+            ) : clientSecret ? (
               <Elements stripe={stripePromise} options={options}>
                  <CheckoutForm amount={amount} orderNumber={orderNumber} />
               </Elements>
             ) : (
-              <div className="py-12 flex justify-center">
+              <div className="py-12 flex flex-col items-center gap-4">
                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                 <p className="text-sm text-muted-foreground italic">Inicializace platby...</p>
               </div>
             )}
           </div>

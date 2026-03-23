@@ -1321,7 +1321,10 @@ const CheckoutPage = () => {
                 <StripePaymentModal
                    clientSecret={clientSecret}
                    isOpen={isStripeModalOpen}
-                   onClose={() => setIsStripeModalOpen(false)}
+                   onClose={() => {
+                       setIsStripeModalOpen(false);
+                       setIsProcessing(false);
+                   }}
                    orderNumber={pendingOrder.id}
                    amount={pendingOrder.total}
                 />
