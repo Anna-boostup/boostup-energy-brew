@@ -56,10 +56,8 @@ export default async function handler(req: Request) {
             metadata: {
                 orderId: orderNumber,
             },
-            // Enable automatic payment methods, which Stripe recommends for Elements
-            automatic_payment_methods: {
-                enabled: true,
-            },
+            // Restrict to card only to avoid Apple Pay domain verification issues on test domains
+            payment_method_types: ['card'],
         });
 
         // Return the client_secret which the frontend needs to render the Elements form
