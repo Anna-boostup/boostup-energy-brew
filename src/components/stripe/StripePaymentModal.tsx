@@ -21,7 +21,7 @@ interface StripePaymentModalProps {
   amount: number;
 }
 
-const CheckoutForm = ({ amount, orderNumber }: { amount: number, orderNumber: string }) => {
+const CheckoutForm = ({ amount, orderNumber, clientSecret }: { amount: number, orderNumber: string, clientSecret: string }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,23 +33,28 @@ const CheckoutForm = ({ amount, orderNumber }: { amount: number, orderNumber: st
     const pk = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
     const csPrefix = clientSecret ? clientSecret.split('_').slice(0, 2).join('_') : 'none';
     
-    console.log('[Stripe Debug] Initializing with:', {
-      publishableKeyPrefix: pk.substring(0, 10) + '...',
+    console.log('[Stripe Debug] Component Mount/Update', {
+      hasPublishableKey: !!pk,
+      publishableKeyPrefix: pk ? pk.substring(0, 10) + '...' : 'MISSING',
       isTestKey: pk.startsWith('pk_test'),
       clientSecretPrefix: csPrefix + '...',
-      isTestIntent: clientSecret?.includes('_secret_test_') || clientSecret?.startsWith('pi_test_'),
-      stripeReady: !!stripe,
-      elementsReady: !!elements
+      stripeLoaded: !!stripe,
+      elementsLoaded: !!elements,
+      isOpen: true // It's only rendered when open
     });
 
-    if (pk.startsWith('pk_test') && csPrefix.includes('live')) {
+    if (!pk) {
+      console.error('[Stripe Debug] CRITICAL: VITE_STRIPE_PUBLISHABLE_KEY is missing!');
+    }
+
+    if (pk && pk.startsWith('pk_test') && csPrefix.includes('live')) {
       console.error('[Stripe Debug] KEY MISMATCH: Using TEST Publishable Key with LIVE Client Secret!');
       setErrorMessage('Chyba konfigurace: Testovací klíč vs Produkční platba.');
-    } else if (pk.startsWith('pk_live') && csPrefix.includes('test')) {
+    } else if (pk && pk.startsWith('pk_live') && csPrefix.includes('test')) {
       console.error('[Stripe Debug] KEY MISMATCH: Using LIVE Publishable Key with TEST Client Secret!');
       setErrorMessage('Chyba konfigurace: Produkční klíč vs Testovací platba.');
     }
-  }, [stripe, elements, clientSecret]);
+  }, [stripe, elements, clientSecret, pk]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -215,7 +220,7 @@ export const StripePaymentModal = ({
               </div>
             ) : clientSecret ? (
               <Elements stripe={stripePromise} options={options}>
-                 <CheckoutForm amount={amount} orderNumber={orderNumber} />
+                 <CheckoutForm amount={amount} orderNumber={orderNumber} clientSecret={clientSecret} />
               </Elements>
             ) : (
               <div className="py-12 flex flex-col items-center gap-4">

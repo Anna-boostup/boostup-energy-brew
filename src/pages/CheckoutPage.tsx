@@ -466,7 +466,6 @@ const CheckoutPage = () => {
                 variant: "destructive"
             });
             setIsProcessing(false);
-            setIsRedirecting(false);
         }
     };
 
