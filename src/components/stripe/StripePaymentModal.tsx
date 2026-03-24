@@ -29,32 +29,8 @@ const CheckoutForm = ({ amount, orderNumber, clientSecret }: { amount: number, o
   const [isStripeReady, setIsStripeReady] = useState(false);
 
   // Diagnostic Logging
-  useEffect(() => {
-    const pk = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
-    const csPrefix = clientSecret ? clientSecret.split('_').slice(0, 2).join('_') : 'none';
-    
-    console.log('[Stripe Debug] Component Mount/Update', {
-      hasPublishableKey: !!pk,
-      publishableKeyPrefix: pk ? pk.substring(0, 10) + '...' : 'MISSING',
-      isTestKey: pk.startsWith('pk_test'),
-      clientSecretPrefix: csPrefix + '...',
-      stripeLoaded: !!stripe,
-      elementsLoaded: !!elements,
-      isOpen: true // It's only rendered when open
-    });
-
-    if (!pk) {
-      console.error('[Stripe Debug] CRITICAL: VITE_STRIPE_PUBLISHABLE_KEY is missing!');
     }
-
-    if (pk && pk.startsWith('pk_test') && csPrefix.includes('live')) {
-      console.error('[Stripe Debug] KEY MISMATCH: Using TEST Publishable Key with LIVE Client Secret!');
-      setErrorMessage('Chyba konfigurace: Testovací klíč vs Produkční platba.');
-    } else if (pk && pk.startsWith('pk_live') && csPrefix.includes('test')) {
-      console.error('[Stripe Debug] KEY MISMATCH: Using LIVE Publishable Key with TEST Client Secret!');
-      setErrorMessage('Chyba konfigurace: Produkční klíč vs Testovací platba.');
-    }
-  }, [stripe, elements, clientSecret, pk]);
+  }, [stripe, elements, clientSecret]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
