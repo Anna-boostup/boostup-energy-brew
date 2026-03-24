@@ -32,7 +32,14 @@ export default async function handler(req: Request) {
         console.log(`[Stripe PaymentIntent] Creating intent for order ${orderNumber}`);
 
         if (!orderNumber || !total) {
-             return new Response(JSON.stringify({ error: 'Missing required order details' }), {
+             const missingFields = [];
+             if (!orderNumber) missingFields.push('orderNumber');
+             if (!total) missingFields.push('total');
+
+             return new Response(JSON.stringify({ 
+                 error: `Missing required order details: ${missingFields.join(', ')}`,
+                 debug: { orderNumber, total } 
+             }), {
                  status: 400,
                  headers: { ...corsHeaders, 'Content-Type': 'application/json' },
              });
