@@ -53,6 +53,7 @@ const sendOrderConfirmationEmail = async (
 
 const CheckoutPage = () => {
     const { cart, cartTotal, clearCart } = useCart();
+    const hasSubscription = cart.some(item => item.subscriptionInterval);
     const { addOrder, decrementStock, getStock } = useInventory();
     const { user } = useAuth();
     const { toast } = useToast();
@@ -137,7 +138,7 @@ const CheckoutPage = () => {
                     billingStreet: billing.street || '',
                     billingHouseNumber: billing.houseNumber || '',
                     billingCity: billing.city || '',
-                    billingZip: billing.zip || ''    const hasSubscription = cart.some(item => item.subscriptionInterval);
+                    billingZip: billing.zip || ''
                 }));
 
                 if (billing.isSame !== undefined) {
