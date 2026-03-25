@@ -72,11 +72,21 @@ export default async function handler(req: Request) {
             currency: 'CZK',
             order_number: orderNumber,
             order_description: `Objednávka ${orderNumber} - BoostUp Energy`,
-            items: items.map((item: any) => ({
-                name: item.name,
-                amount: Math.round(item.price * item.quantity * 100),
-                count: item.quantity
-            })),
+            items: [
+                ...items.map((item: any) => ({
+                    type: 'ITEM',
+                    name: item.name,
+                    amount: Math.round(item.price * item.quantity * 100),
+                    count: item.quantity
+                })),
+                // Add shipping as a separate item if total includes it
+                ...(total > items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
+                    type: 'ITEM',
+                    name: 'Doprava',
+                    amount: Math.round((total - items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
+                    count: 1
+                }] : [])
+            ],
             callback: {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
