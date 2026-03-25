@@ -66,7 +66,7 @@ export default async function handler(req: Request) {
         const paymentData: any = {
             target: {
                 type: 'ACCOUNT',
-                goid: Number(goId)
+                go_id: Number(goId)
             },
             amount: Math.round(total * 100), // in cents/haléře
             currency: 'CZK',
