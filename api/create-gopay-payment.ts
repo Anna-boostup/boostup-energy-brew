@@ -93,8 +93,13 @@ export default async function handler(req: Request) {
             },
             payer: {
                 contact: {
-                    email: customerEmail,
-                    full_name: (customerName && customerName.trim().includes(' ')) ? customerName.trim() : `${customerName.trim()} .` 
+                    email: customerEmail || 'info@drinkboostup.cz',
+                    full_name: (() => {
+                        const name = (customerName || '').trim();
+                        if (name.includes(' ') && name.length > 3) return name;
+                        if (name.length > 0) return `${name} ${name}`;
+                        return 'Zakaznik Boostup';
+                    })()
                 }
             },
             lang: 'cs'
