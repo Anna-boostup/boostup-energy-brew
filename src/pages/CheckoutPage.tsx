@@ -137,7 +137,7 @@ const CheckoutPage = () => {
                     billingStreet: billing.street || '',
                     billingHouseNumber: billing.houseNumber || '',
                     billingCity: billing.city || '',
-                    billingZip: billing.zip || ''
+                    billingZip: billing.zip || ''    const hasSubscription = cart.some(item => item.subscriptionInterval);
                 }));
 
                 if (billing.isSame !== undefined) {
@@ -405,9 +405,13 @@ const CheckoutPage = () => {
                 return;
             }
 
-            // --- Stripe Payment Logic ---
+            // Detect if this is a subscription order
+            const isSubscription = cart.some(item => item.subscriptionInterval);
+            
+            // --- Payment Routing Logic ---
+            
+            // 1. Manual Bank Transfer
             if (formData.paymentMethod === 'transfer_manual') {
-                // For manual transfer, we don't go to gateway
                 clearCart();
                 const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
                 const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
@@ -423,36 +427,72 @@ const CheckoutPage = () => {
                 return;
             }
 
-            // For other methods (card), initialize Stripe PaymentIntent via our Vercel Serverless Function
+            // 2. Stripe (FOR SUBSCRIPTIONS)
+            if (isSubscription) {
+                setPendingOrder(newOrder);
+                setIsRedirecting(true);
+                
+                try {
+                    const stripeRes = await fetch('/api/create-stripe-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            orderNumber: newOrder.id,
+                            customerEmail: formData.email,
+                            total: newOrder.total,
+                            items: newOrder.items
+                        }),
+                    });
+
+                    const stripeData = await stripeRes.json();
+                    if (stripeRes.ok && stripeData.url) {
+                        window.location.href = stripeData.url;
+                        return;
+                    } else {
+                        throw new Error(stripeData.error || 'Nepodařilo se vytvořit Stripe relaci');
+                    }
+                } catch (stripeError: any) {
+                    console.error('Stripe redirect error:', stripeError);
+                    toast({
+                        title: "Chyba předplatného",
+                        description: stripeError.message || "Nepodařilo se inicializovat Stripe Checkout.",
+                        variant: "destructive"
+                    });
+                    setIsProcessing(false);
+                    setIsRedirecting(false);
+                    return;
+                }
+            }
+
+            // 3. GoPay (FOR REGULAR CARD/FAST TRANSFER)
             setPendingOrder(newOrder);
-            setIsRedirecting(true); // show loader on button
+            setIsRedirecting(true);
             
             try {
-                const stripeRes = await fetch('/api/create-payment-intent', {
+                const gopayRes = await fetch('/api/create-gopay-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         orderNumber: newOrder.id,
                         customerEmail: formData.email,
+                        customerName: `${formData.firstName} ${formData.lastName}`,
                         total: newOrder.total,
+                        items: newOrder.items
                     }),
                 });
 
-                const stripeData = await stripeRes.json();
-
-                if (stripeRes.ok && stripeData.clientSecret) {
-                    setClientSecret(stripeData.clientSecret);
-                    setIsRedirecting(false);
-                    // Do not clear the cart yet! Keep it until payment is confirmed or webhook handles it
-                    setIsStripeModalOpen(true);
+                const gopayData = await gopayRes.json();
+                if (gopayRes.ok && gopayData.gw_url) {
+                    window.location.href = gopayData.gw_url;
+                    return;
                 } else {
-                    throw new Error(stripeData.error || 'Nepodařilo se inicializovat platbu');
+                    throw new Error(gopayData.error || 'Nepodařilo se vytvořit GoPay platbu');
                 }
-            } catch (stripeError: any) {
-                console.error('Stripe initialization error:', stripeError);
+            } catch (gopayError: any) {
+                console.error('GoPay initialization error:', gopayError);
                 toast({
                     title: "Chyba platby",
-                    description: stripeError.message || "Nepodařilo se inicializovat platební bránu.",
+                    description: gopayError.message || "Nepodařilo se inicializovat platební bránu GoPay.",
                     variant: "destructive"
                 });
                 setIsProcessing(false);
@@ -1045,7 +1085,7 @@ const CheckoutPage = () => {
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-muted-foreground font-medium mt-1">Visa, Mastercard, Maestro</p>
+                                            <p className="text-sm text-muted-foreground font-medium mt-1">{hasSubscription ? 'Přes Stripe' : 'Přes GoPay'}</p>
                                         </div>
                                     </button>
 
@@ -1067,8 +1107,7 @@ const CheckoutPage = () => {
                                                 </svg>
                                             </div>
                                             <div className="flex-1 text-left">
-                                                <p className="font-black text-lg">Okamžitá platba bankou</p>
-                                                <p className="text-sm text-muted-foreground font-medium">Převod přes platební bránu</p>
+                                                <p className="text-sm text-muted-foreground font-medium">{hasSubscription ? 'Přes Stripe' : 'Okamžitý převod GoPay'}</p>
                                             </div>
                                         </button>
 

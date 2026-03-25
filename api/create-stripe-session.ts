@@ -46,23 +46,34 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
         
+        // Check if there is a subscription item
+        const isSubscription = items.some((item: any) => item.subscriptionInterval);
+        
         // Map items to Stripe line_items
-        const lineItems = items.map((item: OrderItem) => {
+        const lineItems = items.map((item: any) => {
+            const isRecurring = !!item.subscriptionInterval;
+            
             return {
                 price_data: {
                     currency: 'czk',
                     product_data: {
-                        name: item.name,
+                        name: item.name + (isRecurring ? ` (Předplatné ${item.subscriptionInterval === 'monthly' ? 'měsíční' : 'dvouměsíční'})` : ''),
                         description: item.mixConfiguration ? 'Vlastní mix příchutí' : undefined,
                     },
-                    unit_amount: Math.round(item.price * 100), // Stripe expects amount in haléře (cents)
+                    unit_amount: Math.round(item.price * 100),
+                    recurring: isRecurring ? {
+                        interval: 'month',
+                        interval_count: item.subscriptionInterval === 'monthly' ? 1 : 2,
+                    } : undefined,
                 },
                 quantity: item.quantity,
             };
         });
 
-        // Add shipping if there is a discrepancy between items total and final total (like Zásilkovna)
-        const itemsTotal = items.reduce((acc: number, item: OrderItem) => acc + (item.price * item.quantity), 0);
+        // Add shipping for one-time payments if needed
+        // Note: For pure subscriptions, Stripe handles shipping differently if it's recurring.
+        // For simplicity, we add it as a one-time line item in the first invoice.
+        const itemsTotal = items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
         if (total > itemsTotal) {
             lineItems.push({
                 price_data: {
@@ -78,17 +89,18 @@ export default async function handler(req: Request) {
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            billing_address_collection: 'auto',
+            billing_address_collection: 'required',
             shipping_address_collection: {
                 allowed_countries: ['CZ', 'SK'],
             },
             customer_email: customerEmail,
             line_items: lineItems,
-            mode: 'payment',
+            mode: isSubscription ? 'subscription' : 'payment',
             success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${total}`,
-            cancel_url: `${origin}/kosik`, // Or error page
+            cancel_url: `${origin}/kosik`,
             metadata: {
                 orderId: orderNumber,
+                isSubscription: isSubscription ? 'true' : 'false'
             },
         });
 
