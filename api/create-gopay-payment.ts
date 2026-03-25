@@ -91,6 +91,7 @@ export default async function handler(req: Request) {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
+            /* 
             payer: {
                 contact: {
                     email: customerEmail || 'info@drinkboostup.cz',
@@ -102,6 +103,7 @@ export default async function handler(req: Request) {
                     })()
                 }
             },
+            */
             lang: 'cs'
         };
 
