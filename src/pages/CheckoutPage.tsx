@@ -352,14 +352,16 @@ const CheckoutPage = () => {
                     paymentMethod: formData.paymentMethod,
                     packetaPointId: formData.packetaPointId,
                 },
-                items: cart.map(item => ({
-                    // Keep detailed info for record
-                    sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                    mixConfiguration: item.mixConfiguration
-                })),
+                items: cart.map(item => {
+                    const finalPrice = item.subscriptionInterval ? item.price * 0.85 : item.price;
+                    return {
+                        sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: parseFloat(finalPrice.toFixed(2)),
+                        mixConfiguration: item.mixConfiguration
+                    };
+                }),
                 total: cartTotal + shippingCost,
                 status: 'pending', // Initial status, will be updated by Stripe webhook or admin manually for transfer
                 is_subscription_order: cart.some(item => !!item.subscriptionInterval)
