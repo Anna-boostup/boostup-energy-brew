@@ -121,7 +121,13 @@ export default async function handler(req: Request) {
 
         if (!response.ok) {
             console.error('[GoPay Error Response]', data);
-            throw new Error(data.errors?.[0]?.message || 'Failed to create GoPay payment');
+            // Return full error details to frontend for debugging
+            return new Response(JSON.stringify({ 
+                error: `GoPay Error: ${JSON.stringify(data)}` 
+            }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
         }
 
         return new Response(JSON.stringify({ 
