@@ -62,12 +62,8 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
 
-        // Prepare GoPay payment data with restored items
+        // Prepare GoPay payment data - OMITTING target to let GoPay identify it from the token
         const paymentData: any = {
-            target: {
-                type: 'ACCOUNT',
-                go_id: Number(goId)
-            },
             amount: Math.round(total * 100), // in cents/haléře
             currency: 'CZK',
             order_number: orderNumber,
