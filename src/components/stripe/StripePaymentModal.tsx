@@ -203,9 +203,18 @@ export const StripePaymentModal = ({
           </div>
 
           <div className="p-6">
-            <div className="mb-6 flex justify-between items-center bg-secondary/20 p-4 rounded-xl">
-              <span className="font-medium text-foreground/80">K úhradě</span>
-              <span className="text-2xl font-black text-foreground">{amount} Kč</span>
+            <div className="mb-6">
+              <div className="flex justify-between items-center bg-secondary/20 p-4 rounded-xl">
+                <span className="font-medium text-foreground/80">K úhradě</span>
+                <span className="text-2xl font-black text-foreground">{amount} Kč</span>
+              </div>
+              <div className="mt-2 px-4 flex justify-between items-center text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
+                <span>Debug Info:</span>
+                <span className={publishableKey.startsWith('pk_test') ? 'text-orange-500' : 'text-green-500'}>
+                  Frontend: {publishableKey.startsWith('pk_test') ? 'TEST MODE' : publishableKey.startsWith('pk_live') ? 'LIVE MODE' : 'UNKNOWN'} 
+                  ({publishableKey.slice(0, 8)}...)
+                </span>
+              </div>
             </div>
 
             {!publishableKey ? (
