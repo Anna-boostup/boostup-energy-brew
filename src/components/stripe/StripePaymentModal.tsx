@@ -211,8 +211,9 @@ export const StripePaymentModal = ({
               <div className="mt-2 px-4 flex justify-between items-center text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                 <span>Debug Info:</span>
                 <span className={publishableKey.startsWith('pk_test') ? 'text-orange-500' : 'text-green-500'}>
-                  Frontend: {publishableKey.startsWith('pk_test') ? 'TEST MODE' : publishableKey.startsWith('pk_live') ? 'LIVE MODE' : 'UNKNOWN'} 
-                  ({publishableKey.slice(0, 8)}...)
+                  FE: {publishableKey.startsWith('pk_test') ? 'TEST' : publishableKey.startsWith('pk_live') ? 'LIVE' : '??'} ({publishableKey.slice(0, 10)}...)
+                  <br/>
+                  BE: {clientSecret.startsWith('pi_') ? 'PaymentIntent' : '??'} ({clientSecret.slice(0, 10)}...)
                 </span>
               </div>
             </div>
