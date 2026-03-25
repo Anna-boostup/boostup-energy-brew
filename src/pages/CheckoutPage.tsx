@@ -310,7 +310,7 @@ const CheckoutPage = () => {
                 }
             }
 
-            const orderNumber = `ORD-${Date.now()}`;
+            const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`; // Shorter for GoPay (max 15 chars)
 
             // 2. Decrement Stock
             Object.entries(requiredStock).forEach(([flavor, amount]) => {
