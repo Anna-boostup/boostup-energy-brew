@@ -62,8 +62,8 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
 
-        // Prepare GoPay payment data
-        const paymentData = {
+        // Prepare MINIMAL GoPay payment data to isolate the error
+        const paymentData: any = {
             target: {
                 type: 'ACCOUNT',
                 goid: goId
@@ -71,38 +71,25 @@ export default async function handler(req: Request) {
             amount: Math.round(total * 100), // in cents/haléře
             currency: 'CZK',
             order_number: orderNumber,
-            order_description: `Objednávka ${orderNumber} - BoostUp Energy`,
-            items: [
-                ...items.map((item: any) => ({
-                    type: 'ITEM',
-                    name: item.name,
-                    amount: Math.round(item.price * item.quantity * 100),
-                    count: item.quantity
-                })),
-                // Add shipping as a separate item if total includes it
-                ...(total > items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
-                    type: 'ITEM',
-                    name: 'Doprava',
-                    amount: Math.round((total - items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
-                    count: 1
-                }] : [])
-            ],
+            order_description: `Objednávka ${orderNumber}`,
             callback: {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
-            payer: {
-                contact: {
-                    email: customerEmail,
-                    full_name: customerName
-                }
-            },
             lang: 'cs'
         };
 
+        // Only add payer if we have data
+        if (customerEmail) {
+            paymentData.payer = {
+                contact: {
+                    email: customerEmail,
+                    full_name: customerName || customerEmail
+                }
+            };
+        }
+
         console.log(`[GoPay Data Check] Total Amount: ${paymentData.amount}`);
-        const itemsSum = paymentData.items.reduce((acc: number, item: any) => acc + item.amount, 0);
-        console.log(`[GoPay Data Check] Items Sum: ${itemsSum}`);
 
         console.log(`[GoPay Full Request Payload]:`, JSON.stringify(paymentData, null, 2));
 
