@@ -62,7 +62,7 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
 
-        // Prepare MINIMAL GoPay payment data to isolate the error
+        // Prepare GoPay payment data with restored items
         const paymentData: any = {
             target: {
                 type: 'ACCOUNT',
@@ -72,22 +72,33 @@ export default async function handler(req: Request) {
             currency: 'CZK',
             order_number: orderNumber,
             order_description: `Objednávka ${orderNumber}`,
+            items: [
+                ...items.map((item: any) => ({
+                    type: 'ITEM',
+                    name: item.name,
+                    amount: Math.round(item.price * item.quantity * 100),
+                    count: item.quantity
+                })),
+                // Add shipping as a separate item if total includes it
+                ...(total > items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
+                    type: 'ITEM',
+                    name: 'Doprava',
+                    amount: Math.round((total - items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
+                    count: 1
+                }] : [])
+            ],
             callback: {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
-            lang: 'cs'
-        };
-
-        // Only add payer if we have data
-        if (customerEmail) {
-            paymentData.payer = {
+            payer: {
                 contact: {
                     email: customerEmail,
-                    full_name: customerName || customerEmail
+                    full_name: (customerName && customerName.trim().includes(' ')) ? customerName.trim() : `${customerName.trim()} .` 
                 }
-            };
-        }
+            },
+            lang: 'cs'
+        };
 
         console.log(`[GoPay Data Check] Total Amount: ${paymentData.amount}`);
 
