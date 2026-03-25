@@ -1,4 +1,4 @@
-// Triggering final deploy after env variable update
+// Triggering deploy after Stripe key update - v6
 import { Stripe } from 'stripe';
 
 const secretKey = process.env.STRIPE_SECRET_KEY || '';
