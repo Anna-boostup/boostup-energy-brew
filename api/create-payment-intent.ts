@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 
 const secretKey = process.env.STRIPE_SECRET_KEY || '';
-console.log(`[Stripe Backend] Initializing Stripe with key type: ${secretKey.startsWith('sk_test') ? 'sk_test_***' : secretKey.startsWith('sk_live') ? 'sk_live_***' : 'unknown/missing'}`);
+// Diagnostic log outside was only on init
 
 const stripe = new Stripe(secretKey, {
     apiVersion: '2023-10-16', // Add a default API version to avoid warnings
@@ -28,8 +28,8 @@ export default async function handler(req: Request) {
     try {
         const body = await req.json();
         const { orderNumber, total, customerEmail } = body;
-
-        console.log(`[Stripe PaymentIntent] Creating intent for order ${orderNumber}`);
+ 
+        console.log(`[Stripe PaymentIntent] Creating intent for order ${orderNumber} using key type: ${secretKey.startsWith('sk_test') ? 'sk_test_***' : secretKey.startsWith('sk_live') ? 'sk_live_***' : 'unknown/missing'}`);
 
         if (!orderNumber || !total) {
              const missingFields = [];
