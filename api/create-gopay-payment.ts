@@ -50,9 +50,7 @@ export default async function handler(req: Request) {
         
         console.log('[GoPay Debug]', { customerName, customerEmail });
 
-        console.log('[GoPay Debug]', { customerName, customerEmail });
-
-        const isSandbox = true; // Hardcoded for now, should use process.env.NODE_ENV or GOPAY_ENV
+        const isSandbox = true; 
         const baseUrl = isSandbox ? GOPAY_URL_SANDBOX : GOPAY_URL_PROD;
         
         const goId = process.env.GOPAY_GOID || '8738112812';
