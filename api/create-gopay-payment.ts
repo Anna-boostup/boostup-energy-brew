@@ -66,7 +66,7 @@ export default async function handler(req: Request) {
         const paymentData: any = {
             target: {
                 type: 'ACCOUNT',
-                goid: goId
+                go_id: Number(goId)
             },
             amount: Math.round(total * 100), // in cents/haléře
             currency: 'CZK',
@@ -91,7 +91,6 @@ export default async function handler(req: Request) {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
-            /* 
             payer: {
                 contact: {
                     email: customerEmail || 'info@drinkboostup.cz',
@@ -103,7 +102,6 @@ export default async function handler(req: Request) {
                     })()
                 }
             },
-            */
             lang: 'cs'
         };
 
