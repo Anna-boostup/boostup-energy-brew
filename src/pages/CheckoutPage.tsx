@@ -89,7 +89,7 @@ const CheckoutPage = () => {
         billingCity: '',
         billingZip: '',
 
-        deliveryMethod: 'card',
+        deliveryMethod: 'personal',
         packetaPointId: '',
         paymentMethod: '',
         subMethod: '',
@@ -1310,10 +1310,11 @@ const CheckoutPage = () => {
                                     <span className="text-muted-foreground uppercase font-bold text-[10px]">Doprava</span>
                                     {(() => {
                                         const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                                        return isFreeShipping ? (
-                                            <span className="text-lime font-bold uppercase">ZDARMA</span>
+                                        const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+                                        return shippingCost === 0 ? (
+                                            <span className="text-lime font-bold uppercase">ZDARMA / OSOBNÍ</span>
                                         ) : (
-                                            <span className="font-bold">79 Kč</span>
+                                            <span className="font-bold">{shippingCost} Kč</span>
                                         );
                                     })()}
                                 </div>
