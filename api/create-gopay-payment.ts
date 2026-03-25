@@ -47,6 +47,8 @@ export default async function handler(req: Request) {
     try {
         const body = await req.json();
         const { orderNumber, total, customerEmail, customerName, items } = body;
+        
+        console.log('[GoPay Debug]', { customerName, customerEmail });
 
         console.log('[GoPay Debug]', { customerName, customerEmail });
 
