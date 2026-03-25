@@ -471,17 +471,20 @@ const CheckoutPage = () => {
             setPendingOrder(newOrder);
             setIsRedirecting(true);
             
+            const gopayBody = {
+                orderNumber: newOrder.id,
+                customerEmail: formData.email,
+                customerName: `${formData.firstName} ${formData.lastName}`,
+                total: newOrder.total,
+                items: newOrder.items
+            };
+            console.log('[Frontend GoPay Request]:', gopayBody);
+            
             try {
                 const gopayRes = await fetch('/api/create-gopay-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        orderNumber: newOrder.id,
-                        customerEmail: formData.email,
-                        customerName: `${formData.firstName} ${formData.lastName}`,
-                        total: newOrder.total,
-                        items: newOrder.items
-                    }),
+                    body: JSON.stringify(gopayBody),
                 });
 
                 const gopayData = await gopayRes.json();

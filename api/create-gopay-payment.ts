@@ -104,9 +104,7 @@ export default async function handler(req: Request) {
         const itemsSum = paymentData.items.reduce((acc: number, item: any) => acc + item.amount, 0);
         console.log(`[GoPay Data Check] Items Sum: ${itemsSum}`);
 
-        if (paymentData.amount !== itemsSum) {
-            console.error(`[GoPay Error] Amount mismatch! Total: ${paymentData.amount}, Sum: ${itemsSum}`);
-        }
+        console.log(`[GoPay Full Request Payload]:`, JSON.stringify(paymentData, null, 2));
 
         const response = await fetch(`${baseUrl}/payments/payment`, {
             method: 'POST',
@@ -119,6 +117,7 @@ export default async function handler(req: Request) {
         });
 
         const data = await response.json();
+        console.log(`[GoPay Full Response]:`, JSON.stringify(data, null, 2));
 
         if (!response.ok) {
             console.error('[GoPay Error Response]', data);
