@@ -92,12 +92,7 @@ export default async function handler(req: Request) {
             payer: {
                 contact: {
                     email: customerEmail || 'info@drinkboostup.cz',
-                    full_name: (() => {
-                        const name = (customerName || '').trim();
-                        if (name.includes(' ') && name.length > 3) return name;
-                        if (name.length > 0) return `${name} ${name}`;
-                        return 'Zakaznik Boostup';
-                    })()
+                    full_name: "Jan Novak" // Forcing a known valid name to isolate the error
                 }
             },
             lang: 'cs'
