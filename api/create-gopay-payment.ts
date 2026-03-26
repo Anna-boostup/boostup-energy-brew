@@ -95,7 +95,10 @@ export default async function handler(req: Request) {
                 contact: {
                     email: customerEmail || 'info@drinkboostup.cz',
                     full_name: (() => {
-                        const name = (customerName || '').trim();
+                        // Strip diacritics — GoPay sandbox rejects Czech chars like ě, á, í
+                        const stripDiacritics = (s: string) =>
+                            s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        const name = stripDiacritics((customerName || '').trim());
                         if (name.includes(' ') && name.length > 3) return name;
                         if (name.length > 0) return `${name} ${name}`;
                         return 'Zakaznik Boostup';
