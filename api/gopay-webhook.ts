@@ -26,7 +26,7 @@ export default async function handler(req: Request) {
 
     // Verify payment status with GoPay API
     try {
-        const isSandbox = true;
+        const isSandbox = false; // Match production gateway
         const baseUrl = isSandbox
             ? 'https://gw.sandbox.gopay.com/api'
             : 'https://gate.gopay.cz/api';
