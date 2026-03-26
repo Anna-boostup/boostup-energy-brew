@@ -64,8 +64,12 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
 
-        // Prepare GoPay payment data - OMITTING target to let GoPay identify it from the token
+        // Prepare GoPay payment data following the user-provided structure precisely
         const paymentData: any = {
+            target: {
+                type: 'ACCOUNT',
+                go_id: Number(goId)
+            },
             amount: Math.round(total * 100), // in cents/haléře
             currency: 'CZK',
             order_number: orderNumber,
@@ -75,14 +79,16 @@ export default async function handler(req: Request) {
                     type: 'ITEM',
                     name: item.name,
                     amount: Math.round(item.price * item.quantity * 100),
-                    count: item.quantity
+                    count: item.quantity,
+                    vat_rate: 21
                 })),
                 // Add shipping as a separate item if total includes it
                 ...(total > items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
                     type: 'ITEM',
                     name: 'Doprava',
                     amount: Math.round((total - items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
-                    count: 1
+                    count: 1,
+                    vat_rate: 21
                 }] : [])
             ],
             callback: {
@@ -92,7 +98,7 @@ export default async function handler(req: Request) {
             payer: {
                 contact: {
                     email: customerEmail || 'info@drinkboostup.cz',
-                    full_name: "Jan Novak" // Forcing a known valid name to isolate the error
+                    full_name: "Jan Novak" // Still hardcoded for one last test
                 }
             },
             lang: 'cs'

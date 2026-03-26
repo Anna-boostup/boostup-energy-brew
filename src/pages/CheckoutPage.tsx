@@ -471,13 +471,16 @@ const CheckoutPage = () => {
             setPendingOrder(newOrder);
             setIsRedirecting(true);
             
-            const gopayBody = {
-                orderNumber: newOrder.id,
-                customerEmail: formData.email,
-                customerName: `${formData.firstName} ${formData.lastName}`,
-                total: newOrder.total,
-                items: newOrder.items
-            };
+                const gopayBody = {
+                    orderNumber: newOrder.id,
+                    customerEmail: formData.email,
+                    customerName: `${formData.firstName} ${formData.lastName}`.trim(),
+                    total: newOrder.total,
+                    items: newOrder.items.map(item => ({
+                        ...item,
+                        name: item.name.replace(/[\u1F600-\u1F64F]|[\u2702-\u27B0]|[\u1F680-\u1F6FF]|[\u24C2-\u1F251]|[\u1F300-\u1F5FF]|[\u1F900-\u1F9FF]|[\u1F600-\u1F64F]|[\u1F680-\u1F6FF]|[\u2600-\u26FF]\uFE0F?|[\u2700-\u27BF]\uFE0F?|[\u24C2-\u1F251]|[\u1F004-\u1F0CF]|[\u1F170-\u1F19A]|[\u1F1E6-\u1F1FF]|[\u1F201-\u1F251]|[\u1F300-\u1F5FF]|[\u1F600-\u1F64F]|[\u1F680-\u1F6FF]|[\u1F910-\u1F96B]|[\u1F980-\u1F9E0]/g, '').trim()
+                    }))
+                };
             console.log('[Frontend GoPay Request]:', gopayBody);
             
             try {
