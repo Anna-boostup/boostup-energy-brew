@@ -10,11 +10,11 @@ const corsHeaders = {
 };
 
 export const config = {
-    runtime: 'nodejs',
+    runtime: 'edge',
 };
 
 async function getAccessToken(clientId: string, clientSecret: string, baseUrl: string) {
-    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+    const auth = btoa(`${clientId}:${clientSecret}`);
 
     const response = await fetch(`${baseUrl}/oauth2/token`, {
         method: 'POST',
