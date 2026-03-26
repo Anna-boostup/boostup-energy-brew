@@ -13,8 +13,7 @@ export const config = {
     runtime: 'edge',
 };
 
-async function getAccessToken(clientId: string, clientSecret: string, isSandbox: boolean) {
-    const baseUrl = isSandbox ? GOPAY_URL_SANDBOX : GOPAY_URL_PROD;
+async function getAccessToken(clientId: string, clientSecret: string, baseUrl: string) {
     const auth = btoa(`${clientId}:${clientSecret}`);
 
     const response = await fetch(`${baseUrl}/oauth2/token`, {
@@ -58,9 +57,9 @@ export default async function handler(req: Request) {
         const clientId = process.env.GOPAY_CLIENT_ID;
         const clientSecret = process.env.GOPAY_CLIENT_SECRET;
 
-        console.log(`[GoPay] Creating payment for order ${orderNumber}`);
+        console.log(`[GoPay] Creating payment for order ${orderNumber}, baseUrl: ${baseUrl}`);
 
-        const tokenData = await getAccessToken(clientId!, clientSecret!, isSandbox);
+        const tokenData = await getAccessToken(clientId!, clientSecret!, baseUrl);
         const accessToken = tokenData.access_token;
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
