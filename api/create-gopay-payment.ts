@@ -51,9 +51,9 @@ export default async function handler(req: Request) {
         console.log('[ENV Check]', { goId: process.env.GOPAY_GO_ID });
         console.log('[GoPay Debug]', { customerName, customerEmail });
 
-        const isSandbox = false; // GoID 8738112812 is registered on production gateway
-        const baseUrl = isSandbox ? GOPAY_URL_SANDBOX : GOPAY_URL_PROD;
-        
+        // Use GOPAY_API_URL from env if set, fall back to production gateway
+        const baseUrl = (process.env.GOPAY_API_URL || 'https://gate.gopay.cz/api').replace(/\/$/, '');
+
         const goId = process.env.GOPAY_GO_ID;
         const clientId = process.env.GOPAY_CLIENT_ID;
         const clientSecret = process.env.GOPAY_CLIENT_SECRET;

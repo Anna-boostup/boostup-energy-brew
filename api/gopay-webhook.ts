@@ -26,10 +26,7 @@ export default async function handler(req: Request) {
 
     // Verify payment status with GoPay API
     try {
-        const isSandbox = false; // Match production gateway
-        const baseUrl = isSandbox
-            ? 'https://gw.sandbox.gopay.com/api'
-            : 'https://gate.gopay.cz/api';
+        const baseUrl = (process.env.GOPAY_API_URL || 'https://gate.gopay.cz/api').replace(/\/$/, '');
 
         const clientId = process.env.GOPAY_CLIENT_ID;
         const clientSecret = process.env.GOPAY_CLIENT_SECRET;
