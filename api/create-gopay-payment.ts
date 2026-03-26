@@ -48,6 +48,7 @@ export default async function handler(req: Request) {
         const body = await req.json();
         const { orderNumber, total, customerEmail, customerName, items } = body;
         
+        console.log('[ENV Check]', { goId: process.env.GOPAY_GO_ID });
         console.log('[GoPay Debug]', { customerName, customerEmail });
 
         const isSandbox = true; 
