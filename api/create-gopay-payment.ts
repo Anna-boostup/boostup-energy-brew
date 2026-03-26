@@ -65,12 +65,9 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
 
-        // Structure follows GoPay's own official integration example
+        // NOTE: target omitted — the one payment that reached GoPay (ID 3297672027) had no target.
+        // With target, sandbox consistently returns go_id: INVALID despite correct GoID.
         const paymentData: any = {
-            target: {
-                type: 'ACCOUNT',
-                go_id: String(goId)  // Trying as String — sandbox may differ from production
-            },
             payer: {
                 default_payment_instrument: 'PAYMENT_CARD',
                 allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT']
