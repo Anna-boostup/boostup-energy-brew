@@ -64,35 +64,37 @@ export default async function handler(req: Request) {
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
 
-        // NOTE: Omitting 'target' — GoPay infers the merchant account from the access token.
+        // Structure follows GoPay's own official integration example
         const paymentData: any = {
-            amount: Math.round(total * 100), // in cents/haléře
+            target: {
+                type: 'ACCOUNT',
+                go_id: Number(goId)
+            },
+            payer: {
+                default_payment_instrument: 'PAYMENT_CARD',
+                allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT']
+            },
+            amount: Math.round(total * 100),
             currency: 'CZK',
             order_number: orderNumber,
-            order_description: `Objednávka ${orderNumber}`,
+            order_description: `Objednavka ${orderNumber}`,
             items: [
                 ...items.map((item: any) => ({
-                    type: 'ITEM',
-                    name: item.name,
+                    name: item.name.replace(/[^\x00-\xFF\u0100-\u017F]/g, '').trim(),
                     amount: Math.round(item.price * item.quantity * 100),
-                    count: item.quantity,
-                    vat_rate: 21
+                    count: item.quantity
                 })),
-                // Add shipping as a separate item if total includes it
                 ...(total > items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
-                    type: 'ITEM',
                     name: 'Doprava',
                     amount: Math.round((total - items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
-                    count: 1,
-                    vat_rate: 21
+                    count: 1
                 }] : [])
             ],
             callback: {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
-            // payer block omitted — sandbox rejects full_name regardless of content
-            lang: 'cs'
+            lang: 'CS'
         };
 
         console.log(`[GoPay Data Check] Total Amount: ${paymentData.amount}`);
