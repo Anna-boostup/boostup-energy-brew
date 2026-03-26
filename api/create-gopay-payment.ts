@@ -91,20 +91,7 @@ export default async function handler(req: Request) {
                 return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
-            payer: {
-                contact: {
-                    email: customerEmail || 'info@drinkboostup.cz',
-                    full_name: (() => {
-                        // Strip diacritics — GoPay sandbox rejects Czech chars like ě, á, í
-                        const stripDiacritics = (s: string) =>
-                            s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                        const name = stripDiacritics((customerName || '').trim());
-                        if (name.includes(' ') && name.length > 3) return name;
-                        if (name.length > 0) return `${name} ${name}`;
-                        return 'Zakaznik Boostup';
-                    })()
-                }
-            },
+            // payer block omitted — sandbox rejects full_name regardless of content
             lang: 'cs'
         };
 
