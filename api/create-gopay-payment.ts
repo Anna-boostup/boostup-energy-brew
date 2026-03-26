@@ -60,6 +60,7 @@ export default async function handler(req: Request) {
         console.log(`[GoPay] Creating payment for order ${orderNumber}, baseUrl: ${baseUrl}`);
 
         const tokenData = await getAccessToken(clientId!, clientSecret!, baseUrl);
+        console.log('[GoPay Token Response]', JSON.stringify(tokenData));
         const accessToken = tokenData.access_token;
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
