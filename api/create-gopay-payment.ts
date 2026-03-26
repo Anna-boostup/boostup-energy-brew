@@ -53,13 +53,13 @@ export default async function handler(req: Request) {
         const isSandbox = true; 
         const baseUrl = isSandbox ? GOPAY_URL_SANDBOX : GOPAY_URL_PROD;
         
-        const goId = process.env.GOPAY_GOID || '8738112812';
-        const clientId = process.env.GOPAY_CLIENT_ID || '1151077928';
-        const clientSecret = process.env.GOPAY_CLIENT_SECRET || 'cxcvevfZ';
+        const goId = process.env.GOPAY_GO_ID;
+        const clientId = process.env.GOPAY_CLIENT_ID;
+        const clientSecret = process.env.GOPAY_CLIENT_SECRET;
 
         console.log(`[GoPay] Creating payment for order ${orderNumber}`);
 
-        const tokenData = await getAccessToken(clientId, clientSecret, isSandbox);
+        const tokenData = await getAccessToken(clientId!, clientSecret!, isSandbox);
         const accessToken = tokenData.access_token;
 
         const origin = req.headers.get('origin') || 'https://test.drinkboostup.cz';
@@ -98,7 +98,12 @@ export default async function handler(req: Request) {
             payer: {
                 contact: {
                     email: customerEmail || 'info@drinkboostup.cz',
-                    full_name: "Jan Novak" // Still hardcoded for one last test
+                    full_name: (() => {
+                        const name = (customerName || '').trim();
+                        if (name.includes(' ') && name.length > 3) return name;
+                        if (name.length > 0) return `${name} ${name}`;
+                        return 'Zakaznik Boostup';
+                    })()
                 }
             },
             lang: 'cs'
