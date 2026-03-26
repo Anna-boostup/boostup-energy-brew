@@ -68,7 +68,7 @@ export default async function handler(req: Request) {
         const paymentData: any = {
             target: {
                 type: 'ACCOUNT',
-                go_id: Number(goId)
+                go_id: String(goId)  // Trying as String — sandbox may differ from production
             },
             payer: {
                 default_payment_instrument: 'PAYMENT_CARD',
