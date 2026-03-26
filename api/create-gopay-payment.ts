@@ -68,6 +68,10 @@ export default async function handler(req: Request) {
         // NOTE: target omitted — the one payment that reached GoPay (ID 3297672027) had no target.
         // With target, sandbox consistently returns go_id: INVALID despite correct GoID.
         const paymentData: any = {
+            target: {
+                type: 'ACCOUNT',
+                goid: Number(goId)  // GoPay npm SDK uses 'goid' (no underscore)
+            },
             payer: {
                 default_payment_instrument: 'PAYMENT_CARD',
                 allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT']
