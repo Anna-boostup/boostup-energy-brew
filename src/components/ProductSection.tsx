@@ -68,9 +68,9 @@ const ProductSection = () => {
                   <Sparkles className="w-3 h-3" />
                   Konfigurátor balení
                 </div>
-                <h2 className="text-4xl md:text-6xl font-display font-black text-foreground leading-[0.9] tracking-tighter uppercase">
+                <h2 className="text-4xl md:text-6xl font-display font-black text-foreground leading-[0.9] tracking-tighter uppercase whitespace-nowrap">
                   VYTVOŘTE SI SVOU <br />
-                  <span className="text-gradient-energy italic">ENERGII</span>
+                  <span className="text-gradient-energy italic pr-4">ENERGII</span>
                 </h2>
                 <p className="text-lg text-foreground/60 max-w-xl font-medium">
                   Vyberte si velikost balení, příchuť a způsob doručení. Vše čerstvě připravené pro špičkový výkon.
