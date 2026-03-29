@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- High Priority Resource Hints -->
+  <!-- Critical Resource Hints - Absolute Priority -->
   <link rel="dns-prefetch" href="https://gmbxcqqmnlsjvqghaxmu.supabase.co" />
   <link rel="preconnect" href="https://gmbxcqqmnlsjvqghaxmu.supabase.co" crossorigin />
   <link rel="preload" as="image" href="/bottle-silky.webp" imagesrcset="/bottle-silky-mobile.webp 600w, /bottle-silky.webp 1200w" imagesizes="(max-width: 600px) 100vw, 800px" fetchpriority="high" />
@@ -36,7 +36,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3" />
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- Critical CSS Inlining -->
+  <!-- Critical CSS Inlining (Above the Fold) -->
   <style>
     :root {
       --background: 47 30% 93%;
@@ -51,24 +51,38 @@
       --font-heading: "Poppins", system-ui, sans-serif;
       --font-body: "Poppins", system-ui, sans-serif;
     }
-    body {
+    html, body {
       background-color: hsl(var(--background));
       color: hsl(var(--foreground));
       font-family: var(--font-body);
       margin: 0;
+      padding: 0;
+      overflow-x: hidden;
     }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 72px;
+      background-color: hsla(47, 30%, 93%, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      border-bottom: 1px solid hsla(99, 15%, 78%, 0.5);
+    }
+    section.pt-14 { padding-top: 3.5rem; }
     @keyframes fade-up {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .container { width: 100%; margin: 0 auto; padding: 0 1rem; }
+    @media (min-width: 1280px) { .container { max-width: 1280px; } }
     .animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
   </style>
   <script>
-    // Deflate render-blocking CSS injected by Vite
+    // Collapse the critical chain by making late CSS non-blocking
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
+          if (node.tagName === 'LINK' && node.rel === 'stylesheet' && !node.dataset.critical) {
             node.media = 'print';
             node.onload = () => { node.media = 'all'; };
           }
