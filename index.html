@@ -56,16 +56,27 @@
       color: hsl(var(--foreground));
       font-family: var(--font-body);
       margin: 0;
-      opacity: 0;
-      animation: fadeIn 0.3s ease-in forwards;
     }
-    @keyframes fadeIn { to { opacity: 1; } }
     @keyframes fade-up {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
   </style>
+  <script>
+    // Deflate render-blocking CSS injected by Vite
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
+            node.media = 'print';
+            node.onload = () => { node.media = 'all'; };
+          }
+        });
+      });
+    });
+    observer.observe(document.head, { childList: true });
+  </script>
 </head>
 
 <body>

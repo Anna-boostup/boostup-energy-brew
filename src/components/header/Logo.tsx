@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import logoGreen from "@/assets/logo-green.png";
-import logoWhite from "@/assets/logo-white.png";
+import logoGreen from "@/assets/logo-green.webp";
+import logoWhite from "@/assets/logo-white.webp";
 
 const Logo = () => {
   return (
