@@ -83,29 +83,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(null);
     };
 
-    // TEMPORARY: Bypass for security audit on test.drinkboostup.cz
-    // Provides a mock admin profile if no user is logged in
-    const bypassProfile: Profile = {
-        id: 'bypass-admin',
-        email: 'audit@boostup.brew',
-        full_name: 'Security Auditor',
-        role: 'admin',
-        account_type: 'admin',
-        address: {}
-    };
-
     const value = {
         session,
         user,
-        profile: profile || (loading ? null : bypassProfile),
+        profile,
         loading,
-        isAdmin: true, // Always true for audit
+        isAdmin: profile?.role === 'admin',
         signOut,
     };
 
     return (
         <AuthContext.Provider value={value}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     );
 };

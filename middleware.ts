@@ -25,6 +25,7 @@ export default function middleware(request: Request) {
         !authUser ||
         !authPass ||
         (productionDomain && (hostname === productionDomain || hostname === `www.${productionDomain}`)) ||
+        hostname === 'test.drinkboostup.cz' || // Temporary bypass for security audit
         hostname.includes('localhost') ||
         hostname.includes('127.0.0.1')
     ) {

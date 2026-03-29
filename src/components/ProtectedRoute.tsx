@@ -26,15 +26,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         return <div className="h-screen flex items-center justify-center">Načítání...</div>;
     }
 
-    // TEMPORARY: Allow all routes for security audit
-    return <>{children}</>;
-    /*
     if (!user) {
         return <Navigate to="/login" replace />;
     }
 
     return <>{children}</>;
-    */
 };
 
 export default ProtectedRoute;
