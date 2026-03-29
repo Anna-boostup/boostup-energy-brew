@@ -2,7 +2,8 @@ import { useState } from "react";
 import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
 import { useContent } from "@/context/ContentContext";
-import IngredientDialog from "./IngredientDialog";
+import { lazy, Suspense } from "react";
+const IngredientDialog = lazy(() => import("./IngredientDialog"));
 
 const HeroSection = () => {
   const { content: SITE_CONTENT } = useContent();
@@ -136,17 +137,19 @@ const HeroSection = () => {
       </div>
 
       {activeIngredient && (
-        <IngredientDialog
-          isOpen={!!activeIngredient}
-          onClose={() => setActiveIngredient(null)}
-          data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
-          colorClass={
-            activeIngredient === 'stimulants' ? 'bg-lime' :
-            activeIngredient === 'electrolytes' ? 'bg-blue-400' :
-            activeIngredient === 'adaptogens' ? 'bg-terracotta' :
-            'bg-orange'
-          }
-        />
+        <Suspense fallback={null}>
+          <IngredientDialog
+            isOpen={!!activeIngredient}
+            onClose={() => setActiveIngredient(null)}
+            data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
+            colorClass={
+              activeIngredient === 'stimulants' ? 'bg-lime' :
+              activeIngredient === 'electrolytes' ? 'bg-blue-400' :
+              activeIngredient === 'adaptogens' ? 'bg-terracotta' :
+              'bg-orange'
+            }
+          />
+        </Suspense>
       )}
     </section>
   );
