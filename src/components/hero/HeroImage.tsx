@@ -1,7 +1,7 @@
-const HeroImage = () => {
-  const bottlesHero = "/hero-vse.webp";
-  const bottlesHeroMobile = "/hero-vse-mobile.webp";
+import bottlesHero from "@/assets/hero-vse.webp";
+import bottlesHeroMobile from "@/assets/hero-vse-mobile.webp";
 
+const HeroImage = () => {
   return (
     <div className="relative animate-fade-up animation-delay-300 mb-8 sm:mb-16">
       <div className="relative max-w-3xl mx-auto">

@@ -1,6 +1,6 @@
 import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
-import bottleHero from "@/assets/hero-vse.jpg";
+import bottleHero from "@/assets/bottle-silky-hero.png";
 
 const HeroSection = () => {
   const scrollTo = (id: string) => {
@@ -94,7 +94,7 @@ const HeroSection = () => {
               src={bottleHero}
               alt="BoostUp Pure Shot - prémiový energetický shot"
               className="w-[360px] sm:w-[450px] md:w-[520px] lg:max-h-[80vh] lg:w-auto lg:max-w-none object-contain relative z-10"
-              style={{ transform: 'rotate(15deg)', mixBlendMode: 'multiply' }}
+              style={{ transform: 'rotate(15deg)' }}
               loading="eager"
               {...({ fetchPriority: "high" } as any)}
             />

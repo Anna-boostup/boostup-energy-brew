@@ -68,6 +68,9 @@ const MissionSection = () => {
             const isNatural = feature.title === "Přírodní složení";
             const Icon = iconMap[feature.title] || Zap;
             const textColor = feature.color === 'bg-lime' || feature.color === 'bg-orange' ? 'text-foreground' : 'text-cream';
+            const glowStyle = isNatural
+              ? { background: 'linear-gradient(135deg, hsl(var(--olive-light)) 0%, hsl(101 54% 13%) 100%)' }
+              : undefined;
 
             return (
               <div
@@ -76,24 +79,27 @@ const MissionSection = () => {
                 style={{ animationDelay: `${300 + index * 100}ms` }}
               >
                 {/* Intense Background Glow */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${isNatural ? '' : feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`}
+                  style={glowStyle}
+                />
 
-                <div className={`relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 group-hover:border-transparent hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500 ${isNatural ? 'group-hover:bg-[#1a320f]' : ''}`}>
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 group-hover:border-transparent hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500">
                   {/* Icon */}
                   <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
                   {/* Stat */}
-                  <div className={`text-4xl lg:text-5xl font-black text-lime mb-2 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className="text-4xl lg:text-5xl font-black text-lime mb-2 group-hover:scale-110 transition-transform duration-300">
                     {feature.stat}
                   </div>
 
                   {/* Title */}
-                  <h3 className={`font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors ${isNatural ? 'group-hover:text-cream' : ''}`}>{feature.title}</h3>
+                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
 
                   {/* Description */}
-                  <p className={`text-sm text-primary-foreground leading-relaxed ${isNatural ? 'group-hover:text-cream/90' : ''}`}>{feature.description}</p>
+                  <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             );

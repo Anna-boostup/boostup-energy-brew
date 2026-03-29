@@ -18,7 +18,7 @@ const HeroCTA = ({ cta }: HeroCTAProps) => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-12 animate-fade-up animation-delay-600 items-start relative z-20">
+    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-up animation-delay-600 items-center relative z-20">
       <Button
         variant="default"
         size="xl"
