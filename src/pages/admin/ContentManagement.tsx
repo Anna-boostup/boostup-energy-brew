@@ -620,6 +620,15 @@ const ContentManagement = () => {
                                                 placeholder="Energie: 15 kcal..."
                                             />
                                         </div>
+                                        <div className="grid gap-2">
+                                            <Label>Složení</Label>
+                                            <Textarea
+                                                rows={3}
+                                                value={flavor.ingredients || ""}
+                                                onChange={(e) => updateField(['flavors', key, 'ingredients'], e.target.value)}
+                                                placeholder="Voda, kofein..."
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="space-y-4">

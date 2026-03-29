@@ -1,7 +1,4 @@
-
-import { Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import IngredientsDialog from "./IngredientsDialog";
 import NutritionalFactsDialog from "./NutritionalFactsDialog";
 import { FLAVORS, type FlavorConfig } from "@/config/product-data";
 
@@ -64,23 +61,12 @@ const FlavorSelector = ({
                   </div>
                 </div>
                 {/* Info Tooltip & Nutrition */}
+                {/* Info & Nutrition Links */}
                 <div className="flex flex-col items-center gap-1 shrink-0">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className={`h-8 w-8 rounded-full ${isSelected ? 'text-white/80 hover:text-white hover:bg-white/20' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
-                        onClick={(e) => e.stopPropagation()}
-                        aria-label={`Informace o příchuti ${flavor.name}`}
-                      >
-                        <Info className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="left" className="max-w-xs">
-                      <p>{eff?.tooltip || flavor.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <IngredientsDialog
+                    flavorName={content.flavors[flavor.id]?.name || flavor.name}
+                    ingredients={content.flavors[flavor.id]?.ingredients || flavor.ingredients || ""}
+                  />
                   <NutritionalFactsDialog
                     flavorName={content.flavors[flavor.id]?.name || flavor.name}
                     data={content.flavors[flavor.id]?.nutritionalFacts || (flavor as any).nutritionalFacts || ""}
