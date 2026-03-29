@@ -23,7 +23,7 @@ const FlavorModeSelector = ({ flavorMode, onSelectFlavorMode }: FlavorModeSelect
           <Droplet className="w-5 h-5" />
           <div className="text-left">
             <div className="font-bold text-sm sm:text-base">Jednu příchuť</div>
-            <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "text-primary-foreground" : "text-foreground/80"}`}>Vyberu si níže</div>
+            <div className={`text-[10px] sm:text-xs ${flavorMode === "single" ? "text-primary-foreground" : "text-foreground/80"}`}>Vyberte si níže</div>
           </div>
         </button>
 
