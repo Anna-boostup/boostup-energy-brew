@@ -14,7 +14,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1 lg:col-span-1">
             <Link to="/" className="inline-block mb-8">
-              <img src={logoWhite} alt="BoostUp" className="h-10 w-auto" />
+              <img src={logoWhite} alt="BoostUp" className="h-10 w-auto" width={160} height={40} />
             </Link>
             <p className="text-primary-foreground/90 text-lg leading-relaxed mb-8 max-w-sm">
               {content.brand.description}

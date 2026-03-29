@@ -99,6 +99,8 @@ const HeroSection = () => {
               src="/bottle-silky.webp"
               srcSet="/bottle-silky-mobile.webp 600w, /bottle-silky.webp 1200w"
               sizes="(max-width: 600px) 100vw, 800px"
+              width="450"
+              height="800"
               alt="BoostUp Pure Shot - prémiový energetický shot"
               className="w-[360px] sm:w-[450px] md:w-[520px] lg:max-h-[80vh] lg:w-auto lg:max-w-none object-contain relative z-10"
               style={{ transform: 'rotate(15deg)' }}
