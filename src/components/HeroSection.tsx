@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
 import bottleHero from "@/assets/bottle-silky-hero.png";
+import { useContent } from "@/context/ContentContext";
+import IngredientDialog from "./IngredientDialog";
 
 const HeroSection = () => {
+  const { content: SITE_CONTENT } = useContent();
+  const [activeIngredient, setActiveIngredient] = useState<string | null>(null);
+
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -104,15 +110,15 @@ const HeroSection = () => {
         {/* Tags row - full width below both columns */}
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
           {[
-            { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f' },
-            { label: 'STIMULACE', color: '#dfdf57' },
-            { label: 'ODOLNOST', color: '#f29739' },
-            { label: 'ROVNOVÁHA', color: '#aa263e' },
+            { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f', id: 'vitamins', colorClass: 'bg-orange' },
+            { label: 'STIMULACE', color: '#dfdf57', id: 'stimulants', colorClass: 'bg-lime' },
+            { label: 'ODOLNOST', color: '#f29739', id: 'adaptogens', colorClass: 'bg-terracotta' },
+            { label: 'ROVNOVÁHA', color: '#aa263e', id: 'electrolytes', colorClass: 'bg-blue-400' },
           ].map((item) => (
             <button
               key={item.label}
-              onClick={() => {}}
-              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-opacity hover:opacity-80 cursor-pointer border-0"
+              onClick={() => setActiveIngredient(item.id)}
+              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-all border-0 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #f1e8c3, #f4f1e6)',
                 color: '#3d5a2f',
@@ -125,6 +131,20 @@ const HeroSection = () => {
           ))}
         </div>
       </div>
+
+      {activeIngredient && (
+        <IngredientDialog
+          isOpen={!!activeIngredient}
+          onClose={() => setActiveIngredient(null)}
+          data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
+          colorClass={
+            activeIngredient === 'stimulants' ? 'bg-lime' :
+            activeIngredient === 'electrolytes' ? 'bg-blue-400' :
+            activeIngredient === 'adaptogens' ? 'bg-terracotta' :
+            'bg-orange'
+          }
+        />
+      )}
     </section>
   );
 };
