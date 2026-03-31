@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
-    AlertTriangle
+    AlertTriangle, Mail
 } from "lucide-react";
 
 interface HelpItem {
@@ -176,6 +176,36 @@ const sections: Section[] = [
             {
                 label: "Tlačítko 'Resetovat'",
                 description: "Vrátí všechny neuložené změny na stav posledního uložení. Nelze vrátit zpět po uložení."
+            }
+        ]
+    },
+    {
+        icon: Mail,
+        title: "E-mailová komunikace",
+        description: "Správa firemních e-mailových schránek drinkboostup.cz.",
+        items: [
+            {
+                label: "Webmail (Forpsi)",
+                description: "V levém menu najdete rychlý odkaz 'E-maily (Webmail)', který vás přesměruje přímo do rozhraní pro správu pošty u Forpsi."
+            },
+            {
+                label: "Mobilní a desktopové aplikace",
+                description: "Pro pohodlnější denní práci doporučujeme si e-mail napojit přímo do telefonu nebo počítače (Apple Mail, Outlook, Spark) pomocí IMAP a SMTP údajů od Forpsi."
+            },
+            {
+                label: "Přeposílání pošty",
+                description: "Pokud preferujete Gmail, můžete si ve správě u Forpsi nastavit automatické přeposílání všech zpráv na váš osobní/firemní Google účet."
+            }
+        ]
+    },
+    {
+        icon: HelpCircle,
+        title: "Tipy pro testování",
+        description: "Užitečné rady pro kontrolu funkčnosti webu.",
+        items: [
+            {
+                label: "Reset Cookies (pro testování)",
+                description: "Pokud chcete znovu vidět Cookies lištu (např. pro testování), stačí na webu v sekci 'Zásady cookies' (v patičce) kliknout na tlačítko 'Změnit nastavení cookies'."
             }
         ]
     }

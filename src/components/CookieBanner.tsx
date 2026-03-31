@@ -9,6 +9,10 @@ export function CookieBanner() {
     const [showBanner, setShowBanner] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
 
+    useEffect(() => {
+        console.log('CookieContext: hasResponded status:', hasResponded);
+    }, [hasResponded]);
+
     // Draft state for the details modal
     const [draftPreferences, setDraftPreferences] = useState({
         analytics: false,
@@ -22,7 +26,7 @@ export function CookieBanner() {
             if (!hasResponded) {
                 setShowBanner(true);
             }
-        }, 1000);
+        }, 300);
         return () => clearTimeout(timer);
     }, [hasResponded]);
 
@@ -62,7 +66,7 @@ export function CookieBanner() {
 
     return (
         <>
-            <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:p-6 sm:px-12 pb-12 sm:pb-8 flex justify-center pointer-events-none">
+            <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 md:p-6 sm:px-12 pb-12 sm:pb-8 flex justify-center pointer-events-none">
                 <div className="bg-background/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl p-6 md:p-8 max-w-4xl w-full pointer-events-auto flex flex-col md:flex-row gap-6 md:items-center animate-in slide-in-from-bottom-10 fade-in duration-500">
                     <div className="flex-1 space-y-3 relative">
                         <div className="flex items-center gap-3">
