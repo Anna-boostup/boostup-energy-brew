@@ -851,12 +851,8 @@ const ContentManagement = () => {
                                             </TabsContent>
                                         </Tabs>
                                     </div>
-                      </div>
-                                            ))}
-                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                         </CardContent>
                     </Card>
                 </TabsContent>
