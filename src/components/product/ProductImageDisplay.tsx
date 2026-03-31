@@ -1,5 +1,5 @@
-import React from "react";
 import MixStack from "./MixStack";
+import ConfiguratorHero from "./ConfiguratorHero";
 
 // Assets
 const bottlesHero = "/hero-vse.webp";
@@ -45,6 +45,8 @@ const ProductImageDisplay: React.FC<ProductImageDisplayProps> = ({
                     <div className="relative w-full max-w-[300px] md:max-w-[340px]">
                         {flavorMode === "mix" ? (
                             <MixStack images={[bottleLemon, bottleRed, bottleSilky]} className="w-full" />
+                        ) : !selectedFlavor ? (
+                            <ConfiguratorHero className="w-full" />
                         ) : (
                             <img
                                 src={productImageSrc}
