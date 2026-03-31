@@ -25,19 +25,19 @@ const Index = () => {
       <main>
         <HeroSection />
         
-        <LazySection minHeight="600px">
+        <LazySection id="mise" minHeight="600px">
           <Suspense fallback={<div className="h-[600px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <MissionSection />
           </Suspense>
         </LazySection>
 
-        <LazySection minHeight="1200px">
+        <LazySection id="produkty" minHeight="1200px">
           <Suspense fallback={<div className="h-[1200px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <ProductSection />
           </Suspense>
         </LazySection>
         
-        <LazySection minHeight="800px">
+        <LazySection id="3b" minHeight="800px">
           <Suspense fallback={<div className="h-[800px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <ConceptSection />
           </Suspense>
@@ -49,7 +49,7 @@ const Index = () => {
           </Suspense>
         </LazySection>
 
-        <LazySection minHeight="500px">
+        <LazySection id="kontakt" minHeight="500px">
           <Suspense fallback={<div className="h-[500px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <ContactSection />
           </Suspense>

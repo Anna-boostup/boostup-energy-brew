@@ -5,6 +5,7 @@ interface LazySectionProps {
   threshold?: number;
   rootMargin?: string;
   minHeight?: string;
+  id?: string;
 }
 
 export const LazySection: React.FC<LazySectionProps> = ({
@@ -12,6 +13,7 @@ export const LazySection: React.FC<LazySectionProps> = ({
   threshold = 0.1,
   rootMargin = "200px",
   minHeight = "400px",
+  id,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,7 @@ export const LazySection: React.FC<LazySectionProps> = ({
   }, [threshold, rootMargin]);
 
   return (
-    <div ref={containerRef} style={{ minHeight }}>
+    <div id={id} ref={containerRef} style={{ minHeight }}>
       {isVisible ? children : null}
     </div>
   );
