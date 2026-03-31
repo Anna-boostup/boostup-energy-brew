@@ -25,39 +25,39 @@ const ConfiguratorHero = ({ className, selectedFlavor }: ConfiguratorHeroProps) 
       <img
         src={bottleLemon}
         alt="BoostUp Lemon"
-        className={`relative w-36 md:w-48 lg:w-56 xl:w-64 h-auto z-30 transition-all duration-500 -rotate-[8deg] -translate-x-4 ${
+        className={`relative w-44 md:w-60 lg:w-72 xl:w-80 h-auto z-30 transition-all duration-500 -rotate-[8deg] -translate-x-4 ${
             selectedFlavor === 'lemon' 
                 ? 'drop-shadow-[0_0_40px_rgba(250,204,21,0.5)] scale-105' 
                 : 'drop-shadow-2xl opacity-90'
         }`}
-        width={256}
-        height={340}
+        width={320}
+        height={426}
       />
 
       {/* Red Bottle */}
       <img
         src={bottleRed}
         alt="BoostUp Red"
-        className={`relative w-36 md:w-48 lg:w-56 xl:w-64 h-auto z-20 transition-all duration-500 rotate-[6deg] translate-x-6 ${
+        className={`relative w-44 md:w-60 lg:w-72 xl:w-80 h-auto z-20 transition-all duration-500 rotate-[6deg] translate-x-6 ${
             selectedFlavor === 'red' 
                 ? 'drop-shadow-[0_0_40px_rgba(239,68,68,0.5)] scale-105' 
                 : 'drop-shadow-2xl opacity-90'
         }`}
-        width={256}
-        height={340}
+        width={320}
+        height={426}
       />
 
       {/* Silky Bottle */}
       <img
         src={bottleSilky}
         alt="BoostUp Silky"
-        className={`relative w-36 md:w-48 lg:w-56 xl:w-64 h-auto z-10 transition-all duration-500 -rotate-[6deg] -translate-x-2 ${
+        className={`relative w-44 md:w-60 lg:w-72 xl:w-80 h-auto z-10 transition-all duration-500 -rotate-[6deg] -translate-x-2 ${
             selectedFlavor === 'silky' 
                 ? 'drop-shadow-[0_0_40px_rgba(16,185,129,0.5)] scale-105' 
                 : 'drop-shadow-2xl opacity-90'
         }`}
-        width={256}
-        height={340}
+        width={320}
+        height={426}
       />
     </div>
   );
