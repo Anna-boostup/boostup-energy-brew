@@ -114,7 +114,7 @@ const HeroSection = () => {
         </div>
 
         {/* Tags row - full width below both columns */}
-        <div className="flex flex-wrap gap-4 mt-12 justify-center">
+        <div className="flex flex-wrap gap-4 mt-2 justify-center">
           {[
             { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f', id: 'vitamins', colorClass: 'bg-orange' },
             { label: 'STIMULACE', color: '#dfdf57', id: 'stimulants', colorClass: 'bg-lime' },
