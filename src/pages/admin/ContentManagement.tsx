@@ -626,7 +626,12 @@ const ContentManagement = () => {
                                                 rows={3}
                                                 value={flavor.ingredients || ""}
                                                 onChange={(e) => updateField(['flavors', key, 'ingredients'], e.target.value)}
-                                                placehold                                     <div className="space-y-4">
+                                                placeholder="Voda, kofein..."
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
                                         <div className="flex justify-between items-center">
                                             <Label className="text-muted-foreground uppercase text-[10px] font-black tracking-widest">Štítky (Tagy)</Label>
                                             <Button
