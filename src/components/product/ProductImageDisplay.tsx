@@ -32,8 +32,8 @@ const ProductImageDisplay: React.FC<ProductImageDisplayProps> = ({
     currentFlavor
 }) => {
     return (
-        <div className="w-full lg:w-1/2 flex items-center justify-center animate-fade-up animation-delay-200">
-            <div className="relative w-full max-w-[400px] flex justify-center">
+        <div className="w-full lg:w-1/2 flex items-center justify-center animate-fade-up animation-delay-200 lg:sticky lg:top-12">
+            <div className="relative w-full max-w-[500px] lg:max-w-[600px] flex justify-center">
                 <div className={`absolute inset-0 ${flavorMode === "mix"
                     ? "bg-gradient-to-br from-lime via-terracotta to-olive text-cream"
                     : !selectedFlavor
@@ -42,7 +42,7 @@ const ProductImageDisplay: React.FC<ProductImageDisplayProps> = ({
                     } opacity-20 blur-3xl scale-110 transition-all duration-700`} />
 
                 <div className="relative w-full flex justify-center py-8">
-                    <div className="relative w-full max-w-[300px] md:max-w-[340px]">
+                    <div className="relative w-full max-w-[400px] md:max-w-[500px]">
                         {flavorMode === "mix" ? (
                             <MixStack images={[bottleLemon, bottleRed, bottleSilky]} className="w-full" />
                         ) : (
