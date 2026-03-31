@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -57,6 +57,7 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
+        { icon: Mail, label: "E-maily (Webmail)", path: "https://webmail.forpsi.com/", isExternal: true },
         { icon: User, label: "Můj profil", path: "/admin/profile" },
         { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
     ];
@@ -85,24 +86,39 @@ const AdminLayout = () => {
                                 const isActive = location.pathname === item.path;
                                 return (
                                     <li key={item.path}>
-                                        <button
-                                            onClick={() => {
-                                                navigate(item.path);
-                                            }}
-                                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
-                                                ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                                                } `}
-                                            aria-current={isActive ? "page" : undefined}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <Icon className="w-5 h-5" />
-                                                {item.label}
-                                            </div>
-                                            {item.hasAlert && (
-                                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
-                                            )}
-                                        </button>
+                                        {item.isExternal ? (
+                                            <a
+                                                href={item.path}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-slate-300 hover:bg-slate-800 hover:text-white"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <Icon className="w-5 h-5" />
+                                                    {item.label}
+                                                </div>
+                                                <ExternalLink className="w-4 h-4 opacity-50" />
+                                            </a>
+                                        ) : (
+                                            <button
+                                                onClick={() => {
+                                                    navigate(item.path);
+                                                }}
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
+                                                    ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                                    } `}
+                                                aria-current={isActive ? "page" : undefined}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <Icon className="w-5 h-5" />
+                                                    {item.label}
+                                                </div>
+                                                {item.hasAlert && (
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
+                                                )}
+                                            </button>
+                                        )}
                                     </li>
                                 );
                             })}
@@ -136,22 +152,37 @@ const AdminLayout = () => {
                         const isActive = location.pathname === item.path;
                         return (
                             <li key={item.path}>
-                                <button
-                                    onClick={() => navigate(item.path)}
-                                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
-                                        ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                        : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                                        } `}
-                                    aria-current={isActive ? "page" : undefined}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <Icon className="w-5 h-5" />
-                                        {item.label}
-                                    </div>
-                                    {item.hasAlert && (
-                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
-                                    )}
-                                </button>
+                                {item.isExternal ? (
+                                    <a
+                                        href={item.path}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-slate-300 hover:bg-slate-800 hover:text-white"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Icon className="w-5 h-5" />
+                                            {item.label}
+                                        </div>
+                                        <ExternalLink className="w-4 h-4 opacity-50" />
+                                    </a>
+                                ) : (
+                                    <button
+                                        onClick={() => navigate(item.path)}
+                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
+                                            ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
+                                            : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                            } `}
+                                        aria-current={isActive ? "page" : undefined}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Icon className="w-5 h-5" />
+                                            {item.label}
+                                        </div>
+                                        {item.hasAlert && (
+                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
+                                        )}
+                                    </button>
+                                )}
                             </li>
                         );
                     })}
