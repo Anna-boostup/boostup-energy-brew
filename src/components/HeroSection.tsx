@@ -116,10 +116,10 @@ const HeroSection = () => {
         {/* Tags row - full width below both columns */}
         <div className="flex flex-wrap gap-4 mt-2 justify-center">
           {[
-            { label: 'SOUSTŘEDĚNÍ', color: '#3d5a2f', id: 'vitamins', colorClass: 'bg-orange' },
-            { label: 'STIMULACE', color: '#dfdf57', id: 'stimulants', colorClass: 'bg-lime' },
-            { label: 'ODOLNOST', color: '#f29739', id: 'adaptogens', colorClass: 'bg-terracotta' },
-            { label: 'ROVNOVÁHA', color: '#aa263e', id: 'electrolytes', colorClass: 'bg-blue-400' },
+            { label: 'SOUSTŘEDĚNÍ', dotColor: '#3d5a2f', id: 'vitamins', colorClass: 'bg-olive' },
+            { label: 'STIMULACE', dotColor: '#dfdf57', id: 'stimulants', colorClass: 'bg-lime' },
+            { label: 'ODOLNOST', dotColor: '#f29739', id: 'adaptogens', colorClass: 'bg-orange' },
+            { label: 'ROVNOVÁHA', dotColor: '#aa263e', id: 'electrolytes', colorClass: 'bg-terracotta' },
           ].map((item) => (
             <button
               key={item.label}
@@ -131,7 +131,7 @@ const HeroSection = () => {
                 fontFamily: 'Poppins, sans-serif',
               }}
             >
-              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.dotColor }} />
               {item.label}
             </button>
           ))}
@@ -146,9 +146,9 @@ const HeroSection = () => {
             data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
             colorClass={
               activeIngredient === 'stimulants' ? 'bg-lime' :
-              activeIngredient === 'electrolytes' ? 'bg-blue-400' :
-              activeIngredient === 'adaptogens' ? 'bg-terracotta' :
-              'bg-orange'
+              activeIngredient === 'electrolytes' ? 'bg-terracotta' :
+              activeIngredient === 'adaptogens' ? 'bg-orange' :
+              'bg-olive'
             }
           />
         </Suspense>

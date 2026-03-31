@@ -29,10 +29,10 @@ const IngredientDialog: React.FC<IngredientDialogProps> = ({ isOpen, onClose, da
 
     const getIcon = (title: string) => {
         const t = title.toLowerCase();
-        if (t.includes('stimulanty')) return <Zap className="w-8 h-8 text-lime" />;
-        if (t.includes('elektrolyty')) return <Droplets className="w-8 h-8 text-blue-400" />;
-        if (t.includes('adaptogeny')) return <ShieldCheck className="w-8 h-8 text-terracotta" />;
-        if (t.includes('vitamíny')) return <Beaker className="w-8 h-8 text-orange" />;
+        if (t.includes('stimulanty')) return <Zap className="w-8 h-8 text-lime" />;        // STIMULACE → lime
+        if (t.includes('elektrolyty')) return <Droplets className="w-8 h-8 text-terracotta" />; // ROVNOVÁHA → terracotta/červená
+        if (t.includes('adaptogeny')) return <ShieldCheck className="w-8 h-8 text-orange" />;   // ODOLNOST → oranžová
+        if (t.includes('vitamíny')) return <Beaker className="w-8 h-8 text-olive" />;           // SOUSTŘEDĚNÍ → olive/temná zelená
         return <Leaf className="w-8 h-8 text-primary" />;
     };
 
