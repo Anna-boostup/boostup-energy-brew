@@ -10,7 +10,7 @@ interface ConfiguratorHeroProps {
 
 const ConfiguratorHero = ({ className, selectedFlavor }: ConfiguratorHeroProps) => {
   return (
-    <div className={`relative flex flex-col items-center justify-center gap-6 ${className} py-4 w-full max-w-[400px] mx-auto`}>
+    <div className={`relative flex flex-col items-center justify-center gap-2 md:gap-4 ${className} py-4 w-full max-w-[400px] mx-auto`}>
       {/* Background Glow */}
       <div
          className={`absolute inset-0 blur-3xl scale-110 rounded-full transition-colors duration-1000 opacity-20 pointer-events-none ${
@@ -25,9 +25,9 @@ const ConfiguratorHero = ({ className, selectedFlavor }: ConfiguratorHeroProps) 
       <img
         src={bottleLemon}
         alt="BoostUp Lemon"
-        className={`relative w-32 md:w-40 h-auto z-30 transition-all duration-500 ${
+        className={`relative w-32 md:w-40 h-auto z-30 transition-shadow duration-500 -rotate-12 ${
             selectedFlavor === 'lemon' 
-                ? 'drop-shadow-[0_0_20px_rgba(250,204,21,0.6)] scale-105' 
+                ? 'drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]' 
                 : 'drop-shadow-xl opacity-90'
         }`}
         width={240}
@@ -38,9 +38,9 @@ const ConfiguratorHero = ({ className, selectedFlavor }: ConfiguratorHeroProps) 
       <img
         src={bottleRed}
         alt="BoostUp Red"
-        className={`relative w-32 md:w-40 h-auto z-20 transition-all duration-500 ${
+        className={`relative w-32 md:w-40 h-auto z-20 transition-shadow duration-500 rotate-6 ${
             selectedFlavor === 'red' 
-                ? 'drop-shadow-[0_0_20px_rgba(239,68,68,0.6)] scale-105' 
+                ? 'drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]' 
                 : 'drop-shadow-xl opacity-90'
         }`}
         width={240}
@@ -51,9 +51,9 @@ const ConfiguratorHero = ({ className, selectedFlavor }: ConfiguratorHeroProps) 
       <img
         src={bottleSilky}
         alt="BoostUp Silky"
-        className={`relative w-32 md:w-40 h-auto z-10 transition-all duration-500 ${
+        className={`relative w-32 md:w-40 h-auto z-10 transition-shadow duration-500 -rotate-6 translate-x-4 ${
             selectedFlavor === 'silky' 
-                ? 'drop-shadow-[0_0_20px_rgba(16,185,129,0.6)] scale-105' 
+                ? 'drop-shadow-[0_0_20px_rgba(16,185,129,0.6)]' 
                 : 'drop-shadow-xl opacity-90'
         }`}
         width={240}
