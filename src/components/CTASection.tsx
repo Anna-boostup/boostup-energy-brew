@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Zap, Mail, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
+import { Link } from "react-router-dom";
 
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
