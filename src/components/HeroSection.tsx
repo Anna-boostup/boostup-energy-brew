@@ -97,6 +97,11 @@ const HeroSection = () => {
               <div className="absolute top-[30%] left-[20%] w-[65%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 65%)' }} />
               <div className="absolute top-[45%] left-[10%] w-[70%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 65%)' }} />
             </div>
+            {/* 
+              IMPORTANT: These classes (w-[360px] sm:w-[480px] md:w-[580px] lg:max-h-[85vh]) 
+              must be preserved even if switching back to .webp or different assets 
+              to ensure the bottle remains prominent/enlarged as requested.
+            */}
             <img
               src={bottleSilkyHero}
               alt="BoostUp Pure Shot - prémiový energetický shot"
