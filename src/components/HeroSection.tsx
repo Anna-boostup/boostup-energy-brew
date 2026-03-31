@@ -17,7 +17,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="pt-14 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
+    <section className="pt-24 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
       <div className="container mx-auto px-4 pt-0 pb-16 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
           
