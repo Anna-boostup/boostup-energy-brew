@@ -75,28 +75,28 @@ const MissionSection = () => {
             return (
               <div
                 key={feature.title}
-                className="relative group animate-fade-up cursor-default"
+                className="relative animate-fade-up cursor-default"
                 style={{ animationDelay: `${300 + index * 100}ms` }}
               >
-                {/* Intense Background Glow */}
+                {/* Intense Background Glow (Opacity 0 by default, removed hover triggers) */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${isNatural ? '' : feature.color} opacity-0 group-hover:opacity-40 rounded-3xl transition-all duration-700 blur-2xl scale-100 group-hover:scale-110`}
+                  className={`absolute inset-0 bg-gradient-to-br ${isNatural ? '' : feature.color} opacity-0 rounded-3xl transition-all duration-700 blur-2xl scale-100`}
                   style={glowStyle}
                 />
 
-                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 group-hover:border-transparent hover-lift h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500">
+                <div className="relative p-6 lg:p-8 rounded-3xl bg-primary-foreground/5 border-2 border-primary-foreground/10 h-full flex flex-col items-center text-center backdrop-blur-md transition-all duration-500">
                   {/* Icon */}
-                  <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
+                  <div className={`w-16 h-16 ${iconBgMap[feature.title] || feature.color} ${textColor} rounded-2xl flex items-center justify-center mb-4 transition-transform duration-500 shadow-lg border border-primary-foreground/10`}>
                     <Icon className="w-8 h-8" />
                   </div>
 
                   {/* Stat */}
-                  <div className="text-4xl lg:text-5xl font-black text-lime mb-2 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-4xl lg:text-5xl font-black text-lime mb-2 transition-transform duration-300">
                     {feature.stat}
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg text-primary-foreground mb-2 group-hover:text-lime transition-colors">{feature.title}</h3>
+                  <h3 className="font-bold text-lg text-primary-foreground mb-2 transition-colors">{feature.title}</h3>
 
                   {/* Description */}
                   <p className="text-sm text-primary-foreground leading-relaxed">{feature.description}</p>

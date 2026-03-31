@@ -626,12 +626,7 @@ const ContentManagement = () => {
                                                 rows={3}
                                                 value={flavor.ingredients || ""}
                                                 onChange={(e) => updateField(['flavors', key, 'ingredients'], e.target.value)}
-                                                placeholder="Voda, kofein..."
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
+                                                placehold                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center">
                                             <Label className="text-muted-foreground uppercase text-[10px] font-black tracking-widest">Štítky (Tagy)</Label>
                                             <Button
@@ -666,9 +661,192 @@ const ContentManagement = () => {
                                                             updateField(['flavors', key, 'labels'], newLabels);
                                                         }}
                                                     >
-                                                        <RotateCcw className="h-4 w-4 rotate-45" /> {/* Use RotateCcw as an "X" for simplicity or cross icon if available */}
+                                                        <RotateCcw className="h-4 w-4 rotate-45" />
                                                     </Button>
                                                 </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* DETAILED SPECS EDITOR */}
+                                    <div className="pt-6 border-t border-border/20 space-y-6">
+                                        <div className="flex items-center gap-2 text-primary">
+                                            <FileText className="w-4 h-4" />
+                                            <h4 className="text-sm font-black tracking-widest uppercase">Podrobné specifikace (Tabulka)</h4>
+                                        </div>
+
+                                        <Tabs defaultValue="basic" className="w-full">
+                                            <TabsList className="bg-muted/50 p-1 mb-4 flex w-full">
+                                                <TabsTrigger value="basic" className="flex-1 text-[10px]">Základní údaje</TabsTrigger>
+                                                <TabsTrigger value="nutrition" className="flex-1 text-[10px]">Nutriční hodnoty</TabsTrigger>
+                                                <TabsTrigger value="vitamins" className="flex-1 text-[10px]">Vitamíny & Minerály</TabsTrigger>
+                                                <TabsTrigger value="active" className="flex-1 text-[10px]">Ostatní látky</TabsTrigger>
+                                            </TabsList>
+
+                                            {/* Basic Info Editor */}
+                                            <TabsContent value="basic" className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <Label className="text-[11px] font-bold">Základní údaje</Label>
+                                                    <Button 
+                                                        variant="outline" size="sm" className="h-7 text-[10px]"
+                                                        onClick={() => {
+                                                            const current = flavor.fullSpecs?.basicInfo || [];
+                                                            updateField(['flavors', key, 'fullSpecs', 'basicInfo'], [...current, { label: "Nový údaj", value: "" }]);
+                                                        }}
+                                                    >+ Přidat řádek</Button>
+                                                </div>
+                                                {(flavor.fullSpecs?.basicInfo || []).map((row: any, i: number) => (
+                                                    <div key={i} className="flex gap-3 items-start bg-background/40 p-3 rounded-lg border border-border/10">
+                                                        <div className="flex-1 space-y-2">
+                                                            <Input 
+                                                                className="h-8 text-xs font-bold bg-muted/20" 
+                                                                value={row.label} 
+                                                                onChange={(e) => {
+                                                                    const news = [...flavor.fullSpecs.basicInfo];
+                                                                    news[i] = { ...news[i], label: e.target.value };
+                                                                    updateField(['flavors', key, 'fullSpecs', 'basicInfo'], news);
+                                                                }}
+                                                            />
+                                                            <Textarea 
+                                                                className="text-xs min-h-[60px]" 
+                                                                value={row.value} 
+                                                                onChange={(e) => {
+                                                                    const news = [...flavor.fullSpecs.basicInfo];
+                                                                    news[i] = { ...news[i], value: e.target.value };
+                                                                    updateField(['flavors', key, 'fullSpecs', 'basicInfo'], news);
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <Button 
+                                                            variant="ghost" size="icon" className="h-8 w-8 text-red-500"
+                                                            onClick={() => {
+                                                                const news = flavor.fullSpecs.basicInfo.filter((_: any, idx: number) => idx !== i);
+                                                                updateField(['flavors', key, 'fullSpecs', 'basicInfo'], news);
+                                                            }}
+                                                        ><RotateCcw className="h-4 w-4 rotate-45" /></Button>
+                                                    </div>
+                                                ))}
+                                            </TabsContent>
+
+                                            {/* Nutrition Editor */}
+                                            <TabsContent value="nutrition" className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <Label className="text-[11px] font-bold">Nutriční hodnoty</Label>
+                                                    <Button 
+                                                        variant="outline" size="sm" className="h-7 text-[10px]"
+                                                        onClick={() => {
+                                                            const current = flavor.fullSpecs?.nutrition || [];
+                                                            updateField(['flavors', key, 'fullSpecs', 'nutrition'], [...current, { label: "", per100: "", perPortion: "", rhp: "" }]);
+                                                        }}
+                                                    >+ Přidat řádek</Button>
+                                                </div>
+                                                <div className="grid grid-cols-12 gap-2 px-2 text-[10px] font-black uppercase text-muted-foreground">
+                                                    <div className="col-span-4">Položka</div>
+                                                    <div className="col-span-3 text-right">Na 100ml</div>
+                                                    <div className="col-span-3 text-right">Na 60ml</div>
+                                                    <div className="col-span-2 text-right">RHP*</div>
+                                                </div>
+                                                {(flavor.fullSpecs?.nutrition || []).map((row: any, i: number) => (
+                                                    <div key={i} className="grid grid-cols-12 gap-2 items-center bg-background/20 p-2 rounded-lg border border-border/5">
+                                                        <Input 
+                                                            className="col-span-4 h-8 text-xs font-bold" 
+                                                            value={row.label} 
+                                                            onChange={(e) => {
+                                                                const news = [...flavor.fullSpecs.nutrition];
+                                                                news[i] = { ...news[i], label: e.target.value };
+                                                                updateField(['flavors', key, 'fullSpecs', 'nutrition'], news);
+                                                            }}
+                                                        />
+                                                        <Input 
+                                                            className="col-span-3 h-8 text-xs text-right" 
+                                                            value={row.per100} 
+                                                            onChange={(e) => {
+                                                                const news = [...flavor.fullSpecs.nutrition];
+                                                                news[i] = { ...news[i], per100: e.target.value };
+                                                                updateField(['flavors', key, 'fullSpecs', 'nutrition'], news);
+                                                            }}
+                                                        />
+                                                        <Input 
+                                                            className="col-span-3 h-8 text-xs text-right bg-primary/5 border-primary/20" 
+                                                            value={row.perPortion} 
+                                                            onChange={(e) => {
+                                                                const news = [...flavor.fullSpecs.nutrition];
+                                                                news[i] = { ...news[i], perPortion: e.target.value };
+                                                                updateField(['flavors', key, 'fullSpecs', 'nutrition'], news);
+                                                            }}
+                                                        />
+                                                        <Input 
+                                                            className="col-span-2 h-8 text-[10px] text-right" 
+                                                            value={row.rhp} 
+                                                            onChange={(e) => {
+                                                                const news = [...flavor.fullSpecs.nutrition];
+                                                                news[i] = { ...news[i], rhp: e.target.value };
+                                                                updateField(['flavors', key, 'fullSpecs', 'nutrition'], news);
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </TabsContent>
+
+                                            {/* Vitamins Editor */}
+                                            <TabsContent value="vitamins" className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <Label className="text-[11px] font-bold">Vitamíny & Minerály</Label>
+                                                    <Button 
+                                                        variant="outline" size="sm" className="h-7 text-[10px]"
+                                                        onClick={() => {
+                                                            const current = flavor.fullSpecs?.vitamins || [];
+                                                            updateField(['flavors', key, 'fullSpecs', 'vitamins'], [...current, { label: "", per100: "", perPortion: "", rhp: "" }]);
+                                                        }}
+                                                    >+ Přidat řádek</Button>
+                                                </div>
+                                                {(flavor.fullSpecs?.vitamins || []).map((row: any, i: number) => (
+                                                    <div key={i} className="grid grid-cols-12 gap-2 items-center bg-background/20 p-2 rounded-lg border border-border/5">
+                                                        <Input className="col-span-4 h-8 text-xs font-bold" value={row.label} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], label: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
+                                                        }} />
+                                                        <Input className="col-span-3 h-8 text-xs text-right" value={row.per100} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], per100: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
+                                                        }} />
+                                                        <Input className="col-span-3 h-8 text-xs text-right bg-primary/5" value={row.perPortion} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], perPortion: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
+                                                        }} />
+                                                        <Input className="col-span-2 h-8 text-[10px] text-right font-black" value={row.rhp} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], rhp: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
+                                                        }} />
+                                                    </div>
+                                                ))}
+                                            </TabsContent>
+
+                                            {/* Active Substances Editor */}
+                                            <TabsContent value="active" className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <Label className="text-[11px] font-bold">Ostatní látky</Label>
+                                                    <Button 
+                                                        variant="outline" size="sm" className="h-7 text-[10px]"
+                                                        onClick={() => {
+                                                            const current = flavor.fullSpecs?.activeSubstances || [];
+                                                            updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], [...current, { label: "", per100: "", perPortion: "" }]);
+                                                        }}
+                                                    >+ Přidat řádek</Button>
+                                                </div>
+                                                {(flavor.fullSpecs?.activeSubstances || []).map((row: any, i: number) => (
+                                                    <div key={i} className="grid grid-cols-12 gap-2 items-center bg-background/20 p-2 rounded-lg border border-border/5">
+                                                        <Input className="col-span-6 h-8 text-xs font-bold" value={row.label} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.activeSubstances]; news[i] = { ...news[i], label: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], news);
+                                                        }} />
+                                                        <Input className="col-span-3 h-8 text-xs text-right" value={row.per100} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.activeSubstances]; news[i] = { ...news[i], per100: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], news);
+                                                        }} />
+                                                        <Input className="col-span-3 h-8 text-xs text-right bg-primary/5" value={row.perPortion} onChange={(e) => {
+                                                            const news = [...flavor.fullSpecs.activeSubstances]; news[i] = { ...news[i], perPortion: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], news);
+                                                        }} />
+                                                    </div>
+                                                ))}
+                                            </TabsContent>
+                                        </Tabs>
+                                    </div>
+                      </div>
                                             ))}
                                         </div>
                                     </div>

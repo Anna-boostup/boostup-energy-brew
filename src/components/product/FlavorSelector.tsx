@@ -1,5 +1,4 @@
-import IngredientsDialog from "./IngredientsDialog";
-import NutritionalFactsDialog from "./NutritionalFactsDialog";
+import ProductSpecsDialog from "./ProductSpecsDialog";
 import { FLAVORS, type FlavorConfig } from "@/config/product-data";
 
 interface FlavorSelectorProps {
@@ -60,16 +59,10 @@ const FlavorSelector = ({
                     {products.find(p => p.sku === sku)?.description || content.flavors[flavor.id]?.description || flavor.description}
                   </div>
                 </div>
-                {/* Info Tooltip & Nutrition */}
-                {/* Info & Nutrition Links */}
                 <div className="flex flex-col items-center gap-1 shrink-0">
-                  <IngredientsDialog
+                  <ProductSpecsDialog
                     flavorName={content.flavors[flavor.id]?.name || flavor.name}
-                    ingredients={content.flavors[flavor.id]?.ingredients || flavor.ingredients || ""}
-                  />
-                  <NutritionalFactsDialog
-                    flavorName={content.flavors[flavor.id]?.name || flavor.name}
-                    data={content.flavors[flavor.id]?.nutritionalFacts || (flavor as any).nutritionalFacts || ""}
+                    specs={content.flavors[flavor.id]?.fullSpecs}
                   />
                 </div>
               </button>

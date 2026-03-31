@@ -255,22 +255,151 @@ export const SITE_CONTENT = {
             name: "LEMON BLAST",
             description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
             labels: ["Bez cukru", "Vegan", "Energie"],
-            nutritionalFacts: "Energie: 15 kcal / 63 kJ\nTuky: 0 g\nSacharidy: 1.2 g\nCukry: 0.1 g\nBílkoviny: 0.1 g\nSůl: 0.05 g",
-            ingredients: "Voda, citronová šťáva (15%), kofein (150mg/shot), L-theanin, vitamín B6, B12, stévie, přírodní aroma."
+            nutritionalFacts: "Energie: 32 kcal / 7.6 kcal\nTuky: <1 g\nSacharidy: 1.4 g\nCukry: 0.5 g\nBílkoviny: <1 g\nSůl: 0.1 g",
+            ingredients: "Voda, vodný výluh ze směsi čajů a bylin (sencha, yerba maté, černý čaj, pomeranč, aroma), sladidlá: erythritol, taurin, xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a tymiánu...",
+            fullSpecs: {
+                basicInfo: [
+                    { label: "Produkt", value: "LEMON BLAST" },
+                    { label: "Popis", value: "tekutý vitamínový doplněk stravy s povzbuzujícím účinkem obohacený o minerální látky se sladidly" },
+                    { label: "Složení (přesně z etikety)", value: "Voda, vodný výluh ze směsi čajů a bylin (sencha, yerba maté, černý čaj, pomeranč, aroma), sladidlá: erythritol, taurin, sladidlo: xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a tymiánu, kyselina jablečná, kyselina citronová, citronan draselný, konzervant: sorban draselný, koenzym Q10, kofein, sůl, steviol-glykosidy, vitamíny B1, B2, B3, B5, B6, B9, B12." },
+                    { label: "Alergeny / přesný text", value: "Neobsahuje alergeny." },
+                    { label: "Doporučené dávkování", value: "Doporučené denní dávkování: až 2 porce / den. 1 porce je 60 ml." },
+                    { label: "Upozornění", value: "Tento doplněk stravy nenahrazuje pestrou stravu. Obsahuje vysoké množství kofeinu (283 mg/100 ml). Výrobek není vhodný pro děti, těhotné a kojící ženy, pro osoby trpící srdečními onemocněními. V případě užívání léků na předpis se poraďte se svým lékařem. Uchovávejte mimo dosah dětí. Nepřekračujte doporučenou denní dávku. Spotřebujte ihned po otevření lahve." },
+                    { label: "Skladování", value: "Skladujte na tmavém místě do 21 °C." },
+                    { label: "Vyrobeno", value: "Vyrobeno v České republice." },
+                    { label: "Distributor", value: "Distributor: BoostUp Supplements s.r.o., Chaloupkova 3002/1A 612 00 Brno." },
+                    { label: "Minimální trvanlivost / číslo šarže", value: "Minimální trvanlivost do, číslo šarže:" }
+                ],
+                nutrition: [
+                    { label: "Energetická hodnota", per100: "32,0 kJ / 7,6 kcal", perPortion: "19,3 kJ / 4,6 kcal", rhp: "<1 % RHP*" },
+                    { label: "Tuky", per100: "<1 g", perPortion: "<1 g", rhp: "" },
+                    { label: "z toho nasycené mastné kyseliny", per100: "0,0 g", perPortion: "0,0 g", rhp: "" },
+                    { label: "Sacharidy", per100: "1,4 g", perPortion: "0,9 g", rhp: "" },
+                    { label: "z toho cukry", per100: "0,5 g", perPortion: "0,3 g", rhp: "" },
+                    { label: "Bílkoviny", per100: "<1 g", perPortion: "<1 g", rhp: "" },
+                    { label: "Vláknina", per100: "0,0 g", perPortion: "0,0 g", rhp: "" },
+                    { label: "Sůl", per100: "0,1 g", perPortion: "0,0 g", rhp: "" }
+                ],
+                vitamins: [
+                    { label: "Vitamin B1", per100: "2,4 mg", perPortion: "1,4 mg", rhp: "130 % RHP*" },
+                    { label: "Vitamin B2", per100: "2,1 mg", perPortion: "1,3 mg", rhp: "91,2 % RHP*" },
+                    { label: "Vitamin B3", per100: "7,9 mg NE", perPortion: "4,7 mg", rhp: "29,5 % RHP*" },
+                    { label: "Vitamin B5", per100: "3,6 mg", perPortion: "2,1 mg", rhp: "35,7 % RHP*" },
+                    { label: "Vitamin B6", per100: "2,5 mg", perPortion: "1,5 mg", rhp: "107,4 % RHP*" },
+                    { label: "Vitamin B9", per100: "112,7 µg", perPortion: "67,6 µg", rhp: "33,8 % RHP*" },
+                    { label: "Vitamin B12", per100: "3,9 µg", perPortion: "2,3 µg", rhp: "93,5 % RHP*" },
+                    { label: "Vitamin C", per100: "500,0 mg", perPortion: "300,0 mg", rhp: "375 % RHP*" },
+                    { label: "Hořčík", per100: "50,0 mg", perPortion: "30,0 mg", rhp: "8,6 % RHP*" },
+                    { label: "Draslík", per100: "53,3 mg", perPortion: "32,0 mg", rhp: "1,6 % RHP*" }
+                ],
+                activeSubstances: [
+                    { label: "Kofein bezvodý", per100: "141,7 mg", perPortion: "85,0 mg" },
+                    { label: "Taurin", per100: "833,3 mg", perPortion: "500,0 mg" },
+                    { label: "Koenzym Q10", per100: "66,7 mg", perPortion: "40,0 mg" },
+                    { label: "Guarana", per100: "644,0 mg", perPortion: "386,4 mg" },
+                    { label: "z toho kofein", per100: "141,7 mg", perPortion: "85,0 mg" },
+                    { label: "Celkový kofein", per100: "283,3 mg", perPortion: "170,0 mg" }
+                ]
+            }
         },
         red: {
             name: "RED RUSH",
             description: "Červené ovoce a guarana pro tvůj rychlý a efektivní start",
             labels: ["Vitamíny", "Rychlý nástup", "Výkon"],
-            nutritionalFacts: "Energie: 18 kcal / 75 kJ\nTuky: 0 g\nSacharidy: 2.1 g\nCukry: 0.5 g\nBílkoviny: 0.1 g\nSůl: 0.05 g",
-            ingredients: "Voda, šťáva z červeného ovoce, guarana extrakt, kofein (120mg/shot), vitamín C, stévie."
+            nutritionalFacts: "Energie: 32,0 kJ / 7,6 kcal\nTuky: <1 g\nSacharidy: 1,4 g\nCukry: 0,5 g\nBílkoviny: <1 g\nSůl: 0,1 g",
+            ingredients: "Voda, vodný výluh ze směsi čajů a bylin (sencha, rooibos, jablko plod, mrkev, květ ibišku, verbena citronová, šípek...), kofein (170mg/60ml porce), guarana, vitamíny...",
+            fullSpecs: {
+                basicInfo: [
+                    { label: "Produkt", value: "RED RUSH" },
+                    { label: "Popis", value: "tekutý vitamínový doplněk stravy s povzbuzujícím účinkem obohacený o minerální látky se sladidly" },
+                    { label: "Složení (přesně z etikety)", value: "Voda, vodný výluh ze směsi čajů a bylin (sencha, rooibos, jablko plod, mrkev, květ ibišku, verbena citronová, šípek, plod rakytníku, list ostružiny, plod rybízu, plod brusinky, slunečnicový květ, list klikvy, přírodní aroma), sladidlá: erythritol, taurin, sladidlo: xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a rozmarýnu, kyselina jablečná, kyselina citronová, citronan draselný, konzervant: sorban draselný, koenzym Q10, kofein, sůl, steviol-glykosidy, vitamíny B1, B2, B3, B5, B6, B9, B12." },
+                    { label: "Alergeny / přesný text", value: "Neobsahuje alergeny." },
+                    { label: "Doporučené dávkování", value: "Doporučené denní dávkování: až 2 porce / den. 1 porce je 60 ml." },
+                    { label: "Upozornění", value: "Tento doplněk stravy nenahrazuje pestrou stravu. Obsahuje vysoké množství kofeinu (283 mg/100 ml). Výrobek není vhodný pro děti, těhotné a kojící ženy, pro osoby trpící srdečními onemocněními. V případě užívání léků na předpis se poraďte se svým lékařem. Uchovávejte mimo dosah dětí. Nepřekračujte doporučenou denní dávku. Spotřebujte ihned po otevření lahve." },
+                    { label: "Skladování", value: "Skladujte na tmavém místě do 21 °C." },
+                    { label: "Vyrobeno", value: "Vyrobeno v České republice." },
+                    { label: "Distributor", value: "Distributor: BoostUp Supplements s.r.o., Chaloupkova 3002/1A 612 00 Brno." },
+                    { label: "Minimální trvanlivost / číslo šarže", value: "Minimální trvanlivost do, číslo šarže:" }
+                ],
+                nutrition: [
+                    { label: "Energetická hodnota", per100: "32,0 kJ / 7,6 kcal", perPortion: "19,3 kJ / 4,6 kcal", rhp: "<1 % RHP*" },
+                    { label: "Tuky", per100: "<1 g", perPortion: "<1 g", rhp: "" },
+                    { label: "z toho nasycené mastné kyseliny", per100: "0,0 g", perPortion: "0,0 g", rhp: "" },
+                    { label: "Sacharidy", per100: "1,4 g", perPortion: "0,9 g", rhp: "" },
+                    { label: "z toho cukry", per100: "0,5 g", perPortion: "0,3 g", rhp: "" },
+                    { label: "Bílkoviny", per100: "<1 g", perPortion: "<1 g", rhp: "" },
+                    { label: "Vláknina", per100: "0,0 g", perPortion: "0,0 g", rhp: "" },
+                    { label: "Sůl", per100: "0,1 g", perPortion: "0,0 g", rhp: "" }
+                ],
+                vitamins: [
+                    { label: "Vitamin B1", per100: "2,4 mg", perPortion: "1,4 mg", rhp: "130 % RHP*" },
+                    { label: "Vitamin B2", per100: "2,1 mg", perPortion: "1,3 mg", rhp: "91,2 % RHP*" },
+                    { label: "Vitamin B3", per100: "7,9 mg NE", perPortion: "4,7 mg", rhp: "29,5 % RHP*" },
+                    { label: "Vitamin B5", per100: "3,6 mg", perPortion: "2,1 mg", rhp: "35,7 % RHP*" },
+                    { label: "Vitamin B6", per100: "2,5 mg", perPortion: "1,5 mg", rhp: "107,4 % RHP*" },
+                    { label: "Vitamin B9", per100: "112,7 µg", perPortion: "67,6 µg", rhp: "33,8 % RHP*" },
+                    { label: "Vitamin B12", per100: "3,9 µg", perPortion: "2,3 µg", rhp: "93,5 % RHP*" },
+                    { label: "Vitamin C", per100: "500,0 mg", perPortion: "300,0 mg", rhp: "375 % RHP*" },
+                    { label: "Hořčík", per100: "50,0 mg", perPortion: "30,0 mg", rhp: "8,6 % RHP*" },
+                    { label: "Draslík", per100: "53,3 mg", perPortion: "32,0 mg", rhp: "1,6 % RHP*" }
+                ],
+                activeSubstances: [
+                    { label: "Kofein bezvodý", per100: "141,7 mg", perPortion: "85,0 mg" },
+                    { label: "Taurin", per100: "833,3 mg", perPortion: "500,0 mg" },
+                    { label: "Koenzym Q10", per100: "66,7 mg", perPortion: "40,0 mg" },
+                    { label: "Guarana", per100: "644,0 mg", perPortion: "386,4 mg" },
+                    { label: "z toho kofein", per100: "141,7 mg", perPortion: "85,0 mg" },
+                    { label: "Celkový kofein", per100: "283,3 mg", perPortion: "170,0 mg" }
+                ]
+            }
         },
         silky: {
             name: "SILKY LEAF",
             description: "Jemný zelený čaj a meduňka pro dlouhotrvající a klidnou energii",
             labels: ["Antioxidanty", "Klidná síla", "Soustředění"],
-            nutritionalFacts: "Energie: 12 kcal / 50 kJ\nTuky: 0 g\nSacharidy: 0.8 g\nCukry: 0.1 g\nBílkoviny: 0.2 g\nSůl: 0.05 g",
-            ingredients: "Voda, extrakt ze zeleného čaje, meduňka, L-theanin, přírodní sladidla."
+            nutritionalFacts: "Energie: 32,0 kJ / 7,6 kcal\nTuky: <1 g\nSacharidy: 1,4 g\nCukry: 0,5 g\nBílkoviny: <1 g\nSůl: 0,1 g",
+            ingredients: "Voda, vodný výluh ze směsi čajů (sencha, oolong), sladidlá: erythritol, taurin, xylitol, vitamín C, guarana, bisglycinát hořečnatý...",
+            fullSpecs: {
+                basicInfo: [
+                    { label: "Produkt", value: "SILKY LEAF" },
+                    { label: "Popis", value: "tekutý vitamínový doplněk stravy s povzbuzujícím účinkem obohacený o minerální látky se sladidly" },
+                    { label: "Složení (přesně z etikety)", value: "Voda, vodný výluh ze směsi čajů (sencha, oolong), sladidlá: erythritol, taurin, sladidlo: xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a bazalky, kyselina jablečná, kyselina citronová, citronan draselný, konzervant: sorban draselný, koenzym Q10, kofein, sůl, steviol-glykosidy, vitamíny B1, B2, B3, B5, B6, B9, B12." },
+                    { label: "Alergeny / přesný text", value: "Neobsahuje alergeny." },
+                    { label: "Doporučené dávkování", value: "Doporučené denní dávkování: až 2 porce / den. 1 porce je 60 ml." },
+                    { label: "Upozornění", value: "Tento doplněk stravy nenahrazuje pestrou stravu. Obsahuje vysoké množství kofeinu (283 mg/100 ml). Výrobek není vhodný pro děti, těhotné a kojící ženy, pro osoby trpící srdečními onemocněními. V případě užívání léků na předpis se poraďte se svým lékařem. Uchovávejte mimo dosah dětí. Nepřekračujte doporučenou denní dávku. Spotřebujte ihned po otevření lahve." },
+                    { label: "Skladování", value: "Skladujte na tmavém místě do 21 °C." },
+                    { label: "Vyrobeno", value: "Vyrobeno v České republice." },
+                    { label: "Distributor", value: "Distributor: BoostUp Supplements s.r.o., Chaloupkova 3002/1A 612 00 Brno." },
+                    { label: "Minimální trvanlivost / číslo šarže", value: "Minimální trvanlivost do, číslo šarže:" }
+                ],
+                nutrition: [
+                    { label: "Sacharidy", per100: "1,4 g", perPortion: "0,9 g", rhp: "" },
+                    { label: "z toho cukry", per100: "0,5 g", perPortion: "0,53 g", rhp: "" },
+                    { label: "Bílkoviny", per100: "<1 g", perPortion: "<1 g", rhp: "" },
+                    { label: "Vláknina", per100: "0,0 g", perPortion: "0,0 g", rhp: "" },
+                    { label: "Sůl", per100: "0,1 g", perPortion: "0,0 g", rhp: "" }
+                ],
+                vitamins: [
+                    { label: "Vitamin B1", per100: "2,4 mg", perPortion: "1,4 mg", rhp: "130 % RHP*" },
+                    { label: "Vitamin B2", per100: "2,1 mg", perPortion: "1,3 mg", rhp: "91,2 % RHP*" },
+                    { label: "Vitamin B3", per100: "7,9 mg NE", perPortion: "4,7 mg", rhp: "29,5 % RHP*" },
+                    { label: "Vitamin B5", per100: "3,6 mg", perPortion: "2,1 mg", rhp: "35,7 % RHP*" },
+                    { label: "Vitamin B6", per100: "2,5 mg", perPortion: "1,5 mg", rhp: "107,4 % RHP*" },
+                    { label: "Vitamin B9", per100: "112,7 µg", perPortion: "67,6 µg", rhp: "33,8 % RHP*" },
+                    { label: "Vitamin B12", per100: "3,9 µg", perPortion: "2,3 µg", rhp: "93,5 % RHP*" },
+                    { label: "Vitamin C", per100: "500,0 mg", perPortion: "300,0 mg", rhp: "375 % RHP*" },
+                    { label: "Hořčík", per100: "50,0 mg", perPortion: "30,0 mg", rhp: "8,6 % RHP*" },
+                    { label: "Draslík", per100: "53,3 mg", perPortion: "32,0 mg", rhp: "1,6 % RHP*" }
+                ],
+                activeSubstances: [
+                    { label: "Kofein bezvodý", per100: "141,7 mg", perPortion: "85,0 mg" },
+                    { label: "Taurin", per100: "833,3 mg", perPortion: "500,0 mg" },
+                    { label: "Koenzym Q10", per100: "66,7 mg", perPortion: "40,0 mg" },
+                    { label: "Guarana", per100: "644,0 mg", perPortion: "386,4 mg" },
+                    { label: "z toho kofein", per100: "141,7 mg", perPortion: "85,0 mg" },
+                    { label: "Celkový kofein", per100: "283,3 mg", perPortion: "170,0 mg" }
+                ]
+            }
         }
     },
 

@@ -2,7 +2,7 @@
 import { Minus, Plus, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import NutritionalFactsDialog from "./NutritionalFactsDialog";
+import ProductSpecsDialog from "./ProductSpecsDialog";
 import { FLAVORS, type FlavorConfig } from "@/config/product-data";
 
 interface MixConfiguratorProps {
@@ -80,24 +80,9 @@ const MixConfigurator = ({
               </div>
 
               <div className="flex flex-col items-end gap-1">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`h-8 w-8 rounded-full p-0 flex items-center justify-center hover:bg-white/20 ${mixCounts[flavor.id] > 0 ? 'text-white hover:text-white' : 'text-foreground/70 hover:text-foreground'}`}
-                      aria-label={`Informace o příchuti ${flavor.name}`}
-                    >
-                      <Info className="w-4 h-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-xs">
-                    <p>{getEffectiveProduct(flavor.id)?.tooltip || flavor.description}</p>
-                  </TooltipContent>
-                </Tooltip>
-                <NutritionalFactsDialog
+                <ProductSpecsDialog
                   flavorName={content.flavors[flavor.id]?.name || flavor.name}
-                  data={content.flavors[flavor.id]?.nutritionalFacts || (flavor as any).nutritionalFacts || ""}
+                  specs={content.flavors[flavor.id]?.fullSpecs}
                 />
               </div>
             </div>
