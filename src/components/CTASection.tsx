@@ -6,6 +6,7 @@ import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
 
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 const CTASection = () => {
   const { content: SITE_CONTENT } = useContent();
@@ -28,6 +29,17 @@ const CTASection = () => {
 
     setIsSubmitting(true);
     try {
+      // 1. Save to Supabase database
+      const { error: dbError } = await supabase
+        .from('newsletter_subscriptions')
+        .insert([{ email }]);
+
+      if (dbError) {
+        console.error('Supabase DB error:', dbError);
+        // Note: Even if DB save fails, we continue with the email notification as fallback
+      }
+
+      // 2. Send email notification to the team
       const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,7 +50,7 @@ const CTASection = () => {
         })
       });
 
-      if (!response.ok) throw new Error('Subscription failed');
+      if (!response.ok) throw new Error('Email notification failed');
 
       toast({
         title: "Úspěšně přihlášeno!",
