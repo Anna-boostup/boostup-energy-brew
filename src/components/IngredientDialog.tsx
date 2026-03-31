@@ -71,7 +71,7 @@ const IngredientDialog: React.FC<IngredientDialogProps> = ({ isOpen, onClose, da
                     <div className="space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Klíčové benefity</h4>
                         <div className="grid gap-3">
-                            {data.benefits.map((benefit, i) => (
+                            {data.benefits.filter(benefit => benefit.trim() !== "").map((benefit, i) => (
                                 <motion.div
                                     key={i}
                                     initial={{ x: -20, opacity: 0 }}
@@ -89,7 +89,7 @@ const IngredientDialog: React.FC<IngredientDialogProps> = ({ isOpen, onClose, da
                     <div className="space-y-4 pt-2">
                         <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Obsažené látky</h4>
                         <div className="flex flex-wrap gap-2">
-                            {data.ingredients.map((ing, i) => (
+                            {data.ingredients.filter(ing => ing.trim() !== "").map((ing, i) => (
                                 <span
                                     key={i}
                                     className="px-4 py-2 bg-foreground/5 rounded-full text-xs font-bold border border-foreground/10"
