@@ -26,7 +26,6 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
 
     const [formData, setFormData] = useState<Partial<Product>>({
         name: "",
-        price: 0,
         description: "",
         tooltip: "",
         is_on_sale: false,
@@ -37,7 +36,6 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         if (product) {
             setFormData({
                 name: product.name || "",
-                price: product.price || 0,
                 description: product.description || "",
                 tooltip: product.tooltip || "",
                 is_on_sale: product.is_on_sale || false,
@@ -161,18 +159,6 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                             />
                         </div>
 
-                        {/* Price */}
-                        <div className="space-y-1.5">
-                            <Label htmlFor="price" className="text-sm font-semibold">Cena (Kč)</Label>
-                            <Input
-                                id="price"
-                                type="number"
-                                value={formData.price}
-                                onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
-                                className="text-sm"
-                                required
-                            />
-                        </div>
 
                         {/* Description */}
                         <div className="space-y-1.5">

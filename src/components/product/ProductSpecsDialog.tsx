@@ -47,7 +47,7 @@ const ProductSpecsDialog = ({ flavorName, specs }: ProductSpecsDialogProps) => {
           Složení a nutriční fakta
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-none rounded-[2rem] p-0 shadow-2xl overflow-hidden">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-none rounded-[2rem] p-0 shadow-2xl">
         <div className="sticky top-0 z-20 bg-card/80 backdrop-blur-xl border-b border-border/10 p-8 pb-4">
           <DialogHeader>
             <div className="flex items-baseline gap-3 mb-1">

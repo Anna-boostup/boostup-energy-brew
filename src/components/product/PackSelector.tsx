@@ -1,5 +1,6 @@
 
-import { PACK_SIZES, PACK_PRICES } from "@/config/product-data";
+import { PACK_SIZES } from "@/config/product-data";
+import { useContent } from "@/context/ContentContext";
 
 type Pack = typeof PACK_SIZES[number];
 
@@ -9,6 +10,9 @@ interface PackSelectorProps {
 }
 
 const PackSelector = ({ selectedPack, onSelectPack }: PackSelectorProps) => {
+  const { content } = useContent();
+  const pricing = content.pricing || { pack3: 0, pack12: 0, pack21: 0 };
+
   return (
     <div>
       <h3 className="font-display text-sm font-bold text-foreground/80 mb-4 tracking-widest">VYBERTE BALENÍ</h3>
@@ -25,22 +29,22 @@ const PackSelector = ({ selectedPack, onSelectPack }: PackSelectorProps) => {
           >
             {pack === 3 && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-olive text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                76 KČ / SHOT
+                {(pricing.pack3 / 3).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} KČ / SHOT
               </div>
             )}
             {pack === 12 && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                70,80 KČ / SHOT
+                {(pricing.pack12 / 12).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} KČ / SHOT
               </div>
             )}
             {pack === 21 && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                66,60 KČ / SHOT
+                {(pricing.pack21 / 21).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} KČ / SHOT
               </div>
             )}
             {pack}x
             <span className="block text-xs sm:text-sm font-semibold">
-              {PACK_PRICES[pack]} Kč
+              {pricing[`pack${pack}` as keyof typeof pricing]} Kč
             </span>
             {pack === 21 && (
               <span className="block text-[9px] font-bold text-green-600 mt-1 uppercase leading-none">

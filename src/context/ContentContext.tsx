@@ -90,6 +90,11 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     ...(dbContent.badgeVisible || {})
                 };
 
+                const mergedPricing = {
+                    ...SITE_CONTENT.pricing,
+                    ...(dbContent.pricing || {})
+                };
+
                 setContent({
                     ...SITE_CONTENT,
                     ...dbContent,
@@ -102,6 +107,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     typography: mergedTypography,
                     textStyles: mergedTextStyles,
                     badgeVisible: mergedBadgeVisible,
+                    pricing: mergedPricing,
                 });
             }
         } catch (err) {

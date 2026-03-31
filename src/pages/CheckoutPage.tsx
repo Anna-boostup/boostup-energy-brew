@@ -785,7 +785,7 @@ const CheckoutPage = () => {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   {[
-                    { id: 'personal', name: 'Osobní odběr', desc: 'Brno a Praha - Zdarma', icon: <MapPin className="w-5 h-5" /> },
+                    { id: 'personal', name: 'Osobní vyzvednutí (Brno)', desc: 'Mendelova univerzita (po předchozí domluvě na e-mailu objednavky@drinkboostup.cz)', icon: <MapPin className="w-5 h-5" /> },
                     { id: 'zasilkovna', name: 'Zásilkovna', desc: 'Přes 5000 výdejních míst', icon: <Box className="w-5 h-5" /> }
                   ].map((method) => (
                     <button

@@ -471,10 +471,10 @@ export const SITE_CONTENT = {
     }>,
 
     // Badge visibility (defaults to shown; set to false to hide)
-    badgeVisible: {
-        'hero.announcement': true,
-        'mission.badge': true,
-        'cta.badge': true,
-        'contact.title': true,
-    } as Record<string, boolean>,
+    // Pricing configuration for different pack sizes
+    pricing: {
+        pack3: 229,
+        pack12: 849,
+        pack21: 1399
+    }
 };
