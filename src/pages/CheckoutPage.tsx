@@ -625,6 +625,7 @@ const CheckoutPage = () => {
                     <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Jméno *</label>
                     <input
                       name="firstName"
+                      autoComplete="given-name"
                       value={formData.firstName}
                       onChange={handleChange}
                       placeholder="Jan"
@@ -635,6 +636,7 @@ const CheckoutPage = () => {
                     <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Příjmení *</label>
                     <input
                       name="lastName"
+                      autoComplete="family-name"
                       value={formData.lastName}
                       onChange={handleChange}
                       placeholder="Novák"
@@ -646,6 +648,7 @@ const CheckoutPage = () => {
                     <input
                       type="email"
                       name="email"
+                      autoComplete="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="jan.novak@seznam.cz"
@@ -657,6 +660,7 @@ const CheckoutPage = () => {
                     <input
                       type="tel"
                       name="phone"
+                      autoComplete="tel"
                       value={formData.phone}
                       onChange={handleChange}
                       className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.phone ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm hover:border-border/80'}`}
@@ -668,6 +672,7 @@ const CheckoutPage = () => {
                       <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Ulice</label>
                       <input
                         name="street"
+                        autoComplete="address-line1"
                         value={formData.street}
                         onChange={handleChange}
                         placeholder="Vodní"
@@ -678,6 +683,7 @@ const CheckoutPage = () => {
                       <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Č. popisné *</label>
                       <input
                         name="houseNumber"
+                        autoComplete="address-line2"
                         value={formData.houseNumber}
                         onChange={handleChange}
                         placeholder="12/A"
@@ -690,6 +696,7 @@ const CheckoutPage = () => {
                     <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Město / Obec *</label>
                     <input
                       name="city"
+                      autoComplete="address-level2"
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="Praha"
@@ -700,6 +707,7 @@ const CheckoutPage = () => {
                     <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Poštovní směrovací č. *</label>
                     <input
                       name="zip"
+                      autoComplete="postal-code"
                       value={formData.zip}
                       onChange={handleChange}
                       placeholder="110 00"
@@ -792,15 +800,15 @@ const CheckoutPage = () => {
                       key={method.id}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, deliveryMethod: method.id }))}
-                      className={`relative p-6 rounded-[2rem] border-2 text-left transition-all group ${formData.deliveryMethod === method.id ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
+                      className={`relative p-6 rounded-[2rem] border-2 text-center flex flex-col items-center justify-center transition-all group min-h-[140px] ${formData.deliveryMethod === method.id ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
                     >
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-col items-center gap-3">
                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${formData.deliveryMethod === method.id ? 'bg-primary text-black' : 'bg-secondary text-primary'}`}>
                           {method.icon || <Package size={24} />}
                         </div>
                         <div>
                           <p className="font-black uppercase tracking-tight">{method.name}</p>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{method.desc}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">{method.desc}</p>
                         </div>
                       </div>
                       {formData.deliveryMethod === method.id && <CheckCircle className="absolute top-4 right-4 w-5 h-5 text-primary" />}
@@ -895,7 +903,7 @@ const CheckoutPage = () => {
 
           {/* Sidebar Area */}
           <div className="lg:col-span-4 lg:sticky lg:top-24">
-            <div className="bg-black text-white rounded-[2.5rem] p-8 sm:p-10 border-4 border-primary shadow-[0_0_50px_-12px_rgba(234,255,0,0.3)] space-y-8 relative overflow-hidden">
+            <div className="bg-primary text-primary-foreground rounded-[2.5rem] p-8 sm:p-10 border-4 border-black/10 shadow-[0_0_50px_-12px_rgba(61,90,47,0.3)] space-y-8 relative overflow-hidden">
                {/* Animated Pulse */}
               <div className="absolute inset-0 bg-primary/5 animate-pulse" />
               
@@ -917,8 +925,8 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <p className="font-black text-xs uppercase leading-tight truncate">{item.name}</p>
-                        <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest">{item.quantity}x {item.price} Kč</p>
+                        <p className="font-black text-sm uppercase leading-tight pr-2">{item.name}</p>
+                        <p className="text-[11px] text-primary-foreground/70 font-bold uppercase tracking-widest mt-1">{item.quantity}x {item.price} Kč</p>
                       </div>
                       <div className="font-black text-sm self-center text-primary">{item.price * item.quantity} Kč</div>
                     </div>
@@ -939,20 +947,20 @@ const CheckoutPage = () => {
                     })()}
                   </div>
                   
-                  <div className="pt-6 border-t-2 border-primary flex justify-between items-end">
+                  <div className="pt-6 border-t-2 border-primary-foreground/20 flex justify-between items-end">
                     <div>
                       <span className="font-display font-black text-4xl uppercase italic leading-none block">CELKEM</span>
-                      <span className="text-[10px] text-white/40 font-bold uppercase tracking-[0.3em]">včetně DPH</span>
+                      <span className="text-[10px] text-primary-foreground/60 font-bold uppercase tracking-[0.3em]">včetně DPH</span>
                     </div>
-                    <div className="text-right">
-                      <span className="text-4xl font-display font-black text-primary leading-none">
+                    <div className="text-right flex items-baseline">
+                      <span className="text-4xl font-display font-black leading-none">
                         {(() => {
                           const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
                           const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
                           return cartTotal + shippingCost;
                         })()}
                       </span>
-                      <span className="text-lg font-black ml-1 text-primary">Kč</span>
+                      <span className="text-xl font-black ml-2">Kč</span>
                     </div>
                   </div>
                 </div>
@@ -960,7 +968,7 @@ const CheckoutPage = () => {
                 <Button
                   onClick={handleSubmit}
                   disabled={isProcessing || cart.length === 0}
-                  className="w-full h-20 rounded-[1.5rem] mt-10 bg-primary text-black font-black text-xl uppercase italic shadow-[0_10px_40px_-10px_rgba(234,255,0,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                  className="w-full h-20 rounded-[1.5rem] mt-10 bg-black text-white hover:bg-black/80 font-black text-xl uppercase italic shadow-[0_10px_40px_-10px_rgba(0,0,0,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98] group"
                 >
                   {isProcessing ? (
                     <Loader2 className="animate-spin w-8 h-8" />
@@ -1013,14 +1021,14 @@ const PaymentMethodCard = ({ id, name, sub, active, onClick, icon }: any) => (
   <button
     type="button"
     onClick={onClick}
-    className={`relative p-6 rounded-[2rem] border-2 text-left transition-all group h-32 flex flex-col justify-between ${active ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
+    className={`relative p-6 rounded-[2rem] border-2 text-center transition-all group h-[140px] flex flex-col items-center justify-center gap-3 ${active ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
   >
     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${active ? 'bg-primary text-black' : 'bg-secondary text-primary group-hover:bg-primary/20'}`}>
       {icon}
     </div>
-    <div className="mt-2">
+    <div>
       <p className="font-black uppercase tracking-tight text-sm leading-tight">{name}</p>
-      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{sub}</p>
+      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">{sub}</p>
     </div>
     {active && <CheckCircle className="absolute top-4 right-4 w-5 h-5 text-primary" />}
   </button>
