@@ -145,6 +145,11 @@ const CTASection = () => {
                 )}
               </Button>
             </form>
+            <p className="mt-6 text-sm text-primary-foreground/60 max-w-lg mx-auto animate-fade-up animation-delay-500 leading-relaxed">
+              Kliknutím na tlačítko souhlasíte se zpracováním osobních údajů pro účely zasílání newsletteru. 
+              Podrobné informace o tom, jak vaše údaje chráníme, naleznete v našich 
+              <Link to="/ochrana-osobnich-udaju" className="underline hover:text-lime transition-colors ml-1">Zásadách ochrany osobních údajů</Link>.
+            </p>
           </div>
 
           {/* Social proof */}

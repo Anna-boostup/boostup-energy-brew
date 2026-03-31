@@ -165,7 +165,7 @@ export const SITE_CONTENT = {
         },
         description: "Přihlaš se k odběru a získej exkluzivní přístup k testerům, slevám a novinkám. Buď součástí komunity BoostUp.",
         placeholder: "vas@email.cz",
-        button: "Přihlásit se",
+        button: "Chci odebírat novinky",
         socialProof: {
             waiting: "+500 čeká na launch",
             launch: "Launch Q1 2025",
