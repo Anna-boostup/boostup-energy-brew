@@ -83,6 +83,7 @@ import { CookieBanner } from "./components/CookieBanner";
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
 import { useDynamicFonts } from './hooks/useDynamicFonts';
+import { Analytics } from "@vercel/analytics/react";
 
 // Applies typography CSS variables from the CMS content
 const FontLoader = () => { useDynamicFonts(); return null; };
@@ -102,6 +103,7 @@ const App = () => (
                   <CartProvider>
                     <Toaster />
                     <Sonner />
+                    <Analytics />
                     <BrowserRouter>
                       <ScrollToTop />
                       <CookieBanner />
