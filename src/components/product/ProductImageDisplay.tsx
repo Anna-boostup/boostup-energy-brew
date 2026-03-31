@@ -45,26 +45,10 @@ const ProductImageDisplay: React.FC<ProductImageDisplayProps> = ({
                     <div className="relative w-full max-w-[300px] md:max-w-[340px]">
                         {flavorMode === "mix" ? (
                             <MixStack images={[bottleLemon, bottleRed, bottleSilky]} className="w-full" />
-                        ) : !selectedFlavor ? (
-                            <ConfiguratorHero className="w-full" />
                         ) : (
-                            <img
-                                src={productImageSrc}
-                                srcSet={
-                                    selectedFlavor === 'lemon'
-                                        ? `${bottleLemonMobile} 500w, ${bottleLemon} 1000w`
-                                        : selectedFlavor === 'red'
-                                            ? `${bottleRedMobile} 500w, ${bottleRed} 1000w`
-                                            : selectedFlavor === 'silky'
-                                                ? `${bottleSilkyMobile} 500w, ${bottleSilky} 1000w`
-                                                : `${bottlesHero} 1000w`
-                                }
-                                sizes="(max-width: 640px) 100vw, 340px"
-                                alt={selectedFlavor ? `BoostUp Pure Shot - ${flavorName}` : "BoostUp Supplements - Pure Shot 60ml"}
-                                className="w-full h-auto object-contain drop-shadow-2xl transition-all duration-500 hover:scale-[1.03]"
-                                width={340}
-                                height={450}
-                                loading="lazy"
+                            <ConfiguratorHero 
+                                className="w-full" 
+                                selectedFlavor={selectedFlavor}
                             />
                         )}
                     </div>
