@@ -20,7 +20,21 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
+      // Send inquiry to the team
       const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: 'info@drinkboostup.cz',
+          type: 'contact_inquiry',
+          customerName: formData.name,
+          customerEmail: formData.email,
+          message: formData.message
+        })
+      });
+
+      // Optionally send auto-reply to the customer
+      await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -29,7 +43,8 @@ const ContactSection = () => {
           customerName: formData.name,
           message: formData.message
         })
-      });
+      }).catch(err => console.error('Auto-reply failed:', err));
+
 
       if (!response.ok) throw new Error('Failed to send email');
 

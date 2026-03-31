@@ -222,6 +222,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 <p style="margin:0;font-size:14px;color:${COLORS.secondary}">Zatím můžeš mrknout na naše novinky na <a href="https://instagram.com/drinkboostup" style="color:${COLORS.primary};font-weight:600;text-decoration:none">Instagramu</a>.</p>
             `;
             break;
+
+        case 'newsletter_signup':
+            subject = 'Nový odběratel newsletteru! 📧';
+            contentHtml = `
+                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Nový zájemce o BoostUp</h2>
+                <p style="margin:0 0 24px 0;font-size:16px;color:${COLORS.secondary}">Máme nového odběratele v newsletteru.</p>
+                <div style="background:#f9fafb;padding:24px;border-radius:16px;margin:24px 0;border:1px solid #f3f4f6;text-align:center">
+                    <p style="margin:0 0 8px 0;font-size:12px;color:${COLORS.secondary};text-transform:uppercase;font-weight:bold">E-mail</p>
+                    <p style="font-size:20px;font-weight:bold;margin:0;color:${COLORS.primary}">${req.body.subscriberEmail}</p>
+                </div>
+            `;
+            break;
+
+        case 'contact_inquiry':
+            subject = 'Nová zpráva z kontaktního formuláře 📩';
+            contentHtml = `
+                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Nová zpráva od zákazníka</h2>
+                <div style="background:#f9fafb;padding:24px;border-radius:16px;margin:24px 0;border:1px solid #f3f4f6;text-align:left">
+                    <p style="margin:0 0 16px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Od:</strong> ${customerName} (${req.body.customerEmail})
+                    </p>
+                    <p style="margin:0;color:${COLORS.text};line-height:1.6">
+                        ${message}
+                    </p>
+                </div>
+            `;
+            break;
     }
 
     const emailHtml = `

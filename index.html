@@ -77,20 +77,8 @@
     @media (min-width: 1280px) { .container { max-width: 1280px; } }
     .animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
   </style>
-  <script>
-    // Collapse the critical chain by making late CSS non-blocking
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.tagName === 'LINK' && node.rel === 'stylesheet' && !node.dataset.critical) {
-            node.media = 'print';
-            node.onload = () => { node.media = 'all'; };
-          }
-        });
-      });
-    });
-    observer.observe(document.head, { childList: true });
-  </script>
+  <!-- Rendered CSS will be handled by Vite standard loading -->
+
 </head>
 
 <body>

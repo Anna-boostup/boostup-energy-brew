@@ -4,11 +4,57 @@ import { Zap, Mail, ArrowRight, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { getTextStyle, isBadgeVisible } from "@/lib/textStyles";
 
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
+
 const CTASection = () => {
   const { content: SITE_CONTENT } = useContent();
   const content = SITE_CONTENT.cta;
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleSubscribe = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!email || !email.includes('@')) {
+      toast({
+        title: "Neplatný e-mail",
+        description: "Prosím zadejte platnou e-mailovou adresu.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: 'info@drinkboostup.cz',
+          type: 'newsletter_signup',
+          subscriberEmail: email
+        })
+      });
+
+      if (!response.ok) throw new Error('Subscription failed');
+
+      toast({
+        title: "Úspěšně přihlášeno!",
+        description: "Děkujeme za váš zájem o BoostUp.",
+      });
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Chyba",
+        description: "Nepodařilo se nás přihlásit. Zkuste to prosím později.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section className="py-28 bg-gradient-to-br from-primary via-olive-dark to-foreground relative overflow-hidden">
@@ -60,11 +106,12 @@ const CTASection = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className={`flex flex-col sm:flex-row items-center gap-4 p-2 rounded-2xl sm:rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
-              <div className="flex-1 flex items-center gap-3 px-5">
+            <form onSubmit={handleSubscribe} className={`flex flex-col sm:flex-row items-center gap-4 p-2 rounded-2xl sm:rounded-full bg-primary-foreground/10 backdrop-blur-sm border-2 transition-all duration-500 ${isHovered ? 'border-lime shadow-lg shadow-lime/30 scale-[1.02]' : 'border-primary-foreground/20'}`}>
+              <div className="flex-1 flex items-center gap-3 px-5 w-full">
                 <Mail className={`w-6 h-6 transition-colors duration-300 ${isHovered ? 'text-lime' : 'text-primary-foreground/60'}`} />
                 <input
                   type="email"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={content.placeholder}
@@ -72,14 +119,20 @@ const CTASection = () => {
                 />
               </div>
               <Button
-                variant="default"
-                size="lg"
-                className="w-full sm:w-auto bg-lime hover:bg-lime-dark text-foreground font-black rounded-full px-10 py-6 group shadow-button flex items-center justify-center"
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full sm:w-auto bg-lime hover:bg-lime-dark text-foreground font-black rounded-full px-10 py-6 group shadow-button flex items-center justify-center transition-all active:scale-95"
               >
-                {content.button}
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
+                {isSubmitting ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    {content.button}
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
+                  </>
+                )}
               </Button>
-            </div>
+            </form>
           </div>
 
           {/* Social proof */}
