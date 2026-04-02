@@ -88,7 +88,7 @@ export default async function handler(req: Request) {
         }
 
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
+            // Removed hardcoded card restriction to allow Apple/Google Pay via Dashboard settings
             billing_address_collection: 'required',
             shipping_address_collection: {
                 allowed_countries: ['CZ', 'SK'],

@@ -57,8 +57,8 @@ export default async function handler(req: Request) {
             metadata: {
                 orderId: orderNumber,
             },
-            // Restrict to card only to avoid Apple Pay domain verification issues on test domains
-            payment_method_types: ['card'],
+            // Use automatic payment methods to allow Apple/Google Pay from Dashboard
+            automatic_payment_methods: { enabled: true },
         });
 
         // Return the client_secret which the frontend needs to render the Elements form
