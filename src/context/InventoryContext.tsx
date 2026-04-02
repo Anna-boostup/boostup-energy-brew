@@ -134,7 +134,25 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             .channel('orders_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
                 if (payload.eventType === 'INSERT') {
-                    setOrders(prev => [payload.new as any, ...prev]);
+                    const newOrder = payload.new as any;
+                    setOrders(prev => [newOrder, ...prev]);
+
+                    // Trigger browser notification for new orders
+                    if (typeof window !== 'undefined' && Notification.permission === 'granted') {
+                        const amount = newOrder.total;
+                        const customer = newOrder.customer_name || 'Zákazník';
+                        
+                        new Notification('Nová objednávka! ⚡', {
+                            body: `Částka: ${amount} Kč | Od: ${customer}`,
+                            icon: '/logo.png' // Use site logo if available
+                        });
+
+                        // Play a subtle notification sound if possible
+                        try {
+                            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                            audio.play().catch(() => {/* ignore play restrictions */});
+                        } catch (e) {}
+                    }
                 } else if (payload.eventType === 'UPDATE') {
                     setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
                 }

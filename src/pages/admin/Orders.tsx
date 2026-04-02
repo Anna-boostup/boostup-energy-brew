@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Layers, ArrowUpDown } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Layers, ArrowUpDown, Bell, MousePointer2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -367,10 +367,31 @@ const Orders = () => {
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
     const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
     const [printIds, setPrintIds] = useState<string[]>([]);
+    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
+        typeof window !== 'undefined' ? Notification.permission : 'default'
+    );
+
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
         direction: 'desc'
     });
+
+    const requestNotificationPermission = async () => {
+        if (typeof window === 'undefined') return;
+        
+        try {
+            const permission = await Notification.requestPermission();
+            setNotificationPermission(permission);
+            if (permission === 'granted') {
+                toast({
+                    title: "Oznámení povolena! 🔔",
+                    description: "Nyní budete upozorněni na každou novou objednávku přímo v prohlížeči.",
+                });
+            }
+        } catch (error) {
+            console.error('Error requesting notification permission:', error);
+        }
+    };
 
     const handleSort = (key: 'id' | 'date') => {
         setSortConfig(prev => ({
@@ -523,6 +544,18 @@ const Orders = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 className="text-3xl font-bold tracking-tight">Správa objednávek</h2>
                 <div className="flex items-center gap-2">
+                    {notificationPermission !== 'granted' && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2 h-10 px-4 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 font-bold animate-pulse"
+                            onClick={requestNotificationPermission}
+                            aria-label="Zapnout oznámení v prohlížeči"
+                        >
+                            <Bell className="w-4 h-4" />
+                            <span>Povolit oznámení</span>
+                        </Button>
+                    )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="gap-2 h-10 px-4 border-slate-300 shadow-sm text-slate-800 hover:text-slate-950 font-semibold" aria-label="Změnit řazení objednávek">
