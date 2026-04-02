@@ -123,6 +123,14 @@ const sections: Section[] = [
             {
                 label: "Packeta štítky",
                 description: "Pro objednávky s Packeta doručením lze vygenerovat a vytisknout štítky pomocí tlačítka 'Štítky Packeta'."
+            },
+            {
+                label: "Oznámení v prohlížeči",
+                description: "V horní části stránky Objednávky najdete tlačítko 'Povolit oznámení'. Po jeho aktivaci vás prohlížeč upozorní zvukem a vyskakovacím oknem na každou novou objednávku, i když pracujete v jiné záložce."
+            },
+            {
+                label: "Automatická synchronizace plateb",
+                description: "Systém je napojen na Stripe a GoPay. Jakmile zákazník úspěšně zaplatí, stav objednávky se automaticky změní na 'Zaplaceno' bez nutnosti ručního zásahu."
             }
         ]
     },
@@ -195,6 +203,10 @@ const sections: Section[] = [
             {
                 label: "Přeposílání pošty",
                 description: "Pokud preferujete Gmail, můžete si ve správě u Forpsi nastavit automatické přeposílání všech zpráv na váš osobní/firemní Google účet."
+            },
+            {
+                label: "Automatické kopie (BCC)",
+                description: "Každé potvrzení objednávky, dotaz z kontaktního formuláře nebo nový odběratel newsletteru je automaticky v kopii zasílán na adresu objednavky@drinkboostup.cz pro okamžitý přehled."
             }
         ]
     },
