@@ -1,8 +1,13 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
-    AlertTriangle, Mail
+    AlertTriangle, Mail, MousePointer2
 } from "lucide-react";
 
 interface HelpItem {
@@ -15,6 +20,7 @@ interface Section {
     title: string;
     description: string;
     items: HelpItem[];
+    image?: string;
 }
 
 const sections: Section[] = [
@@ -22,6 +28,7 @@ const sections: Section[] = [
         icon: Globe,
         title: "Obsah webu",
         description: "Správa textů a vizuálního obsahu na všech sekcích webu. Cesta: Admin → Obsah webu",
+        image: "/admin-guide/content-management.png",
         items: [
             {
                 label: "Hero (Úvod)",
@@ -33,7 +40,7 @@ const sections: Section[] = [
             },
             {
                 label: "Ingredience",
-                description: "Název a popis ingrediencí zobrazených na webu."
+                description: "Název a popis ingrediencií zobrazených na webu."
             },
             {
                 label: "3B Koncept",
@@ -107,6 +114,7 @@ const sections: Section[] = [
         icon: ShoppingCart,
         title: "Objednávky",
         description: "Přehled a správa všech zákaznických objednávek. Cesta: Admin → Objednávky",
+        image: "/admin-guide/orders.png",
         items: [
             {
                 label: "Filtrování objednávek",
@@ -126,11 +134,11 @@ const sections: Section[] = [
             },
             {
                 label: "Oznámení v prohlížeči",
-                description: "V horní části stránky Objednávky najdete tlačítko 'Povolit oznámení'. Po jeho aktivaci vás prohlížeč upozorní zvukem a vyskakovacím oknem na každou novou objednávku, i když pracujete v jiné záložce."
+                description: "V horní části stránky Objednávky najdete tlačítko 'Povolit oznámení'. Po jeho aktivaci vás prohlížeč upozorní zvukem a vyskakovacím oknem na každou novou objednávku."
             },
             {
                 label: "Automatická synchronizace plateb",
-                description: "Systém je napojen na Stripe a GoPay. Jakmile zákazník úspěšně zaplatí, stav objednávky se automaticky změní na 'Zaplaceno' bez nutnosti ručního zásahu."
+                description: "Systém je napojen na Stripe a GoPay. Jakmile zákazník úspěšně zaplatí, stav objednávky se automaticky změní na 'Zaplaceno'."
             }
         ]
     },
@@ -138,6 +146,7 @@ const sections: Section[] = [
         icon: Package,
         title: "Sklad produktů",
         description: "Správa skladových zásob hotových výrobků. Cesta: Admin → Sklad produktů",
+        image: "/admin-guide/inventory.png",
         items: [
             {
                 label: "Přidání zásoby",
@@ -153,6 +162,7 @@ const sections: Section[] = [
         icon: Factory,
         title: "Sklad výroby",
         description: "Správa surovin a výrobních materiálů. Cesta: Admin → Sklad výroby",
+        image: "/admin-guide/manufacture.png",
         items: [
             {
                 label: "Upozornění (červená tečka)",
@@ -160,11 +170,11 @@ const sections: Section[] = [
             },
             {
                 label: "Úprava zásob",
-                description: "Klikni na surovinu pro zobrazení detailu a ruční úpravu množství. Lze nastavit minimální a varovnou hranici."
+                description: "Klikni na surovinu pro zobrazení detailu a ruční úpravu množství."
             },
             {
                 label: "Notifikace",
-                description: "Notifikace lze pro každou surovinu zapnout nebo vypnout. Pokud jsou zapnuty a zásoba klesne pod limit, zobrazí se alert v menu."
+                description: "Notifikace lze pro každou surovinu zapnout nebo vypnout."
             }
         ]
     },
@@ -183,7 +193,7 @@ const sections: Section[] = [
             },
             {
                 label: "Tlačítko 'Resetovat'",
-                description: "Vrátí všechny neuložené změny na stav posledního uložení. Nelze vrátit zpět po uložení."
+                description: "Vrátí všechny neuložené změny na stav posledního uložení."
             }
         ]
     },
@@ -194,30 +204,11 @@ const sections: Section[] = [
         items: [
             {
                 label: "Webmail (Forpsi)",
-                description: "V levém menu najdete rychlý odkaz 'E-maily (Webmail)', který vás přesměruje přímo do rozhraní pro správu pošty u Forpsi."
+                description: "V levém menu najdete rychlý odkaz 'E-maily (Webmail)', který vás přesměruje přímo do rozhraní Forpsi."
             },
             {
                 label: "Mobilní a desktopové aplikace",
-                description: "Pro pohodlnější denní práci doporučujeme si e-mail napojit přímo do telefonu nebo počítače (Apple Mail, Outlook, Spark) pomocí IMAP a SMTP údajů od Forpsi."
-            },
-            {
-                label: "Přeposílání pošty",
-                description: "Pokud preferujete Gmail, můžete si ve správě u Forpsi nastavit automatické přeposílání všech zpráv na váš osobní/firemní Google účet."
-            },
-            {
-                label: "Automatické kopie (BCC)",
-                description: "Každé potvrzení objednávky, dotaz z kontaktního formuláře nebo nový odběratel newsletteru je automaticky v kopii zasílán na adresu objednavky@drinkboostup.cz pro okamžitý přehled."
-            }
-        ]
-    },
-    {
-        icon: HelpCircle,
-        title: "Tipy pro testování",
-        description: "Užitečné rady pro kontrolu funkčnosti webu.",
-        items: [
-            {
-                label: "Reset Cookies (pro testování)",
-                description: "Pokud chcete znovu vidět Cookies lištu (např. pro testování), stačí na webu v sekci 'Zásady cookies' (v patičce) kliknout na tlačítko 'Změnit nastavení cookies'."
+                description: "Doporučujeme si e-mail napojit přímo do telefonu nebo počítače pomocí IMAP a SMTP údajů."
             }
         ]
     }
@@ -225,52 +216,120 @@ const sections: Section[] = [
 
 const AdminHelp = () => {
     return (
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-5xl mx-auto space-y-12 pb-20">
             {/* Header */}
-            <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <HelpCircle className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                    <h1 className="text-2xl font-bold text-foreground">Nápověda &amp; Příručka</h1>
-                    <p className="text-muted-foreground mt-1">
-                        Průvodce správou webu a admin panelem BoostUp.
-                    </p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-sm">
+                        <HelpCircle className="w-8 h-8 text-primary" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black text-foreground tracking-tight">Nápověda &amp; Příručka</h1>
+                        <p className="text-muted-foreground mt-1 text-lg">
+                            Kompletní průvodce správou e-shopu BoostUp.
+                        </p>
+                    </div>
                 </div>
             </div>
 
             {/* Quick tip banner */}
-            <div className="flex gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
-                <p>
-                    <strong>Nezapomeň:</strong> Všechny změny v sekci <em>Obsah webu</em> musíš potvrdit tlačítkem{" "}
-                    <strong>Uložit změny</strong> v horní části stránky – jinak se po obnovení ztratí.
+            <div className="flex gap-4 p-5 bg-lime/10 border border-lime/20 rounded-2xl text-base text-slate-800 shadow-sm">
+                <div className="w-10 h-10 rounded-full bg-lime/20 flex items-center justify-center shrink-0">
+                    <MousePointer2 className="w-5 h-5 text-lime-700" />
+                </div>
+                <p className="flex items-center">
+                    <span>
+                        <strong>Tip pro rychlou práci:</strong> Kliknutím na nadpis sekce níže ji rozbalíte pro detailní návod a náhledy.
+                        Všechny změny obsahu musíte vždy potvrdit tlačítkem <strong>Uložit změny</strong>.
+                    </span>
                 </p>
             </div>
 
-            {/* Sections */}
-            {sections.map((section) => {
-                const Icon = section.icon;
-                return (
-                    <Card key={section.title} className="overflow-hidden">
-                        <CardHeader className="bg-muted/30 border-b border-border pb-4">
-                            <CardTitle className="flex items-center gap-3 text-lg">
-                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                                    <Icon className="w-4 h-4 text-primary" />
+            {/* Accordion Sections */}
+            <Accordion type="single" collapsible className="w-full space-y-4">
+                {sections.map((section, idx) => {
+                    const Icon = section.icon;
+                    return (
+                        <AccordionItem
+                            key={section.title}
+                            value={`item-${idx}`}
+                            className="border border-border bg-card rounded-2xl overflow-hidden px-2 shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <AccordionTrigger className="hover:no-underline py-6 px-4">
+                                <div className="flex items-center gap-4 text-left">
+                                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                        <Icon className="w-5 h-5 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-foreground leading-none">{section.title}</h3>
+                                        <p className="text-sm text-muted-foreground font-normal mt-1.5">{section.description}</p>
+                                    </div>
                                 </div>
-                                {section.title}
-                            </CardTitle>
-                            <CardDescription className="text-sm">{section.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <ul className="divide-y divide-border">
-                                {section.items.map((item, i) => (
-                                    <li key={i} className="flex gap-3 px-6 py-4 hover:bg-muted/20 transition-colors">
-                                        <ChevronRight className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                                        <div>
-                                            <p className="font-semibold text-sm text-foreground">{item.label}</p>
-                                            <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{item.description}</p>
+                            </AccordionTrigger>
+                            <AccordionContent className="px-4 pb-8 pt-2">
+                                <div className="grid lg:grid-cols-2 gap-8 items-start">
+                                    <div className="space-y-6">
+                                        <ul className="space-y-4">
+                                            {section.items.map((item, i) => (
+                                                <li key={i} className="flex gap-3 group">
+                                                    <div className="mt-1 w-5 h-5 rounded-full bg-primary/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                                                        <ChevronRight className="w-3 h-3 text-primary" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-base text-foreground">{item.label}</p>
+                                                        <p className="text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    {section.image && (
+                                        <div className="space-y-4">
+                                            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                                                <div className="w-1 h-1 rounded-full bg-primary" />
+                                                Vizuální náhled z administrace
+                                            </p>
+                                            <div className="rounded-2xl border-2 border-border overflow-hidden shadow-2xl bg-slate-900 group relative">
+                                                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                                                <img
+                                                    src={section.image}
+                                                    alt={section.title}
+                                                    className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]"
+                                                    onError={(e) => {
+                                                        // Fallback if image is not moved to public yet
+                                                        (e.target as HTMLImageElement).style.display = 'none';
+                                                    }}
+                                                />
+                                            </div>
+                                            <p className="text-xs text-center text-muted-foreground italic">
+                                                * Přesný vzhled se může mírně lišit podle velikosti obrazovky.
+                                            </p>
                                         </div>
+                                    )}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    );
+                })}
+            </Accordion>
+
+            {/* Footer note */}
+            <div className="bg-slate-900 text-white p-8 rounded-3xl text-center space-y-4 shadow-xl">
+                <HelpCircle className="w-10 h-10 text-primary mx-auto opacity-50" />
+                <h3 className="text-xl font-bold">Potřebujete technickou pomoc?</h3>
+                <p className="text-slate-400 max-w-md mx-auto">
+                    Pokud jste v manuálu nenašli odpověď nebo narazili na chybu v aplikaci, neváhejte mě kontaktovat pro rychlou podporu.
+                </p>
+                <div className="pt-2">
+                    <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">BoostUp Admin Panel v2.4.0</span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default AdminHelp;                          </div>
                                     </li>
                                 ))}
                             </ul>

@@ -17,10 +17,10 @@ type FlavorMode = "single" | "mix";
 
 export const useProductLogic = () => {
     const { content } = useContent();
-    const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
-    const [flavorMode, setFlavorMode] = useState<FlavorMode | null>(null);
-    const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>(null);
-    const [purchaseType, setPurchaseType] = useState<'onetime' | 'subscription' | null>(null);
+    const [selectedPack, setSelectedPack] = useState<Pack | null>(3);
+    const [flavorMode, setFlavorMode] = useState<FlavorMode | null>("single");
+    const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>("lemon");
+    const [purchaseType, setPurchaseType] = useState<'onetime' | 'subscription' | null>("onetime");
     const [quantity, setQuantity] = useState(1);
     const [mixCounts, setMixCounts] = useState<Record<string, number>>({ lemon: 0, red: 0, silky: 0 });
 

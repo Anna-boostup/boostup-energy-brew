@@ -53,6 +53,13 @@ export const ConceptCard: React.FC<ConceptCardProps> = ({
                 <p className="text-sm text-foreground group-hover:text-primary-foreground mb-4 font-bold tracking-widest uppercase" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.subtitle`)}>
                     {concept.subtitle}
                 </p>
+
+                {concept.stats && (
+                    <div className="mb-4 inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 group-hover:bg-lime group-hover:text-slate-900 group-hover:border-lime transition-all duration-300 transform group-hover:scale-105 shadow-sm">
+                        <span className="text-sm font-black tracking-tighter uppercase">{concept.stats}</span>
+                    </div>
+                )}
+
                 <p className="flex-grow text-lg leading-relaxed text-foreground/90 group-hover:text-primary-foreground" style={getTextStyle(SITE_CONTENT, `concept3b.${concept.id}.description`)}>
                     {concept.description}
                 </p>
