@@ -58,7 +58,7 @@ const AdminLayout = () => {
         },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
         { icon: Mail, label: "E-maily (Webmail)", path: "https://webmail.forpsi.com/", isExternal: true },
-        { icon: User, label: "Můj profil", path: "/admin/profile" },
+        { icon: User, label: "Můj účet", path: "/admin/profile" },
         { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
     ];
 
