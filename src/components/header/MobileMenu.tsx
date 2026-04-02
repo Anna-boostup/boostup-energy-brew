@@ -55,29 +55,33 @@ const MobileMenu = ({
         {user ? (
           <>
             <Link
-              to={profile?.account_type === 'company' ? "/company-account/profile" : "/account/profile"}
+              to={profile?.role === 'admin' ? "/admin" : profile?.account_type === 'company' ? "/company-account/profile" : "/account/profile"}
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
             >
               <User className="w-5 h-5" />
-              Můj profil
+              {profile?.role === 'admin' ? "Admin Menu" : "Můj profil"}
             </Link>
-            <Link
-              to={profile?.account_type === 'company' ? "/company-account/orders" : "/account/orders"}
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
-            >
-              <Package className="w-5 h-5" />
-              Moje objednávky
-            </Link>
-            <Link
-              to={profile?.account_type === 'company' ? "/company-account/subscriptions" : "/account/subscriptions"}
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
-            >
-              <CreditCard className="w-5 h-5" />
-              Moje předplatné
-            </Link>
+            {profile?.role !== 'admin' && (
+              <>
+                <Link
+                  to={profile?.account_type === 'company' ? "/company-account/orders" : "/account/orders"}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                >
+                  <Package className="w-5 h-5" />
+                  Moje objednávky
+                </Link>
+                <Link
+                  to={profile?.account_type === 'company' ? "/company-account/subscriptions" : "/account/subscriptions"}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                >
+                  <CreditCard className="w-5 h-5" />
+                  Moje předplatné
+                </Link>
+              </>
+            )}
           </>
         ) : (
           <Link
