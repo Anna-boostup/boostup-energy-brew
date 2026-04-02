@@ -74,7 +74,7 @@ export default async function handler(req: Request) {
             },
             payer: {
                 default_payment_instrument: 'PAYMENT_CARD',
-                allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT']
+                allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT', 'APPLE_PAY', 'GPAY']
             },
             amount: Math.round(total * 100),
             currency: 'CZK',
