@@ -17,6 +17,11 @@ import { Button } from '@/components/ui/button';
 import PacketaWidget from '@/components/PacketaWidget';
 import { useToast } from '@/hooks/use-toast';
 import { StripePaymentModal } from '@/components/stripe/StripePaymentModal';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import StripeExpressButtons from '@/components/stripe/StripeExpressButtons';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
 import bottleLemon from "@/assets/bottle-lemon.webp";
 import bottleRed from "@/assets/bottle-red.webp";
@@ -989,8 +994,13 @@ const CheckoutPage = () => {
                 </Button>
 
                 <div className="mt-8 flex items-center justify-center gap-6 opacity-30 grayscale hover:opacity-60 hover:grayscale-0 transition-all cursor-default">
-                  <Lock size={16} />
-                  <span className="text-[9px] font-black uppercase tracking-[0.3em]">Encrypted Connection</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.3em]">Encrypted Connection</span>
+                  </div>
+
+                  {/* Express Checkout Section */}
+                  <Elements stripe={stripePromise}>
+                    <StripeExpressButtons />
+                  </Elements>
                 </div>
               </div>
             </div>
