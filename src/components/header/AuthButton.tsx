@@ -9,8 +9,6 @@ interface AuthButtonProps {
 
 const AuthButton = ({ user, profile }: AuthButtonProps) => {
   if (user) {
-    return (
-      <Button asChild variant="ghost" size="icon" className="h-10 w-10 hover:bg-accent hover:text-accent-foreground" title={profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
     const getProfileLink = () => {
       if (profile?.role === 'admin') return "/admin";
       if (profile?.account_type === 'company') return "/company-account";
