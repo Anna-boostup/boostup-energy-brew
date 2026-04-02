@@ -1010,7 +1010,6 @@ const CheckoutPage = () => {
             </p>
           </div>
         </div>
-      </div>
 
       <StripePaymentModal
         clientSecret={clientSecret || ""}
