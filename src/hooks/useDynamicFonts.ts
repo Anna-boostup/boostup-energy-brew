@@ -9,6 +9,7 @@ export const AVAILABLE_FONTS = [
     { name: 'Raleway', weights: [300, 400, 500, 600, 700, 800, 900] },
     { name: 'Montserrat', weights: [300, 400, 500, 600, 700, 800, 900] },
     { name: 'Oswald', weights: [300, 400, 500, 600, 700] },
+    { name: 'Bebas Neue', weights: [400] },
     { name: 'Playfair Display', weights: [400, 500, 600, 700, 800, 900] },
     { name: 'Lora', weights: [400, 500, 600, 700] },
     { name: 'DM Sans', weights: [300, 400, 500, 600, 700] },
