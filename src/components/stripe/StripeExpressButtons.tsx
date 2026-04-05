@@ -94,16 +94,22 @@ const StripeExpressButtons = () => {
           is_subscription_order: cart.some(item => !!item.subscriptionInterval)
         };
 
-        // 3. Stock update
+        // 3. Stock update (bottle level per base flavor)
         cart.forEach(item => {
            if (item.flavorMode === 'mix' && item.mixConfiguration) {
               const { lemon, red, silky } = item.mixConfiguration;
               if (lemon) decrementStock('lemon', lemon * item.quantity);
               if (red) decrementStock('red', red * item.quantity);
               if (silky) decrementStock('silky', silky * item.quantity);
-           } else {
-              const sku = item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`;
-              decrementStock(sku, item.quantity);
+           } else if (item.flavor && item.pack) {
+              // Normalize display name to base flavor SKU key
+              const flavorLower = item.flavor.toLowerCase();
+              const flavorBase = flavorLower.includes('lemon') ? 'lemon'
+                : flavorLower.includes('red') ? 'red'
+                : flavorLower.includes('silky') ? 'silky' : null;
+              if (flavorBase) {
+                 decrementStock(flavorBase, item.pack * item.quantity);
+              }
            }
         });
 
