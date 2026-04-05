@@ -6,6 +6,29 @@ import { Plus, History, Edit } from "lucide-react";
 import { RestockDialog } from "@/components/admin/RestockDialog";
 import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
 import { ProductEditDialog } from "@/components/admin/ProductEditDialog";
+import { FLAVORS } from "@/config/product-data";
+
+const PACK_SIZES = [3, 12, 21] as const;
+
+const getFlavorLabel = (sku: string) => {
+    if (sku.includes('lemon')) return "🍋 Lemon Blast";
+    if (sku.includes('red'))   return "🍓 Red Rush";
+    if (sku.includes('silky')) return "🌿 Silky Leaf";
+    return sku;
+};
+
+const PackBreakdown = ({ bottles }: { bottles: number }) => (
+    <div className="flex flex-wrap gap-1 mt-1">
+        {PACK_SIZES.map(size => (
+            <span
+                key={size}
+                className="inline-flex items-center rounded-full border bg-muted/50 px-2 py-0.5 text-xs font-medium"
+            >
+                {Math.floor(bottles / size)}× po {size}
+            </span>
+        ))}
+    </div>
+);
 
 const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void }) => (
     <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white shadow-sm">
@@ -14,23 +37,17 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                 <p className="font-mono font-bold text-lg">{sku}</p>
                 <div className="flex flex-col">
                     <span className="font-bold text-sm">
-                        {product?.name || (
-                            sku.includes('lemon') ? "🍋 Lemon Blast" :
-                                sku.includes('red') ? "🍓 Red Rush" :
-                                    sku.includes('silky') ? "🌿 Silky Leaf" : sku
-                        )}
+                        {product?.name || getFlavorLabel(sku)}
                     </span>
-                    <span className="text-xs text-foreground/90 font-medium">
-                        {sku.includes('-')
-                            ? `📦 Balení ${sku.split('-')[1]} ks`
-                            : "🍾 Samostatná lahev (pro Mixy)"}
-                    </span>
+                    <span className="text-xs text-foreground/90 font-medium">🍾 Lahvičky na skladě</span>
                 </div>
             </div>
             <div className={`text-right font-bold text-xl ${qty < 10 ? "text-terracotta" : ""}`}>
                 {qty} ks
             </div>
         </div>
+
+        <PackBreakdown bottles={qty} />
 
         <div className="flex gap-2 pt-2 border-t">
             <Button
@@ -77,20 +94,11 @@ const Inventory = () => {
     const [historySku, setHistorySku] = useState<SKU | null>(null);
     const [editSku, setEditSku] = useState<SKU | null>(null);
 
+    // Show only base flavor SKUs (no pack suffix, no mix)
+    const baseFlavors = FLAVORS.map(f => f.id);
     const sortedStock = Object.entries(stock)
-        .filter(([sku]) => !sku.includes('mix'))
-        .sort(([skuA], [skuB]) => {
-            const parseSku = (sku: string) => {
-                const parts = sku.split('-');
-                const flavor = parts[0];
-                const size = parts.length > 1 ? parseInt(parts[1]) : 1;
-                return { flavor, size };
-            };
-            const a = parseSku(skuA);
-            const b = parseSku(skuB);
-            if (a.flavor !== b.flavor) return a.flavor.localeCompare(b.flavor);
-            return a.size - b.size;
-        });
+        .filter(([sku]) => baseFlavors.includes(sku as any))
+        .sort(([skuA], [skuB]) => skuA.localeCompare(skuB));
 
     return (
         <div className="space-y-8">
@@ -104,8 +112,9 @@ const Inventory = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>SKU (Kód)</TableHead>
-                            <TableHead>Název</TableHead>
-                            <TableHead className="text-right">Množství</TableHead>
+                            <TableHead>Příchuť</TableHead>
+                            <TableHead className="text-right">Lahvičky na skladě</TableHead>
+                            <TableHead>Odpovídá balením</TableHead>
                             <TableHead className="text-right">Akce</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -116,25 +125,17 @@ const Inventory = () => {
                                 <TableRow key={sku}>
                                     <TableCell className="font-mono font-medium">{sku}</TableCell>
                                     <TableCell>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold">
-                                                {product?.name || (
-                                                    sku.includes('lemon') ? "🍋 Lemon Blast" :
-                                                        sku.includes('red') ? "🍓 Red Rush" :
-                                                            sku.includes('silky') ? "🌿 Silky Leaf" : sku
-                                                )}
-                                            </span>
-                                            <span className="text-xs text-foreground/90 font-medium">
-                                                {sku.includes('-')
-                                                    ? `📦 Balení ${sku.split('-')[1]} ks`
-                                                    : "🍾 Samostatná lahev (pro Mixy)"}
-                                            </span>
-                                        </div>
+                                        <span className="font-bold">
+                                            {product?.name || getFlavorLabel(sku)}
+                                        </span>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <span className={`font-bold ${qty < 10 ? "text-terracotta" : ""}`}>
+                                        <span className={`font-bold text-lg ${qty < 10 ? "text-terracotta" : ""}`}>
                                             {qty} ks
                                         </span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <PackBreakdown bottles={qty} />
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">

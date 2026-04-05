@@ -191,8 +191,8 @@ export const useProductLogic = () => {
                 (mixCounts.silky * quantity > 0 && getStock('silky') < mixCounts.silky * quantity)
             ) return true;
         } else {
-            const sku = `${selectedFlavor}-${selectedPack}`;
-            if (getStock(sku) < quantity) return true;
+            // Stock is tracked at bottle level; check if we have enough bottles
+            if (selectedFlavor && getStock(selectedFlavor) < quantity * (selectedPack ?? 0)) return true;
         }
         return false;
     };

@@ -235,7 +235,7 @@ const CheckoutPage = () => {
       return;
     }
 
-    // Calculate total required ingredients
+    // Calculate total required bottles per base flavor
     const requiredStock: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
 
     cart.forEach(item => {
@@ -249,18 +249,18 @@ const CheckoutPage = () => {
             : item.flavor.toLowerCase().includes('silky') ? 'silky' : null;
 
         if (flavorKey) {
-          const sku = `${flavorKey}-${item.pack}`;
-          requiredStock[sku] = (requiredStock[sku] || 0) + item.quantity;
+          // Stock is tracked at bottle level; multiply packs × pack size
+          requiredStock[flavorKey] = (requiredStock[flavorKey] || 0) + item.quantity * (item.pack ?? 1);
         }
       }
     });
 
-    // 1. Stock Check
-    for (const [sku, amount] of Object.entries(requiredStock)) {
-      if (amount > 0 && getStock(sku) < amount) {
+    // 1. Stock Check (bottle level per flavor)
+    for (const [flavorKey, amount] of Object.entries(requiredStock)) {
+      if (amount > 0 && getStock(flavorKey) < amount) {
         toast({
           title: "Chyba objednávky",
-          description: `Nedostatek skladových zásob pro položku ${sku.toUpperCase()}. Chybí ${(amount - getStock(sku))} ks.`,
+          description: `Nedostatek skladových zásob pro příchuť ${flavorKey.toUpperCase()}. Chybí ${(amount - getStock(flavorKey))} ks lahviček.`,
           variant: "destructive"
         });
         return;
