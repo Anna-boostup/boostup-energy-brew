@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
 import logoGreen from "@/assets/logo-green.png";
+import LanguageToggle from "@/components/LanguageToggle";
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -124,6 +125,9 @@ const AdminLayout = () => {
                             })}
                         </ul>
                         <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
+                            <div className="flex items-center justify-between mb-2">
+                                <LanguageToggle className="text-slate-300 hover:text-white hover:bg-slate-800" />
+                            </div>
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
@@ -189,6 +193,9 @@ const AdminLayout = () => {
                 </ul>
 
                 <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
+                    <div className="flex items-center justify-between mb-2">
+                        <LanguageToggle className="text-slate-300 hover:text-white hover:bg-slate-800" />
+                    </div>
                     <Button
                         variant="ghost"
                         className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"

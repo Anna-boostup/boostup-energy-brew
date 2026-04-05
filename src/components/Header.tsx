@@ -14,6 +14,7 @@ import SocialLinks from "./header/SocialLinks";
 import AuthButton from "./header/AuthButton";
 import CartButton from "./header/CartButton";
 import MobileMenu from "./header/MobileMenu";
+import LanguageToggle from "./LanguageToggle";
 
 const CartModal = lazy(() => import("./CartModal"));
 
@@ -43,12 +44,15 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
               <SocialLinks social={SITE_CONTENT.social} />
             )}
 
+            <LanguageToggle />
+
             <AuthButton user={user} profile={profile} />
 
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
           </div>
 
           <div className="flex md:hidden items-center gap-2">
+            <LanguageToggle />
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} mobile />
 
             <button

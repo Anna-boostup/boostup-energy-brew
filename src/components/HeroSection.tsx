@@ -10,6 +10,13 @@ const HeroSection = () => {
   const { content: SITE_CONTENT } = useContent();
   const [activeIngredient, setActiveIngredient] = useState<string | null>(null);
 
+  const benefitIcons = [
+    <Zap className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
+    <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
+    <Brain className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
+    <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
+  ];
+
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -29,7 +36,7 @@ const HeroSection = () => {
                 className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase leading-[1.1] mb-1"
                 style={{ color: '#3d5a2f' }}
               >
-                OBJEVTE NOVÝ STANDARD
+                {SITE_CONTENT.hero.headline.part1}
               </span>
               <span 
                 className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1]"
@@ -40,21 +47,16 @@ const HeroSection = () => {
                   backgroundClip: 'text',
                 }}
               >
-                STABILNÍHO SOUSTŘEDĚNÍ
+                {SITE_CONTENT.hero.headline.gradient}
               </span>
             </h1>
 
             {/* Benefits */}
             <div className="flex flex-col gap-4 mt-8 mb-10 items-center lg:items-start">
-              {[
-                { icon: <Zap className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Až 6 hodin energie', text: 'bez pádu na konci', bg: '#e8eedf' },
-                { icon: <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Přírodní extrakty', text: 'bez cukru, bez umělých sladidel', bg: '#e8eedf' },
-                { icon: <Brain className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Klid pod tlakem', text: 'výkon bez chaosu', bg: '#e8eedf' },
-                { icon: <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />, bold: 'Vyvinuto s odborníky', text: 'na Mendelově univerzitě', bg: '#e8eedf' },
-              ].map((item, i) => (
+              {SITE_CONTENT.hero.benefits.map((item, i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: item.bg }}>
-                    {item.icon}
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#e8eedf' }}>
+                    {benefitIcons[i]}
                   </div>
                   <p className="text-sm md:text-base" style={{ color: '#3d5a2f' }}>
                     <span className="font-bold">{item.bold}</span>
@@ -73,7 +75,7 @@ const HeroSection = () => {
                 style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent' }}
                 onClick={() => scrollTo('mise')}
               >
-                Chci objevit více
+                {SITE_CONTENT.hero.cta.secondary}
               </Button>
 
               <Button
@@ -82,7 +84,7 @@ const HeroSection = () => {
                 style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
                 onClick={() => scrollTo('produkty')}
               >
-                Chci koupit
+                {SITE_CONTENT.hero.cta.primary}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
               </Button>
             </div>
@@ -115,15 +117,10 @@ const HeroSection = () => {
 
         {/* Tags row - full width below both columns */}
         <div className="flex flex-wrap gap-4 mt-2 justify-center">
-          {[
-            { label: 'SOUSTŘEDĚNÍ', dotColor: '#3d5a2f', id: 'vitamins', colorClass: 'bg-olive' },
-            { label: 'STIMULACE', dotColor: '#dfdf57', id: 'stimulants', colorClass: 'bg-lime' },
-            { label: 'ODOLNOST', dotColor: '#f29739', id: 'adaptogens', colorClass: 'bg-orange' },
-            { label: 'ROVNOVÁHA', dotColor: '#aa263e', id: 'electrolytes', colorClass: 'bg-terracotta' },
-          ].map((item) => (
+          {SITE_CONTENT.hero.tags.map((item) => (
             <button
-              key={item.label}
-              onClick={() => setActiveIngredient(item.id)}
+              key={item.ingredientId}
+              onClick={() => setActiveIngredient(item.ingredientId)}
               className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-all border-0 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #f1e8c3, #f4f1e6)',

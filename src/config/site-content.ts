@@ -37,7 +37,19 @@ export const SITE_CONTENT = {
             "Elektrolyty",
             "Adaptogeny",
             "Vitamíny"
-        ]
+        ],
+        benefits: [
+            { bold: "Až 6 hodin energie", text: "bez pádu na konci" },
+            { bold: "Přírodní extrakty", text: "bez cukru, bez umělých sladidel" },
+            { bold: "Klid pod tlakem", text: "výkon bez chaosu" },
+            { bold: "Vyvinuto s odborníky", text: "na Mendelově univerzitě" },
+        ],
+        tags: [
+            { label: "SOUSTŘEDĚNÍ", ingredientId: "vitamins", colorClass: "bg-olive", dotColor: "#3d5a2f" },
+            { label: "STIMULACE", ingredientId: "stimulants", colorClass: "bg-lime", dotColor: "#dfdf57" },
+            { label: "ODOLNOST", ingredientId: "adaptogens", colorClass: "bg-orange", dotColor: "#f29739" },
+            { label: "ROVNOVÁHA", ingredientId: "electrolytes", colorClass: "bg-terracotta", dotColor: "#aa263e" },
+        ],
     },
 
     mission: {

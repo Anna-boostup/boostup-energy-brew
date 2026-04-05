@@ -78,6 +78,7 @@ import { ManufactureProvider } from "./context/ManufactureContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ContentProvider } from "./context/ContentContext";
 import { CookieProvider } from "./context/CookieContext";
+import { LanguageProvider } from "./context/LanguageContext";
 import { CookieBanner } from "./components/CookieBanner";
 
 import { HelmetProvider } from 'react-helmet-async';
@@ -95,7 +96,8 @@ const App = () => (
     <TooltipProvider>
       <HelmetProvider>
         <AuthProvider>
-          <ContentProvider>
+          <LanguageProvider>
+            <ContentProvider>
             <FontLoader />
             <CookieProvider>
               <InventoryProvider>
@@ -179,6 +181,7 @@ const App = () => (
               </InventoryProvider>
             </CookieProvider>
           </ContentProvider>
+          </LanguageProvider>
         </AuthProvider>
       </HelmetProvider>
     </TooltipProvider>
