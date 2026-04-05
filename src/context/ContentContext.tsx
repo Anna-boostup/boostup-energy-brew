@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { SITE_CONTENT } from '@/config/site-content';
+import { SITE_CONTENT_EN } from '@/config/site-content-en';
+import { useLanguage } from '@/context/LanguageContext';
 
 type SiteContent = typeof SITE_CONTENT;
 
@@ -13,8 +15,45 @@ interface ContentContextType {
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
 export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [content, setContent] = useState<SiteContent>(SITE_CONTENT);
+    const { language } = useLanguage();
+    const [dbContent, setDbContent] = useState<Partial<SiteContent> | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Derive displayed content from DB content + language overrides
+    const content: SiteContent = React.useMemo(() => {
+        const base = language === 'en'
+            ? { ...SITE_CONTENT, ...SITE_CONTENT_EN }
+            : SITE_CONTENT;
+
+        if (!dbContent) return base;
+
+        return {
+            ...base,
+            ...dbContent,
+            hero: { ...base.hero, ...(dbContent.hero || {}) },
+            mission: { ...base.mission, ...(dbContent.mission || {}) },
+            cta: { ...base.cta, ...(dbContent.cta || {}) },
+            contact: { ...base.contact, ...(dbContent.contact || {}) },
+            footer: { ...base.footer, ...(dbContent.footer || {}) },
+            flavors: (() => {
+                const merged = { ...base.flavors };
+                if (dbContent.flavors) {
+                    Object.keys(dbContent.flavors).forEach(key => {
+                        if (merged[key]) {
+                            merged[key] = { ...merged[key], ...dbContent.flavors![key] };
+                        } else {
+                            merged[key] = dbContent.flavors![key];
+                        }
+                    });
+                }
+                return merged;
+            })(),
+            typography: { ...base.typography, ...(dbContent.typography || {}) },
+            textStyles: { ...base.textStyles, ...(dbContent.textStyles || {}) },
+            badgeVisible: { ...base.badgeVisible, ...(dbContent.badgeVisible || {}) },
+            pricing: { ...base.pricing, ...(dbContent.pricing || {}) },
+        };
+    }, [language, dbContent]);
 
     const fetchContent = async () => {
         try {
@@ -33,82 +72,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
             }
 
             if (data?.content) {
-                const dbContent = data.content;
-
-                // Deep merge helper (simple version for this specific structure)
-                const mergedHero = {
-                    ...SITE_CONTENT.hero,
-                    ...(dbContent.hero || {})
-                };
-
-                const mergedMission = {
-                    ...SITE_CONTENT.mission,
-                    ...(dbContent.mission || {})
-                };
-
-                const mergedCTA = {
-                    ...SITE_CONTENT.cta,
-                    ...(dbContent.cta || {})
-                };
-
-                const mergedContact = {
-                    ...SITE_CONTENT.contact,
-                    ...(dbContent.contact || {})
-                };
-
-                const mergedFooter = {
-                    ...SITE_CONTENT.footer,
-                    ...(dbContent.footer || {})
-                };
-
-                const mergedFlavors = { ...SITE_CONTENT.flavors };
-                if (dbContent.flavors) {
-                    Object.keys(dbContent.flavors).forEach(key => {
-                        if (mergedFlavors[key]) {
-                            mergedFlavors[key] = {
-                                ...mergedFlavors[key],
-                                ...dbContent.flavors[key]
-                            };
-                        } else {
-                            mergedFlavors[key] = dbContent.flavors[key];
-                        }
-                    });
-                }
-
-                const mergedTypography = {
-                    ...SITE_CONTENT.typography,
-                    ...(dbContent.typography || {})
-                };
-
-                const mergedTextStyles = {
-                    ...SITE_CONTENT.textStyles,
-                    ...(dbContent.textStyles || {})
-                };
-
-                const mergedBadgeVisible = {
-                    ...SITE_CONTENT.badgeVisible,
-                    ...(dbContent.badgeVisible || {})
-                };
-
-                const mergedPricing = {
-                    ...SITE_CONTENT.pricing,
-                    ...(dbContent.pricing || {})
-                };
-
-                setContent({
-                    ...SITE_CONTENT,
-                    ...dbContent,
-                    hero: mergedHero,
-                    mission: mergedMission,
-                    cta: mergedCTA,
-                    contact: mergedContact,
-                    footer: mergedFooter,
-                    flavors: mergedFlavors,
-                    typography: mergedTypography,
-                    textStyles: mergedTextStyles,
-                    badgeVisible: mergedBadgeVisible,
-                    pricing: mergedPricing,
-                });
+                setDbContent(data.content);
             }
         } catch (err) {
             console.error('Unexpected error fetching content:', err);
