@@ -6,7 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useInventory, SKU } from "@/context/InventoryContext";
 import { Plus } from "lucide-react";
-import { FLAVORS } from "@/config/product-data";
+import { FLAVORS, FlavorType } from "@/config/product-data";
+
+const BASE_FLAVOR_IDS = FLAVORS.map(f => f.id);
+const isValidFlavor = (value: string): value is FlavorType =>
+    BASE_FLAVOR_IDS.includes(value as FlavorType);
 
 interface RestockDialogProps {
     isOpen: boolean;
@@ -33,7 +37,7 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock }: RestockDia
     const packs21 = Math.floor(newTotal / 21);
 
     const handleRestock = () => {
-        if (!baseFlavor) return;
+        if (!baseFlavor || !isValidFlavor(baseFlavor)) return;
         const qty = parseInt(bottles);
         if (isNaN(qty) || qty <= 0) return;
 

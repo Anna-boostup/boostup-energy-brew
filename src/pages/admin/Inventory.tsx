@@ -6,9 +6,13 @@ import { Plus, History, Edit } from "lucide-react";
 import { RestockDialog } from "@/components/admin/RestockDialog";
 import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
 import { ProductEditDialog } from "@/components/admin/ProductEditDialog";
-import { FLAVORS } from "@/config/product-data";
+import { FLAVORS, FlavorType } from "@/config/product-data";
 
 const PACK_SIZES = [3, 12, 21] as const;
+
+const BASE_FLAVOR_IDS = FLAVORS.map(f => f.id);
+const isBaseFlavor = (sku: string): sku is FlavorType =>
+    BASE_FLAVOR_IDS.includes(sku as FlavorType);
 
 const getFlavorLabel = (sku: string) => {
     if (sku.includes('lemon')) return "🍋 Lemon Blast";
@@ -94,10 +98,9 @@ const Inventory = () => {
     const [historySku, setHistorySku] = useState<SKU | null>(null);
     const [editSku, setEditSku] = useState<SKU | null>(null);
 
-    // Show only base flavor SKUs (no pack suffix, no mix)
-    const baseFlavors = FLAVORS.map(f => f.id);
+    // Show only base flavor SKUs (lemon, red, silky)
     const sortedStock = Object.entries(stock)
-        .filter(([sku]) => baseFlavors.includes(sku as any))
+        .filter(([sku]) => isBaseFlavor(sku))
         .sort(([skuA], [skuB]) => skuA.localeCompare(skuB));
 
     return (

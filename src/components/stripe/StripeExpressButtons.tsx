@@ -101,10 +101,13 @@ const StripeExpressButtons = () => {
               if (lemon) decrementStock('lemon', lemon * item.quantity);
               if (red) decrementStock('red', red * item.quantity);
               if (silky) decrementStock('silky', silky * item.quantity);
-           } else {
-              // Extract base flavor from cart item id (e.g. "lemon-3" → "lemon")
-              const flavorBase = item.id.split('-')[0];
-              if (flavorBase && item.pack) {
+           } else if (item.flavor && item.pack) {
+              // Normalize display name to base flavor SKU key
+              const flavorLower = item.flavor.toLowerCase();
+              const flavorBase = flavorLower.includes('lemon') ? 'lemon'
+                : flavorLower.includes('red') ? 'red'
+                : flavorLower.includes('silky') ? 'silky' : null;
+              if (flavorBase) {
                  decrementStock(flavorBase, item.pack * item.quantity);
               }
            }

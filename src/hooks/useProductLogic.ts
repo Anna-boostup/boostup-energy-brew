@@ -192,7 +192,7 @@ export const useProductLogic = () => {
             ) return true;
         } else {
             // Stock is tracked at bottle level; check if we have enough bottles
-            if (selectedFlavor && getStock(selectedFlavor) < quantity * (selectedPack ?? 0)) return true;
+            if (selectedFlavor && selectedPack && getStock(selectedFlavor) < quantity * selectedPack) return true;
         }
         return false;
     };
