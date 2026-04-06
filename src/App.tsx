@@ -34,6 +34,7 @@ const AdminProfile = lazy(() => import("./pages/admin/AdminProfile"));
 const Orders = lazy(() => import("./pages/admin/Orders"));
 const ContentManagement = lazy(() => import("./pages/admin/ContentManagement"));
 const PricingStatistics = lazy(() => import("./pages/admin/PricingStatistics"));
+const PromoCodes = lazy(() => import("./pages/admin/PromoCodes"));
 const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
 
 // Legal pages
@@ -159,6 +160,7 @@ const App = () => (
                             <Route path="manufacture" element={<ManufactureInventory />} />
                             <Route path="content" element={<ContentManagement />} />
                             <Route path="pricing" element={<PricingStatistics />} />
+                            <Route path="promo-codes" element={<PromoCodes />} />
                             <Route path="profile" element={<AdminProfile />} />
                             <Route path="help" element={<AdminHelp />} />
                           </Route>

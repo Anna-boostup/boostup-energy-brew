@@ -50,6 +50,13 @@ export const SITE_CONTENT = {
             { label: "ODOLNOST", ingredientId: "adaptogens", colorClass: "bg-orange", dotColor: "#f29739" },
             { label: "ROVNOVÁHA", ingredientId: "electrolytes", colorClass: "bg-terracotta", dotColor: "#aa263e" },
         ],
+        badgeVisible: {
+            hero: true,
+            mission: true,
+            contact: true,
+            cta: true,
+        },
+        showDiscountPopup: true,
     },
 
     mission: {

@@ -42,10 +42,6 @@ const ProductSection = () => {
   return (
     <TooltipProvider>
       <section id="produkty" className="py-16 md:py-32 bg-secondary/30 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary/5 blur-3xl rounded-full -translate-x-1/2 translate-y-1/2" />
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
             

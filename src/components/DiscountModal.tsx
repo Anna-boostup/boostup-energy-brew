@@ -1,14 +1,18 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Gift } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useContent } from "@/context/ContentContext";
 
 const DiscountModal = () => {
+    const { content } = useContent();
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
+        // Only show if enabled in admin
+        if (content?.showDiscountPopup === false) return;
+        
         // Check if user has already seen the popup or is logged in (simplified check for now)
         const hasSeenPopup = localStorage.getItem("hasSeenDiscountPopup");
         const isLoggedIn = false; // logic to check auth state if accessible, or just rely on local storage for now
@@ -20,7 +24,7 @@ const DiscountModal = () => {
 
             return () => clearTimeout(timer);
         }
-    }, []);
+    }, [content?.showDiscountPopup]);
 
     const handleClose = () => {
         setIsOpen(false);

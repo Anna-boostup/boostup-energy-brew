@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useMemo, useCallback, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 export interface CartItem {
     id: string;
@@ -35,6 +37,10 @@ interface CartContextType {
     clearCart: () => void;
     cartTotal: number;
     cartCount: number;
+    discountAmount: number;
+    appliedPromoCode: { code: string; discount: number } | null;
+    applyPromoCode: (code: string) => Promise<boolean>;
+    removePromoCode: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -89,12 +95,22 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return localData ? { items: JSON.parse(localData) } : initial;
     });
 
+    const [appliedPromoCode, setAppliedPromoCode] = useState<{ code: string; discount: number } | null>(null);
+
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             localStorage.setItem('boostup_cart', JSON.stringify(state.items));
         }, 500); // Debounce storage updates
         return () => clearTimeout(timeoutId);
     }, [state.items]);
+
+    // Load promo code from session storage if exists
+    useEffect(() => {
+        const savedCode = sessionStorage.getItem('boostup_promo');
+        if (savedCode) {
+            setAppliedPromoCode(JSON.parse(savedCode));
+        }
+    }, []);
 
     const addToCart = useCallback((item: CartItem) => {
         dispatch({ type: 'ADD_TO_CART', payload: item });
@@ -112,12 +128,61 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dispatch({ type: 'CLEAR_CART' });
     }, []);
 
-    const cartTotal = useMemo(() => {
-        return parseFloat(state.items.reduce((total, item) => {
-            const price = item.subscriptionInterval ? item.price * 0.85 : item.price;
-            return total + (price * item.quantity);
-        }, 0).toFixed(2));
-    }, [state.items]);
+    const applyPromoCode = async (code: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('promo_codes')
+                .select('*')
+                .eq('code', code.toUpperCase())
+                .eq('is_active', true)
+                .single();
+
+            if (error || !data) {
+                toast.error('Neplatný nebo neaktivní slevový kód');
+                return false;
+            }
+
+            const promo = { code: data.code, discount: data.discount_percent };
+            setAppliedPromoCode(promo);
+            sessionStorage.setItem('boostup_promo', JSON.stringify(promo));
+            toast.success(`Sleva ${data.discount_percent}% byla uplatněna`);
+            return true;
+        } catch (err) {
+            console.error('Error applying promo code:', err);
+            return false;
+        }
+    };
+
+    const removePromoCode = () => {
+        setAppliedPromoCode(null);
+        sessionStorage.removeItem('boostup_promo');
+        toast.info('Slevový kód byl odebrán');
+    };
+
+    const { cartTotal, discountAmount } = useMemo(() => {
+        let total = 0;
+        let discount = 0;
+
+        state.items.forEach(item => {
+            const itemBaseTotal = item.price * item.quantity;
+            let discountMultiplier = 1;
+            
+            if (item.subscriptionInterval) {
+                discountMultiplier = 0.85;
+            } else if (appliedPromoCode) {
+                discountMultiplier = (100 - appliedPromoCode.discount) / 100;
+            }
+
+            const discountedPrice = item.price * discountMultiplier;
+            total += discountedPrice * item.quantity;
+            discount += (item.price - discountedPrice) * item.quantity;
+        });
+
+        return { 
+            cartTotal: parseFloat(total.toFixed(2)), 
+            discountAmount: parseFloat(discount.toFixed(2)) 
+        };
+    }, [state.items, appliedPromoCode]);
 
     const cartCount = useMemo(() => {
         return state.items.reduce((count, item) => count + item.quantity, 0)
@@ -130,8 +195,12 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         updateQuantity,
         clearCart,
         cartTotal,
-        cartCount
-    }), [state.items, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount]);
+        cartCount,
+        discountAmount,
+        appliedPromoCode,
+        applyPromoCode,
+        removePromoCode
+    }), [state.items, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount, discountAmount, appliedPromoCode]);
 
     return (
         <CartContext.Provider value={value}>

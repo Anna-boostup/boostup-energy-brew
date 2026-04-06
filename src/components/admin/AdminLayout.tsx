@@ -51,6 +51,7 @@ const AdminLayout = () => {
         { icon: ShoppingCart, label: "Objednávky", path: "/admin/orders" },
         { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
         { icon: TrendingUp, label: "Ceny a Statistiky", path: "/admin/pricing" },
+        { icon: Sparkles, label: "Slevové kódy", path: "/admin/promo-codes" },
         {
             icon: Factory,
             label: "Sklad výroby",

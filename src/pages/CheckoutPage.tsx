@@ -57,12 +57,14 @@ const sendOrderConfirmationEmail = async (
 };
 
 const CheckoutPage = () => {
-  const { cart, cartTotal, clearCart } = useCart();
+  const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode } = useCart();
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [promoInput, setPromoInput] = useState("");
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
 
@@ -927,30 +929,73 @@ const CheckoutPage = () => {
                 </h2>
 
                 <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-                  {cart.map(item => (
-                    <div key={item.id} className="flex gap-4 group">
-                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex-shrink-0 flex items-center justify-center p-2 border border-white/5 group-hover:bg-white/20 transition-all">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-full h-full object-contain"
-                          onError={(e) => { (e.target as HTMLImageElement).src = getFallbackImage(item); }}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <p className="font-black text-sm uppercase leading-tight pr-2">{item.name}</p>
-                        <p className="text-[11px] text-primary-foreground/70 font-bold uppercase tracking-widest mt-1">{item.quantity}x {item.price} Kč</p>
-                      </div>
-                      <div className="font-black text-sm self-center text-primary">{item.price * item.quantity} Kč</div>
-                    </div>
                   ))}
                 </div>
 
+                {/* Promo Code Input */}
+                <div className="pt-6 border-t border-white/10 mt-6">
+                  {!appliedPromoCode ? (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          value={promoInput}
+                          onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                          placeholder="Slevový kód"
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm font-bold placeholder:text-white/30 focus:outline-none focus:border-white/40 tracking-wider"
+                        />
+                        <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                      </div>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={!promoInput || isApplyingPromo}
+                        onClick={async () => {
+                          setIsApplyingPromo(true);
+                          await applyPromoCode(promoInput);
+                          setPromoInput("");
+                          setIsApplyingPromo(false);
+                        }}
+                        className="h-auto px-4 font-black text-[10px] uppercase tracking-widest bg-white text-black hover:bg-white/90"
+                      >
+                        {isApplyingPromo ? <Loader2 className="w-3 h-3 animate-spin" /> : 'POUŽÍT'}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between bg-white/10 rounded-xl px-4 py-3 border border-primary/30">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary" />
+                        <span className="font-black text-xs tracking-widest">{appliedPromoCode.code}</span>
+                        <span className="text-[10px] font-bold opacity-60">(-{appliedPromoCode.discount}%)</span>
+                      </div>
+                      <button 
+                        onClick={removePromoCode}
+                        className="text-[10px] font-black uppercase text-white/50 hover:text-white transition-colors"
+                      >
+                        Odebrat
+                      </button>
+                    </div>
+                  )}
+                  {cart.some(item => item.subscriptionInterval) && !appliedPromoCode && (
+                    <p className="text-[9px] text-white/40 mt-2 font-bold px-1 italic">
+                      Pozn: Slevové kódy nelze kombinovat se slevou na předplatné.
+                    </p>
+                  )}
+                </div>
+
                 <div className="pt-8 space-y-4 border-t border-white/10 mt-8">
-                  <div className="flex justify-between items-center">
-                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Balení</span>
-                    <span className="font-bold">{cartTotal} Kč</span>
+                  <div className="flex justify-between items-center opacity-70">
+                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Mezisoučet</span>
+                    <span className="font-bold">{(cartTotal + discountAmount).toFixed(2)} Kč</span>
                   </div>
+                  
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between items-center text-primary">
+                      <span className="uppercase font-bold text-[10px] tracking-[0.2em]">Sleva celkem</span>
+                      <span className="font-bold italic">-{discountAmount.toFixed(2)} Kč</span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-center">
                     <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Doprava</span>
                     {(() => {

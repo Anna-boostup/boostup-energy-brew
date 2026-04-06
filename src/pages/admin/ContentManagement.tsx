@@ -96,6 +96,12 @@ const ContentManagement = () => {
         setLocalContent(newContent);
     };
 
+    // Helper: toggle discount popup
+    const toggleDiscountPopup = (visible: boolean) => {
+        const newContent = { ...localContent, showDiscountPopup: visible };
+        setLocalContent(newContent);
+    };
+
     // Component: badge visibility toggle
     const BadgeToggle = ({ badgeKey, label }: { badgeKey: string; label: string }) => (
         <div className="flex items-center gap-3 p-3 bg-secondary/40 rounded-lg border border-border">
@@ -160,6 +166,7 @@ const ContentManagement = () => {
                     <TabsTrigger value="contact">Kontakt</TabsTrigger>
                     <TabsTrigger value="flavors">Příchutě</TabsTrigger>
                     <TabsTrigger value="footer">Patička</TabsTrigger>
+                    <TabsTrigger value="settings">Nastavení</TabsTrigger>
                 </TabsList>
 
                 {/* HERO SECTION */}
@@ -909,6 +916,31 @@ const ContentManagement = () => {
                                 style={ts('footer.bottom.copyright')}
                                 onStyleChange={(s) => updateStyle('footer.bottom.copyright', s)}
                             />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* SETTINGS SECTION */}
+                <TabsContent value="settings">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Globální Nastavení</CardTitle>
+                            <CardDescription>Obecné nastavení chování webu.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/20 border border-border">
+                                <div className="space-y-0.5">
+                                    <Label className="text-base font-bold">Slevový Pop-up (Pobídka)</Label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Zobrazit vyskakovací okno s nabídkou slevy při první návštěvě.
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="showDiscountPopup"
+                                    checked={localContent.showDiscountPopup}
+                                    onCheckedChange={(checked) => updateField(['showDiscountPopup'], checked)}
+                                />
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
