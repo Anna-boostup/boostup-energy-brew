@@ -40,8 +40,18 @@ const ConceptSection = () => {
           </span>
         </div>
 
-        {/* 3B Cards moved ABOVE the headline as requested */}
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-10 mb-20 animate-fade-up animation-delay-100">
+        {/* Headline and Description at the top */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-200" style={getTextStyle(SITE_CONTENT, 'concept3b.headline')}>
+            {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
+          </h2>
+          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-300" style={getTextStyle(SITE_CONTENT, 'concept3b.description')}>
+            {content.description}
+          </p>
+        </div>
+
+        {/* 3B Cards below the headline */}
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-10 mb-20 animate-fade-up animation-delay-400">
           {(content.concepts || []).map((concept, index) => {
             const Icon = iconMap[concept.id];
             const colors = colorMap[concept.id];
@@ -58,16 +68,6 @@ const ConceptSection = () => {
               />
             );
           })}
-        </div>
-
-        {/* Headline and Description below the cards */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-foreground mb-6 animate-fade-up animation-delay-200" style={getTextStyle(SITE_CONTENT, 'concept3b.headline')}>
-            {content.headline.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-gradient-energy"> {word}</span> : word)}
-          </h2>
-          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto animate-fade-up animation-delay-300" style={getTextStyle(SITE_CONTENT, 'concept3b.description')}>
-            {content.description}
-          </p>
         </div>
 
         {/* Energy Chart */}

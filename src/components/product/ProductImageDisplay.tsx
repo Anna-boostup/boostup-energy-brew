@@ -42,7 +42,7 @@ const ProductImageDisplay: React.FC<ProductImageDisplayProps> = ({
                     } opacity-20 blur-3xl scale-110 transition-all duration-700`} />
 
                 <div className="relative w-full flex justify-center py-8">
-                    <div className="relative w-full max-w-[400px] md:max-w-[500px]">
+                    <div className="relative w-full max-w-[500px] md:max-w-[650px] lg:max-w-[800px]">
                         {flavorMode === "mix" ? (
                             <MixStack images={[bottleLemon, bottleRed, bottleSilky]} className="w-full" />
                         ) : (
