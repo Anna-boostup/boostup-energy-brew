@@ -6,6 +6,9 @@ const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
   return (
     <div className={`relative w-full h-auto ${className} py-0 px-0 overflow-hidden`}>
       
+      {/* Atmospheric Mist (Glow behind the strip) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-full bg-primary/20 blur-[130px] rounded-full opacity-60 pointer-events-none" />
+
       <div className="relative w-full flex justify-center py-0 overflow-hidden">
         {/*
             MONUMENTAL FALLING BOTTLES COLUMN (HEIGHT OPTIMIZED):

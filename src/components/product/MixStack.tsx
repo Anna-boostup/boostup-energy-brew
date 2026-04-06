@@ -7,6 +7,8 @@ interface MixStackProps {
 const MixStack = ({ images, className }: MixStackProps) => {
   return (
     <div className={`relative flex items-center justify-center ${className} min-h-[300px] md:min-h-[400px]`}>
+      {/* Atmospheric Mist (Glow behind the stack) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 h-4/5 bg-primary/20 blur-[130px] rounded-full opacity-60 pointer-events-none z-[-1]" />
       {/* Right Bottle (Silky) */}
       <img
         src={images[2]}
