@@ -17,22 +17,27 @@ import StyledTextField from '@/components/admin/StyledTextField';
 import type { TextStyle } from '@/lib/textStyles';
 
 const ContentManagement = () => {
-    const { content, refreshContent } = useContent();
-    const [localContent, setLocalContent] = useState(content);
+    const { contentCZ, contentEN, refreshContent } = useContent();
+    const [editingLang, setEditingLang] = useState<'cs' | 'en'>('cs');
+    
+    // Select the base content based on editing language
+    const currentContent = editingLang === 'cs' ? contentCZ : contentEN;
+    
+    const [localContent, setLocalContent] = useState(currentContent);
     const [isSaving, setIsSaving] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
 
-    // Update local state when context content changes (e.g. after refresh)
+    // Update local state when context content changes or language switches
     React.useEffect(() => {
-        setLocalContent(content);
-    }, [content]);
+        setLocalContent(currentContent);
+    }, [currentContent, editingLang]);
 
     const handleSave = async () => {
         try {
             setIsSaving(true);
-            await updateSiteContent(localContent);
+            await updateSiteContent(localContent, editingLang === 'en' ? 'en' : 'main');
             await refreshContent();
-            toast.success('Obsah byl úspěšně uložen');
+            toast.success(`Obsah (${editingLang === 'cs' ? 'CZ' : 'EN'}) byl úspěšně uložen`);
         } catch (error: any) {
             console.error('Save error:', error);
             toast.error('Chyba při ukládání obsahu: ' + (error.message || 'Neznámá chyba'));
@@ -42,13 +47,14 @@ const ContentManagement = () => {
     };
 
     const handleReset = async () => {
-        if (!window.confirm('Opravdu chcete resetovat veškerý obsah na výchozí hodnoty? Tato akce je nevratná.')) return;
+        const langName = editingLang === 'cs' ? 'český' : 'anglický';
+        if (!window.confirm(`Opravdu chcete resetovat veškerý ${langName} obsah na výchozí hodnoty? Tato akce je nevratná.`)) return;
 
         try {
             setIsResetting(true);
-            await resetToDefaultContent();
+            await resetToDefaultContent(editingLang === 'en' ? 'en' : 'main');
             await refreshContent();
-            toast.success('Obsah byl resetován na výchozí hodnoty');
+            toast.success(`Obsah (${editingLang === 'cs' ? 'CZ' : 'EN'}) byl resetován na výchozí hodnoty`);
         } catch (error: any) {
             toast.error('Chyba při resetování obsahu: ' + (error.message || 'Neznámá chyba'));
         } finally {
@@ -110,15 +116,37 @@ const ContentManagement = () => {
                     <h2 className="text-3xl font-bold tracking-tight text-foreground">Správa obsahu</h2>
                     <p className="text-muted-foreground">Upravte texty na webu v reálném čase.</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                    <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="gap-2">
-                        {isResetting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
-                        Resetovat
-                    </Button>
-                    <Button onClick={handleSave} disabled={isSaving || isResetting} className="gap-2 px-8">
-                        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                        Uložit změny
-                    </Button>
+
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex items-center bg-muted rounded-lg p-1 border border-border">
+                        <Button
+                            variant={editingLang === 'cs' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-8 px-4 font-bold"
+                            onClick={() => setEditingLang('cs')}
+                        >
+                            🇨🇿 ČEŠTINA
+                        </Button>
+                        <Button
+                            variant={editingLang === 'en' ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-8 px-4 font-bold"
+                            onClick={() => setEditingLang('en')}
+                        >
+                            🇬🇧 ANGLIČTINA
+                        </Button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="gap-2">
+                            {isResetting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
+                            Resetovat
+                        </Button>
+                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="gap-2 px-8">
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                            Uložit změny
+                        </Button>
+                    </div>
                 </div>
             </div>
 
