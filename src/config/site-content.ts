@@ -13,8 +13,8 @@ export const SITE_CONTENT = {
 
     social: {
         instagram: "https://www.instagram.com/drinkboostup/",
-        facebook: "https://www.facebook.com/drinkboostup",
-        linkedin: "https://www.linkedin.com/company/boostup-energy",
+        facebook: "https://www.facebook.com/profile.php?id=61567084724538",
+        linkedin: "https://www.linkedin.com/company/112783959/",
         youtube: "https://youtube.com/@drinkboostup"
     },
 
@@ -161,11 +161,10 @@ export const SITE_CONTENT = {
           
           **Co obsahuje:**
           • Adaptogeny pro odolnost vůči stresu
-          • Antioxidanty pro ochranu buněk
-          • Přírodní ingredience bez umělých přísad
+          • Vyváženou minerální a vitamínovou směs
+          • Bylinnou složku pro zklidnění
           
           **Přínosy:**
-          • Synergie mezi mentální a fyzickou složkou
           • Podpora přirozené rovnováhy organismu
           • Snížení negativních účinků stresu
           • Dlouhodobá podpora zdraví a vitality

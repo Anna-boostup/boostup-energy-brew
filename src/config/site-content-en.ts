@@ -13,8 +13,8 @@ export const SITE_CONTENT_EN = {
     ],
     social: {
         instagram: "https://www.instagram.com/drinkboostup/",
-        facebook: "https://www.facebook.com/drinkboostup",
-        linkedin: "https://www.linkedin.com/company/boostup-energy",
+        facebook: "https://www.facebook.com/profile.php?id=61567084724538",
+        linkedin: "https://www.linkedin.com/company/112783959/",
         youtube: "https://youtube.com/@drinkboostup"
     },
 
@@ -109,9 +109,6 @@ export const SITE_CONTENT_EN = {
           **What it contains:**
           • L-theanine for calm concentration without jitters
           • Guarana for gradual energy release
-          • B-complex for optimal nervous system function
-          
-          **Benefits:**
           • Enhanced mental sharpness and clarity of thought
           • Better ability to concentrate on demanding tasks
           • Support for memory and information processing speed
