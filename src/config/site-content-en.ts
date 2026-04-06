@@ -316,4 +316,13 @@ export const SITE_CONTENT_EN = {
             ingredients: ["Vitamin B6", "Vitamin B12", "Vitamin C"]
         }
     },
+
+    configurator: {
+        badge: "PACK CONFIGURATOR",
+        headline: "CREATE YOUR ENERGY",
+        description: "Choose your pack size, flavor and delivery method. All freshly prepared for peak performance.",
+        outOfStock: "OUT OF STOCK",
+        cta: "ADD TO CART",
+        total: "Total"
+    }
 };
