@@ -929,6 +929,22 @@ const CheckoutPage = () => {
                 </h2>
 
                 <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                  {cart.map(item => (
+                    <div key={item.id} className="flex gap-4 group">
+                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex-shrink-0 flex items-center justify-center p-2 border border-white/5 group-hover:bg-white/20 transition-all">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-contain"
+                          onError={(e) => { (e.target as HTMLImageElement).src = getFallbackImage(item); }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <p className="font-black text-sm uppercase leading-tight pr-2">{item.name}</p>
+                        <p className="text-[11px] text-primary-foreground/70 font-bold uppercase tracking-widest mt-1">{item.quantity}x {item.price} Kč</p>
+                      </div>
+                      <div className="font-black text-sm self-center text-primary">{item.price * item.quantity} Kč</div>
+                    </div>
                   ))}
                 </div>
 
