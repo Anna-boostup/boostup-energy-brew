@@ -65,7 +65,7 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
+        <div className="min-h-screen bg-slate-50 flex font-sans">
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 bg-slate-900 text-white p-4 flex items-center justify-between z-50">
                 <Link to="/" className="font-display font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
