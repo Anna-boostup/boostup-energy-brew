@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import bottleComposite from "@/assets/bottle-composite.jpg";
+import bottleComposite from "@/assets/bottle-composite-nobg.png";
 
 interface ConfiguratorHeroProps {
   className?: string;
@@ -16,42 +16,50 @@ const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
 
       <div className="relative h-full w-full flex flex-col items-center">
         {/*
-            COMPOSITE STRIP:
-            We use two instances of the 3-bottle composite image vertically
-            to cover the full height. Styled as a seamless monumental column.
+            FALLING BOTTLES COLUMN:
+            We use three instances of the transparent composite image vertically
+            to cover the full height. Styled as a seamless monumental column of falling products.
         */}
-        <div className="absolute left-[8%] w-full flex flex-col items-center gap-0">
+        <div className="absolute left-[5%] md:left-[8%] w-full flex flex-col items-center gap-0">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[900px] flex justify-center -mt-20"
+            transition={{ duration: 1.2 }}
+            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center -mt-10"
           >
             <img
               src={bottleComposite}
-              alt="BoostUp Bottle Strip"
-              className="w-full h-auto select-none pointer-events-none scale-125"
-              style={{ 
-                  filter: 'contrast(1.02) brightness(1.05)',
-                  // Original image might have extra white space, clip specifically
-                  clipPath: 'inset(0% 10% 0% 10%)'
-              }}
+              alt="BoostUp Falling Bottles 1"
+              className="w-full h-auto select-none pointer-events-none"
+              style={{ filter: 'contrast(1.02) brightness(1.05)' }}
             />
           </motion.div>
+          
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[900px] flex justify-center -mt-10"
+            transition={{ duration: 1.2, delay: 0.2 }}
+            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center -mt-5"
           >
             <img
               src={bottleComposite}
-              alt="BoostUp Bottle Strip 2"
-              className="w-full h-auto select-none pointer-events-none scale-125"
-              style={{ 
-                  filter: 'contrast(1.02) brightness(1.05)',
-                  clipPath: 'inset(0% 10% 0% 10%)'
-              }}
+              alt="BoostUp Falling Bottles 2"
+              className="w-full h-auto select-none pointer-events-none"
+              style={{ filter: 'contrast(1.02) brightness(1.05)' }}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.4 }}
+            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[800px] flex justify-center -mt-5"
+          >
+            <img
+              src={bottleComposite}
+              alt="BoostUp Falling Bottles 3"
+              className="w-full h-auto select-none pointer-events-none"
+              style={{ filter: 'contrast(1.02) brightness(1.05)' }}
             />
           </motion.div>
         </div>
