@@ -1,3 +1,5 @@
+import React from "react";
+import { motion } from "framer-motion";
 import bottleComposite from "@/assets/bottle-composite.jpg";
 
 interface ConfiguratorHeroProps {
