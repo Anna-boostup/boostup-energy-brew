@@ -1,6 +1,6 @@
 import { useContent } from "@/context/ContentContext";
 import { Link } from "react-router-dom";
-import { Youtube, Instagram, Facebook } from "lucide-react";
+import { Youtube, Instagram, Facebook, Linkedin } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 
 const Footer = () => {
@@ -28,6 +28,9 @@ const Footer = () => {
               </a>
               <a href={SITE_CONTENT.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
                 <Youtube className="w-6 h-6" />
+              </a>
+              <a href={SITE_CONTENT.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="w-12 h-12 rounded-2xl bg-primary-foreground/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                <Linkedin className="w-6 h-6" />
               </a>
             </div>
           </div>

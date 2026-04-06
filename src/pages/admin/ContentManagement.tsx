@@ -164,6 +164,7 @@ const ContentManagement = () => {
                     <TabsTrigger value="concept">3B Koncept</TabsTrigger>
                     <TabsTrigger value="cta">CTA (Odběr)</TabsTrigger>
                     <TabsTrigger value="contact">Kontakt</TabsTrigger>
+                    <TabsTrigger value="social">Sociální sítě</TabsTrigger>
                     <TabsTrigger value="flavors">Příchutě</TabsTrigger>
                     <TabsTrigger value="footer">Patička</TabsTrigger>
                     <TabsTrigger value="settings">Nastavení</TabsTrigger>
@@ -605,6 +606,56 @@ const ContentManagement = () => {
                                 style={ts('contact.address.line2')}
                                 onStyleChange={(s) => updateStyle('contact.address.line2', s)}
                             />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* SOCIAL SECTION */}
+                <TabsContent value="social">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Sociální sítě</CardTitle>
+                            <CardDescription>Odkazy na profily značky. Nezapomeňte uvést celou URL adresu začínající https://</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="social-instagram">Instagram</Label>
+                                    <Input
+                                        id="social-instagram"
+                                        placeholder="https://www.instagram.com/vasprofil"
+                                        value={localContent.social.instagram}
+                                        onChange={(e) => updateField(['social', 'instagram'], e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="social-facebook">Facebook</Label>
+                                    <Input
+                                        id="social-facebook"
+                                        placeholder="https://www.facebook.com/vasprofil"
+                                        value={localContent.social.facebook}
+                                        onChange={(e) => updateField(['social', 'facebook'], e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="social-linkedin">LinkedIn</Label>
+                                    <Input
+                                        id="social-linkedin"
+                                        placeholder="https://www.linkedin.com/company/vasprofil"
+                                        value={localContent.social.linkedin}
+                                        onChange={(e) => updateField(['social', 'linkedin'], e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="social-youtube">YouTube</Label>
+                                    <Input
+                                        id="social-youtube"
+                                        placeholder="https://www.youtube.com/@vasprofil"
+                                        value={localContent.social.youtube}
+                                        onChange={(e) => updateField(['social', 'youtube'], e.target.value)}
+                                    />
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
