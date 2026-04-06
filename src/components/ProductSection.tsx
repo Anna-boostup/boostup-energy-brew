@@ -66,14 +66,14 @@ const ProductSection = () => {
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4 animate-fade-in">
                   <Sparkles className="w-3 h-3" />
-                  Konfigurátor balení
+                  {content.badge || "Konfigurátor balení"}
                 </div>
                 <h2 className="text-4xl md:text-6xl font-display font-black text-foreground leading-[0.9] tracking-tighter uppercase whitespace-nowrap">
-                  VYTVOŘTE SI SVOU <br />
-                  <span className="text-gradient-energy italic pr-4">ENERGII</span>
+                  {content.headline?.split(' ').slice(0, 2).join(' ') || "VYTVOŘTE SI SVOU"} <br />
+                  <span className="text-gradient-energy italic pr-4">{content.headline?.split(' ').slice(2).join(' ') || "ENERGII"}</span>
                 </h2>
                 <p className="text-lg text-foreground/60 max-w-xl font-medium">
-                  Vyberte si velikost balení, příchuť a způsob doručení. Vše čerstvě připravené pro špičkový výkon.
+                  {content.description || "Vyberte si velikost balení, příchuť a způsob doručení. Vše čerstvě připravené pro špičkový výkon."}
                 </p>
               </div>
 
@@ -146,11 +146,11 @@ const ProductSection = () => {
                       <div className="relative z-10 flex flex-col items-center">
                         <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight">
                           <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                          {isOutOfStock ? "VYPRODÁNO" : "PŘIDAT DO KOŠÍKU"}
+                          {isOutOfStock ? (content.outOfStock || "VYPRODÁNO") : (content.cta || "PŘIDAT DO KOŠÍKU")}
                         </div>
                         {!isOutOfStock && (
                           <div className="flex items-center gap-2 text-[10px] font-bold opacity-90 tracking-widest uppercase">
-                            <span>Celkem {price} Kč</span>
+                            <span>{content.total || "Celkem"} {price} Kč</span>
                             <Sparkles className="w-3 h-3 text-lime" />
                           </div>
                         )}
