@@ -1,8 +1,4 @@
-import React from "react";
-import { motion } from "framer-motion";
-import bottleLemon from "@/assets/bottle-lemon.webp";
-import bottleRed from "@/assets/bottle-red.webp";
-import bottleSilky from "@/assets/bottle-silky.webp";
+import bottleComposite from "@/assets/bottle-composite.jpg";
 
 interface ConfiguratorHeroProps {
   className?: string;
@@ -10,52 +6,53 @@ interface ConfiguratorHeroProps {
 }
 
 const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
-  const bottleStrip = [
-    { src: bottleLemon, alt: "Lemon", rotate: -8, top: "-10%" },
-    { src: bottleRed, alt: "Red", rotate: 6, top: "15%" },
-    { src: bottleSilky, alt: "Silky", rotate: -6, top: "40%" },
-    { src: bottleLemon, alt: "Lemon", rotate: 8, top: "65%" },
-    { src: bottleRed, alt: "Red", rotate: -6, top: "90%" },
-  ];
-
   return (
     <div className={`relative w-full h-[800px] md:h-[1000px] lg:h-[1100px] ${className} py-0 px-0 overflow-hidden`}>
       
-      {/* Background Glow - None */}
+      {/* Background Glow */}
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 blur-[150px] rounded-full opacity-5 bg-primary pointer-events-none h-2/3" />
 
-      <div className="relative h-full w-full flex justify-center">
-        {bottleStrip.map((bottle, index) => (
+      <div className="relative h-full w-full flex flex-col items-center">
+        {/*
+            COMPOSITE STRIP:
+            We use two instances of the 3-bottle composite image vertically
+            to cover the full height. Styled as a seamless monumental column.
+        */}
+        <div className="absolute left-[8%] w-full flex flex-col items-center gap-0">
           <motion.div
-            key={index}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="absolute left-[8%] flex justify-center w-full"
-            style={{ top: bottle.top, zIndex: 10 + index }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[900px] flex justify-center -mt-20"
           >
-            {/* 
-                NON-TOUCHING STRIP: 
-                Increased intervals (25%) so bottles don't overlap, 
-                plus a 5th bottle to maintain dense strip coverage.
-            */}
-            <div className="relative overflow-visible w-full max-w-[300px] md:max-w-[450px] lg:max-w-[700px] flex justify-center">
-                <img
-                  src={bottle.src}
-                  alt={bottle.alt}
-                  className="w-full h-auto select-none pointer-events-none scale-140"
-                  style={{ 
-                      transform: `rotate(${bottle.rotate}deg)`,
-                      filter: 'contrast(1.05) brightness(1.08)',
-                      // 42% clipping on the right to remove all original horizontal shadows
-                      clipPath: 'inset(0 42% 0 0)' 
-                  }}
-                  width={320}
-                  height={426}
-                />
-            </div>
+            <img
+              src={bottleComposite}
+              alt="BoostUp Bottle Strip"
+              className="w-full h-auto select-none pointer-events-none scale-125"
+              style={{ 
+                  filter: 'contrast(1.02) brightness(1.05)',
+                  // Original image might have extra white space, clip specifically
+                  clipPath: 'inset(0% 10% 0% 10%)'
+              }}
+            />
           </motion.div>
-        ))}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[900px] flex justify-center -mt-10"
+          >
+            <img
+              src={bottleComposite}
+              alt="BoostUp Bottle Strip 2"
+              className="w-full h-auto select-none pointer-events-none scale-125"
+              style={{ 
+                  filter: 'contrast(1.02) brightness(1.05)',
+                  clipPath: 'inset(0% 10% 0% 10%)'
+              }}
+            />
+          </motion.div>
+        </div>
       </div>
     </div>
   );
