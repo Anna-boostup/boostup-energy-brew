@@ -105,12 +105,12 @@ const ContentManagement = () => {
 
     return (
         <div className="space-y-6 animate-fade-in pb-20">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap">
+                <div className="min-w-[200px]">
                     <h2 className="text-3xl font-bold tracking-tight text-foreground">Správa obsahu</h2>
                     <p className="text-muted-foreground">Upravte texty na webu v reálném čase.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="gap-2">
                         {isResetting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
                         Resetovat

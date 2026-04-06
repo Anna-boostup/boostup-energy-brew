@@ -541,9 +541,9 @@ const Orders = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap">
                 <h2 className="text-3xl font-bold tracking-tight">Správa objednávek</h2>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     {notificationPermission !== 'granted' && (
                         <Button
                             variant="outline"

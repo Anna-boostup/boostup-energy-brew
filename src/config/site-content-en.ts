@@ -11,6 +11,12 @@ export const SITE_CONTENT_EN = {
         { label: "3B Concept", href: "/#3b" },
         { label: "Contact", href: "/#kontakt" },
     ],
+    social: {
+        instagram: "https://www.instagram.com/boost_up_czech/",
+        facebook: "https://www.facebook.com/profile.php?id=61567084724538",
+        linkedin: "https://www.linkedin.com/company/112783959/",
+        youtube: "https://youtube.com/@boostup"
+    },
 
     hero: {
         announcement: "COMING SOON",

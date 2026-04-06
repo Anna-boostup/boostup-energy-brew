@@ -104,9 +104,12 @@ const Inventory = () => {
         .sort(([skuA], [skuB]) => skuA.localeCompare(skuB));
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold tracking-tight">Správa sklad</h2>
+        <div className="space-y-6 pb-20">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight">Správa skladu</h2>
+                    <p className="text-muted-foreground">Přehled zásob hotových výrobků.</p>
+                </div>
             </div>
 
             {/* Desktop Table */}

@@ -20,9 +20,9 @@ const ManufactureInventory = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <h2 className="text-3xl font-bold tracking-tight">Sklad výroby</h2>
-                <Button onClick={() => setIsAddOpen(true)}>
+                <Button onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
                     <Plus className="mr-2 h-4 w-4" />
                     Přidat surovinu/materiál
                 </Button>

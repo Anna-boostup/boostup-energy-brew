@@ -12,9 +12,9 @@ export const SITE_CONTENT = {
     ],
 
     social: {
-        instagram: "https://instagram.com/boostup",
-        facebook: "https://facebook.com/boostup",
-        linkedin: "https://linkedin.com/company/boostup",
+        instagram: "https://www.instagram.com/boost_up_czech/",
+        facebook: "https://www.facebook.com/profile.php?id=61567084724538",
+        linkedin: "https://www.linkedin.com/company/112783959/",
         youtube: "https://youtube.com/@boostup"
     },
 

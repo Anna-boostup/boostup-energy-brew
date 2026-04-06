@@ -119,7 +119,7 @@ const PricingStatistics = () => {
 
     return (
         <div className="space-y-8 pb-12">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Ceny a Statistiky</h1>
                     <p className="text-muted-foreground">Správa prodejních cen a přehled výkonu e-shopu.</p>

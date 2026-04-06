@@ -34,8 +34,9 @@ export const SEO = ({
                     "url": "https://www.drinkboostup.cz/logo-green.png"
                 },
                 "sameAs": [
-                    "https://www.instagram.com/boostup_energy/",
-                    "https://www.facebook.com/boostupenergybrew"
+                    "https://www.instagram.com/boost_up_czech/",
+                    "https://www.facebook.com/profile.php?id=61567084724538",
+                    "https://www.linkedin.com/company/112783959/"
                 ]
             },
             {
