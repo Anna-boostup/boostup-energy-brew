@@ -7,16 +7,16 @@ const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
     <div className={`relative w-full h-[800px] md:h-[1200px] lg:h-[1800px] ${className} py-0 px-0 overflow-hidden`}>
       
       {/* Background Glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-lime via-terracotta to-olive opacity-20 blur-3xl scale-110 transition-all duration-700" />
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 blur-[150px] rounded-full opacity-10 bg-primary pointer-events-none h-2/3" />
 
-      <div className="relative w-full flex justify-center py-0 h-full">
+      <div className="relative w-full flex justify-center py-0 h-full overflow-hidden">
         {/*
-            MONUMENTAL FALLING BOTTLES COLUMN (OPTIMIZED):
+            MONUMENTAL FALLING BOTTLES COLUMN (RESTORED):
+            - 100% horizontal visibility: w-full h-auto ensures no cropping.
             - Masked with a gradient to 'feather' the top and bottom edges.
-            - Scaled to 1.15 to 'crop' the empty horizontal space from the 1080x3240 strip.
         */}
         <div 
-          className="relative w-full h-full flex justify-center overflow-hidden"
+          className="relative w-full h-full flex justify-center"
           style={{
             WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
             maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
@@ -25,7 +25,7 @@ const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
           <img
             src={fallingBottles}
             alt="BoostUp Premium Falling Bottles"
-            className="w-full h-auto select-none pointer-events-none object-cover scale-[1.15] transform-gpu"
+            className="w-full h-auto select-none pointer-events-none object-contain transform-gpu"
           />
         </div>
       </div>
