@@ -12,19 +12,14 @@ const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
     <div className={`relative w-full h-[800px] md:h-[1200px] lg:h-[1800px] ${className} py-0 px-0 overflow-hidden`}>
       
       {/* Background Glow */}
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 blur-[150px] rounded-full opacity-10 bg-primary pointer-events-none h-2/3" />
+      <div className="absolute inset-0 bg-gradient-to-br from-lime via-terracotta to-olive opacity-20 blur-3xl scale-110 transition-all duration-700" />
 
-      <div className="relative h-full w-full flex flex-col items-center">
-        {/*
-            MONUMENTAL FALLING BOTTLES COLUMN:
-            Using the high-impact vertical strip provided by the user.
-            No animations (static as requested).
-        */}
-        <div className="absolute inset-0 flex justify-center items-center">
+      <div className="relative w-full flex justify-center py-0">
+        <div className="relative w-full">
           <img
             src={fallingBottles}
             alt="BoostUp Premium Falling Bottles"
-            className="h-full w-auto max-w-none select-none pointer-events-none object-contain"
+            className="w-full h-auto select-none pointer-events-none object-cover"
           />
         </div>
       </div>
