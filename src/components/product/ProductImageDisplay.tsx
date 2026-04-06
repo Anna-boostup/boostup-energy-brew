@@ -53,15 +53,6 @@ const ProductImageDisplay: React.FC<ProductImageDisplayProps> = ({
                         )}
                     </div>
 
-                    {(selectedFlavor || flavorMode === "mix") && selectedPack && (
-                        <div className={`absolute -bottom-4 left-1/2 -translate-x-1/2 ${flavorMode === "mix"
-                            ? "bg-gradient-to-r from-lime via-terracotta to-olive text-cream"
-                            : `${currentFlavor.bgColor} ${currentFlavor.textColor}`
-                            } px-5 py-2.5 rounded-2xl font-bold shadow-lg z-30 flex items-baseline gap-1 animate-in zoom-in-50 duration-300`}>
-                            <span className="text-lg leading-none">{selectedPack}x</span>
-                            <span className="text-[10px] uppercase tracking-wider">{flavorMode === "mix" ? "MIX" : "PACK"}</span>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

@@ -11,43 +11,47 @@ interface ConfiguratorHeroProps {
 
 const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
   const bottleStrip = [
-    { src: bottleLemon, alt: "Lemon", rotate: -12, top: "-15%" },
-    { src: bottleRed, alt: "Red", rotate: 8, top: "4%" },
-    { src: bottleSilky, alt: "Silky", rotate: -8, top: "23%" },
-    { src: bottleLemon, alt: "Lemon", rotate: 12, top: "42%" },
-    { src: bottleRed, alt: "Red", rotate: -10, top: "61%" },
-    { src: bottleSilky, alt: "Silky", rotate: 12, top: "80%" },
-    { src: bottleLemon, alt: "Lemon", rotate: -8, top: "99%" },
+    { src: bottleLemon, alt: "Lemon", rotate: -8, top: "-10%" },
+    { src: bottleRed, alt: "Red", rotate: 6, top: "15%" },
+    { src: bottleSilky, alt: "Silky", rotate: -6, top: "40%" },
+    { src: bottleLemon, alt: "Lemon", rotate: 8, top: "65%" },
+    { src: bottleRed, alt: "Red", rotate: -6, top: "90%" },
   ];
 
   return (
-    <div className={`relative w-full h-[600px] md:h-[800px] lg:h-[900px] ${className} py-0 px-0 overflow-hidden`}>
+    <div className={`relative w-full h-[800px] md:h-[1000px] lg:h-[1100px] ${className} py-0 px-0 overflow-hidden`}>
       
-      {/* Background Glow - Minimal */}
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 blur-[120px] rounded-full opacity-5 bg-primary pointer-events-none h-2/3" />
+      {/* Background Glow - None */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 blur-[150px] rounded-full opacity-5 bg-primary pointer-events-none h-2/3" />
 
       <div className="relative h-full w-full flex justify-center">
         {bottleStrip.map((bottle, index) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: index * 0.05 }}
-            className="absolute left-1/2 -translate-x-1/2 flex justify-center w-full"
-            style={{ top: bottle.top, zIndex: 20 - index }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="absolute left-[8%] flex justify-center w-full"
+            style={{ top: bottle.top, zIndex: 10 + index }}
           >
-            <div className="relative flex justify-center w-[300px] md:w-[450px] lg:w-[750px]">
+            {/* 
+                NON-TOUCHING STRIP: 
+                Increased intervals (25%) so bottles don't overlap, 
+                plus a 5th bottle to maintain dense strip coverage.
+            */}
+            <div className="relative overflow-visible w-full max-w-[300px] md:max-w-[450px] lg:max-w-[700px] flex justify-center">
                 <img
-                    src={bottle.src}
-                    alt={bottle.alt}
-                    className="w-[180%] max-w-none h-auto select-none pointer-events-none"
-                    style={{ 
-                        transform: `rotate(${bottle.rotate}deg)`,
-                        clipPath: 'inset(0 32% 0 32%)', // Aggressively clip the sides where shadows usually sit
-                        filter: 'brightness(1.05) contrast(1.01)'
-                    }}
-                    width={320}
-                    height={426}
+                  src={bottle.src}
+                  alt={bottle.alt}
+                  className="w-full h-auto select-none pointer-events-none scale-140"
+                  style={{ 
+                      transform: `rotate(${bottle.rotate}deg)`,
+                      filter: 'contrast(1.05) brightness(1.08)',
+                      // 42% clipping on the right to remove all original horizontal shadows
+                      clipPath: 'inset(0 42% 0 0)' 
+                  }}
+                  width={320}
+                  height={426}
                 />
             </div>
           </motion.div>
