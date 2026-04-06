@@ -329,21 +329,4 @@ const AdminHelp = () => {
     );
 };
 
-export default AdminHelp;                          </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                );
-            })}
-
-            {/* Footer note */}
-            <div className="text-center text-xs text-muted-foreground pb-4">
-                BoostUp Admin Panel &middot; Pokud narazíš na problém, kontaktuj technickou podporu.
-            </div>
-        </div>
-    );
-};
-
 export default AdminHelp;
