@@ -9,6 +9,9 @@ import { Plus, Trash2, Loader2, Sparkles, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useContent } from "@/context/ContentContext";
+import { updateSiteContent } from "@/lib/cms";
+import { Eye, EyeOff, Gift } from "lucide-react";
 
 interface PromoCode {
     id: string;
@@ -115,6 +118,41 @@ const PromoCodes = () => {
         }
     };
 
+    const { contentCZ, contentEN, refreshContent } = useContent();
+    const [popupSaving, setPopupSaving] = useState(false);
+    
+    const handleTogglePopup = async (visible: boolean) => {
+        try {
+            setPopupSaving(true);
+            const newCz = { ...contentCZ, hero: { ...contentCZ.hero, showDiscountPopup: visible } };
+            const newEn = { ...contentEN, hero: { ...contentEN.hero, showDiscountPopup: visible } };
+            await updateSiteContent(newCz, 'main');
+            await updateSiteContent(newEn, 'en');
+            await refreshContent();
+            toast.success(`Pop-up byl ${visible ? 'zapnut' : 'vypnut'}`);
+        } catch (error) {
+            toast.error('Chyba při změně pop-upu');
+        } finally {
+            setPopupSaving(false);
+        }
+    };
+
+    const handleCodeChange = async (newCodeValue: string) => {
+        try {
+            setPopupSaving(true);
+            const newCz = { ...contentCZ, hero: { ...contentCZ.hero, discountCode: newCodeValue } };
+            const newEn = { ...contentEN, hero: { ...contentEN.hero, discountCode: newCodeValue } };
+            await updateSiteContent(newCz, 'main');
+            await updateSiteContent(newEn, 'en');
+            await refreshContent();
+            toast.success(`Kód pop-upu změněn na ${newCodeValue}`);
+        } catch (error) {
+            toast.error('Chyba při změně kódu');
+        } finally {
+            setPopupSaving(false);
+        }
+    };
+
     return (
         <div className="space-y-6 pb-20 animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
@@ -176,6 +214,60 @@ const PromoCodes = () => {
                     </DialogContent>
                 </Dialog>
             </div>
+
+            <Card className="mb-6 border-primary/20 bg-gradient-to-r from-background to-secondary/20 shadow-lg">
+                <CardHeader className="bg-primary/5 pb-4 border-b border-primary/10">
+                    <CardTitle className="text-xl flex items-center gap-2">
+                        <Gift className="w-5 h-5 text-primary" />
+                        Uvítací Slevový Pop-up na Úvodní Stránce
+                    </CardTitle>
+                    <CardDescription>
+                        Nastavení automatického pop-upu, který se ukáže novým návštěvníkům pro motivaci k prvnímu nákupu.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-5">
+                    <div className="flex items-center gap-3 p-4 bg-secondary/50 rounded-xl border border-border">
+                        {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-5 w-5 text-primary" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+                        <div className="flex-1">
+                            <Label className="cursor-pointer font-extrabold text-base mb-1 block" htmlFor="toggle-popup">
+                                Zobrazovat slevový pop-up na úvodní straně
+                            </Label>
+                            <p className="text-sm text-muted-foreground">
+                                Pokud je zapnuto, návštěvníkům se po pár vteřinách od příchodu samo ukáže okno s nabídkou slevového kódu.
+                            </p>
+                        </div>
+                        <Switch
+                            id="toggle-popup"
+                            checked={!!contentCZ?.hero?.showDiscountPopup}
+                            onCheckedChange={handleTogglePopup}
+                            disabled={popupSaving}
+                            className="scale-110"
+                        />
+                    </div>
+                    
+                    {contentCZ?.hero?.showDiscountPopup && (
+                        <div className="p-4 border rounded-xl bg-background shadow-inner flex flex-col sm:flex-row gap-4 items-end animate-fade-in">
+                            <div className="grid gap-2 w-full sm:max-w-xs">
+                                <Label htmlFor="popup-discount-code" className="font-bold text-primary">Slevový kód pro zobrazení</Label>
+                                <p className="text-xs text-muted-foreground">Kód se musí vespod nacházet mezi aktivními kódy.</p>
+                                <Input
+                                    id="popup-discount-code"
+                                    defaultValue={contentCZ?.hero?.discountCode || ''}
+                                    onBlur={(e) => {
+                                        const val = e.target.value.toUpperCase();
+                                        if (val !== contentCZ?.hero?.discountCode) {
+                                            handleCodeChange(val);
+                                        }
+                                    }}
+                                    placeholder="např. BOOST10"
+                                    className="font-mono font-bold text-lg tracking-widest border-primary border-2"
+                                    disabled={popupSaving}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
 
             <Card className="border-border/50 shadow-xl overflow-hidden">
                 <CardHeader className="bg-muted/30 pb-4">

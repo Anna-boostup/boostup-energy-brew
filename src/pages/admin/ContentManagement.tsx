@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Gift } from 'lucide-react';
+import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText } from 'lucide-react';
 import { AVAILABLE_FONTS, FONT_WEIGHTS } from '@/hooks/useDynamicFonts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -96,11 +96,6 @@ const ContentManagement = () => {
         setLocalContent(newContent);
     };
 
-    // Helper: toggle discount popup
-    const toggleDiscountPopup = (visible: boolean) => {
-        updateField(['hero', 'showDiscountPopup'], visible);
-    };
-
     // Component: badge visibility toggle
     const BadgeToggle = ({ badgeKey, label }: { badgeKey: string; label: string }) => (
         <div className="flex items-center gap-3 p-3 bg-secondary/40 rounded-lg border border-border">
@@ -170,38 +165,6 @@ const ContentManagement = () => {
 
                 {/* HERO SECTION */}
                 <TabsContent value="hero">
-                    <Card className="mb-6 border-primary/20">
-                        <CardHeader className="bg-primary/5 pb-4">
-                            <CardTitle className="text-xl flex items-center gap-2">
-                                <Gift className="w-5 h-5 text-primary" />
-                                Slevový Popup
-                            </CardTitle>
-                            <CardDescription>Nastavení uvítacího pop-upu se slevou pro návštěvníky.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="pt-6 space-y-4">
-                            <div className="flex items-center gap-3 p-3 bg-secondary/40 rounded-lg border border-border">
-                                {localContent.hero.showDiscountPopup ? <Eye className="h-4 w-4 text-primary" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
-                                <div className="flex-1">
-                                    <Label className="cursor-pointer font-bold" htmlFor="toggle-popup">Zobrazovat slevový pop-up</Label>
-                                    <p className="text-sm text-muted-foreground">Pokud je zapnuto, návštěvníkům se po pár vteřinách ukáže nabídka s kódem.</p>
-                                </div>
-                                <Switch
-                                    id="toggle-popup"
-                                    checked={!!localContent.hero.showDiscountPopup}
-                                    onCheckedChange={(v) => toggleDiscountPopup(v)}
-                                />
-                            </div>
-                            {localContent.hero.showDiscountPopup && (
-                                <StyledTextField
-                                    label="Slevový kód pro zobrazení"
-                                    value={localContent.hero.discountCode || ''}
-                                    onChange={(v) => updateField(['hero', 'discountCode'], v)}
-                                    placeholder="Nyní třeba BOOST10"
-                                />
-                            )}
-                        </CardContent>
-                    </Card>
-
                     <Card>
                         <CardHeader>
                             <CardTitle>Hero Sekce</CardTitle>
