@@ -468,6 +468,7 @@ const Messages = () => {
                     </AnimatePresence>
                 </div>
             </div>
+        </div>
     );
 };
 
