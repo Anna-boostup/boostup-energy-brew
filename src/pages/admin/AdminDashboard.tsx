@@ -15,10 +15,20 @@ import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
 import { useState } from "react";
 
 const AdminDashboard = () => {
-    const { orders, totalRevenue, stock } = useInventory();
+    const { orders, stock } = useInventory();
     const { content, refreshContent } = useContent();
     const { toast } = useToast();
     const [isUpdating, setIsUpdating] = useState(false);
+
+    // Calculate stats
+    const totalRevenue = orders.reduce((sum, order) => order.status !== 'cancelled' ? sum + (order.total || 0) : sum, 0);
+    const newOrdersCount = orders.filter(o => o.status === 'pending' || o.status === 'paid').length;
+    const processingCount = orders.filter(o => o.status === 'processing').length;
+    const shippedCount = orders.filter(o => o.status === 'shipped').length;
+    const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
+    
+    const today = new Date().toISOString().split('T')[0];
+    const todayOrders = orders.filter(o => o.date?.startsWith(today)).length;
 
     const toggleSales = async (enabled: boolean) => {
         setIsUpdating(true);
