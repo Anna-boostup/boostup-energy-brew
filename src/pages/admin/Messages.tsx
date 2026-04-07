@@ -44,6 +44,8 @@ interface Message {
     body_html: string;
     is_read: boolean;
     metadata: any;
+    replied_at?: string;
+    reply_text?: string;
 }
 
 const Messages = () => {
@@ -51,6 +53,9 @@ const Messages = () => {
     const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isReplyMode, setIsReplyMode] = useState(false);
+    const [replyText, setReplyText] = useState("");
+    const [isSending, setIsSending] = useState(false);
     const { toast } = useToast();
 
     const selectedMessage = messages.find(m => m.id === selectedMessageId);
@@ -119,8 +124,60 @@ const Messages = () => {
         }
     };
 
+    const handleSendReply = async () => {
+        if (!selectedMessage || !replyText.trim()) return;
+
+        setIsSending(true);
+        try {
+            // Include message_id if it exists in metadata
+            const originalMessageId = selectedMessage.metadata?.message_id;
+
+            const response = await fetch('/api/send-reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messageId: selectedMessage.id,
+                    replyText: replyText,
+                    customerEmail: selectedMessage.from_email,
+                    originalSubject: selectedMessage.subject,
+                    originalMessageId: originalMessageId
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) throw new Error(result.error || 'Failed to send reply');
+
+            toast({
+                title: "Odpověď odeslána",
+                description: "Vaše zpráva byla úspěšně doručena zákazníkovi.",
+            });
+
+            // Update local state
+            setMessages(prev => prev.map(m => 
+                m.id === selectedMessage.id 
+                    ? { ...m, replied_at: new Date().toISOString(), reply_text: replyText } 
+                    : m
+            ));
+            
+            setIsReplyMode(false);
+            setReplyText("");
+        } catch (error: any) {
+            console.error('Error sending reply:', error);
+            toast({
+                title: "Chyba při odesílání",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsSending(false);
+        }
+    };
+
     const handleSelectMessage = (id: string) => {
         setSelectedMessageId(id);
+        setIsReplyMode(false);
+        setReplyText("");
         const msg = messages.find(m => m.id === id);
         if (msg && !msg.is_read) {
             markAsRead(id);
@@ -202,6 +259,9 @@ const Messages = () => {
                                                 <span className={`text-[10px] uppercase font-black tracking-widest ${msg.is_read ? 'text-slate-400' : 'text-primary'}`}>
                                                     {format(new Date(msg.created_at), "d. MMMM HH:mm", { locale: cs })}
                                                 </span>
+                                                {msg.replied_at && (
+                                                    <Badge variant="outline" className="text-[9px] py-0 border-primary/20 text-primary">ODPOVĚZENO</Badge>
+                                                )}
                                             </div>
                                             <div className="space-y-0.5">
                                                 <h3 className={`text-sm font-black italic uppercase leading-none truncate ${selectedMessageId === msg.id ? 'text-slate-900' : 'text-slate-800'}`}>
@@ -257,6 +317,15 @@ const Messages = () => {
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
+                                            {!isReplyMode && (
+                                                <Button 
+                                                    onClick={() => setIsReplyMode(true)}
+                                                    className="bg-primary hover:bg-primary/90 rounded-xl"
+                                                >
+                                                    <Mail className="w-4 h-4 mr-2" />
+                                                    Odpovědět
+                                                </Button>
+                                            )}
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
                                                     <Button variant="outline" size="sm" className="rounded-xl border-red-100 text-red-500 hover:bg-red-50">
@@ -290,50 +359,94 @@ const Messages = () => {
                                             <Clock className="w-3.5 h-3.5" />
                                             Přijato: {format(new Date(selectedMessage.created_at), "PPPP HH:mm", { locale: cs })}
                                         </div>
-                                        {selectedMessage.is_read ? (
+                                        {selectedMessage.replied_at && (
                                             <div className="flex items-center gap-1.5 text-primary">
                                                 <CheckCheck className="w-3.5 h-3.5" />
-                                                Přečteno
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-1.5 text-amber-500">
-                                                <EyeOff className="w-3.5 h-3.5" />
-                                                Nepřečteno
+                                                Odpovězeno: {format(new Date(selectedMessage.replied_at), "d. MMMM HH:mm", { locale: cs })}
                                             </div>
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Body Content */}
-                                <div className="flex-1 p-6 overflow-hidden">
-                                    <Tabs defaultValue="plain" className="h-full flex flex-col">
-                                        <div className="flex justify-between items-center mb-4">
-                                            <TabsList className="bg-slate-100 rounded-xl p-1">
-                                                <TabsTrigger value="plain" className="rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm">Text</TabsTrigger>
-                                                <TabsTrigger value="html" className="rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm">HTML / Formátováno</TabsTrigger>
-                                            </TabsList>
-                                        </div>
-                                        <ScrollArea className="flex-1 rounded-2xl border border-slate-100 bg-slate-50/20 p-6">
-                                            <TabsContent value="plain" className="mt-0 outline-none">
-                                                <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700 leading-relaxed font-medium">
-                                                    {selectedMessage.body_text || "Žádný obsah zprávy."}
-                                                </pre>
-                                            </TabsContent>
-                                            <TabsContent value="html" className="mt-0 outline-none h-full">
-                                                {selectedMessage.body_html ? (
-                                                    <div 
-                                                        className="prose prose-sm max-w-none text-slate-700"
-                                                        dangerouslySetInnerHTML={{ __html: selectedMessage.body_html }} 
-                                                    />
-                                                ) : (
-                                                    <div className="flex items-center justify-center py-20 text-slate-400 italic text-sm font-medium">
-                                                        Formatovaná verze není k dispozici.
-                                                    </div>
-                                                )}
-                                            </TabsContent>
-                                        </ScrollArea>
-                                    </Tabs>
-                                </div>
+                                <ScrollArea className="flex-1 p-6">
+                                    <div className="space-y-8">
+                                        {/* Original Message */}
+                                        <Tabs defaultValue="plain" className="flex flex-col">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Původní zpráva</h3>
+                                                <TabsList className="bg-slate-100 rounded-xl p-1">
+                                                    <TabsTrigger value="plain" className="rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm">Text</TabsTrigger>
+                                                    <TabsTrigger value="html" className="rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider data-[state=active]:bg-white data-[state=active]:shadow-sm">HTML</TabsTrigger>
+                                                </TabsList>
+                                            </div>
+                                            <div className="rounded-2xl border border-slate-100 bg-slate-50/20 p-6">
+                                                <TabsContent value="plain" className="mt-0 outline-none">
+                                                    <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700 leading-relaxed font-medium">
+                                                        {selectedMessage.body_text || "Žádný obsah zprávy."}
+                                                    </pre>
+                                                </TabsContent>
+                                                <TabsContent value="html" className="mt-0 outline-none">
+                                                    {selectedMessage.body_html ? (
+                                                        <div 
+                                                            className="prose prose-sm max-w-none text-slate-700"
+                                                            dangerouslySetInnerHTML={{ __html: selectedMessage.body_html }} 
+                                                        />
+                                                    ) : (
+                                                        <div className="flex items-center justify-center py-10 text-slate-400 italic text-sm font-medium">
+                                                            HTML není k dispozici.
+                                                        </div>
+                                                    )}
+                                                </TabsContent>
+                                            </div>
+                                        </Tabs>
+
+                                        {/* Reply History */}
+                                        {selectedMessage.reply_text && (
+                                            <div className="space-y-4">
+                                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Vaše odpověď</h3>
+                                                <div className="rounded-2xl border border-primary/10 bg-primary/[0.02] p-6">
+                                                    <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700 leading-relaxed font-medium">
+                                                        {selectedMessage.reply_text}
+                                                    </pre>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Reply Editor */}
+                                        {isReplyMode && (
+                                            <motion.div 
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="space-y-4 pt-4 border-t"
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">Nová odpověď</h3>
+                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="h-7 text-[10px] font-bold">Zrušit</Button>
+                                                </div>
+                                                <textarea 
+                                                    className="w-full min-h-[200px] p-4 rounded-2xl border-2 border-primary/20 focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all outline-none text-sm font-medium text-slate-700 leading-relaxed"
+                                                    placeholder="Napište svou odpověď zde..."
+                                                    value={replyText}
+                                                    onChange={(e) => setReplyText(e.target.value)}
+                                                />
+                                                <div className="flex justify-end">
+                                                    <Button 
+                                                        onClick={handleSendReply}
+                                                        disabled={isSending || !replyText.trim()}
+                                                        className="bg-primary hover:bg-primary/90 rounded-xl px-8 h-12 font-bold"
+                                                    >
+                                                        {isSending ? (
+                                                            <><RefreshCcw className="w-4 h-4 mr-2 animate-spin" /> Odesílám...</>
+                                                        ) : (
+                                                            <><Mail className="w-4 h-4 mr-2" /> Odeslat odpověď</>
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                </ScrollArea>
                             </motion.div>
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center p-20 text-center">
@@ -347,17 +460,14 @@ const Messages = () => {
                                         Vyberte zprávu k přečtení
                                     </h2>
                                     <p className="text-slate-400 text-sm mt-1 font-bold">
-                                        Klikněte na zprávu v seznamu pro zobrazení jejího obsahu.
+                                        Klikněte na zprávu v seznamu pro zobrazení jejího obsahu a možnost odpovědět.
                                     </p>
                                 </motion.div>
                             </div>
                         )}
                     </AnimatePresence>
                 </div>
-
-                {/* Mobile Selected Message Placeholder/Dialog could go here, but for now we focus on Desktop integration */}
             </div>
-        </div>
     );
 };
 

@@ -69,6 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     is_read: false,
                     metadata: {
                         resend_email_id: email_id,
+                        message_id: (emailData as any).message_id,
                         to: emailData.to,
                         created_at: payload.created_at
                     }

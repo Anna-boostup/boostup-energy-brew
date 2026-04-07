@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -164,7 +164,7 @@ const AdminLayout = () => {
                                             className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-800 hover:text-white group"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <Icon className="w-4.5 h-4.5 text-slate-400 group-hover:text-white transition-colors" />
+                                                <Icon className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
                                                 <span className="text-sm">{item.label}</span>
                                             </div>
                                             <ExternalLink className="w-3.5 h-3.5 opacity-30 group-hover:opacity-60" />
@@ -179,7 +179,7 @@ const AdminLayout = () => {
                                             aria-current={isActive ? "page" : undefined}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <Icon className={`w-4.5 h-4.5 ${isActive ? "text-primary-foreground" : "text-slate-400 group-hover:text-white"}`} />
+                                                <Icon className={`w-5 h-5 ${isActive ? "text-primary-foreground" : "text-slate-400 group-hover:text-white"}`} />
                                                 <span className={isActive ? "text-sm" : "text-sm font-medium"}>{item.label}</span>
                                             </div>
                                             {item.hasAlert && (
@@ -193,7 +193,20 @@ const AdminLayout = () => {
                     </ul>
                 </div>
 
-                <div className="p-4 border-t border-slate-800 bg-slate-900/50 shrink-0">
+                <div className="p-4 border-t border-slate-800 bg-slate-900/50 shrink-0 space-y-2">
+                    <Link 
+                        to="/admin/profile" 
+                        className={`px-4 py-3 flex items-center gap-3 mb-2 rounded-2xl transition-all hover:bg-slate-800 group ${location.pathname === '/admin/profile' ? 'bg-slate-800 ring-1 ring-primary/20' : ''}`}
+                    >
+                        <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-primary border border-slate-700 font-bold text-sm uppercase group-hover:scale-105 transition-transform">
+                            {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
+                        </div>
+                        <div className="flex flex-col overflow-hidden">
+                            <span className="text-xs font-bold text-white truncate group-hover:text-primary transition-colors">{profile?.full_name || "Admin"}</span>
+                            <span className="text-[10px] text-slate-500 truncate">{user?.email}</span>
+                        </div>
+                        <ChevronRight className={`ml-auto w-4 h-4 text-slate-600 transition-all ${location.pathname === '/admin/profile' ? 'text-primary translate-x-1' : 'group-hover:translate-x-1 capitalize'}`} />
+                    </Link>
                     
                     <Button
                         variant="ghost"
