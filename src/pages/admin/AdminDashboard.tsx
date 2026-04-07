@@ -14,6 +14,12 @@ import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
 import { useState } from "react";
 
+const AdminDashboard = () => {
+    const { orders, totalRevenue, stock } = useInventory();
+    const { content, refreshContent } = useContent();
+    const { toast } = useToast();
+    const [isUpdating, setIsUpdating] = useState(false);
+
     const toggleSales = async (enabled: boolean) => {
         setIsUpdating(true);
         try {
