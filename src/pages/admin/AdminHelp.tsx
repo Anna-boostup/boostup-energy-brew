@@ -7,7 +7,7 @@ import {
 import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
-    AlertTriangle, Mail, MousePointer2
+    AlertTriangle, Mail, MousePointer2, BarChart3, Gift
 } from "lucide-react";
 
 interface HelpItem {
@@ -139,6 +139,44 @@ const sections: Section[] = [
             {
                 label: "Automatická synchronizace plateb",
                 description: "Systém je napojen na Stripe a GoPay. Jakmile zákazník úspěšně zaplatí, stav objednávky se automaticky změní na 'Zaplaceno'."
+            }
+        ]
+    },
+    {
+        icon: BarChart3,
+        title: "Ceny a Statistiky",
+        description: "Globální správa cen a přehled výkonu e-shopu. Cesta: Admin → Ceny a Statistiky",
+        items: [
+            {
+                label: "Globální ceny balení",
+                description: "Zde nastavíte ceny pro balení 3, 12 a 21 ks. Tyto ceny jsou globální – platí pro všechny příchutě i pro MIX balení."
+            },
+            {
+                label: "Statistiky prodejů",
+                description: "Grafy zobrazují počet objednávek a prodaných jednotek za posledních 30 dní. Data se aktualizují automaticky."
+            },
+            {
+                label: "Analýza příchutí",
+                description: "Sledujte, které příchutě jsou nejoblíbenější. MIX balení jsou rozpočítána na jednotlivé lahvičky pro přesnější přehled."
+            }
+        ]
+    },
+    {
+        icon: Gift,
+        title: "Slevové kódy",
+        description: "Správa slevových kupónů a uvítacího pop-upu. Cesta: Admin → Slevové kódy",
+        items: [
+            {
+                label: "Tvorba kódů",
+                description: "Můžete vytvářet neomezené množství kódů s různou procentuální slevou. Kódy lze kdykoli aktivovat/deaktivovat."
+            },
+            {
+                label: "Uvítací pop-up",
+                description: "Speciální funkce, která novým návštěvníkům webu automaticky nabídne slevový kód pro motivaci k prvnímu nákupu."
+            },
+            {
+                label: "Pravidla slev",
+                description: "Slevové kódy se nesčítají se slevou na předplatné. Systém vždy uplatní tu výhodnější variantu pro zákazníka."
             }
         ]
     },

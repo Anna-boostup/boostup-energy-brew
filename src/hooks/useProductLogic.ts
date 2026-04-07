@@ -3,7 +3,7 @@ import { useContent } from "@/context/ContentContext";
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
-import { FLAVORS, PACK_PRICES, PACK_SIZES, type FlavorType } from "@/config/product-data";
+import { FLAVORS, PACK_SIZES, type FlavorType } from "@/config/product-data";
 
 // Assets
 const bottlesHero = "/hero-vse.webp";
@@ -55,7 +55,7 @@ export const useProductLogic = () => {
             return {
                 sku,
                 name: `BoostUp ${packSize}x Pack (MIX)`,
-                price: PACK_PRICES[packSize] || 0,
+                price: content.pricing?.[`pack${packSize}` as keyof typeof content.pricing] || 0,
                 description: getMixDescription(packSize),
                 tooltip: "Ochutnejte všechny příchutě v jednom balení",
                 is_on_sale: false,
@@ -112,7 +112,8 @@ export const useProductLogic = () => {
             const product = products.find(p => p.sku === sku);
             if (product) return product.price * quantity;
         }
-        return PACK_PRICES[selectedPack as keyof typeof PACK_PRICES] * quantity;
+        const packPrice = content.pricing?.[`pack${selectedPack}` as keyof typeof content.pricing] || 0;
+        return packPrice * quantity;
     };
 
     const handleMixChange = (flavorId: string, change: number) => {
@@ -156,7 +157,7 @@ export const useProductLogic = () => {
         const sku = flavorMode === "mix" ? `mix-${selectedPack}` : `${selectedFlavor}-${selectedPack}`;
         const effProduct = getEffectiveProduct(sku);
         const displayName = effProduct?.name || (flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`);
-        const displayPrice = effProduct?.price || PACK_PRICES[selectedPack as keyof typeof PACK_PRICES];
+        const displayPrice = effProduct?.price || content.pricing?.[`pack${selectedPack}` as keyof typeof content.pricing] || 0;
 
         addToCart({
             id: flavorMode === "mix" ? `mix-${selectedPack}${mixIdSuffix}` : `${selectedFlavor}-${selectedPack}`,

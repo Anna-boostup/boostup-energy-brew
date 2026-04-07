@@ -49,5 +49,4 @@ export const FLAVORS: FlavorConfig[] = [
     }
 ];
 
-export const PACK_PRICES = { 3: 229, 12: 849, 21: 1399 };
 export const PACK_SIZES = [3, 12, 21] as const;

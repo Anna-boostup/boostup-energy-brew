@@ -132,9 +132,9 @@ const PricingStatistics = () => {
                     <CardHeader className="bg-primary/5 border-b">
                         <CardTitle className="flex items-center gap-2">
                             <Package className="w-5 h-5 text-primary" />
-                            Nastavení cen balení
+                            Globální ceny balení
                         </CardTitle>
-                        <CardDescription>Tyto ceny se propíší do prodejní sekce na webu.</CardDescription>
+                        <CardDescription>Tyto ceny platí pro VŠECHNY příchutě i pro MIX balení.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6 space-y-6">
                         <div className="space-y-4">
