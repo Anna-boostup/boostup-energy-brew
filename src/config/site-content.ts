@@ -56,6 +56,7 @@ export const SITE_CONTENT = {
             cta: true,
         },
         showDiscountPopup: true,
+        discountCode: "BOOST10",
     },
 
     mission: {

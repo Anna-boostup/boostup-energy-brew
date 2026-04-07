@@ -49,6 +49,8 @@ export const SITE_CONTENT_EN = {
             { label: "RESILIENCE", ingredientId: "adaptogens", colorClass: "bg-orange", dotColor: "#f29739" },
             { label: "BALANCE", ingredientId: "electrolytes", colorClass: "bg-terracotta", dotColor: "#aa263e" },
         ],
+        showDiscountPopup: true,
+        discountCode: "BOOST10",
     },
 
     mission: {
