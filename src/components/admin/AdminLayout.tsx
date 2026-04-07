@@ -60,7 +60,6 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
-        { icon: ExternalLink, label: "Zobrazit web", path: "/", isExternal: false },
         { icon: User, label: "Můj účet", path: "/admin/profile" },
         { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
     ];
