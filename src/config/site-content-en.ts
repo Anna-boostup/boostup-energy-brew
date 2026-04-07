@@ -13,8 +13,8 @@ export const SITE_CONTENT_EN = {
     ],
     social: {
         instagram: "https://www.instagram.com/drinkboostup/",
-        facebook: "https://www.facebook.com/profile.php?id=61567084724538",
-        linkedin: "https://www.linkedin.com/company/112783959/",
+        facebook: "https://www.facebook.com/drinkboostup",
+        linkedin: "https://www.linkedin.com/company/boostup-energy",
         youtube: "https://youtube.com/@drinkboostup"
     },
 

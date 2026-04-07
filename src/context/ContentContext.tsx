@@ -24,6 +24,7 @@ const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null)
         ...dbContent,
         hero: { ...base.hero, ...(dbContent.hero || {}) },
         mission: { ...base.mission, ...(dbContent.mission || {}) },
+        social: base.social,
         cta: { ...base.cta, ...(dbContent.cta || {}) },
         contact: { ...base.contact, ...(dbContent.contact || {}) },
         footer: { ...base.footer, ...(dbContent.footer || {}) },
