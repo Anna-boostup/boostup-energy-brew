@@ -19,19 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const Index = () => {
-  const { user, isAdmin } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user && isAdmin) {
-      navigate("/admin", { replace: true });
-    }
-  }, [user, isAdmin, navigate]);
-
-  if (user && isAdmin) {
-    return null; // Prevent flicker before redirect
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <SEO
