@@ -20,7 +20,7 @@
 
 @layer base {
   :root {
-    /* BoostUp Brand Colors - New Palette */
+    /* BoostUp Brand Colors - Precise Palette from User */
     /* #f4f1e6 - Cream/Background */
     --background: 47 30% 93%;
     --foreground: 99 33% 26%;
@@ -32,48 +32,31 @@
     --popover: 47 30% 93%;
     --popover-foreground: 99 33% 26%;
 
-    /* Primary: #3a572c - Dark Green */
-    --primary: 99 33% 26%;
+    /* Primary: #3d5a2f - Dark Green */
+    --primary: 97 31% 27%;
     --primary-foreground: 47 30% 93%;
 
     /* Secondary: Lighter cream */
     --secondary: 47 25% 88%;
     --secondary-foreground: 99 33% 26%;
 
-    /* Muted */
-    --muted: 47 20% 85%;
-    --muted-foreground: 99 25% 40%;
-
-    /* Accent: #aa263e - Red/Burgundy */
-    --accent: 349 63% 41%;
-    --accent-foreground: 47 30% 93%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 99 15% 78%;
-    --input: 99 15% 82%;
-    --ring: 99 33% 26%;
-
-    --radius: 0.75rem;
-
     /* Custom Brand Colors - Exact HEX conversions to HSL */
-    /* #3a572c - Dark Green (Main) */
-    --olive: 99 33% 26%;
-    --olive-dark: 99 33% 18%;
-    --olive-light: 99 33% 35%;
+    /* #3d5a2f - Dark Green (Main Olive) */
+    --olive: 97 31% 27%;
+    --olive-dark: 97 31% 20%;
+    --olive-light: 97 31% 35%;
 
-    /* #dee16b - Lime Yellow (Official) */
-    --lime: 61 65% 65%;
-    --lime-dark: 61 65% 50%;
+    /* #dfdf57 - Special Lime */
+    --lime: 60 67% 61%;
+    --lime-dark: 60 67% 50%;
 
     /* #aa263e - Red/Burgundy (Accent) */
     --terracotta: 349 63% 41%;
     --terracotta-dark: 349 63% 32%;
 
-    /* #d56230 - Orange */
-    --orange: 18 65% 51%;
-    --orange-dark: 18 65% 42%;
+    /* #f29739 - Orange */
+    --orange: 31 88% 58%;
+    --orange-dark: 31 88% 48%;
 
     /* #f4f1e6 - Cream (Background) */
     --cream: 47 30% 93%;
