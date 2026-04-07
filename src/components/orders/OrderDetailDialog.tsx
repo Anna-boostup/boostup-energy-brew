@@ -20,7 +20,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
 
     // Helper to safely format currency if formatPrice isn't available or fails
     const formatCurrency = (amount: number) => {
-        return amount.toLocaleString('cs-CZ') + ' Kč';
+        return (amount || 0).toLocaleString('cs-CZ') + ' Kč';
     };
 
     const handleCreatePacketaPacket = async () => {

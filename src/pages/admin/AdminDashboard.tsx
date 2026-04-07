@@ -112,7 +112,7 @@ const AdminDashboard = () => {
                         <span className="font-bold text-muted-foreground">Kč</span>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalRevenue.toLocaleString('cs-CZ')} Kč</div>
+                        <div className="text-2xl font-bold">{(totalRevenue || 0).toLocaleString('cs-CZ')} Kč</div>
                         <p className="text-xs text-foreground/70">Lokální data</p>
                     </CardContent>
                 </Card>
