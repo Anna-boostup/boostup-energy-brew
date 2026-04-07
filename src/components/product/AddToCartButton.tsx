@@ -46,7 +46,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
             onClick={onAddToCart}
             className={`flex-1 h-full min-h-[76px] px-6 py-2 border-2 transition-all duration-300 rounded-3xl whitespace-normal leading-tight text-center ${isOutOfStock
                 ? "bg-slate-100 border-slate-200 text-slate-400 grayscale cursor-not-allowed"
-                : "bg-slate-900 border-slate-800 text-lime hover:bg-black hover:scale-105 shadow-2xl shadow-lime/20 hover:shadow-lime/40 animate-energy-pulse"
+                : "bg-slate-900 border-slate-800 text-lime hover:bg-black transition-all"
                 }`}
             disabled={isOutOfStock}
         >

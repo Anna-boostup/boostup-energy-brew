@@ -1084,9 +1084,11 @@ const CheckoutPage = () => {
               </div>
             </div>
             
-            <p className="mt-6 text-[10px] text-center text-muted-foreground leading-relaxed px-4">
-              Odesláním objednávky souhlasíte s <a href="/obchodni-podminky" className="underline font-bold">obchodními podmínkami</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">zásadami soukromí</a>.
-            </p>
+            <div className="lg:col-span-12">
+              <p className="mt-12 text-[10px] text-center text-muted-foreground leading-relaxed px-4 max-w-2xl mx-auto">
+                Odesláním objednávky souhlasíte s <a href="/obchodni-podminky" className="underline font-bold">obchodními podmínkami</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">zásadami soukromí</a>.
+              </p>
+            </div>
           </div>
         </div>
 
