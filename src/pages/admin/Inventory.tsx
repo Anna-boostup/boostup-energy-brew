@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useInventory, SKU } from "@/context/InventoryContext";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, History, Edit } from "lucide-react";
+import { Plus, Minus, History, Edit } from "lucide-react";
 import { RestockDialog } from "@/components/admin/RestockDialog";
 import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
 import { ProductEditDialog } from "@/components/admin/ProductEditDialog";
+import { Switch } from "@/components/ui/switch";
 import { FLAVORS, FlavorType } from "@/config/product-data";
 
 const PACK_SIZES = [3, 12, 21] as const;
@@ -51,6 +52,15 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
             </div>
         </div>
 
+        <div className="flex items-center justify-between p-2 rounded-md bg-slate-50 border border-slate-100">
+            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Aktivní prodej</span>
+            <Switch
+                checked={product?.is_active !== false}
+                onCheckedChange={(checked) => onEdit()}
+                className="scale-75"
+            />
+        </div>
+
         <PackBreakdown bottles={qty} />
 
         <div className="flex gap-2 pt-2 border-t">
@@ -91,10 +101,10 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
 );
 
 const Inventory = () => {
-    const { stock, products } = useInventory();
+    const { stock, products, updateProduct } = useInventory();
 
     // Dialog States
-    const [restockSku, setRestockSku] = useState<SKU | null>(null);
+    const [restockData, setRestockData] = useState<{ sku: SKU; mode: "in" | "out" } | null>(null);
     const [historySku, setHistorySku] = useState<SKU | null>(null);
     const [editSku, setEditSku] = useState<SKU | null>(null);
 
@@ -121,6 +131,7 @@ const Inventory = () => {
                             <TableHead>Příchuť</TableHead>
                             <TableHead className="text-right">Lahvičky na skladě</TableHead>
                             <TableHead>Odpovídá balením</TableHead>
+                            <TableHead className="text-center">Aktivní prodej</TableHead>
                             <TableHead className="text-right">Akce</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -142,6 +153,16 @@ const Inventory = () => {
                                     </TableCell>
                                     <TableCell>
                                         <PackBreakdown bottles={qty} />
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Switch
+                                            checked={product?.is_active !== false}
+                                            onCheckedChange={async (checked) => {
+                                                if (product) {
+                                                    await updateProduct(product.sku, { is_active: checked });
+                                                }
+                                            }}
+                                        />
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
@@ -165,8 +186,18 @@ const Inventory = () => {
                                             </Button>
                                             <Button
                                                 size="sm"
+                                                variant="outline"
+                                                className="text-terracotta border-terracotta/20 hover:bg-terracotta/10"
+                                                onClick={() => setRestockData({ sku: sku as SKU, mode: "out" })}
+                                                aria-label={`Odebrat ze skladu ${sku}`}
+                                                title="Odebrat ze skladu"
+                                            >
+                                                <Minus className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
                                                 className="bg-lime hover:bg-lime-dark text-white"
-                                                onClick={() => setRestockSku(sku)}
+                                                onClick={() => setRestockData({ sku: sku as SKU, mode: "in" })}
                                                 aria-label={`Naskladnit ${sku}`}
                                                 title="Naskladnit"
                                             >
@@ -190,7 +221,7 @@ const Inventory = () => {
                         product={products.find(p => p.sku === sku)}
                         qty={qty}
                         onHistory={() => setHistorySku(sku)}
-                        onRestock={() => setRestockSku(sku)}
+                        onRestock={() => setRestockData({ sku: sku as SKU, mode: "in" })}
                         onEdit={() => setEditSku(sku)}
                     />
                 ))}
@@ -198,10 +229,11 @@ const Inventory = () => {
 
             {/* Dialogs */}
             <RestockDialog
-                isOpen={!!restockSku}
-                onClose={() => setRestockSku(null)}
-                sku={restockSku}
-                currentStock={restockSku ? stock[restockSku] : 0}
+                isOpen={!!restockData}
+                onClose={() => setRestockData(null)}
+                sku={restockData?.sku || null}
+                currentStock={restockData ? stock[restockData.sku] : 0}
+                initialMode={restockData?.mode}
             />
 
             <StockHistoryDialog

@@ -182,14 +182,19 @@ export const useProductLogic = () => {
         }
 
         if (flavorMode === 'mix') {
+            const lemonProduct = products.find(p => p.sku === 'lemon');
+            const redProduct = products.find(p => p.sku === 'red');
+            const silkyProduct = products.find(p => p.sku === 'silky');
+
             if (
-                (mixCounts.lemon * quantity > 0 && getStock('lemon') < mixCounts.lemon * quantity) ||
-                (mixCounts.red * quantity > 0 && getStock('red') < mixCounts.red * quantity) ||
-                (mixCounts.silky * quantity > 0 && getStock('silky') < mixCounts.silky * quantity)
+                (mixCounts.lemon > 0 && (getStock('lemon') < mixCounts.lemon * quantity || lemonProduct?.is_active === false)) ||
+                (mixCounts.red > 0 && (getStock('red') < mixCounts.red * quantity || redProduct?.is_active === false)) ||
+                (mixCounts.silky > 0 && (getStock('silky') < mixCounts.silky * quantity || silkyProduct?.is_active === false))
             ) return true;
         } else {
-            // Stock is tracked at bottle level; check if we have enough bottles
-            if (selectedFlavor && selectedPack && getStock(selectedFlavor) < quantity * selectedPack) return true;
+            const product = products.find(p => p.sku === selectedFlavor);
+            // Stock is tracked at bottle level; check if we have enough bottles OR if product is inactive
+            if (selectedFlavor && selectedPack && (getStock(selectedFlavor) < quantity * selectedPack || product?.is_active === false)) return true;
         }
         return false;
     };
