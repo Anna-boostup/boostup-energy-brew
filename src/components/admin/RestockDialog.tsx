@@ -13,18 +13,23 @@ const BASE_FLAVOR_IDS = FLAVORS.map(f => f.id);
 const isValidFlavor = (value: string): value is FlavorType =>
     BASE_FLAVOR_IDS.includes(value as FlavorType);
 
-interface RestockDialogProps {
-    isOpen: boolean;
-    onClose: () => void;
     sku: SKU | null;
     currentStock: number;
+    initialMode?: "in" | "out";
 }
 
-export const RestockDialog = ({ isOpen, onClose, sku, currentStock }: RestockDialogProps) => {
+export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode = "in" }: RestockDialogProps) => {
     const { addMovement } = useInventory();
     const [bottles, setBottles] = useState<string>("10");
     const [note, setNote] = useState("");
-    const [mode, setMode] = useState<"in" | "out">("in");
+    const [mode, setMode] = useState<"in" | "out">(initialMode);
+
+    // Update mode when initialMode changes or dialog opens
+    useEffect(() => {
+        if (isOpen) {
+            setMode(initialMode);
+        }
+    }, [isOpen, initialMode]);
 
     // Derive the base flavor SKU (e.g. "lemon-3" → "lemon")
     const baseFlavor = sku ? sku.split('-')[0] : null;

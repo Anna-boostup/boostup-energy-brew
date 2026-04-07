@@ -13,6 +13,7 @@ export interface Product {
     ingredients?: string;
     tooltip?: string;
     is_on_sale?: boolean;
+    is_active?: boolean;
 }
 
 export interface Order {
@@ -174,7 +175,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const productsList: Product[] = [];
             data.forEach((item: any) => {
                 stockMap[item.sku] = item.quantity;
-                productsList.push(item);
+                productsList.push({
+                    ...item,
+                    is_active: item.is_active ?? true // Default to true if null
+                });
             });
             setStock(stockMap);
             setProducts(productsList);

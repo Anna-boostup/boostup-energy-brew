@@ -29,6 +29,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         description: "",
         tooltip: "",
         is_on_sale: false,
+        is_active: true,
         image_url: ""
     });
 
@@ -39,6 +40,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                 description: product.description || "",
                 tooltip: product.tooltip || "",
                 is_on_sale: product.is_on_sale || false,
+                is_active: product.is_active !== false, // Default to true
                 image_url: product.image_url || ""
             });
             setImageError(false);
@@ -146,17 +148,32 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                             />
                         </div>
 
-                        {/* Sale toggle */}
-                        <div className="flex items-center justify-between p-3 rounded-lg border bg-amber-50 border-amber-200">
-                            <div>
-                                <p className="text-sm font-semibold text-amber-800">Akce</p>
-                                <p className="text-xs text-amber-600">Zobrazí štítek AKCE u produktu</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {/* Sale toggle */}
+                            <div className="flex items-center justify-between p-3 rounded-lg border bg-amber-50 border-amber-200">
+                                <div>
+                                    <p className="text-sm font-semibold text-amber-800">Akce</p>
+                                    <p className="text-xs text-amber-600">Zobrazí štítek AKCE</p>
+                                </div>
+                                <Switch
+                                    id="is_on_sale"
+                                    checked={formData.is_on_sale}
+                                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_on_sale: checked }))}
+                                />
                             </div>
-                            <Switch
-                                id="is_on_sale"
-                                checked={formData.is_on_sale}
-                                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_on_sale: checked }))}
-                            />
+
+                            {/* Active toggle */}
+                            <div className="flex items-center justify-between p-3 rounded-lg border bg-blue-50 border-blue-200">
+                                <div>
+                                    <p className="text-sm font-semibold text-blue-800">Aktivní prodej</p>
+                                    <p className="text-xs text-blue-600">Zobrazit produkt na webu</p>
+                                </div>
+                                <Switch
+                                    id="is_active"
+                                    checked={formData.is_active}
+                                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                                />
+                            </div>
                         </div>
 
 
