@@ -12,7 +12,9 @@ import { FLAVORS, FlavorType } from "@/config/product-data";
 const BASE_FLAVOR_IDS = FLAVORS.map(f => f.id);
 const isValidFlavor = (value: string): value is FlavorType =>
     BASE_FLAVOR_IDS.includes(value as FlavorType);
-
+interface RestockDialogProps {
+    isOpen: boolean;
+    onClose: () => void;
     sku: SKU | null;
     currentStock: number;
     initialMode?: "in" | "out";
