@@ -12,10 +12,9 @@ export const SITE_CONTENT_EN = {
         { label: "Contact", href: "/#kontakt" },
     ],
     social: {
-        instagram: "https://www.instagram.com/drinkboostup/",
+        instagram: "https://www.instagram.com/boost_up_czech/",
         facebook: "https://www.facebook.com/profile.php?id=61567084724538",
-        linkedin: "https://www.linkedin.com/company/112783959/",
-        youtube: "https://youtube.com/@drinkboostup"
+        linkedin: "https://www.linkedin.com/company/112783959/admin/dashboard/"
     },
 
     hero: {
