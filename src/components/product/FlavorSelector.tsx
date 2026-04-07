@@ -55,7 +55,7 @@ const FlavorSelector = ({
                       </span>
                     ))}
                   </div>
-                  <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${isSelected ? 'text-white' : 'text-foreground/80 font-medium'}`}>
+                  <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${isSelected ? (flavor.id === 'lemon' ? 'text-primary' : 'text-white') : 'text-foreground/80 font-medium'}`}>
                     {products.find(p => p.sku === sku)?.description || content.flavors[flavor.id]?.description || flavor.description}
                   </div>
                 </div>

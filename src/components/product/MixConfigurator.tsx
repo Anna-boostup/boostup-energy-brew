@@ -51,7 +51,7 @@ const MixConfigurator = ({
                     </span>
                   ))}
                 </div>
-                <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white' : 'text-foreground/90 font-medium'}`}>
+                <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? (flavor.id === 'lemon' ? 'text-primary' : 'text-white') : 'text-foreground/90 font-medium'}`}>
                   {getEffectiveProduct(flavor.id)?.description || content.flavors[flavor.id]?.description || flavor.description}
                 </div>
               </div>
