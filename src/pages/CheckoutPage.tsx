@@ -56,7 +56,11 @@ const sendOrderConfirmationEmail = async (
   }
 };
 
+import { useContent } from '@/context/ContentContext';
+
 const CheckoutPage = () => {
+  const { content } = useContent();
+  const isSalesEnabled = content.isSalesEnabled !== false;
   const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode } = useCart();
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
@@ -1041,18 +1045,32 @@ const CheckoutPage = () => {
 
                 <Button
                   onClick={handleSubmit}
-                  disabled={isProcessing || cart.length === 0}
-                  className="w-full h-20 rounded-[1.5rem] mt-10 bg-[#bef264] text-black hover:bg-[#a3e635] font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                  disabled={isProcessing || cart.length === 0 || !isSalesEnabled}
+                  className={`w-full h-20 rounded-[1.5rem] mt-10 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
+                    !isSalesEnabled ? 'bg-slate-200 text-slate-500 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
+                  }`}
                 >
                   {isProcessing ? (
                     <Loader2 className="animate-spin w-8 h-8" />
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="leading-none">Závazně objednat</span>
-                      <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">SSL Zabezpečená platba</span>
+                      <span className="leading-none">{!isSalesEnabled ? 'Prodej pozastaven' : 'Závazně objednat'}</span>
+                      <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">
+                        {!isSalesEnabled ? 'DOČASNĚ NEDOSTUPNÉ' : 'SSL Zabezpečená platba'}
+                      </span>
                     </div>
                   )}
                 </Button>
+
+                {!isSalesEnabled && (
+                  <div className="mt-4 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
+                    <div className="space-y-1 text-left">
+                      <p className="text-sm font-bold text-red-800">Prodej je dočasně pozastaven</p>
+                      <p className="text-xs text-red-700">Momentálně nepřijímáme nové objednávky. Zkuste to prosím později.</p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="mt-8 flex items-center justify-center gap-6 opacity-30 grayscale hover:opacity-60 hover:grayscale-0 transition-all cursor-default">
                     <span className="text-[9px] font-black uppercase tracking-[0.3em]">Encrypted Connection</span>

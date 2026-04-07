@@ -308,12 +308,49 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+        // Find existing order to check for stock return on cancellation
+        const currentOrder = orders.find(o => o.id === orderId);
+        const wasCancelled = currentOrder?.status === 'cancelled';
+        const isNowCancelling = status === 'cancelled';
+
         const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
 
         if (error) {
             console.error('Error updating order status:', error);
             alert("Chyba při aktualizaci stavu: " + error.message);
         } else {
+            // If the order is being cancelled and wasn't before, return items to stock
+            if (isNowCancelling && !wasCancelled && currentOrder) {
+                console.log(`[Inventory] Order ${orderId} cancelled. Returning items to stock.`);
+                
+                for (const item of currentOrder.items) {
+                    if (item.mixConfiguration) {
+                        // Return specific bottles from MIX
+                        if (item.mixConfiguration.lemon > 0) 
+                            await addMovement('lemon', item.mixConfiguration.lemon * item.quantity, 'restock', `Storno obj. ${orderId} (Mix)`);
+                        if (item.mixConfiguration.red > 0) 
+                            await addMovement('red', item.mixConfiguration.red * item.quantity, 'restock', `Storno obj. ${orderId} (Mix)`);
+                        if (item.mixConfiguration.silky > 0) 
+                            await addMovement('silky', item.mixConfiguration.silky * item.quantity, 'restock', `Storno obj. ${orderId} (Mix)`);
+                    } else if (item.sku) {
+                        // Regular flavor - pattern: {flavor}-{pack}
+                        // Flavor part can be multi-word, but we are looking for 'lemon', 'red' or 'silky' keywords
+                        // Pack size is after the dash
+                        const flavorKey = item.sku.toLowerCase().includes('lemon') ? 'lemon'
+                            : item.sku.toLowerCase().includes('red') ? 'red'
+                            : item.sku.toLowerCase().includes('silky') ? 'silky' : null;
+                        
+                        if (flavorKey) {
+                            const packParts = item.sku.split('-');
+                            const packSize = parseInt(packParts[packParts.length - 1]) || 1;
+                            const returnQty = item.quantity * packSize;
+                            
+                            await addMovement(flavorKey, returnQty, 'restock', `Storno obj. ${orderId}`);
+                        }
+                    }
+                }
+            }
+
             // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
         }

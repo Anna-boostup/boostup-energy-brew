@@ -168,12 +168,12 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             let discountMultiplier = 1;
             
             if (item.subscriptionInterval) {
-                discountMultiplier = 0.85;
+                discountMultiplier = 0.90;
             } else if (appliedPromoCode) {
                 discountMultiplier = (100 - appliedPromoCode.discount) / 100;
             }
 
-            const discountedPrice = item.price * discountMultiplier;
+            const discountedPrice = item.subscriptionInterval ? Math.round(item.price * discountMultiplier) : item.price * discountMultiplier;
             total += discountedPrice * item.quantity;
             discount += (item.price - discountedPrice) * item.quantity;
         });

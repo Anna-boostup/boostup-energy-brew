@@ -129,16 +129,16 @@ const ProductSection = () => {
                   </div>
                   
                   <div className="w-full sm:w-2/3">
-                    <Button 
-                      size="lg"
-                      onClick={handleAddToCart}
-                      disabled={!isValid || isOutOfStock}
-                      className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
-                        isOutOfStock 
-                          ? "bg-muted grayscale border-border text-muted-foreground opacity-70"
-                          : "bg-primary text-black font-black border-none"
-                      } shadow-2xl hover:shadow-primary/40`}
-                    >
+                        <Button 
+                          size="lg"
+                          onClick={handleAddToCart}
+                          disabled={!isValid || isOutOfStock}
+                          className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
+                            isOutOfStock 
+                              ? "bg-muted grayscale border-border text-muted-foreground opacity-70"
+                              : "bg-slate-900 text-lime font-black border-2 border-slate-800"
+                          } shadow-2xl hover:shadow-lime/40 animate-energy-pulse`}
+                        >
                       <div className="relative z-10 flex flex-col items-center">
                         <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight">
                           <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />

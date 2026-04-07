@@ -107,7 +107,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
                     <CheckCircle2 className="w-5 h-5 text-lime" />
                 </div>
                 <p className="text-xs leading-relaxed text-foreground/80 flex items-center">
-                    Objednávku začneme zpracovávat ihned po připsání platby na náš účet. O odeslání balíčku vás budeme informovat e-mailem.
+                    Objednávku začneme zpracovávat ihned po připsání platby na náš účet. V případě dotazů k platbě nás kontaktujte na <a href="mailto:fakturace@drinkboostup.cz" className="font-bold underline">fakturace@drinkboostup.cz</a>.
                 </p>
             </div>
         </div>

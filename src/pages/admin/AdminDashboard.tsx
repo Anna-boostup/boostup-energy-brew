@@ -1,29 +1,93 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingBag, Package, Users, Printer, Eye, FileText } from "lucide-react";
 import { useInventory, Order } from "@/context/InventoryContext";
+import { useContent } from "@/context/ContentContext";
+import { Switch } from "@/components/ui/switch";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
+import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
+import { useState } from "react";
 
-const AdminDashboard = () => {
-    const { stock, orders } = useInventory();
-    const totalStock = Object.values(stock).reduce((a, b) => a + b, 0);
-    const lowStockItems = Object.entries(stock).filter(([_, qty]) => qty < 10).length;
+    const toggleSales = async (enabled: boolean) => {
+        setIsUpdating(true);
+        try {
+            const newContent = {
+                ...content,
+                isSalesEnabled: enabled
+            };
 
-    const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-    const todayOrders = orders.filter(o => new Date(o.date).toDateString() === new Date().toDateString()).length;
+            const { error } = await supabase
+                .from('site_content')
+                .upsert({ 
+                    id: 'main', 
+                    content: newContent,
+                    updated_at: new Date().toISOString()
+                });
 
-    // Status groups
-    const newOrdersCount = orders.filter(o => o.status === 'pending' || o.status === 'paid').length;
-    const processingCount = orders.filter(o => o.status === 'processing').length;
-    const shippedCount = orders.filter(o => o.status === 'shipped').length;
-    const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
+            if (error) throw error;
+
+            await refreshContent();
+            toast({
+                title: enabled ? "Prodej zapnut" : "Prodej vypnut",
+                description: enabled ? "Konfigurátor byl aktivován." : "Konfigurátor byl dočasně deaktivován.",
+            });
+        } catch (error: any) {
+            toast({
+                title: "Chyba při aktualizaci",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const isSalesEnabled = content.isSalesEnabled !== false; // Default to true
 
     return (
         <div className="space-y-8">
-            <h2 className="text-3xl font-bold tracking-tight">Přehled</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-3xl font-bold tracking-tight">Přehled</h2>
+                
+                {/* Sales Toggle Control */}
+                <div className={`flex items-center gap-4 p-2 px-4 rounded-2xl border-2 transition-all ${isSalesEnabled ? 'bg-lime/5 border-lime/20' : 'bg-red-50 border-red-200 shadow-lg shadow-red-200/20'}`}>
+                    <div className="flex flex-col">
+                        <Label htmlFor="sales-toggle" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                            STAV PRODEJE
+                        </Label>
+                        <div className="flex items-center gap-2">
+                            {isSalesEnabled ? (
+                                <CheckCircle2 className="w-4 h-4 text-lime-600" />
+                            ) : (
+                                <AlertCircle className="w-4 h-4 text-red-600 animate-pulse" />
+                            )}
+                            <span className={`text-sm font-bold uppercase tracking-tight ${isSalesEnabled ? 'text-lime-700' : 'text-red-700'}`}>
+                                {isSalesEnabled ? 'AKTIVNÍ' : 'POZASTAVEN'}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="h-8 w-px bg-border mx-2" />
+                    <div className="flex items-center gap-2">
+                        {isUpdating ? (
+                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                        ) : (
+                            <Switch 
+                                id="sales-toggle"
+                                checked={isSalesEnabled}
+                                onCheckedChange={toggleSales}
+                                disabled={isUpdating}
+                            />
+                        )}
+                        <Power className={`w-4 h-4 transition-colors ${isSalesEnabled ? 'text-lime-600' : 'text-red-400'}`} />
+                    </div>
+                </div>
+            </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card className="bg-lime/5 border-lime/10">

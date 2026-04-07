@@ -50,16 +50,17 @@ export const useProductLogic = () => {
     };
 
     const getEffectiveProduct = (sku: string) => {
-        if (sku.startsWith('mix-')) {
-            const packSize = parseInt(sku.split('-')[1]) as Pack;
+        if (sku.startsWith('mix-') || sku.endsWith('-3') || sku.endsWith('-12') || sku.endsWith('-21')) {
+            const packSize = parseInt(sku.split('-').pop() || "0") as Pack;
+            const fallbackName = sku.startsWith('mix-') ? `BoostUp ${packSize}x Pack (MIX)` : `BoostUp ${packSize}x Pack`;
             return {
                 sku,
-                name: `BoostUp ${packSize}x Pack (MIX)`,
+                name: products.find(p => p.sku === sku)?.name || fallbackName,
                 price: content.pricing?.[`pack${packSize}` as keyof typeof content.pricing] || 0,
-                description: getMixDescription(packSize),
-                tooltip: "Ochutnejte všechny příchutě v jednom balení",
-                is_on_sale: false,
-                image_url: null,
+                description: sku.startsWith('mix-') ? getMixDescription(packSize) : "",
+                tooltip: sku.startsWith('mix-') ? "Ochutnejte všechny příchutě v jednom balení" : "",
+                is_on_sale: products.find(p => p.sku === sku)?.is_on_sale || false,
+                image_url: products.find(p => p.sku === sku)?.image_url || null,
             };
         }
 
@@ -107,11 +108,6 @@ export const useProductLogic = () => {
 
     const getDynamicPrice = () => {
         if (!selectedPack) return 0;
-        if (flavorMode === "single" && selectedFlavor) {
-            const sku = `${selectedFlavor}-${selectedPack}`;
-            const product = products.find(p => p.sku === sku);
-            if (product) return product.price * quantity;
-        }
         const packPrice = content.pricing?.[`pack${selectedPack}` as keyof typeof content.pricing] || 0;
         return packPrice * quantity;
     };

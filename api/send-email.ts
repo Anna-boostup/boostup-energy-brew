@@ -16,6 +16,7 @@ const COLORS = {
 };
 
 const ADMIN_EMAIL = 'objednavky@drinkboostup.cz';
+const INFO_EMAIL = 'info@drinkboostup.cz';
 const BASE_URL = process.env.VITE_SITE_URL || 'https://test.drinkboostup.cz';
 
 // Initialize Supabase Admin
@@ -340,12 +341,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         }
 
-        const shouldBccAdmin = ['order_confirmation', 'contact_inquiry', 'newsletter_signup'].includes(type);
+        let bccRecipient = undefined;
+        if (type === 'order_confirmation') {
+            bccRecipient = ADMIN_EMAIL;
+        } else if (['contact_inquiry', 'newsletter_signup'].includes(type)) {
+            bccRecipient = INFO_EMAIL;
+        }
 
         const { data, error } = await resend.emails.send({
             from: 'BoostUp <objednavky@drinkboostup.cz>',
             to: [to],
-            bcc: shouldBccAdmin ? [ADMIN_EMAIL] : undefined,
+            bcc: bccRecipient ? [bccRecipient] : undefined,
             subject: subject,
             html: emailHtml,
             attachments: attachments

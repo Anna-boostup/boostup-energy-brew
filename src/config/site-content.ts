@@ -4,6 +4,7 @@
  */
 
 export const SITE_CONTENT = {
+    isSalesEnabled: true,
     navigation: [
         { label: "Naše mise", href: "/#mise" },
         { label: "Produkty", href: "/#produkty" },

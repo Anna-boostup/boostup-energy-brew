@@ -149,7 +149,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                         <div className="flex justify-between items-end border-t pt-8">
                             <div className="text-sm text-slate-500 max-w-xs">
                                 <p>Děkujeme za vaši objednávku.</p>
-                                <p className="mt-1">V případě dotazů nás kontaktujte na info@drinkboostup.cz</p>
+                                <p className="mt-1">V případě dotazů nás kontaktujte na fakturace@drinkboostup.cz</p>
                             </div>
                             <div className="text-center">
                                 <div className="border p-2 inline-block rounded-lg mb-2 bg-white">

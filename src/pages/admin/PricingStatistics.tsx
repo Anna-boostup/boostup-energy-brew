@@ -37,7 +37,7 @@ const PricingStatistics = () => {
                 pricing: prices
             };
 
-            const { error } = await supabase
+            const { error: contentError } = await supabase
                 .from('site_content')
                 .upsert({ 
                     id: 'main', 
@@ -45,7 +45,23 @@ const PricingStatistics = () => {
                     updated_at: new Date().toISOString()
                 });
 
-            if (error) throw error;
+            if (contentError) throw contentError;
+
+            // Propagate prices to the products table for individual pack SKUs
+            const packUpdates = [
+                { suffix: '-3', price: prices.pack3 },
+                { suffix: '-12', price: prices.pack12 },
+                { suffix: '-21', price: prices.pack21 }
+            ];
+
+            for (const update of packUpdates) {
+                const { error: productError } = await supabase
+                    .from('products')
+                    .update({ price: update.price })
+                    .like('sku', `%${update.suffix}`);
+                
+                if (productError) console.error(`Error updating prices for ${update.suffix}:`, productError);
+            }
 
             await refreshContent();
             toast({

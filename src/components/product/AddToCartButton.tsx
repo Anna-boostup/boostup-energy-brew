@@ -1,6 +1,4 @@
-import React from "react";
-import { Button } from "../ui/button";
-import { ShoppingBag, Sparkles } from "lucide-react";
+import { useContent } from "@/context/ContentContext";
 
 interface AddToCartButtonProps {
     isValid: boolean | null;
@@ -15,6 +13,22 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
     price,
     onAddToCart
 }) => {
+    const { content } = useContent();
+    const isSalesEnabled = content.isSalesEnabled !== false;
+
+    if (!isSalesEnabled) {
+        return (
+            <Button
+                variant="outline"
+                disabled
+                className="flex-1 h-full min-h-[76px] px-8 rounded-3xl border-2 border-slate-200 text-slate-400 font-bold text-sm bg-slate-50 flex flex-col gap-1 uppercase"
+            >
+                <ShoppingBag className="w-5 h-5 opacity-30" />
+                Prodej dočasně pozastaven
+            </Button>
+        );
+    }
+
     if (!isValid) {
         return (
             <Button
@@ -29,18 +43,19 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
 
     return (
         <Button
-            variant="hero"
             onClick={onAddToCart}
-            className={`flex-1 h-full min-h-[76px] px-6 py-2 border-2 border-transparent group animate-energy-pulse transition-all duration-300 rounded-3xl whitespace-normal leading-tight text-center ${isOutOfStock
-                ? "opacity-50 grayscale cursor-not-allowed"
-                : "hover:scale-105"
+            className={`flex-1 h-full min-h-[76px] px-6 py-2 border-2 transition-all duration-300 rounded-3xl whitespace-normal leading-tight text-center ${isOutOfStock
+                ? "bg-slate-100 border-slate-200 text-slate-400 grayscale cursor-not-allowed"
+                : "bg-slate-900 border-slate-800 text-lime hover:bg-black hover:scale-105 shadow-2xl shadow-lime/20 hover:shadow-lime/40 animate-energy-pulse"
                 }`}
             disabled={isOutOfStock}
         >
             <div className="flex flex-col items-center justify-center gap-0.5">
                 <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight">
-                    <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                    {isOutOfStock ? "VYPRODÁNO" : "PŘIDAT DO KOŠÍKU"}
+                    <ShoppingBag className={`w-5 h-5 group-hover:rotate-12 transition-transform ${isOutOfStock ? "" : "text-lime"}`} />
+                    <span className={isOutOfStock ? "" : "text-lime"}>
+                        {isOutOfStock ? "VYPRODÁNO" : "PŘIDAT DO KOŠÍKU"}
+                    </span>
                 </div>
                 {!isOutOfStock && (
                     <div className="flex items-center gap-2 text-[10px] font-bold opacity-90 tracking-widest uppercase">
