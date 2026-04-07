@@ -136,7 +136,7 @@ const ProductSection = () => {
                           className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
                             isOutOfStock 
                               ? "bg-muted grayscale border-border text-muted-foreground opacity-70"
-                              : "bg-lime text-slate-900 font-black border-2 border-lime/20 transition-all hover:bg-lime-dark shadow-xl shadow-lime/20"
+                              : "bg-lime text-[#000000] font-black border-2 border-lime/20 transition-all hover:bg-lime-dark shadow-xl shadow-lime/20 animate-energy-pulse"
                           }`}
                         >
                       <div className="relative z-10 flex flex-col items-center">
