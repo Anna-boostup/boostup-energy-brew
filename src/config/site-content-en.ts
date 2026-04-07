@@ -14,7 +14,7 @@ export const SITE_CONTENT_EN = {
     social: {
         instagram: "https://www.instagram.com/boost_up_czech/",
         facebook: "https://www.facebook.com/profile.php?id=61567084724538",
-        linkedin: "https://www.linkedin.com/company/112783959/admin/dashboard/"
+        linkedin: "https://www.linkedin.com/company/boost-up-czech/"
     },
 
     hero: {
