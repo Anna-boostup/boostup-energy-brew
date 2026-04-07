@@ -60,6 +60,7 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
+        { icon: ExternalLink, label: "Zobrazit web", path: "/", isExternal: false },
         { icon: User, label: "Můj účet", path: "/admin/profile" },
         { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
     ];
@@ -68,7 +69,7 @@ const AdminLayout = () => {
         <div className="min-h-screen bg-slate-50 flex font-sans">
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 bg-slate-900 text-white p-4 flex items-center justify-between z-50">
-                <Link to="/admin" className="font-display font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
+                <Link to="/" className="font-display font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
                 <Sheet>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-white hover:bg-slate-800">
@@ -77,7 +78,7 @@ const AdminLayout = () => {
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 bg-slate-900 border-r-slate-800 text-white w-72">
                         <div className="p-6 border-b border-slate-800">
-                            <Link to="/admin" className="flex items-center">
+                            <Link to="/" className="flex items-center">
                                 <img src={logoGreen} alt="BoostUp" className="h-8 w-auto brightness-0 invert" />
                             </Link>
                             <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
@@ -143,7 +144,7 @@ const AdminLayout = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-white fixed h-full shadow-xl z-20">
                 <div className="p-6 border-b border-slate-800 shrink-0">
-                    <Link to="/admin" className="flex items-center">
+                    <Link to="/" className="flex items-center">
                         <img src={logoGreen} alt="BoostUp" className="h-8 w-auto brightness-0 invert" />
                     </Link>
                     <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
