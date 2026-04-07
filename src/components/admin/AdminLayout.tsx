@@ -52,6 +52,7 @@ const AdminLayout = () => {
         { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
         { icon: TrendingUp, label: "Ceny a Statistiky", path: "/admin/pricing" },
         { icon: Sparkles, label: "Slevové kódy", path: "/admin/promo-codes" },
+        { icon: Mail, label: "Zprávy", path: "/admin/messages" },
         {
             icon: Factory,
             label: "Sklad výroby",
@@ -59,7 +60,6 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
-        { icon: Mail, label: "E-maily (Webmail)", path: "https://webmail.forpsi.com/", isExternal: true },
         { icon: User, label: "Můj účet", path: "/admin/profile" },
         { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
     ];
