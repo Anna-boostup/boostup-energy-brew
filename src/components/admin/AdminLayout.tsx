@@ -205,7 +205,7 @@ const AdminLayout = () => {
                             <span className="text-xs font-bold text-white truncate group-hover:text-primary transition-colors">{profile?.full_name || "Admin"}</span>
                             <span className="text-[10px] text-slate-500 truncate">{user?.email}</span>
                         </div>
-                        <ChevronRight className={`ml-auto w-4 h-4 text-slate-600 transition-all ${location.pathname === '/admin/profile' ? 'text-primary translate-x-1' : 'group-hover:translate-x-1 capitalize'}`} />
+                        <ChevronRight className={`ml-auto w-4 h-4 text-slate-600 transition-all ${location.pathname === '/admin/profile' ? 'text-primary translate-x-1' : 'group-hover:translate-x-1'}`} />
                     </Link>
                     
                     <Button
