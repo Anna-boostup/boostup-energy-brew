@@ -53,6 +53,25 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [dbContentCZ, setDbContentCZ] = useState<Partial<SiteContent> | null>(null);
     const [dbContentEN, setDbContentEN] = useState<Partial<SiteContent> | null>(null);
     const [loading, setLoading] = useState(true);
+    const [previewContent, setPreviewContent] = useState<Partial<SiteContent> | null>(null);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('preview') === 'true') {
+                const lang = urlParams.get('lang') || 'cs';
+                try {
+                    const item = localStorage.getItem(`boostup_preview_content_${lang}`);
+                    if (item) {
+                        setPreviewContent(JSON.parse(item));
+                        console.log("Preview mode activated with local draft");
+                    }
+                } catch (e) {
+                    console.error("Preview content parse error:", e);
+                }
+            }
+        }
+    }, []);
 
     const baseCZ = SITE_CONTENT;
     const baseEN = { ...SITE_CONTENT, ...SITE_CONTENT_EN } as SiteContent;
@@ -60,7 +79,8 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const contentCZ = React.useMemo(() => mergeContent(baseCZ, dbContentCZ), [baseCZ, dbContentCZ]);
     const contentEN = React.useMemo(() => mergeContent(baseEN, dbContentEN), [baseEN, dbContentEN]);
 
-    const content = language === 'en' ? contentEN : contentCZ;
+    const activeContentBase = language === 'en' ? contentEN : contentCZ;
+    const content = previewContent ? (previewContent as SiteContent) : activeContentBase;
 
     const fetchContent = async () => {
         try {

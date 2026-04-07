@@ -109,6 +109,14 @@ const ContentManagement = () => {
         </div>
     );
 
+    const handlePreview = () => {
+        const lang = editingLang;
+        // Save the current draft correctly to localStorage
+        localStorage.setItem(`boostup_preview_content_${lang}`, JSON.stringify(localContent));
+        toast.success("Náhled byl vygenerován");
+        window.open(`/?preview=true&lang=${lang}`, '_blank');
+    };
+
     return (
         <div className="space-y-6 animate-fade-in pb-20">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap">
@@ -138,6 +146,10 @@ const ContentManagement = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" onClick={handlePreview} className="gap-2 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20">
+                            <Eye className="h-4 w-4" />
+                            Náhled
+                        </Button>
                         <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="gap-2">
                             {isResetting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />}
                             Resetovat

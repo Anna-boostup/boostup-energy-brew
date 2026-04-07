@@ -42,6 +42,18 @@ const StyledTextField: React.FC<StyledTextFieldProps> = ({
         fontStyle: (style.fontStyle || undefined) as any,
     };
 
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+    React.useEffect(() => {
+        if (textareaRef.current) {
+            // Reset height to strictly recalculate
+            textareaRef.current.style.height = '0px';
+            const scrollHeight = textareaRef.current.scrollHeight;
+            // Set new height based on scroll height, adding a small buffer for borders/padding if necessary
+            textareaRef.current.style.height = `${scrollHeight}px`;
+        }
+    }, [value, previewStyle.fontSize, previewStyle.fontWeight, previewStyle.fontFamily, previewStyle.fontStyle]);
+
     return (
         <div className="grid gap-1">
             <Label
@@ -134,27 +146,16 @@ const StyledTextField: React.FC<StyledTextFieldProps> = ({
                     )}
                 </div>
 
-                {/* Text area / input – borderless, blends into the card */}
-                {multiline ? (
-                    <Textarea
-                        id={id}
-                        rows={rows}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        placeholder={placeholder}
-                        style={previewStyle}
-                        className="resize-none border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
-                    />
-                ) : (
-                    <Input
-                        id={id}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        placeholder={placeholder}
-                        style={previewStyle}
-                        className="border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
-                    />
-                )}
+                {/* Auto-sizing Text area */}
+                <textarea
+                    ref={textareaRef}
+                    id={id}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder={placeholder}
+                    style={{ ...previewStyle, minHeight: multiline ? '80px' : '40px' }}
+                    className="w-full p-3 resize-none border-0 rounded-none shadow-none focus-visible:outline-none bg-transparent overflow-hidden"
+                />
             </div>
         </div>
     );
