@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingBag, Package, Users, Printer, Eye, FileText } from "lucide-react";
 import { useInventory, Order } from "@/context/InventoryContext";
 import { useContent } from "@/context/ContentContext";
