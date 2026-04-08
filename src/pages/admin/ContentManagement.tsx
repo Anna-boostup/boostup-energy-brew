@@ -786,6 +786,16 @@ const ContentManagement = () => {
                                                 className="h-12 rounded-xl border-slate-200 font-bold text-slate-900 focus-visible:ring-primary shadow-sm"
                                             />
                                         </div>
+                                        <div className="space-y-3 lg:col-span-3">
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Krátký popis (zobrazí se na stránce u výběru příchutě)</Label>
+                                            <Textarea
+                                                value={flavor.description || ''}
+                                                onChange={(e) => updateField(['flavors', key, 'description'], e.target.value)}
+                                                className="rounded-xl border-slate-200 font-medium text-slate-900 focus-visible:ring-primary shadow-sm resize-none"
+                                                rows={2}
+                                                placeholder="Krátký popis příchutě, který se zobrazí zákazníkům..."
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="space-y-6 pt-6">

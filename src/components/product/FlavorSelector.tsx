@@ -71,7 +71,7 @@ const FlavorSelector = ({
                     ? (flavor.id === 'lemon' ? 'text-primary font-medium' : 'text-white/90 font-medium') 
                     : 'text-foreground/70 font-medium'
                   }`}>
-                    {products.find(p => p.sku === sku)?.description || content.flavors[flavor.id]?.description || flavor.description}
+                    {content.flavors[flavor.id]?.description || flavor.description}
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-1 shrink-0">
