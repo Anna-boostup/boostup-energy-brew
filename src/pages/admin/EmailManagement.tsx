@@ -23,8 +23,11 @@ import {
     RefreshCw,
     Zap,
     Key,
-    Plus
+    Plus,
+    FileCode,
+    RefreshCcw
 } from "lucide-react";
+import { EMAIL_DEFAULTS, EMAIL_BASE_LAYOUT } from '@/data/emailDefaults';
 import { useAuth } from "@/context/AuthContext";
 import {
     Dialog,
@@ -120,12 +123,26 @@ const EmailManagement = () => {
         if (existing) {
             setCurrentSubject(existing.subject || '');
             setCurrentContent(existing.content_html || '');
+        } else if (EMAIL_DEFAULTS[selectedTypeId]) {
+            // Fallback to system defaults if no DB override exists
+            setCurrentSubject(EMAIL_DEFAULTS[selectedTypeId].subject);
+            setCurrentContent(EMAIL_DEFAULTS[selectedTypeId].content_html);
         } else {
-            // Find if it's a known system template we haven't overridden yet
             setCurrentSubject('');
             setCurrentContent('');
         }
     }, [selectedTypeId, templates]);
+
+    const handleResetToDefault = () => {
+        if (!EMAIL_DEFAULTS[selectedTypeId]) {
+            toast.error("Pro tuto šablonu neexistuje výchozí systémový kód.");
+            return;
+        }
+
+        setCurrentSubject(EMAIL_DEFAULTS[selectedTypeId].subject);
+        setCurrentContent(EMAIL_DEFAULTS[selectedTypeId].content_html);
+        toast.success("Načten výchozí systémový kód.");
+    };
 
     const handleCreateTemplate = async () => {
         if (!newId.trim()) {
@@ -281,6 +298,15 @@ const EmailManagement = () => {
                         Odeslat test na můj mail
                     </Button>
                     <Button 
+                        variant="ghost"
+                        onClick={handleResetToDefault}
+                        disabled={saving || sendingTest}
+                        className="h-14 px-8 rounded-2xl text-olive-dark/40 font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-terracotta transition-all gap-3 group"
+                    >
+                        <RefreshCcw className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
+                        Resetovat na výchozí
+                    </Button>
+                    <Button 
                         onClick={handleSave} 
                         disabled={saving || sendingTest} 
                         className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
@@ -425,7 +451,8 @@ const EmailManagement = () => {
                                     </div>
                                 </div>
                                 {!templates.some(t => t.id === selectedTypeId) && (
-                                    <Badge className="bg-terracotta text-white border-none py-1.5 px-4 rounded-full font-black text-[9px] tracking-widest">
+                                    <Badge className="bg-olive/20 text-lime border-none py-1.5 px-4 rounded-full font-black text-[9px] tracking-widest flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                                         VÝCHOZÍ SYSTÉMOVÝ KÓD
                                     </Badge>
                                 )}
@@ -433,6 +460,61 @@ const EmailManagement = () => {
                         </div>
 
                         <CardContent className="p-12 space-y-10">
+                            {/* Layout Reference Alert */}
+                            <div className="bg-lime/5 border border-lime/20 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 mb-4">
+                                <div className="flex items-center gap-4 text-left">
+                                    <div className="p-3 bg-lime/10 rounded-xl">
+                                        <FileCode className="w-5 h-5 text-lime" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-black text-olive-dark uppercase tracking-wide">Struktura šablony</h4>
+                                        <p className="text-[11px] text-olive-dark/40 font-bold">Text v editoru se automaticky vkládá do fixního e-mailového rámu s logem.</p>
+                                    </div>
+                                </div>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="bg-white border-lime/30 text-olive-dark font-black text-[10px] uppercase tracking-widest px-6 rounded-xl hover:bg-lime hover:border-lime transition-all">
+                                            Zobrazit základní HTML
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col p-0 border-none bg-olive-dark">
+                                        <div className="p-8 border-b border-white/5">
+                                            <h3 className="text-xl font-black text-white uppercase italic tracking-tight">Základní HTML struktura</h3>
+                                            <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold mt-1">Pouze pro čtení – tato část je fixní pro všechny e-maily.</p>
+                                        </div>
+                                        <ScrollArea className="flex-1 p-8">
+                                            <pre className="text-[11px] text-white/70 font-mono leading-relaxed bg-black/30 p-8 rounded-2xl whitespace-pre-wrap">
+                                                {EMAIL_BASE_LAYOUT}
+                                            </pre>
+                                        </ScrollArea>
+                                        <div className="p-6 bg-black/20 flex justify-end gap-3">
+                                            <Button 
+                                                variant="ghost"
+                                                className="text-white/40 hover:text-white uppercase text-[10px] font-black tracking-widest"
+                                                onClick={() => {
+                                                    const fullHtml = EMAIL_BASE_LAYOUT
+                                                        .replace('{{subject}}', currentSubject)
+                                                        .replace('{{content_html}}', currentContent);
+                                                    const blob = new Blob([fullHtml], { type: 'text/html' });
+                                                    const url = URL.createObjectURL(blob);
+                                                    window.open(url, '_blank');
+                                                }}
+                                            >
+                                                Náhled celého e-mailu
+                                            </Button>
+                                            <Button 
+                                                className="bg-lime text-olive-dark font-black uppercase text-[10px] tracking-widest px-8 rounded-xl h-11 shadow-lg shadow-lime/20"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(EMAIL_BASE_LAYOUT);
+                                                    toast.success("Základní HTML kód byl zkopírován.");
+                                                }}
+                                            >
+                                                Zkopírovat základ
+                                            </Button>
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                             {/* Subject Field */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
