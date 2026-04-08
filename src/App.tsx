@@ -82,6 +82,7 @@ import { ContentProvider } from "./context/ContentContext";
 import { CookieProvider } from "./context/CookieContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import { CookieBanner } from "./components/CookieBanner";
+import { AdminErrorBoundary } from "./components/AdminErrorBoundary";
 
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
@@ -159,7 +160,7 @@ const App = () => (
                             <Route path="orders" element={<Orders />} />
                             <Route path="inventory" element={<Inventory />} />
                             <Route path="manufacture" element={<ManufactureInventory />} />
-                            <Route path="content" element={<ContentManagement />} />
+                            <Route path="content" element={<AdminErrorBoundary><ContentManagement /></AdminErrorBoundary>} />
                             <Route path="pricing" element={<PricingStatistics />} />
                             <Route path="promo-codes" element={<PromoCodes />} />
                             <Route path="messages" element={<Messages />} />

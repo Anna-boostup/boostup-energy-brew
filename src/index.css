@@ -219,11 +219,11 @@
   }
 
   .glass-card {
-    /* Olivová karta na krémovém pozadí — vizuálně jasně oddělená */
-    background: rgba(244, 241, 230, 0.7);
+    /* Karta na krémovém pozadí — bílá/poloprůhledná s olivovým rámečkem */
+    background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(16px);
-    border: 1px solid rgba(61, 90, 47, 0.12);
-    box-shadow: 0 20px 50px -12px rgba(61, 90, 47, 0.15);
+    border: 1px solid rgba(61, 90, 47, 0.15);
+    box-shadow: 0 20px 50px -12px rgba(61, 90, 47, 0.12);
   }
 
   .glass-dark {
@@ -234,8 +234,8 @@
   }
 
   .bg-admin-canvas {
-    /* Tmavý olivový gradient #3d5a2f → ještě tmavší */
-    background: radial-gradient(ellipse at top left, hsl(101 31% 18%) 0%, hsl(101 35% 10%) 60%, hsl(101 40% 7%) 100%);
+    /* Krémové pozadí #f4f1e6 z ořficialní brand palety */
+    background-color: #f4f1e6;
   }
   
   .text-brand-primary {
@@ -243,7 +243,8 @@
   }
   
   .text-brand-muted {
-    color: hsl(47 39% 70%);
+    color: #3d5a2f;
+    opacity: 0.6;
   }
 
   .sidebar-premium {
