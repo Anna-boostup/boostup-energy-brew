@@ -65,22 +65,24 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 flex font-sans">
+        <div className="min-h-screen bg-admin-canvas flex font-sans">
             {/* Mobile Header */}
-            <div className="md:hidden fixed top-0 left-0 right-0 bg-slate-900 text-white p-4 flex items-center justify-between z-50">
-                <Link to="/" className="font-display font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">BOOSTUP<span className="text-primary">.</span></Link>
+            <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark text-white p-4 flex items-center justify-between z-50 shadow-lg px-6">
+                <Link to="/" className="font-display font-black text-2xl tracking-tighter hover:opacity-80 transition-opacity">
+                    BOOST<span className="text-lime">UP</span>
+                </Link>
                 <Sheet>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-white hover:bg-slate-800">
                             <Menu className="w-6 h-6" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0 bg-slate-900 border-r-slate-800 text-white w-72">
-                        <div className="p-6 border-b border-slate-800">
+                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-72 rounded-r-[3rem]">
+                        <div className="p-8 border-b border-white/5">
                             <Link to="/" className="flex items-center">
-                                <img src={logoGreen} alt="BoostUp" className="h-8 w-auto brightness-0 invert" />
+                                <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-lime">UP</span></span>
                             </Link>
-                            <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-lime/50 mt-2">Admin Engine</p>
                         </div>
                         <ul className="p-4 space-y-2" role="list">
                             {navItems.map((item) => {
@@ -106,9 +108,9 @@ const AdminLayout = () => {
                                                 onClick={() => {
                                                     navigate(item.path);
                                                 }}
-                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all ${isActive
-                                                    ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 ${isActive
+                                                    ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.02]"
+                                                    : "text-white/60 hover:bg-white/5 hover:text-white"
                                                     } `}
                                                 aria-current={isActive ? "page" : undefined}
                                             >
@@ -141,12 +143,17 @@ const AdminLayout = () => {
             </div>
 
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-white fixed h-full shadow-xl z-20">
-                <div className="p-6 border-b border-slate-800 shrink-0">
-                    <Link to="/" className="flex items-center">
-                        <img src={logoGreen} alt="BoostUp" className="h-8 w-auto brightness-0 invert" />
+            <aside className="hidden md:flex flex-col w-72 sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 ml-4 rounded-[3rem] shadow-2xl z-20 border border-white/5">
+                <div className="p-10 pb-8 shrink-0">
+                    <Link to="/" className="flex items-center group">
+                        <span className="font-display font-black text-3xl tracking-tighter group-hover:scale-105 transition-transform duration-500">
+                            BOOST<span className="text-lime">UP</span>
+                        </span>
                     </Link>
-                    <p className="text-xs text-slate-400 mt-1">Admin Dashboard</p>
+                    <div className="flex items-center gap-2 mt-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Admin Terminal</p>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
@@ -172,18 +179,18 @@ const AdminLayout = () => {
                                     ) : (
                                         <button
                                             onClick={() => navigate(item.path)}
-                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all ${isActive
-                                                ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
-                                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                            className={`w-full flex items-center justify-between px-5 py-3 rounded-2xl transition-all duration-300 group ${isActive
+                                                ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.05] z-10"
+                                                : "text-white/50 hover:bg-white/5 hover:text-white hover:pl-7"
                                                 } `}
                                             aria-current={isActive ? "page" : undefined}
                                         >
-                                            <div className="flex items-center gap-3">
-                                                <Icon className={`w-5 h-5 ${isActive ? "text-primary-foreground" : "text-slate-400 group-hover:text-white"}`} />
-                                                <span className={isActive ? "text-sm" : "text-sm font-medium"}>{item.label}</span>
+                                            <div className="flex items-center gap-4">
+                                                <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-lime"}`} />
+                                                <span className="text-xs font-bold uppercase tracking-wider">{item.label}</span>
                                             </div>
                                             {item.hasAlert && (
-                                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
+                                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label="Upozornění: Nízký stav zásob" />
                                             )}
                                         </button>
                                     )}
@@ -193,36 +200,37 @@ const AdminLayout = () => {
                     </ul>
                 </div>
 
-                <div className="p-4 border-t border-slate-800 bg-slate-900/50 shrink-0 space-y-2">
+                <div className="p-6 border-t border-white/5 space-y-3">
                     <Link 
                         to="/admin/profile" 
-                        className={`px-4 py-3 flex items-center gap-3 mb-2 rounded-2xl transition-all hover:bg-slate-800 group ${location.pathname === '/admin/profile' ? 'bg-slate-800 ring-1 ring-primary/20' : ''}`}
+                        className={`px-4 py-4 flex items-center gap-4 rounded-[2rem] transition-all duration-300 border border-transparent ${location.pathname === '/admin/profile' ? 'bg-white/10 border-white/10' : 'hover:bg-white/5'}`}
                     >
-                        <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-primary border border-slate-700 font-bold text-sm uppercase group-hover:scale-105 transition-transform">
+                        <div className="w-11 h-11 rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-lg shadow-lime/20">
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
                         </div>
-                        <div className="flex flex-col overflow-hidden">
-                            <span className="text-xs font-bold text-white truncate group-hover:text-primary transition-colors">{profile?.full_name || "Admin"}</span>
-                            <span className="text-[10px] text-slate-500 truncate">{user?.email}</span>
+                        <div className="flex flex-col min-w-0">
+                            <span className="text-xs font-black text-white truncate leading-tight uppercase tracking-widest">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
+                            <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
                         </div>
-                        <ChevronRight className={`ml-auto w-4 h-4 text-slate-600 transition-all ${location.pathname === '/admin/profile' ? 'text-primary translate-x-1' : 'group-hover:translate-x-1'}`} />
                     </Link>
                     
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20 px-4 py-3"
+                        className="w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 px-6"
                         onClick={handleLogout}
                     >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        <span className="text-sm font-semibold">Odhlásit se</span>
+                        <LogOut className="w-4 h-4 mr-3" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Odhlásit se</span>
                     </Button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-64 p-4 md:p-8 pt-20 md:pt-8">
-                <Outlet />
+            <main className="flex-1 md:ml-80 p-6 md:p-12 pt-28 md:pt-12 min-h-screen">
+                <div className="max-w-7xl mx-auto">
+                    <Outlet />
+                </div>
             </main>
         </div>
     );

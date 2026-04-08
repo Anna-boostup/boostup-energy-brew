@@ -23,18 +23,20 @@ const getFlavorLabel = (sku: string) => {
 };
 
 const PackBreakdown = ({ bottles }: { bottles: number }) => (
-    <div className="flex flex-wrap gap-2 mt-2">
+    <div className="flex flex-wrap gap-3 mt-4">
         {PACK_SIZES.map(size => {
             const count = Math.floor(bottles / size);
             return (
                 <div
                     key={size}
-                    className={`flex flex-col items-center justify-center rounded-2xl border px-3 py-2 transition-all ${
-                        count > 0 ? "bg-white border-slate-200 shadow-sm" : "bg-slate-50/50 border-slate-100 opacity-40"
-                    }`}
+                    className={`flex flex-col items-center justify-center rounded-3xl border transition-all duration-500 hover:scale-105 ${
+                        count > 0 
+                            ? "bg-white border-olive/10 shadow-lg shadow-olive/5" 
+                            : "bg-olive-dark/5 border-transparent opacity-20"
+                    } px-5 py-3 min-w-[70px]`}
                 >
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{size}ks</span>
-                    <span className="text-sm font-black text-slate-900">{count}×</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/30 mb-1">{size}ks</span>
+                    <span className="text-lg font-black text-olive-dark font-display">{count} <span className="text-[10px] text-olive/20 tracking-normal">×</span></span>
                 </div>
             );
         })}
@@ -42,70 +44,64 @@ const PackBreakdown = ({ bottles }: { bottles: number }) => (
 );
 
 const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void }) => (
-    <div className="border border-white/40 rounded-[2.5rem] p-6 space-y-4 mb-6 bg-white/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
+    <div className="glass-card rounded-[3rem] p-8 space-y-8 mb-8 border-none animate-in fade-in slide-in-from-bottom-6">
         <div className="flex justify-between items-start">
             <div>
-                <p className="font-mono font-bold text-lg">{sku}</p>
+                <div className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-3 shadow-xl shadow-olive-dark/10">#{sku}</div>
                 <div className="flex flex-col">
-                    <span className="font-bold text-sm">
+                    <span className="font-black text-2xl text-olive-dark leading-tight uppercase tracking-tight">
                         {product?.name || getFlavorLabel(sku)}
                     </span>
-                    <span className="text-xs text-foreground/90 font-medium">🍾 Lahvičky na skladě</span>
+                    <span className="text-[10px] text-olive/40 font-black uppercase tracking-widest mt-1">Stav zásob</span>
                 </div>
             </div>
-            <div className={`text-right font-bold text-xl ${qty < 10 ? "text-terracotta" : ""}`}>
-                {qty} ks
+            <div className={`text-right ${qty < 10 ? "text-red-600" : "text-olive-dark"}`}>
+                <div className="text-4xl font-black font-display leading-none">{qty}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest opacity-30 mt-1">Lahviček</div>
             </div>
         </div>
 
-        <div className="flex items-center justify-between p-2 rounded-md bg-slate-50 border border-slate-100">
-            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Aktivní prodej</span>
+        <div className="flex items-center justify-between p-5 rounded-[2rem] bg-olive-dark/5 border border-olive/5">
+            <span className="text-[10px] font-black text-olive/40 uppercase tracking-[0.2em]">Aktivní prodej</span>
             <Switch
                 checked={product?.is_active !== false}
-                onCheckedChange={async (checked) => {
-                    if (product) {
-                        try {
-                            await onEdit(); // We keep this if it triggers a refresh or similar but we need direct update
-                        } catch (e) {}
-                    }
+                onCheckedChange={async () => {
+                   if (product) onEdit();
                 }}
-                className="scale-75 data-[state=checked]:bg-lime"
+                className="data-[state=checked]:bg-lime"
             />
         </div>
 
-        <PackBreakdown bottles={qty} />
+        <div className="space-y-4">
+            <span className="text-[10px] font-black text-olive/20 uppercase tracking-[0.3em] ml-2">Přepočet na balení</span>
+            <PackBreakdown bottles={qty} />
+        </div>
 
-        <div className="flex gap-2 pt-2 border-t">
+        <div className="flex gap-3 pt-6 border-t border-olive/5">
             <Button
-                size="sm"
                 variant="outline"
                 onClick={onHistory}
-                className="flex-1"
+                className="h-14 rounded-2xl border-olive/10 hover:bg-olive-dark hover:text-white font-black uppercase text-[10px] tracking-widest flex-1 transition-all"
                 aria-label={`Historie pohybů pro ${sku}`}
-                title="Historie"
             >
-                <History className="h-3 w-3 mr-1" />
+                <History className="h-4 w-4 mr-2" />
                 Historie
             </Button>
             <Button
-                size="sm"
                 variant="outline"
-                className="flex-1"
+                className="h-14 rounded-2xl border-olive/10 hover:bg-white text-olive-dark/40 hover:text-olive-dark font-black uppercase text-[10px] tracking-widest flex-1 transition-all"
                 onClick={onEdit}
                 aria-label={`Upravit detaily pro ${sku}`}
-                title="Upravit detaily"
             >
-                <Edit className="h-3 w-3 mr-1" />
-                Upravit
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
             </Button>
             <Button
-                size="sm"
-                className="bg-lime hover:bg-lime-dark text-white flex-1"
+                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest flex-1 shadow-xl shadow-lime/20 transition-all"
                 onClick={onRestock}
                 aria-label={`Naskladnit ${sku}`}
-                title="Naskladnit"
             >
-                <Plus className="h-3 w-3 mr-1" />
+                <Plus className="h-4 w-4 mr-2" />
                 Sklad
             </Button>
         </div>
@@ -126,100 +122,101 @@ const Inventory = () => {
         .sort(([skuA], [skuB]) => skuA.localeCompare(skuB));
 
     return (
-        <div className="space-y-6 pb-20">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Správa skladu</h2>
-                    <p className="text-muted-foreground">Přehled zásob hotových výrobků.</p>
+                    <h2 className="text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic">SKLAD VÝROBKŮ</h2>
+                    <div className="flex items-center gap-3 mt-2">
+                        <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted leading-none">Kontrola zásob a naskladnění hotových lahviček.</p>
+                    </div>
                 </div>
             </div>
 
             {/* Desktop Table Container */}
-            <div className="bg-white/50 backdrop-blur-sm rounded-[2.5rem] border border-white/40 shadow-sm hidden md:block overflow-hidden transition-all hover:shadow-md animate-in fade-in zoom-in-95 duration-500">
+            <div className="hidden md:block overflow-hidden rounded-[3rem] glass-card border-none shadow-2xl">
                 <Table>
-                    <TableHeader className="bg-slate-50 border-b border-slate-200">
-                        <TableRow className="hover:bg-transparent">
-                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 px-6">Produkt / SKU</TableHead>
-                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right w-[150px]">Skladem</TableHead>
-                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 pl-10">Přepočet na balení</TableHead>
-                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-center w-[120px]">Prodej</TableHead>
-                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right px-6">Akce</TableHead>
+                    <TableHeader className="bg-white/40 border-b border-olive/5">
+                        <TableRow className="hover:bg-transparent border-none">
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 px-10">PRODUKT / SKU</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 text-right w-[180px]">SKLADEM</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 pl-16">BALENÍ</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 text-center w-[140px]">PRODEJ</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 text-right px-10">AKCE</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {sortedStock.map(([sku, qty]) => {
                             const product = products.find(p => p.sku === sku);
                             return (
-                                <TableRow key={sku} className="transition-colors hover:bg-slate-50/80 border-b border-slate-100 group">
-                                    <TableCell className="py-6 px-6">
+                                <TableRow key={sku} className="transition-all duration-500 hover:bg-white border-b border-olive/5 group">
+                                    <TableCell className="py-10 px-10">
                                         <div className="flex flex-col">
-                                            <span className="font-display font-black text-slate-900 text-base leading-tight mb-1">
+                                            <span className="font-display font-black text-olive-dark text-2xl leading-tight group-hover:scale-105 origin-left transition-transform duration-500 uppercase tracking-tight">
                                                 {product?.name || getFlavorLabel(sku)}
                                             </span>
-                                            <span className="font-mono font-black text-[10px] text-primary bg-slate-900 px-2 py-0.5 rounded-md w-fit tracking-tighter uppercase">
-                                                {sku}
+                                            <span className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1 rounded-xl w-fit mt-3 shadow-lg shadow-olive-dark/10">
+                                                #{sku}
                                             </span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex flex-col items-end">
-                                            <span className={`font-display font-black text-2xl tabular-nums leading-none ${qty < 10 ? "text-red-500" : "text-slate-900"}`}>
+                                            <span className={`font-display font-black text-4xl tabular-nums leading-none ${qty < 10 ? "text-red-600" : "text-olive-dark"}`}>
                                                 {qty}
                                             </span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Lahviček</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-olive/20 mt-2">Lahviček</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="pl-10">
+                                    <TableCell className="pl-16">
                                         <PackBreakdown bottles={qty} />
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <div className="flex flex-col items-center gap-1">
+                                        <div className="flex flex-col items-center gap-3">
                                             <Switch
                                                 checked={product?.is_active !== false}
                                                 onCheckedChange={async (checked) => {
-                                                    if (product) {
-                                                        await updateProduct(product.sku, { is_active: checked });
-                                                    }
+                                                    if (product) await updateProduct(product.sku, { is_active: checked });
                                                 }}
-                                                className="data-[state=checked]:bg-primary shadow-sm"
+                                                className="data-[state=checked]:bg-lime shadow-lg shadow-lime/10"
                                             />
-                                            <span className="text-[9px] font-black uppercase tracking-tighter text-slate-400">
-                                                {product?.is_active !== false ? "Aktivní" : "Vypnuto"}
+                                            <span className={`text-[9px] font-black uppercase tracking-widest ${product?.is_active !== false ? "text-lime-dark" : "text-olive/30"}`}>
+                                                {product?.is_active !== false ? "AKTIVNÍ" : "VYPNUTO"}
                                             </span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-right px-6 tabular-nums">
-                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                                    <TableCell className="text-right px-10">
+                                        <div className="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
                                             <Button
                                                 size="sm"
-                                                variant="ghost"
+                                                variant="outline"
                                                 onClick={() => setHistorySku(sku)}
-                                                className="h-10 w-10 p-0 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100"
+                                                className="h-14 w-14 p-0 rounded-2xl border-olive/10 hover:bg-olive-dark hover:text-white transition-all duration-300 shadow-sm"
                                                 title="Historie pohybů"
                                             >
-                                                <History className="h-4.5 w-4.5" />
+                                                <History className="h-6 w-6" />
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                variant="ghost"
-                                                className="h-10 w-10 p-0 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100"
+                                                variant="outline"
+                                                className="h-14 w-14 p-0 rounded-2xl border-olive/10 hover:bg-white text-olive-dark/40 hover:text-olive-dark transition-all duration-300 shadow-sm"
                                                 onClick={() => setEditSku(sku)}
                                                 title="Upravit detaily"
                                             >
-                                                <Edit className="h-4.5 w-4.5" />
+                                                <Edit className="h-6 w-6" />
                                             </Button>
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="h-10 w-10 p-0 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50"
+                                                className="h-14 w-14 p-0 rounded-2xl text-red-400 hover:text-red-700 hover:bg-red-50 transition-all duration-300"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "out" })}
                                                 title="Odebrat ze skladu"
                                             >
-                                                <Minus className="h-4.5 w-4.5" />
+                                                <Minus className="h-6 w-6" />
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                className="bg-slate-900 hover:bg-black text-white h-10 px-4 rounded-xl font-bold shadow-lg shadow-slate-900/10"
+                                                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-lime/20 transition-all duration-300 ml-2"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "in" })}
                                             >
                                                 <Plus className="h-4 w-4 mr-2" />
@@ -234,8 +231,8 @@ const Inventory = () => {
                 </Table>
             </div>
 
-            {/* Mobile List */}
-            <div className="md:hidden">
+            {/* Mobile List Container */}
+            <div className="md:hidden space-y-6 px-1">
                 {sortedStock.map(([sku, qty]) => (
                     <MobileInventoryCard
                         key={sku}

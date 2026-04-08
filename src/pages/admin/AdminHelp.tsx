@@ -7,7 +7,7 @@ import {
 import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
-    AlertTriangle, Mail, MousePointer2, BarChart3, Gift
+    AlertTriangle, Mail, MousePointer2, BarChart3, Gift, Settings2, Zap, Layout
 } from "lucide-react";
 
 interface HelpItem {
@@ -251,29 +251,33 @@ const AdminHelp = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
                 <div className="flex items-start gap-8">
-                    <div className="w-20 h-20 rounded-[2rem] bg-slate-900 flex items-center justify-center shrink-0 shadow-2xl">
-                        <HelpCircle className="w-10 h-10 text-primary" />
+                    <div className="w-24 h-24 rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <HelpCircle className="w-12 h-12 text-lime relative z-10" />
                     </div>
-                    <div className="space-y-2">
-                        <h1 className="text-5xl font-black text-slate-900 tracking-tighter font-display uppercase italic">Centrum Pomoci</h1>
-                        <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs">
-                            Kompletní manuál pro administraci systému BoostUp.
-                        </p>
+                    <div className="space-y-3">
+                        <h1 className="text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Centrum Pomoci</h1>
+                        <div className="flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px]">
+                                Kompletní manuál pro administraci systému BoostUp
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Quick tip banner */}
-            <div className="relative group overflow-hidden">
-                <div className="absolute inset-0 bg-primary opacity-10 group-hover:opacity-20 transition-opacity duration-500 rounded-[3rem]" />
-                <div className="relative flex flex-col md:flex-row gap-8 p-10 items-center">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-slate-900 flex items-center justify-center shrink-0 shadow-xl transition-transform group-hover:scale-110 duration-500">
-                        <MousePointer2 className="w-8 h-8 text-primary" />
+            <div className="relative group overflow-hidden bg-olive-dark rounded-[3.5rem] shadow-2xl">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-lime/5 blur-[80px] -translate-y-1/2 translate-x-1/3" />
+                <div className="relative flex flex-col md:flex-row gap-10 p-12 items-center">
+                    <div className="w-20 h-20 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-2xl transition-all group-hover:scale-110 group-hover:border-lime/30 duration-700">
+                        <MousePointer2 className="w-10 h-10 text-lime" />
                     </div>
-                    <div className="space-y-1 text-center md:text-left">
-                        <p className="text-xl font-display font-black text-slate-900 uppercase italic">Pro rychlou navigaci</p>
-                        <p className="text-slate-500 font-bold leading-relaxed text-sm">
-                            Kliknutím na nadpis rozbalíte detailní návod. Všechny změny musí být vždy potvrzeny tlačítkem <span className="text-slate-900 font-black">Uložit změny</span>.
+                    <div className="space-y-2 text-center md:text-left flex-1">
+                        <p className="text-2xl font-display font-black text-white uppercase italic tracking-tight">Pro rychlou navigaci</p>
+                        <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-[11px] leading-relaxed">
+                            Kliknutím na nadpis rozbalíte detailní návod. Všechny změny musí být vždy potvrzeny tlačítkem <span className="text-lime font-black border-b border-lime/30 mx-1">Uložit změny</span>.
                         </p>
                     </div>
                 </div>
@@ -287,31 +291,32 @@ const AdminHelp = () => {
                         <AccordionItem
                             key={section.title}
                             value={`item-${idx}`}
-                            className="border border-white shadow-sm bg-white/50 backdrop-blur-sm rounded-[3rem] overflow-hidden px-4 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 border-none"
+                            className="border-none glass-card rounded-[3rem] overflow-hidden px-2 hover:shadow-2xl hover:shadow-olive/10 transition-all duration-700"
                         >
-                            <AccordionTrigger className="hover:no-underline py-10 px-8 group">
-                                <div className="flex items-center gap-6 text-left">
-                                    <div className="w-16 h-16 rounded-[1.5rem] bg-slate-900 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-500">
-                                        <Icon className="w-7 h-7 text-primary" />
+                            <AccordionTrigger className="hover:no-underline py-12 px-8 group border-none">
+                                <div className="flex items-center gap-8 text-left">
+                                    <div className="w-20 h-20 rounded-[2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform duration-700 relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-lime/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <Icon className="w-9 h-9 text-lime relative z-10" />
                                     </div>
-                                    <div className="space-y-1">
-                                        <h3 className="text-2xl font-black text-slate-900 font-display uppercase tracking-tight">{section.title}</h3>
-                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{section.description}</p>
+                                    <div className="space-y-2">
+                                        <h3 className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight leading-none italic">{section.title}</h3>
+                                        <p className="text-[10px] text-brand-muted font-black uppercase tracking-[0.3em]">{section.description}</p>
                                     </div>
                                 </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-10 pb-12 pt-4">
-                                <div className="grid lg:grid-cols-2 gap-12 items-start">
-                                    <div className="space-y-8">
-                                        <ul className="space-y-6">
+                            <AccordionContent className="px-12 pb-14 pt-2">
+                                <div className="grid lg:grid-cols-2 gap-16 items-start">
+                                    <div className="space-y-10">
+                                        <ul className="space-y-8">
                                             {section.items.map((item, i) => (
-                                                <li key={i} className="flex gap-5 group">
-                                                    <div className="mt-1 w-6 h-6 rounded-xl bg-slate-900 flex items-center justify-center shrink-0 shadow-sm">
-                                                        <ChevronRight className="w-3 h-3 text-primary" />
+                                                <li key={i} className="flex gap-6 group/item">
+                                                    <div className="mt-1.5 w-7 h-7 rounded-xl bg-olive-dark flex items-center justify-center shrink-0 shadow-xl group-hover/item:scale-110 transition-transform">
+                                                        <ChevronRight className="w-4 h-4 text-lime" />
                                                     </div>
-                                                    <div className="space-y-1">
-                                                        <p className="font-black text-lg text-slate-900 font-display uppercase tracking-tight leading-none">{item.label}</p>
-                                                        <p className="text-slate-500 font-bold text-sm leading-relaxed">{item.description}</p>
+                                                    <div className="space-y-2">
+                                                        <p className="font-black text-xl text-olive-dark font-display uppercase tracking-tight leading-none italic">{item.label}</p>
+                                                        <p className="text-brand-muted font-black uppercase tracking-[0.1em] text-[11px] leading-relaxed">{item.description}</p>
                                                     </div>
                                                 </li>
                                             ))}
@@ -319,24 +324,26 @@ const AdminHelp = () => {
                                     </div>
 
                                     {section.image && (
-                                        <div className="space-y-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vizuální reprezentace</p>
+                                        <div className="space-y-8 sticky top-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
+                                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted">Vizuální reprezentace systému</p>
                                             </div>
-                                            <div className="rounded-[2.5rem] border-8 border-white overflow-hidden shadow-2xl bg-slate-900 group relative">
-                                                <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
-                                                <img
-                                                    src={section.image}
-                                                    alt={section.title}
-                                                    className="w-full h-auto object-cover transform transition-transform duration-1000 group-hover:scale-110"
-                                                    onError={(e) => {
-                                                        (e.target as HTMLImageElement).style.display = 'none';
-                                                    }}
-                                                />
+                                            <div className="rounded-[3rem] p-3 bg-olive-dark/5 border border-olive/10 overflow-hidden shadow-2xl group relative transition-all duration-700 hover:bg-olive-dark/10">
+                                                <div className="rounded-[2.2rem] overflow-hidden border-4 border-white shadow-inner relative z-10">
+                                                    <div className="absolute inset-0 bg-lime/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-20" />
+                                                    <img
+                                                        src={section.image}
+                                                        alt={section.title}
+                                                        className="w-full h-auto object-cover transform transition-transform duration-1000 group-hover:scale-110"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).parentElement!.style.display = 'none';
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
-                                            <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-widest italic">
-                                                * Interface se přizpůsobuje vašemu zařízení.
+                                            <p className="text-[10px] text-center text-brand-muted font-black uppercase tracking-[0.3em] italic">
+                                                * Interface se dynamicky přizpůsobuje vašemu zařízení
                                             </p>
                                         </div>
                                     )}
@@ -348,23 +355,29 @@ const AdminHelp = () => {
             </Accordion>
 
             {/* Footer note */}
-            <div className="bg-slate-900 text-white p-16 rounded-[4rem] text-center space-y-8 shadow-2xl relative overflow-hidden group">
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary opacity-5 rounded-full blur-[100px] transition-all duration-1000 group-hover:scale-150" />
-                <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary opacity-5 rounded-full blur-[100px] transition-all duration-1000 group-hover:scale-150" />
+            <div className="bg-olive-dark text-white p-20 rounded-[4.5rem] text-center space-y-10 shadow-2xl relative overflow-hidden group">
+                <div className="absolute -top-32 -right-32 w-96 h-96 bg-lime/10 rounded-full blur-[120px] transition-all duration-1000 group-hover:scale-150" />
+                <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-lime/10 rounded-full blur-[120px] transition-all duration-1000 group-hover:scale-150" />
                 
-                <div className="relative z-10 space-y-6">
-                    <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-4 border border-white/10 group-hover:border-primary/50 transition-all duration-500">
-                        <HelpCircle className="w-10 h-10 text-primary" />
+                <div className="relative z-10 space-y-8">
+                    <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 border border-white/10 group-hover:border-lime/50 transition-all duration-700 shadow-2xl">
+                        <HelpCircle className="w-12 h-12 text-lime" />
                     </div>
-                    <div className="space-y-3">
-                        <h3 className="text-4xl font-black font-display uppercase italic tracking-tight">Technická podpora</h3>
-                        <p className="text-slate-400 font-bold text-lg max-w-xl mx-auto leading-relaxed">
+                    <div className="space-y-4">
+                        <h3 className="text-5xl font-black font-display uppercase italic tracking-tight leading-none text-white">Technická podpora</h3>
+                        <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-sm max-w-2xl mx-auto leading-relaxed">
                             Nenašli jste odpověď nebo je něco v nepořádku? Jsme připraveni vám okamžitě pomoci se správou vašeho e-shopu.
                         </p>
                     </div>
-                    <div className="pt-10 flex flex-col items-center gap-4">
-                        <a href="mailto:support@drinkboostup.cz" className="text-primary font-black uppercase text-xs tracking-[0.3em] hover:text-white transition-colors">support@drinkboostup.cz</a>
-                        <span className="text-[10px] font-black font-mono text-slate-700 uppercase tracking-widest">BoostUp Engine v4.0.0 // Platinum Edition</span>
+                    <div className="pt-12 flex flex-col items-center gap-6">
+                        <a href="mailto:support@drinkboostup.cz" className="h-16 px-12 rounded-2xl bg-lime text-olive-dark flex items-center justify-center font-black uppercase text-xs tracking-[0.4em] hover:bg-white hover:scale-105 transition-all duration-500 shadow-2xl shadow-lime/20 group">
+                            support@drinkboostup.cz
+                        </a>
+                        <div className="flex items-center gap-4 text-white/20">
+                            <div className="w-8 h-[1px] bg-white/10" />
+                            <span className="text-[10px] font-black font-mono uppercase tracking-[0.5em]">BoostUp Engine v5.0 // Platinum Premium</span>
+                            <div className="w-8 h-[1px] bg-white/10" />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -119,19 +119,22 @@ const ContentManagement = () => {
 
     return (
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 flex-wrap">
-                <div className="space-y-1">
-                    <h2 className="text-5xl font-black tracking-tighter text-slate-900 font-display uppercase italic">Content Engine</h2>
-                    <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs">Správa vizuálního a textového obsahu webu</p>
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
+                <div className="space-y-3">
+                    <h2 className="text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">CONTENT ENGINE</h2>
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">Správa vizuálního a textového obsahu webu</p>
+                    </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-6 w-full lg:w-auto">
-                    <div className="flex items-center bg-slate-900 rounded-[2rem] p-1.5 shadow-2xl">
+                    <div className="flex items-center bg-olive-dark rounded-[2rem] p-1.5 shadow-2xl">
                         <Button
                             variant="ghost"
                             size="sm"
                             className={`h-12 px-8 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all duration-500 border-none ${
-                                editingLang === 'cs' ? 'bg-primary text-slate-900 shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                editingLang === 'cs' ? 'bg-lime text-olive-dark shadow-xl' : 'text-olive/40 hover:text-white hover:bg-white/5'
                             }`}
                             onClick={() => setEditingLang('cs')}
                         >
@@ -141,7 +144,7 @@ const ContentManagement = () => {
                             variant="ghost"
                             size="sm"
                             className={`h-12 px-8 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all duration-500 border-none ${
-                                editingLang === 'en' ? 'bg-primary text-slate-900 shadow-lg' : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                editingLang === 'en' ? 'bg-lime text-olive-dark shadow-xl' : 'text-olive/40 hover:text-white hover:bg-white/5'
                             }`}
                             onClick={() => setEditingLang('en')}
                         >
@@ -150,15 +153,15 @@ const ContentManagement = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-4 ml-auto">
-                        <Button variant="outline" onClick={handlePreview} className="h-14 px-6 rounded-2xl bg-white border-slate-100 text-slate-900 font-black uppercase text-[10px] tracking-widest shadow-sm hover:bg-slate-50 hover:border-slate-200 transition-all gap-3">
+                        <Button variant="outline" onClick={handlePreview} className="h-14 px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white hover:border-olive transition-all gap-3">
                             <Eye className="h-5 w-5" />
                             Náhled
                         </Button>
-                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-14 px-6 rounded-2xl bg-white border-slate-100 text-slate-400 font-black uppercase text-[10px] tracking-widest shadow-sm hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all gap-3">
+                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-14 px-8 rounded-2xl bg-white border-olive/10 text-olive/40 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all gap-3">
                             {isResetting ? <Loader2 className="h-5 w-5 animate-spin" /> : <RotateCcw className="h-5 w-5" />}
                             Resetovat
                         </Button>
-                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-14 px-10 rounded-2xl bg-slate-900 hover:bg-black text-primary font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-slate-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3">
+                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-lime font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3">
                             {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                             Uložit změny
                         </Button>
@@ -167,13 +170,13 @@ const ContentManagement = () => {
             </div>
 
             <Tabs defaultValue="hero" className="w-full space-y-12">
-                <div className="p-2 bg-slate-100/50 backdrop-blur-md rounded-[2.5rem] w-full shadow-sm border border-white/50">
+                <div className="p-3 glass-card rounded-[3rem] w-full shadow-2xl border-none">
                     <TabsList className="bg-transparent h-auto p-1 gap-2 flex flex-wrap justify-center border-none">
                         {['hero', 'mission', 'ingredients', 'concept', 'cta', 'contact', 'flavors', 'footer', 'settings'].map((tab) => (
                             <TabsTrigger 
                                 key={tab}
                                 value={tab} 
-                                className="px-6 py-4 rounded-[2rem] font-black uppercase text-[9px] tracking-[0.2em] text-slate-400 data-[state=active]:bg-slate-900 data-[state=active]:text-primary transition-all duration-500 border-none shadow-none"
+                                className="px-8 py-5 rounded-[2rem] font-black uppercase text-[10px] tracking-[0.2em] text-olive/40 data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none"
                             >
                                 {tab === 'hero' && 'Hero (Úvod)'}
                                 {tab === 'mission' && 'Mise'}
@@ -191,18 +194,21 @@ const ContentManagement = () => {
 
                 {/* HERO SECTION */}
                 <TabsContent value="hero" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <Type className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Type className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Hlavní Hero Sekce</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Hlavní Hero Sekce</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Vizuální středobod vaší webové prezentace</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Vizuální středobod vaší webové prezentace</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-10">
-                            <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
+                        </div>
+                        <div className="p-12 space-y-12">
+                            <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
                                 <BadgeToggle badgeKey="hero.announcement" label="Viditelnost oznamovacího banneru" />
                             </div>
                             <StyledTextField
@@ -256,7 +262,7 @@ const ContentManagement = () => {
                                 placeholder="Zadejte text pod tlačítka..."
                             />
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-olive/5 pt-10">
                                 <StyledTextField
                                     label="Tlačítko Primární"
                                     value={localContent.hero.cta.primary}
@@ -279,24 +285,27 @@ const ContentManagement = () => {
                                     onStyleChange={(s) => updateStyle('hero.cta.concept3b', s)}
                                 />
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* MISSION SECTION */}
                 <TabsContent value="mission" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <FileText className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <FileText className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Naše Mise</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Naše Mise</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Sekce vyprávějící příběh vaší značky</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Sekce vyprávějící příběh vaší značky</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-10">
-                            <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
+                        </div>
+                        <div className="p-12 space-y-12">
+                            <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
                                 <BadgeToggle badgeKey="mission.badge" label="Viditelnost štítku (O NÁS)" />
                             </div>
                             <StyledTextField
@@ -341,23 +350,26 @@ const ContentManagement = () => {
                                     />
                                 ))}
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* INGREDIENTS SECTION */}
                 <TabsContent value="ingredients" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <Beaker className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Beaker className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Vědecké Informace</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Vědecké Informace</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Detailní rozpis ingrediencí a jejich benefitů</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Detailní rozpis ingrediencí a jejich benefitů</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-12">
+                        </div>
+                        <div className="p-12 space-y-12">
                             {Object.entries(localContent.ingredientDetails || {}).map(([key, details]: [string, any]) => (
                                 <div key={key} className="space-y-8 p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative group overflow-hidden">
                                     <div className={`absolute top-0 right-0 w-32 h-32 opacity-5 translate-x-12 -translate-y-12 rounded-full transition-transform duration-700 group-hover:scale-150 ${
@@ -443,23 +455,26 @@ const ContentManagement = () => {
                                     </div>
                                 </div>
                             ))}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* CONCEPT SECTION */}
                 <TabsContent value="concept" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <BarChart3 className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <BarChart3 className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">3B Koncept</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">3B Koncept</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Hlavní pilíře výkonu a funkčnosti</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Hlavní pilíře výkonu a funkčnosti</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-12">
+                        </div>
+                        <div className="p-12 space-y-12">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Hlavní Nadpis Sekce</Label>
@@ -587,23 +602,26 @@ const ContentManagement = () => {
                                     </div>
                                 ))}
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* CTA SECTION */}
                 <TabsContent value="cta" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <Mail className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Mail className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Akční Výzva (CTA)</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Akční Výzva (CTA)</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Sekce pro konverzi návštěvníků v odběratele</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Sekce pro konverzi návštěvníků v odběratele</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-10">
+                        </div>
+                        <div className="p-12 space-y-12">
                             <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
                                 <BadgeToggle badgeKey="cta.badge" label="Viditelnost konverzního badge" />
                             </div>
@@ -637,23 +655,26 @@ const ContentManagement = () => {
                                 style={ts('cta.description')}
                                 onStyleChange={(s) => updateStyle('cta.description', s)}
                             />
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* CONTACT SECTION */}
                 <TabsContent value="contact" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <MapPin className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <MapPin className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Kontakt & Informace</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Kontakt & Informace</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Kontaktní údaje a lokace firmy</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Kontaktní údaje a lokace firmy</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-12">
+                        </div>
+                        <div className="p-12 space-y-12">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-3 mb-2">
@@ -696,23 +717,26 @@ const ContentManagement = () => {
                                     />
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* FLAVORS SECTION */}
                 <TabsContent value="flavors" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <Zap className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Zap className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Katalog Příchutí</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Katalog Příchutí</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Správa parametrů a specifikací jednotlivých produktů</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Správa parametrů a specifikací jednotlivých produktů</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-12">
+                        </div>
+                        <div className="p-12 space-y-12">
                             {Object.entries(localContent.flavors || {}).map(([key, flavor]: [string, any]) => (
                                 <div key={key} className="p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm space-y-10">
                                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -880,23 +904,26 @@ const ContentManagement = () => {
                                     </div>
                                 </div>
                             ))}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* FOOTER SECTION */}
                 <TabsContent value="footer" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <Layout className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Layout className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Patička (Footer)</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Patička (Footer)</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Upravte copyright and značkový popis ve spodní části webu</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Upravte copyright and značkový popis ve spodní části webu</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-10">
+                        </div>
+                        <div className="p-12 space-y-12">
                             <StyledTextField
                                 label="Krátký popis značky"
                                 value={localContent.footer.brand.description}
@@ -913,23 +940,26 @@ const ContentManagement = () => {
                                 style={ts('footer.bottom.copyright')}
                                 onStyleChange={(s) => updateStyle('footer.bottom.copyright', s)}
                             />
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* SETTINGS SECTION */}
                 <TabsContent value="settings" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                    <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="bg-slate-900 border-b border-slate-800 py-12 px-12">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="p-3 bg-primary/20 rounded-2xl">
-                                    <Settings2 className="w-6 h-6 text-primary" />
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Settings2 className="w-8 h-8 text-lime" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-white font-display uppercase tracking-tight">Globální Nastavení</CardTitle>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Globální Nastavení</h3>
+                                    <p className="text-lime/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Ovládání globálních funkcí a behaviorálních prvků</p>
+                                </div>
                             </div>
-                            <CardDescription className="text-slate-400 font-bold text-xs uppercase tracking-widest pl-1">Ovládání globálních funkcí a behaviorálních prvků</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-12 space-y-10">
+                        </div>
+                        <div className="p-12 space-y-12">
                             <div className="flex items-center justify-between p-8 rounded-[2rem] bg-white border border-slate-100 shadow-sm group transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
                                 <div className="space-y-1">
                                     <Label className="text-lg font-black font-display uppercase tracking-tight text-slate-900">Slevový Pop-up (Engagement)</Label>
@@ -944,32 +974,32 @@ const ContentManagement = () => {
                                     className="data-[state=checked]:bg-primary scale-125"
                                 />
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
             </Tabs>
 
-            <div className="p-8 bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-2xl flex flex-col md:flex-row gap-8 items-center text-center md:text-left group transition-all duration-700 hover:scale-[1.01]">
-                <div className="p-5 bg-primary/10 rounded-3xl border border-primary/20 shrink-0 animate-pulse group-hover:bg-primary/20 transition-all">
-                    <AlertTriangle className="h-8 w-8 text-primary" />
+            <div className="p-10 bg-olive-dark rounded-[3rem] border border-olive/10 shadow-2xl flex flex-col md:flex-row gap-10 items-center text-center md:text-left group transition-all duration-700 hover:scale-[1.01]">
+                <div className="p-6 bg-lime/10 rounded-3xl border border-lime/20 shrink-0 animate-pulse group-hover:bg-lime/20 transition-all">
+                    <AlertTriangle className="h-10 w-10 text-lime" />
                 </div>
-                <div className="space-y-1">
-                    <h4 className="text-white font-black font-display uppercase tracking-widest text-xl italic">Nezapomeňte uložít změny!</h4>
-                    <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                <div className="space-y-2">
+                    <h4 className="text-white font-black font-display uppercase tracking-wider text-2xl italic">Nezapomeňte uložít změny!</h4>
+                    <p className="text-brand-muted font-black text-[10px] uppercase tracking-[0.3em] leading-relaxed">
                         Veškeré úpravy v tomto engine se stanou aktivními až po kliknutí na 
-                        <span className="text-primary font-black mx-2 border-b border-primary/30">ULOŽIT ZMĚNY</span> 
+                        <span className="text-lime font-black mx-2 border-b-2 border-lime/30 italic">ULOŽIT ZMĚNY</span> 
                         v horní části ovládacího panelu.
                     </p>
                 </div>
             </div>
 
-            <div className="p-8 bg-white/30 backdrop-blur-md rounded-[2.5rem] border border-white/50 text-slate-500 flex flex-col md:flex-row gap-8 items-center text-center md:text-left">
-                <div className="p-5 bg-white rounded-3xl shadow-sm border border-slate-100 shrink-0">
-                    <Info className="h-8 w-8 text-slate-400" />
+            <div className="p-10 glass-card rounded-[3rem] border-none shadow-xl text-olive/60 flex flex-col md:flex-row gap-10 items-center text-center md:text-left">
+                <div className="p-6 bg-olive-dark rounded-3xl shadow-2xl shrink-0">
+                    <Info className="h-10 w-10 text-lime" />
                 </div>
-                <div className="space-y-1">
-                    <h4 className="text-slate-900 font-black font-display uppercase tracking-widest text-sm italic">Systémové Info</h4>
-                    <p className="text-[10px] font-bold uppercase tracking-widest leading-loose">
+                <div className="space-y-2">
+                    <h4 className="text-olive-dark font-black font-display uppercase tracking-widest text-base italic">Systémové Info</h4>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed text-brand-muted">
                         Změny se po uložení projeví okamžitě na celém webu. Pokud dojde k neočekávané chybě synchronizace, 
                         systém se automaticky přepne do záložního režimu a načte statický obsah.
                     </p>

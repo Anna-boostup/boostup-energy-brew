@@ -46,21 +46,29 @@
     --olive-dark: 97 31% 20%;
     --olive-light: 97 31% 35%;
 
-    /* #dfdf57 - Special Lime */
-    --lime: 60 67% 61%;
-    --lime-dark: 60 67% 50%;
+    /* #C4F135 - Official BoostUp Lime */
+    --lime: 74 87% 58%;
+    --lime-dark: 74 87% 45%;
 
-    /* #aa263e - Red/Burgundy (Accent) */
-    --terracotta: 349 63% 41%;
-    --terracotta-dark: 349 63% 32%;
+    /* #3D5A2F - Official BoostUp Olive */
+    --olive: 101 31% 27%;
+    --olive-dark: 101 45% 8%; 
+    --olive-light: 101 25% 40%;
 
-    /* #f29739 - Orange */
-    --orange: 31 88% 58%;
-    --orange-dark: 31 88% 48%;
-
-    /* #f4f1e6 - Cream (Background) */
+    /* #F4F1E6 - Official BoostUp Cream */
     --cream: 47 30% 93%;
-    --cream-dark: 47 30% 88%;
+    --cream-dark: 47 25% 82%;
+    
+    /* Background for Admin (Slightly darker for contrast) */
+    --admin-bg: 47 15% 82%;
+    
+    /* Contrast Text */
+    --text-primary: 101 45% 5%;
+    --text-muted: 101 30% 25%;
+
+    /* Premium Accents */
+    --terracotta: 349 63% 41%;
+    --orange: 31 88% 58%;
 
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(48 30% 93%) 0%, hsl(48 25% 88%) 100%);
@@ -201,6 +209,30 @@
 
   .shadow-levitate {
     box-shadow: var(--shadow-levitate);
+  }
+
+  .glass-card {
+    @apply bg-white/90 backdrop-blur-2xl border border-white/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.2)];
+  }
+
+  .glass-dark {
+    @apply bg-black/60 backdrop-blur-2xl border border-white/10 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)];
+  }
+
+  .bg-admin-canvas {
+    background: radial-gradient(circle at top left, hsl(47 15% 88%), hsl(47 15% 80%));
+  }
+  
+  .text-brand-primary {
+    color: hsl(var(--text-primary));
+  }
+  
+  .text-brand-muted {
+    color: hsl(var(--text-muted));
+  }
+
+  .sidebar-premium {
+    background: linear-gradient(180deg, hsl(101 40% 12%) 0%, hsl(101 40% 8%) 100%);
   }
 }
 
