@@ -52,13 +52,25 @@ const FlavorSelector = ({
                         AKCE
                       </span>
                     )}
-                    {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
-                      <span key={label} className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/20 border border-white/10 hidden sm:inline-block">
-                        {label}
-                      </span>
-                    ))}
+                    {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => {
+                      const tagStyles = isSelected
+                        ? (flavor.id === 'lemon' ? 'text-primary border-primary/20 bg-primary/5' : 'text-white border-white/30 bg-white/10')
+                        : 'text-muted-foreground border-primary/10 bg-primary/5';
+                      
+                      return (
+                        <span 
+                          key={label} 
+                          className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full border hidden sm:inline-block transition-colors ${tagStyles}`}
+                        >
+                          {label}
+                        </span>
+                      );
+                    })}
                   </div>
-                  <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${isSelected ? (flavor.id === 'lemon' ? 'text-primary' : 'text-white') : 'text-foreground/80 font-medium'}`}>
+                  <div className={`text-xs leading-snug mt-1 text-balance min-h-[2.5em] flex items-center transition-colors ${isSelected 
+                    ? (flavor.id === 'lemon' ? 'text-primary font-medium' : 'text-white/90 font-medium') 
+                    : 'text-foreground/70 font-medium'
+                  }`}>
                     {products.find(p => p.sku === sku)?.description || content.flavors[flavor.id]?.description || flavor.description}
                   </div>
                 </div>
@@ -66,6 +78,8 @@ const FlavorSelector = ({
                   <ProductSpecsDialog
                     flavorName={content.flavors[flavor.id]?.name || flavor.name}
                     specs={content.flavors[flavor.id]?.fullSpecs}
+                    isSelected={isSelected}
+                    flavorId={flavor.id}
                   />
                 </div>
               </button>
