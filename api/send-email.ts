@@ -15,9 +15,13 @@ const COLORS = {
     white: '#ffffff'
 };
 
-const ADMIN_EMAIL = 'objednavky@drinkboostup.cz';
-const INFO_EMAIL = 'info@drinkboostup.cz';
-const BASE_URL = process.env.VITE_SITE_URL || 'https://test.drinkboostup.cz';
+// Dynamic BASE_URL detection
+const getBaseUrl = (req: VercelRequest) => {
+    const protocol = req.headers['x-forwarded-proto'] || 'https';
+    const host = req.headers['x-forwarded-host'] || req.headers.host || 'test.drinkboostup.cz';
+    const url = `${protocol}://${host}`;
+    return url.replace(/\/$/, "");
+};
 
 // Initialize Supabase Admin
 const supabaseAdmin = createClient(
@@ -36,6 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    const BASE_URL = getBaseUrl(req);
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
         console.error('RESEND_API_KEY not set');
@@ -80,7 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
 
             contentHtml = `
-                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Vítej v týmu! 🚀 Ontěříme se?</h2>
+                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Vítej v týmu! 🚀 Prověříme se?</h2>
                 <p style="margin:0 0 24px 0;font-size:16px;color:${COLORS.secondary}">Děkujeme za registraci na BoostUp Energy. Pro aktivaci tvého účtu prosím klikni na tlačítko níže.</p>
                 <div style="margin:32px 0;text-align:center">
                     <a href="${confirmationLink}" style="background:${COLORS.primary};color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px">Potvrdit e-mail</a>
@@ -250,6 +255,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     </p>
                 </div>
             `;
+            
+            // Store inquiry in the messages table
+            try {
+                await supabaseAdmin.from('messages').insert({
+                    from_email: req.body.customerEmail,
+                    from_name: customerName,
+                    subject: subject,
+                    body_text: message,
+                    body_html: contentHtml,
+                    is_read: false
+                });
+            } catch (err) {
+                console.error('Failed to store message inquiry:', err);
+            }
             break;
     }
 

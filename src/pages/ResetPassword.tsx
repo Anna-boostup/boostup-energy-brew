@@ -15,10 +15,18 @@ const ResetPassword = () => {
     const { toast } = useToast();
 
     useEffect(() => {
-        // Check if we have a session (recovery token sets an active session)
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
+        // Use onAuthStateChange to robustly detect when the recovery session is established
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log("Auth state change in ResetPassword:", event, session?.user?.id);
+            
+            if (event === 'SIGNED_IN' || session) {
+                // Session is active, user can change password
+                return;
+            }
+
+            // If we don't have a session, double check one last time before redirecting
+            const { data: { session: currentSession } } = await supabase.auth.getSession();
+            if (!currentSession) {
                 toast({
                     title: "Neplatný odkaz",
                     description: "Odkaz pro obnovu hesla je neplatný nebo jeho platnost vypršela.",
@@ -26,8 +34,9 @@ const ResetPassword = () => {
                 });
                 navigate("/login");
             }
-        };
-        checkSession();
+        });
+
+        return () => subscription.unsubscribe();
     }, [navigate, toast]);
 
     const handleReset = async (e: React.FormEvent) => {
