@@ -19,10 +19,10 @@ import {
 } from "lucide-react";
 
 /**
- * Modern Login component - Integrated Version (v7)
- * - Removed harsh white background
- * - Adjusted rounding to match dashboard (2xl instead of 2.5rem)
- * - Using glassmorphism for a lighter feel
+ * Modern Login component - Ultra Rounded Version (v8)
+ * - Increased card rounding to rounded-[4rem]
+ * - Changed inputs and buttons to rounded-full (pill shape)
+ * - Maintaining glassmorphic cream aesthetic
  */
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -160,8 +160,8 @@ const Login = () => {
     return (
         <main className="min-h-screen flex items-center justify-center bg-[hsl(var(--cream))] px-4 relative overflow-hidden">
             {/* Subtle background glow */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-olive/5 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-lime/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-olive/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-lime/5 blur-[120px] rounded-full pointer-events-none" />
 
             <Link 
                 to="/" 
@@ -172,44 +172,45 @@ const Login = () => {
             </Link>
 
             <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-[420px] z-10"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-[440px] z-10"
             >
-                <div className="bg-white/40 backdrop-blur-xl p-8 md:p-10 rounded-2xl border border-white/50 shadow-card space-y-8">
+                <div className="bg-white/40 backdrop-blur-2xl p-10 md:p-14 rounded-[4rem] border border-white/60 shadow-card space-y-10">
                     <div className="text-center space-y-3">
                         <div className="flex justify-center mb-2">
-                            <div className="w-14 h-14 bg-olive rounded-xl flex items-center justify-center shadow-button">
-                                <Zap className="w-7 h-7 text-lime" fill="currentColor" />
+                            <div className="w-16 h-16 bg-olive rounded-[2rem] flex items-center justify-center shadow-button">
+                                <Zap className="w-8 h-8 text-lime" fill="currentColor" />
                             </div>
                         </div>
-                        <h1 className="text-2xl font-black text-olive tracking-tight">PŘIHLÁŠENÍ</h1>
-                        <p className="text-olive/50 text-xs font-bold uppercase tracking-widest">drinkboostup.cz</p>
+                        <h1 className="text-3xl font-black text-olive tracking-tight">PŘIHLÁŠENÍ</h1>
+                        <p className="text-olive/40 text-[10px] font-black uppercase tracking-[0.3em]">boostup.cz</p>
                     </div>
 
                     <AnimatePresence>
                         {successMessage && (
                             <motion.div 
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                className="bg-olive/5 border border-olive/10 rounded-xl p-4 flex items-start gap-3"
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-olive/5 border border-olive/10 rounded-3xl p-5 flex items-start gap-3"
                             >
                                 <CheckCircle2 className="w-5 h-5 text-olive mt-0.5 shrink-0" />
-                                <p className="text-sm font-bold text-olive leading-snug">{successMessage}</p>
+                                <p className="text-sm font-bold text-olive leading-tight">{successMessage}</p>
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-olive/30 ml-1">Váš Email</Label>
+                    <form onSubmit={handleLogin} className="space-y-5">
+                        <div className="space-y-2">
+                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-olive/30 ml-4">Váš Email</Label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
+                                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="email"
                                     type="email"
                                     placeholder="vas@email.cz"
-                                    className="h-12 pl-12 bg-cream/30 border-none rounded-xl focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
+                                    className="h-14 pl-14 bg-cream/30 border-none rounded-full focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -217,25 +218,25 @@ const Login = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-1.5">
-                            <div className="flex items-center justify-between ml-1">
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between ml-4">
                                 <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-olive/30">Heslo</Label>
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
-                                    className="text-[9px] font-black uppercase tracking-widest text-olive/20 hover:text-olive transition-colors"
+                                    className="text-[9px] font-black uppercase tracking-widest text-olive/20 hover:text-olive transition-colors pr-2"
                                     disabled={loading}
                                 >
                                     Zapomenuto?
                                 </button>
                             </div>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
+                                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    className="h-12 pl-12 pr-12 bg-cream/30 border-none rounded-xl focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
+                                    className="h-14 pl-14 pr-12 bg-cream/30 border-none rounded-full focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -243,7 +244,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-olive/20 hover:text-olive transition-colors"
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-olive/20 hover:text-olive transition-colors"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -252,18 +253,18 @@ const Login = () => {
 
                         <Button 
                             type="submit" 
-                            className="w-full h-12 bg-olive hover:bg-olive-dark text-cream font-black text-base rounded-xl shadow-button transition-all active:scale-[0.98]" 
+                            className="w-full h-14 bg-olive hover:bg-olive-dark text-cream font-black text-lg rounded-full shadow-button transition-all active:scale-[0.98]" 
                             disabled={loading}
                         >
                             {loading ? "ČEKEJTE..." : "PŘIHLÁSIT SE"}
                         </Button>
                     </form>
 
-                    <div className="relative py-1">
+                    <div className="relative py-2">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-olive/5" />
                         </div>
-                        <div className="relative flex justify-center text-[9px] font-black tracking-[0.2em] text-olive/10">
+                        <div className="relative flex justify-center text-[10px] font-black tracking-[0.4em] text-olive/10">
                             <span className="bg-transparent px-4">NEBO</span>
                         </div>
                     </div>
@@ -271,19 +272,19 @@ const Login = () => {
                     <Button
                         type="button"
                         variant="ghost"
-                        className="w-full h-12 bg-white/50 border border-olive/5 hover:bg-olive hover:text-white rounded-xl transition-all font-bold text-xs"
+                        className="w-full h-14 bg-white/50 border border-olive/5 hover:bg-olive hover:text-white rounded-full transition-all font-bold text-xs"
                         onClick={handleMagicLink}
                         disabled={loading}
                     >
-                        <Zap className="w-3.5 h-3.5 text-lime mr-2" />
+                        <Zap className="w-4 h-4 text-lime mr-2" />
                         PŘIHLÁSIT MAGIC LINKEM
                     </Button>
 
                     <div className="text-center pt-2">
-                        <p className="text-[10px] font-bold text-olive/30 uppercase tracking-widest">
+                        <p className="text-[10px] font-bold text-olive/30 uppercase tracking-[0.2em]">
                             Nemáte účet?{" "}
                             <Link to="/register" className="text-olive font-black hover:underline underline-offset-4">
-                                Zaregistrovat
+                                ZAREGISTROVAT SE
                             </Link>
                         </p>
                     </div>

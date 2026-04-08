@@ -106,7 +106,7 @@ const AdminLayout = () => {
                                                 onClick={() => {
                                                     navigate(item.path);
                                                 }}
-                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-full transition-all ${isActive
                                                     ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
                                                     } `}
@@ -161,7 +161,7 @@ const AdminLayout = () => {
                                             href={item.path}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-800 hover:text-white group"
+                                            className="w-full flex items-center justify-between px-4 py-2.5 rounded-full transition-all text-slate-300 hover:bg-slate-800 hover:text-white group"
                                         >
                                             <div className="flex items-center gap-3">
                                                 <Icon className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
@@ -172,7 +172,7 @@ const AdminLayout = () => {
                                     ) : (
                                         <button
                                             onClick={() => navigate(item.path)}
-                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all ${isActive
+                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full transition-all ${isActive
                                                 ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                                 : "text-slate-300 hover:bg-slate-800 hover:text-white"
                                                 } `}
@@ -196,7 +196,7 @@ const AdminLayout = () => {
                 <div className="p-4 border-t border-slate-800 bg-slate-900/50 shrink-0 space-y-2">
                     <Link 
                         to="/admin/profile" 
-                        className={`px-4 py-3 flex items-center gap-3 mb-2 rounded-2xl transition-all hover:bg-slate-800 group ${location.pathname === '/admin/profile' ? 'bg-slate-800 ring-1 ring-primary/20' : ''}`}
+                        className={`px-4 py-3 flex items-center gap-3 mb-2 rounded-full transition-all hover:bg-slate-800 group ${location.pathname === '/admin/profile' ? 'bg-slate-800 ring-1 ring-primary/20' : ''}`}
                     >
                         <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-primary border border-slate-700 font-bold text-sm uppercase group-hover:scale-105 transition-transform">
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
