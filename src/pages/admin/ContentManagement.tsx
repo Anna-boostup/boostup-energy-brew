@@ -386,14 +386,14 @@ const ContentManagement = () => {
                                 <div key={key} className="space-y-8 p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative group overflow-hidden">
                                     <div className={`absolute top-0 right-0 w-32 h-32 opacity-5 translate-x-12 -translate-y-12 rounded-full transition-transform duration-700 group-hover:scale-150 ${
                                         key === 'stimulants' ? 'bg-primary' :
-                                        key === 'electrolytes' ? 'bg-blue-400' :
+                                        key === 'electrolytes' ? 'bg-[#dfdf57]' :
                                         key === 'adaptogens' ? 'bg-orange-500' :
                                         'bg-orange-500'
                                     }`} />
                                     <div className="flex items-center gap-4">
                                         <div className={`w-4 h-4 rounded-full shadow-lg ${
                                             key === 'stimulants' ? 'bg-primary' :
-                                            key === 'electrolytes' ? 'bg-blue-400' :
+                                            key === 'electrolytes' ? 'bg-[#dfdf57]' :
                                             key === 'adaptogens' ? 'bg-orange-500' :
                                             'bg-orange-500'
                                         }`} />

@@ -61,7 +61,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     <Badge
                         className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
-                                order.status === 'processing' ? 'bg-indigo-600 text-white' :
+                                order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
                                     order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
                                         'bg-lime/20 text-olive-dark'
                         }`}
@@ -263,7 +263,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                             <Button
                                                 size="sm"
                                                 onClick={() => onStatusChange(order.id, 'processing')}
-                                                className="h-10 w-10 p-0 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-600/20"
+                                                className="h-10 w-10 p-0 bg-[#3d5a2f] text-white hover:bg-[#2d4422] rounded-xl shadow-lg shadow-[#3d5a2f]/20"
                                                 title="Označit jako rozpracované"
                                             >
                                                 <Clock className="w-5 h-5" />
