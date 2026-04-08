@@ -59,6 +59,23 @@ const StripeExpressButtons = () => {
       try {
         const { paymentMethod, shippingAddress, payerName, payerEmail } = ev;
         
+        // Helper to parse address line into street and house number
+        const parseAddressLine = (line: string) => {
+          if (!line) return { street: '', houseNumber: '' };
+          // Look for number at the end: "Smetanova 123", "U Lesa 10/2", "Náměstí 5a"
+          const match = line.match(/^(.*?)\s*(\d+[\/\w]*)$/);
+          if (match) {
+            return { street: match[1].trim(), houseNumber: match[2].trim() };
+          }
+          return { street: line.trim(), houseNumber: '' };
+        };
+
+        const { street, houseNumber } = parseAddressLine(shippingAddress?.addressLine?.[0] || '');
+        const fullName = payerName || shippingAddress?.recipient || 'Express Customer';
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0] || 'Express';
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'Customer';
+
         // 1. Create orderNumber
         const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`;
 
@@ -67,15 +84,15 @@ const StripeExpressButtons = () => {
           id: orderNumber,
           date: new Date().toISOString(),
           customer: {
-            name: payerName || shippingAddress?.recipient || 'Express Customer',
+            name: fullName,
             email: payerEmail || 'guest@drinkboostup.cz',
           },
           delivery_info: {
-            firstName: (payerName || '').split(' ')[0] || 'Express',
-            lastName: (payerName || '').split(' ').slice(1).join(' ') || 'Customer',
+            firstName,
+            lastName,
             phone: ev.shippingAddress?.phone || '',
-            street: shippingAddress?.addressLine?.[0] || '',
-            houseNumber: '', // Potentially in addressLine
+            street,
+            houseNumber,
             city: shippingAddress?.city || '',
             zip: shippingAddress?.postalCode || '',
             deliveryMethod: 'courier',

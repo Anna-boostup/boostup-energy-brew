@@ -55,9 +55,21 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/30">{new Date(order.date).toLocaleString('cs-CZ')}</p>
                 </div>
                 <div className="flex flex-col gap-3 items-end">
-                    <Badge className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${order.status === 'pending' ? 'bg-orange-500/10 text-orange-600' : 'bg-lime text-olive-dark'}`}>
-                        {order.status === 'pending' ? 'ČEKÁ' : 'ZAPLACENO'}
-                    </Badge>
+                    <div className="flex flex-col gap-1 items-end">
+                        <Badge className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                            order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                            order.status === 'pending' ? 'bg-red-500/10 text-red-600' : 
+                            'bg-lime text-olive-dark'
+                        }`}>
+                            {order.status === 'cancelled' ? 'STORNO' :
+                             order.status === 'pending' ? 'NEZAPLACENO' : 'ZAPLACENO'}
+                        </Badge>
+                        <span className="text-[8px] font-black text-olive/40 uppercase tracking-widest mt-0.5 pr-1">
+                            {order.delivery_info?.paymentMethod === 'transfer_manual' ? 'Bankovním převodem' :
+                             order.delivery_info?.paymentMethod === 'stripe_express' ? 'Apple/Google Pay' :
+                             order.delivery_info?.paymentMethod || 'Platební metoda'}
+                        </span>
+                    </div>
                     <Badge
                         className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
@@ -177,6 +189,8 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                         <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8">ZÁKAZNÍK</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right w-[15%]">POLOŽKY</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right">ČÁSTKA</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">PLATBA</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">METODA</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">STATUS</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right pr-8">AKCE</TableHead>
                     </TableRow>
@@ -237,6 +251,25 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <span className="font-display font-black text-lg text-olive-dark">{(order.total || 0).toLocaleString('cs-CZ')} <span className="text-[10px] text-olive/20 tracking-normal">CZK</span></span>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <Badge 
+                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                            order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                                            order.status === 'pending' ? 'bg-red-500/10 text-red-600' : 
+                                            'bg-lime text-olive-dark'
+                                        }`}
+                                    >
+                                        {order.status === 'cancelled' ? 'STORNO' :
+                                         order.status === 'pending' ? 'NEZAPLACENO' : 'ZAPLACENO'}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <span className="text-[10px] font-black text-olive/60 uppercase tracking-widest">
+                                        {order.delivery_info?.paymentMethod === 'transfer_manual' ? 'PŘEVOD' :
+                                         order.delivery_info?.paymentMethod === 'stripe_express' ? 'APPLE/GOOGLE' :
+                                         order.delivery_info?.paymentMethod?.toUpperCase() || 'NEZNÁMÁ'}
+                                    </span>
                                 </TableCell>
                                 <TableCell className="text-right pr-8">
                                     <div className="flex justify-end gap-2">
