@@ -111,15 +111,19 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const inventorySubscription = supabase
             .channel('inventory_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload) => {
-                const updatedItem = payload.new as Product;
-                setStock(prev => ({ ...prev, [updatedItem.sku]: updatedItem.quantity }));
-                setProducts(prev => {
-                    const exists = prev.find(p => p.sku === updatedItem.sku);
-                    if (exists) {
-                        return prev.map(p => p.sku === updatedItem.sku ? updatedItem : p);
+                const updatedItem = payload.new as Partial<Product>;
+                if (updatedItem.sku) {
+                    if (updatedItem.quantity !== undefined) {
+                        setStock(prev => ({ ...prev, [updatedItem.sku!]: updatedItem.quantity! }));
                     }
-                    return [...prev, updatedItem];
-                });
+                    setProducts(prev => {
+                        const existing = prev.find(p => p.sku === updatedItem.sku);
+                        if (existing) {
+                            return prev.map(p => p.sku === updatedItem.sku ? { ...existing, ...updatedItem } : p);
+                        }
+                        return [...prev, updatedItem as Product];
+                    });
+                }
             })
             .subscribe();
 
@@ -372,6 +376,20 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const updateProduct = async (sku: string, updates: Partial<Product>) => {
+        // 1. Optimistic Update
+        let previousProduct: Product | undefined;
+        setProducts(prev => {
+            const index = prev.findIndex(p => p.sku === sku);
+            if (index !== -1) {
+                previousProduct = prev[index];
+                const updated = [...prev];
+                updated[index] = { ...previousProduct, ...updates };
+                return updated;
+            }
+            return prev;
+        });
+
+        // 2. Perform DB Update
         const { error } = await supabase
             .from('inventory')
             .update(updates)
@@ -379,6 +397,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (error) {
             console.error('Error updating product:', error);
+            // 3. Rollback on failure
+            if (previousProduct) {
+                setProducts(prev => prev.map(p => p.sku === sku ? previousProduct! : p));
+            }
             throw error;
         }
     };

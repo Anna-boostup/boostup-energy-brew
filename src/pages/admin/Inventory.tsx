@@ -65,10 +65,10 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
             <span className="text-[10px] font-black text-olive/40 uppercase tracking-[0.2em]">Aktivní prodej</span>
             <Switch
                 checked={product?.is_active !== false}
-                onCheckedChange={async () => {
-                   if (product) onEdit();
+                onCheckedChange={async (checked) => {
+                   if (product) await updateProduct(product.sku, { is_active: checked });
                 }}
-                className="data-[state=checked]:bg-lime"
+                className="data-[state=checked]:bg-lime shadow-lg shadow-lime/10"
             />
         </div>
 
