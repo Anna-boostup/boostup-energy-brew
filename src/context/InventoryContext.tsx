@@ -135,32 +135,26 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             })
             .subscribe();
 
+        const mapDbOrderToOrder = (o: any): Order => ({
+            ...o,
+            date: o.created_at || o.date,
+            customer: {
+                name: o.customer_name,
+                email: o.customer_email
+            },
+            packeta_barcode: o.packeta_barcode,
+            packeta_packet_id: o.packeta_packet_id,
+        });
+
         const ordersSubscription = supabase
             .channel('orders_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
                 if (payload.eventType === 'INSERT') {
-                    const newOrder = payload.new as any;
+                    const newOrder = mapDbOrderToOrder(payload.new);
                     setOrders(prev => [newOrder, ...prev]);
-
-                    /* 
-                    // Trigger browser notification for new orders (Disabled per user request)
-                    if (typeof window !== 'undefined' && Notification.permission === 'granted') {
-                        const amount = newOrder.total;
-                        const customer = newOrder.customer_name || 'Zákazník';
-                        
-                        new Notification('Nová objednávka! ⚡', {
-                            body: `Částka: ${amount} Kč | Od: ${customer}`,
-                            icon: '/logo.png'
-                        });
-
-                        try {
-                            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                            audio.play().catch(() => {});
-                        } catch (e) {}
-                    }
-                    */
                 } else if (payload.eventType === 'UPDATE') {
-                    setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+                    const updated = mapDbOrderToOrder(payload.new);
+                    setOrders(prev => prev.map(o => o.id === updated.id ? { ...o, ...updated } : o));
                 }
             })
             .subscribe();

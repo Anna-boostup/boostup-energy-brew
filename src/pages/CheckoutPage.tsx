@@ -333,7 +333,7 @@ const CheckoutPage = () => {
         id: orderNumber,
         date: new Date().toISOString(),
         customer: {
-          name: `${formData.firstName} ${formData.lastName}`,
+          name: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || formData.email,
           email: formData.email,
         },
         delivery_info: {
