@@ -291,6 +291,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 </table>
                 <p style="margin:0;font-size:14px;color:${COLORS.secondary}">Hned jak zásilku předáme dopravci, pošleme ti e-mail se sledovacím číslem.</p>
             `;
+
+            // Store order confirmation in the messages table
+            try {
+                const messageBody = `Nová objednávka ${orderNumber}.\nZákazník: ${customerName} (${to})\nCelkem: ${total} Kč\nPoložky:\n${items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n')}`;
+                
+                await supabaseAdmin.from('messages').insert({
+                    from_email: to,
+                    from_name: customerName,
+                    subject: subject,
+                    body_text: messageBody,
+                    body_html: contentHtml,
+                    is_read: false,
+                    metadata: { type: 'order_confirmation', orderNumber, total }
+                });
+            } catch (err) {
+                console.error('Failed to store order message:', err);
+            }
             break;
         }
 
