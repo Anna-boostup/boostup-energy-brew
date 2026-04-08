@@ -17,56 +17,36 @@ const COLORS = {
 
 // Hardened BASE_URL detection
 const getBaseUrl = (req: VercelRequest) => {
-    // 0. Aggressive logging for debugging host issues
-    console.log('--- API DEBUG: getBaseUrl ---');
-    console.log('Headers:', JSON.stringify({
-        host: req.headers.host,
-        'x-forwarded-host': req.headers['x-forwarded-host'],
-        'x-forwarded-proto': req.headers['x-forwarded-proto'],
-        origin: req.headers.origin,
-        referer: req.headers.referer
-    }, null, 2));
-
     // 1. Check x-forwarded-host (most reliable on Vercel)
     const host = req.headers['x-forwarded-host'] || req.headers.host || '';
     const origin = req.headers.origin || '';
     const protocol = req.headers['x-forwarded-proto'] || 'https';
 
     // 2. Explicit mapping for our environments to avoid any ambiguity
-    // We check both 'host' and 'origin' headers
     if (host.includes('test.drinkboostup.cz') || origin.includes('test.drinkboostup.cz')) {
-        console.log('Detected environment: TEST');
         return 'https://test.drinkboostup.cz';
     }
     if ((host.includes('drinkboostup.cz') && !host.includes('test.')) || 
         (origin.includes('drinkboostup.cz') && !origin.includes('test.'))) {
-        console.log('Detected environment: PRODUCTION');
         return 'https://drinkboostup.cz';
     }
 
     // 3. Detected host from headers (if not our main domains)
     if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
-        const detected = `${protocol}://${host}`.replace(/\/$/, "");
-        console.log('Detected environment via host header:', detected);
-        return detected;
+        return `${protocol}://${host}`.replace(/\/$/, "");
     }
 
     // 4. Explicit site URL from environment
     if (process.env.VITE_SITE_URL && !process.env.VITE_SITE_URL.includes('localhost')) {
-        const envUrl = process.env.VITE_SITE_URL.replace(/\/$/, "");
-        console.log('Detected environment via VITE_SITE_URL:', envUrl);
-        return envUrl;
+        return process.env.VITE_SITE_URL.replace(/\/$/, "");
     }
 
     // 5. Fallback for localhost development
     if (host.includes('localhost') || host.includes('127.0.0.1')) {
-        const local = `${protocol}://${host}`.replace(/\/$/, "");
-        console.log('Detected environment: LOCALHOST', local);
-        return local;
+        return `${protocol}://${host}`.replace(/\/$/, "");
     }
 
     // 6. Final fallback
-    console.log('Final Fallback: https://drinkboostup.cz');
     return 'https://drinkboostup.cz';
 };
 
@@ -160,8 +140,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (!resetLink && to) {
                 try {
                     const redirectTo = `${BASE_URL}/reset-password`;
-                    console.log('Generating link (recovery) with redirectTo:', redirectTo);
-                    
                     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
                         type: 'recovery',
                         email: to,
@@ -200,11 +178,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             if (!magicLink && to) {
                 try {
-                    console.log('Generating link (magiclink) with redirectTo:', BASE_URL);
+                    const redirectTo = `${BASE_URL}/account/profile`;
                     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
                         type: 'magiclink',
                         email: to,
-                        options: { redirectTo: BASE_URL }
+                        options: { redirectTo }
                     });
                     if (linkError) {
                         console.error('Supabase generateLink error (magiclink):', linkError);
