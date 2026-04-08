@@ -254,9 +254,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         console.warn("[Inventory] RPC failed, trying direct fallback:", rpcError);
 
         // 2. FALLBACK: Přímý update tabulky inventory
-        const currentQty = stock[sku] || 0;
-        const newQty = currentQty + amount;
-
+        
+        
         const { error: updateError } = await supabase
             .from('inventory')
             .update({ quantity: newQty })
