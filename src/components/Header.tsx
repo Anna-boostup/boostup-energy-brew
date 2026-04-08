@@ -30,9 +30,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const { content: SITE_CONTENT } = useContent();
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+    <header className={`fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300 ${
       isMenuOpen 
-        ? 'bg-background border-border shadow-lg max-h-screen overflow-y-auto' 
+        ? 'bg-background border-border h-screen overflow-y-auto' 
         : 'bg-background/95 backdrop-blur-sm border-border/50'
     }`}>
       <div className="container mx-auto px-4 py-4">
