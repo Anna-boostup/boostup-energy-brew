@@ -831,7 +831,7 @@ const CheckoutPage = () => {
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
                     {!selectedPoint ? (
                       <PacketaWidget 
-                        onSelect={(point: any) => { 
+                        onPointSelected={(point: any) => { 
                           setSelectedPoint(point); 
                           setFormData(prev => ({ ...prev, packetaPointId: point.id })); 
                         }} 
