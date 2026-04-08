@@ -17,20 +17,34 @@ const COLORS = {
 
 // Hardened BASE_URL detection
 const getBaseUrl = (req: VercelRequest) => {
-    // 1. Detected host from headers (This is most reliable for identifying current env)
+    // 1. Check x-forwarded-host (most reliable on Vercel)
+    const host = req.headers['x-forwarded-host'] || req.headers.host || '';
     const protocol = req.headers['x-forwarded-proto'] || 'https';
-    const host = req.headers['x-forwarded-host'] || req.headers.host;
-    
-    if (host && !host.includes('localhost')) {
+
+    // 2. Explicit mapping for our environments to avoid any ambiguity
+    if (host.includes('test.drinkboostup.cz')) {
+        return 'https://test.drinkboostup.cz';
+    }
+    if (host.includes('drinkboostup.cz') && !host.includes('test.')) {
+        return 'https://drinkboostup.cz';
+    }
+
+    // 3. Detected host from headers (if not our main domains)
+    if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
         return `${protocol}://${host}`.replace(/\/$/, "");
     }
 
-    // 2. Explicit site URL from environment (Backup/Overrides)
+    // 4. Explicit site URL from environment
     if (process.env.VITE_SITE_URL && !process.env.VITE_SITE_URL.includes('localhost')) {
         return process.env.VITE_SITE_URL.replace(/\/$/, "");
     }
 
-    // 3. Fallback: Always default to the known production domain
+    // 5. Fallback for localhost development
+    if (host.includes('localhost') || host.includes('127.0.0.1')) {
+        return `${protocol}://${host}`.replace(/\/$/, "");
+    }
+
+    // 6. Final fallback
     return 'https://drinkboostup.cz';
 };
 
@@ -86,13 +100,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             let confirmationLink = req.body.confirmationLink;
 
             if (!confirmationLink && to) {
-                const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-                    type: 'signup',
-                    email: to,
-                    options: { redirectTo: `${BASE_URL}/login` }
-                });
-                if (linkError) throw linkError;
-                confirmationLink = linkData.properties.action_link;
+                try {
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: 'signup',
+                        email: to,
+                        options: { redirectTo: `${BASE_URL}/login` }
+                    });
+                    if (linkError) {
+                        console.error('Supabase generateLink error (signup):', linkError);
+                        throw linkError;
+                    }
+                    confirmationLink = linkData.properties.action_link;
+                } catch (err: any) {
+                    console.error('Failed to generate signup link:', err);
+                    return res.status(500).json({ 
+                        error: 'Failed to generate signup link',
+                        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                    });
+                }
             }
 
             contentHtml = `
@@ -111,13 +136,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             let resetLink = req.body.resetLink;
 
             if (!resetLink && to) {
-                const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-                    type: 'recovery',
-                    email: to,
-                    options: { redirectTo: `${BASE_URL}/reset-password` }
-                });
-                if (linkError) throw linkError;
-                resetLink = linkData.properties.action_link;
+                try {
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: 'recovery',
+                        email: to,
+                        options: { redirectTo: `${BASE_URL}/reset-password` }
+                    });
+                    
+                    if (linkError) {
+                        console.error('Supabase generateLink error (recovery):', linkError);
+                        // If linkError is specifically "User not found", we might want to mask it or handle it
+                        throw linkError;
+                    }
+                    resetLink = linkData.properties.action_link;
+                } catch (err: any) {
+                    console.error('Failed to generate reset link:', err);
+                    return res.status(500).json({ 
+                        error: 'Failed to generate reset link',
+                        details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+                    });
+                }
             }
 
             contentHtml = `
@@ -136,13 +174,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             let magicLink = req.body.magicLink;
 
             if (!magicLink && to) {
-                const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-                    type: 'magiclink',
-                    email: to,
-                    options: { redirectTo: BASE_URL }
-                });
-                if (linkError) throw linkError;
-                magicLink = linkData.properties.action_link;
+                try {
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: 'magiclink',
+                        email: to,
+                        options: { redirectTo: BASE_URL }
+                    });
+                    if (linkError) {
+                        console.error('Supabase generateLink error (magiclink):', linkError);
+                        throw linkError;
+                    }
+                    magicLink = linkData.properties.action_link;
+                } catch (err: any) {
+                    console.error('Failed to generate magic link:', err);
+                    return res.status(500).json({ 
+                        error: 'Failed to generate magic link',
+                        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                    });
+                }
             }
 
             contentHtml = `
