@@ -91,34 +91,41 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 
-                {/* Sales Toggle Control */}
-                <div className={`group flex items-center gap-6 p-2 pl-8 pr-2 rounded-[3rem] border transition-all duration-500 hover:scale-[1.02] ${isSalesEnabled ? 'bg-white border-white shadow-2xl shadow-lime/10' : 'bg-red-50 border-red-100 shadow-xl shadow-red-200/10'}`}>
+
+                {/* Sales Toggle Control — výrazný status e-shopu */}
+                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    isSalesEnabled
+                    ? 'bg-lime border-lime shadow-xl shadow-lime/20'
+                    : 'bg-terracotta border-terracotta shadow-xl shadow-terracotta/20'
+                }`}>
                     <div className="flex flex-col">
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className={`w-1.5 h-1.5 rounded-full ${isSalesEnabled ? 'bg-lime animate-pulse' : 'bg-red-500'}`} />
-                            <Label htmlFor="sales-toggle" className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/30 leading-none">
-                                Status E-shopu
-                            </Label>
-                        </div>
-                        <span className={`text-md font-black uppercase tracking-tighter leading-none ${isSalesEnabled ? 'text-olive-dark' : 'text-red-700'}`}>
-                            {isSalesEnabled ? 'PRODEJ AKTIVNÍ' : 'POZASTAVENO'}
+                        <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
+                            isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
+                        }`}>Stav e-shopu</span>
+                        <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
+                            isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                        }`}>
+                            {isSalesEnabled ? '✓ PRODEJ AKTIVNÍ' : '⏸ POZASTAVENO'}
                         </span>
                     </div>
-                    <div className="flex items-center gap-2 bg-olive-dark p-1.5 rounded-[2.5rem] shadow-inner">
+                    <div className={`flex items-center p-1.5 rounded-[1.5rem] shadow-inner ${
+                        isSalesEnabled ? 'bg-olive-dark/20' : 'bg-cream/20'
+                    }`}>
                         {isUpdating ? (
-                            <div className="px-6 py-2">
-                                <Loader2 className="w-5 h-5 animate-spin text-lime" />
+                            <div className="px-5 py-2">
+                                <Loader2 className={`w-5 h-5 animate-spin ${
+                                    isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                                }`} />
                             </div>
                         ) : (
-                            <div className="flex items-center gap-4 px-4 py-2">
-                                <Switch 
+                            <div className="flex items-center gap-3 px-3 py-2">
+                                <Switch
                                     id="sales-toggle"
                                     checked={isSalesEnabled}
                                     onCheckedChange={toggleSales}
                                     disabled={isUpdating}
-                                    className="data-[state=checked]:bg-lime data-[state=unchecked]:bg-red-500/20 h-6 w-11"
+                                    className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-cream/30 h-7 w-12"
                                 />
-                                <Power className={`w-4 h-4 transition-colors duration-300 ${isSalesEnabled ? 'text-lime' : 'text-red-500/40'}`} />
                             </div>
                         )}
                     </div>
@@ -231,9 +238,14 @@ const AdminDashboard = () => {
                                 <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Žádné aktivní objednávky</p>
                             </div>
                         ) : (
-                            <div className="divide-y divide-olive/5">
-                                {orders.slice(0, 10).map((order) => (
-                                    <div key={order.id} className="flex flex-col xl:flex-row xl:items-center justify-between p-8 sm:p-10 hover:bg-white transition-all duration-500 gap-8 group">
+                            <div className="divide-y-2 divide-olive/8">
+                                {orders.slice(0, 10).map((order, index) => (
+                                    <div
+                                        key={order.id}
+                                        className={`flex flex-col xl:flex-row xl:items-center justify-between p-8 sm:p-10 transition-all duration-300 gap-8 group hover:bg-white/80 ${
+                                            index % 2 === 0 ? 'bg-white/30' : 'bg-cream/60'
+                                        }`}
+                                    >
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-4 mb-4">
                                                 <span className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1.5 rounded-xl tracking-tighter uppercase whitespace-nowrap shadow-xl shadow-olive-dark/10">
