@@ -232,7 +232,8 @@ const sections: Section[] = [
             {
                 label: "Tlačítko 'Resetovat'",
                 description: "Vrátí všechny neuložené změny na stav posledního uložení."
-            }
+            },
+            {
                 label: "Webmail (Forpsi)",
                 description: "V levém menu najdete rychlý odkaz 'E-maily (Webmail)', který vás přesměruje přímo do rozhraní Forpsi."
             },

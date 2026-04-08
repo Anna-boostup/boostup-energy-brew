@@ -396,6 +396,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                 ))
             )}
         </div>
+    </>
     );
 };
 
