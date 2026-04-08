@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoostUp - Přehled Emailových Šablon</title>
+    <style>
+        :root {
+            --olive: #3d4a3e;
+            --lime: #d4ff00;
+            --cream: #f9fbf2;
+            --terracotta: #cc7e5c;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream);
+            color: var(--olive);
+            margin: 0;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin: 0;
+            font-style: italic;
+        }
+        .template-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(61, 74, 62, 0.05);
+            border: 1px solid rgba(61, 74, 62, 0.05);
+        }
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--cream);
+            padding-bottom: 15px;
+        }
+        .template-title {
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+        }
+        .badge {
+            background: var(--lime);
+            color: var(--olive);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        .meta {
+            font-size: 0.8rem;
+            color: rgba(61, 74, 62, 0.6);
+            margin-bottom: 20px;
+        }
+        .preview-box {
+            background: #fdfdfd;
+            border: 1px dashed rgba(61, 74, 62, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            position: relative;
+        }
+        .preview-label {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: white;
+            padding: 0 10px;
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .btn {
+            display: inline-block;
+            background: var(--olive);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <p style="font-weight: 900; text-transform: uppercase; letter-spacing: 5px; font-size: 10px; opacity: 0.4;">System Communication</p>
+            <h1>Email Overview</h1>
+            <div style="width: 50px; h-1px; background: var(--lime); margin: 20px auto; height: 4px;"></div>
+        </div>
+
+        <!-- Order Confirmation -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Potvrzení objednávky</span>
+                <span class="badge">order_confirmation</span>
+            </div>
+            <div class="meta">
+                <strong>Odesílatel:</strong> objednavky@drinkboostup.cz <br>
+                <strong>Příjemce:</strong> Zákazník + BCC objednavky@drinkboostup.cz
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah (Abstrakt)</span>
+                <p>Díky za objednávku! 👋 Máme pro Vás potvrzení č. <strong>#{{orderNumber}}</strong>. Na Vaší zásilce už usilovně pracujeme a jakmile ji předáme kurýrovi, dáme Vám vědět. </p>
+                <p><em>[Zde následuje tabulka produktů a celková cena]</em></p>
+            </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Odeslání zásilky</span>
+                <span class="badge">shipping</span>
+            </div>
+            <div class="meta">
+                <strong>Odesílatel:</strong> objednavky@drinkboostup.cz <br>
+                <strong>Příjemce:</strong> Zákazník
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah (Abstrakt)</span>
+                <p>Vaše plechovky jsou na cestě! 🚀 Vaše objednávka č. <strong>#{{orderNumber}}</strong> byla právě odeslána. Sledovat balíček můžete pod tímto číslem: <strong>{{trackingNumber}}</strong>.</p>
+                <a href="#" class="btn shadow">Sledovat zásilku</a>
+            </div>
+        </div>
+
+        <!-- Contact inquiry -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Nová zpráva (pro admina)</span>
+                <span class="badge">contact_inquiry</span>
+            </div>
+            <div class="meta">
+                <strong>Příjemce:</strong> info@drinkboostup.cz (BCC kopie)
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah</span>
+                <p>Zákazník <strong>{{customerName}}</strong> poslal nový dotaz. <br><br> <em>"{{message}}"</em></p>
+            </div>
+        </div>
+
+        <!-- Contact Auto Reply -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Potvrzení přijetí dotazu</span>
+                <span class="badge">contact_auto_reply</span>
+            </div>
+            <div class="meta">
+                <strong>Odesílatel:</strong> info@drinkboostup.cz
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah</span>
+                <p>Ahoj, dostali jsme Vaši zprávu! ✉️ Náš kolega se na ni podívá a ozve se Vám během pár hodin. Mezitím se můžete podívat na náš Instagram.</p>
+                <a href="#" class="btn" style="background: var(--terracotta);">Náš Instagram</a>
+            </div>
+        </div>
+
+        <!-- Registration -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Uvítání nového uživatele</span>
+                <span class="badge">registration</span>
+            </div>
+            <div class="meta">
+                <strong>Odesílatel:</strong> objednavky@drinkboostup.cz
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah</span>
+                <p>Vítejte v týmu BoostUp! ⚡️ Jsme nadšení, že jste se k nám přidali. Jako registrovaný člen máte přístup k historii svých objednávek a rychlejšímu nákupu.</p>
+                <a href="#" class="btn shadow">Přejít na můj profil</a>
+            </div>
+        </div>
+
+        <!-- Password Reset -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Resetování hesla</span>
+                <span class="badge">reset_password</span>
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah</span>
+                <p>Zapomenuté heslo? To se stane každému. Klikněte na tlačítko níže a nastavte si nové. Odkaz platí pouze 24 hodin.</p>
+                <a href="#" class="btn">Nastavit nové heslo</a>
+            </div>
+        </div>
+
+        <!-- Magic Link -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Rychlé přihlášení (Magic Link)</span>
+                <span class="badge">magic_link</span>
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah</span>
+                <p>Klikněte na tlačítko níže a budete okamžitě přihlášeni do svého účtu BoostUp. Nikdo jiný by tento odkaz neměl vidět.</p>
+                <a href="#" class="btn" style="background: var(--lime); color: var(--olive);">Vstoupit do účtu</a>
+            </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="template-card">
+            <div class="template-header">
+                <span class="template-title">Přihlášení k newsletteru</span>
+                <span class="badge">newsletter_signup</span>
+            </div>
+            <div class="meta">
+                <strong>Příjemce:</strong> info@drinkboostup.cz (Upozornění pro admina)
+            </div>
+            <div class="preview-box">
+                <span class="preview-label">Obsah</span>
+                <p>Máte nového odběratele! 📧 Uživatel s emailem <strong>{{subscriberEmail}}</strong> se právě přihlásil k odběru novinek na webu BoostUp.</p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

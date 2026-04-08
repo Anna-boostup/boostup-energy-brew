@@ -22,9 +22,19 @@ import {
     Search,
     RefreshCw,
     Zap,
-    Key
+    Key,
+    Plus
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface EmailTemplate {
     id: string;
@@ -34,7 +44,7 @@ interface EmailTemplate {
     updated_at: string;
 }
 
-const TEMPLATE_TYPES = [
+const SYSTEM_TEMPLATES = [
     { id: 'order_confirmation', label: 'Potvrzení objednávky', icon: Database },
     { id: 'shipping', label: 'Odeslání zásilky', icon: Send },
     { id: 'contact_auto_reply', label: 'Automatická odpověď kontaktu', icon: Mail },
@@ -48,11 +58,17 @@ const TEMPLATE_TYPES = [
 const EmailManagement = () => {
     const { user } = useAuth();
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
-    const [selectedTypeId, setSelectedTypeId] = useState<string>(TEMPLATE_TYPES[0].id);
+    const [templateTypes, setTemplateTypes] = useState(SYSTEM_TEMPLATES);
+    const [selectedTypeId, setSelectedTypeId] = useState<string>(SYSTEM_TEMPLATES[0].id);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [sendingTest, setSendingTest] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+
+    // New template dialog state
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [newId, setNewId] = useState('');
+    const [newLabel, setNewLabel] = useState('');
 
     // Local form state
     const [currentSubject, setCurrentSubject] = useState('');
@@ -70,16 +86,26 @@ const EmailManagement = () => {
                 .select('*');
             
             if (error) throw error;
-            setTemplates(data || []);
+            const dbData = data || [];
+            setTemplates(dbData);
             
+            // Merge system templates with custom ones found in DB
+            const customTypes = dbData
+                .filter(dbT => !SYSTEM_TEMPLATES.some(sysT => sysT.id === dbT.id))
+                .map(dbT => ({
+                    id: dbT.id,
+                    label: dbT.id.toUpperCase().replace(/_/g, ' '),
+                    icon: Mail,
+                    isCustom: true
+                }));
+            
+            setTemplateTypes([...SYSTEM_TEMPLATES, ...customTypes]);
+
             // Set initial form values for the selected type if template exists
-            const existing = (data || []).find(t => t.id === selectedTypeId);
+            const existing = dbData.find(t => t.id === selectedTypeId);
             if (existing) {
                 setCurrentSubject(existing.subject);
                 setCurrentContent(existing.content_html);
-            } else {
-                setCurrentSubject('');
-                setCurrentContent('');
             }
         } catch (err: any) {
             console.error('Error fetching templates:', err);
@@ -92,13 +118,53 @@ const EmailManagement = () => {
     useEffect(() => {
         const existing = templates.find(t => t.id === selectedTypeId);
         if (existing) {
-            setCurrentSubject(existing.subject);
-            setCurrentContent(existing.content_html);
+            setCurrentSubject(existing.subject || '');
+            setCurrentContent(existing.content_html || '');
         } else {
+            // Find if it's a known system template we haven't overridden yet
             setCurrentSubject('');
             setCurrentContent('');
         }
     }, [selectedTypeId, templates]);
+
+    const handleCreateTemplate = async () => {
+        if (!newId.trim()) {
+            toast.error("ID šablony je povinné");
+            return;
+        }
+
+        const sanitizedId = newId.trim().toLowerCase().replace(/\s+/g, '_');
+        
+        if (templateTypes.some(t => t.id === sanitizedId)) {
+            toast.error("Šablona s tímto ID již existuje");
+            return;
+        }
+
+        try {
+            setSaving(true);
+            const { error } = await supabase
+                .from('email_templates')
+                .insert({
+                    id: sanitizedId,
+                    subject: 'Nový e-mail',
+                    content_html: '<p>Tady začněte psát svůj e-mail...</p>',
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+            
+            toast.success("Nová šablona byla vytvořena");
+            setIsCreateOpen(false);
+            setNewId('');
+            setNewLabel('');
+            await fetchTemplates();
+            setSelectedTypeId(sanitizedId);
+        } catch (err: any) {
+            toast.error("Chyba při vytváření: " + err.message);
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const handleSave = async () => {
         if (!currentSubject.trim() || !currentContent.trim()) {
@@ -163,8 +229,8 @@ const EmailManagement = () => {
         }
     };
 
-    const selectedType = TEMPLATE_TYPES.find(t => t.id === selectedTypeId);
-    const filteredTypes = TEMPLATE_TYPES.filter(t => 
+    const selectedType = templateTypes.find(t => t.id === selectedTypeId);
+    const filteredTypes = templateTypes.filter(t => 
         t.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
         t.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -233,14 +299,51 @@ const EmailManagement = () => {
                             <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">Systémové Emaily</CardTitle>
                             <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Vyberte šablonu k úpravě</CardDescription>
                             
-                            <div className="relative mt-6">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
-                                <Input 
-                                    placeholder="Hledat šablonu..." 
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="bg-white/5 border-white/10 rounded-xl pl-12 h-12 text-sm text-white focus-visible:ring-lime"
-                                />
+                            <div className="flex items-center justify-between gap-4 mt-6">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
+                                    <Input 
+                                        placeholder="Hledat šablonu..." 
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="bg-white/5 border-white/10 rounded-xl pl-12 h-12 text-sm text-white focus-visible:ring-lime"
+                                    />
+                                </div>
+                                <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button className="h-12 w-12 rounded-xl bg-lime text-olive-dark hover:scale-105 transition-all p-0 shadow-lg shadow-lime/20">
+                                            <Plus className="w-6 h-6" />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="bg-olive-dark border-white/10 text-white rounded-[2rem]">
+                                        <DialogHeader>
+                                            <DialogTitle className="text-2xl font-black uppercase italic italic tracking-tight">Vytvořit nový e-mail</DialogTitle>
+                                            <DialogDescription className="text-white/40 font-bold uppercase text-[10px] tracking-widest mt-2">
+                                                Definujte ID šablony pro systémové použití.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="space-y-6 py-4">
+                                            <div className="space-y-2">
+                                                <Label className="text-[10px] font-black uppercase tracking-widest text-white/40">Unikátní ID (např. leto_akce)</Label>
+                                                <Input 
+                                                    value={newId}
+                                                    onChange={(e) => setNewId(e.target.value)}
+                                                    placeholder="bez mezer a diakritiky"
+                                                    className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold"
+                                                />
+                                            </div>
+                                        </div>
+                                        <DialogFooter>
+                                            <Button 
+                                                onClick={handleCreateTemplate}
+                                                disabled={saving}
+                                                className="w-full h-14 bg-lime text-olive-dark font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-white transition-all shadow-xl shadow-lime/10"
+                                            >
+                                                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Vytvořit šablonu"}
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
                             </div>
                         </CardHeader>
                         <CardContent className="p-4">
@@ -266,7 +369,10 @@ const EmailManagement = () => {
                                                         <Icon className="w-4 h-4" />
                                                     </div>
                                                     <div className="flex flex-col items-start">
-                                                        <span className="text-xs font-black uppercase tracking-wider text-left">{type.label}</span>
+                                                        <span className="text-xs font-black uppercase tracking-wider text-left">
+                                                            {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">VLASTNÍ</span>}
+                                                            {type.label}
+                                                        </span>
                                                         <span className={`text-[9px] font-bold tracking-widest opacity-40 uppercase`}>
                                                             {type.id}
                                                         </span>
@@ -332,7 +438,7 @@ const EmailManagement = () => {
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">Předmět E-mailu</Label>
                                     <div className="flex items-center gap-2">
-                                        <Badge variant="outline" className="text-olive/30 hover:bg-olive/5 cursor-pointer text-[9px] border-olive/10" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {{orderNumber}}</Badge>
+                                        <Badge variant="outline" className="text-olive/30 hover:bg-olive/5 cursor-pointer text-[9px] border-olive/10" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {"{{orderNumber}}"}</Badge>
                                     </div>
                                 </div>
                                 <Input 
