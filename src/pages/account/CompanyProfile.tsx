@@ -5,9 +5,10 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Building2 } from "lucide-react";
+import { Loader2, Building2, MapPin, Phone, User as UserIcon, CreditCard, Save } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function CompanyProfile() {
     const { user, profile } = useAuth();
@@ -20,38 +21,43 @@ export default function CompanyProfile() {
 
     // Delivery Address
     const [deliveryStreet, setDeliveryStreet] = useState("");
+    const [deliveryHouseNumber, setDeliveryHouseNumber] = useState("");
     const [deliveryCity, setDeliveryCity] = useState("");
     const [deliveryZip, setDeliveryZip] = useState("");
 
     // Billing
     const [billingSame, setBillingSame] = useState(true);
     const [billingStreet, setBillingStreet] = useState("");
+    const [billingHouseNumber, setBillingHouseNumber] = useState("");
     const [billingCity, setBillingCity] = useState("");
     const [billingZip, setBillingZip] = useState("");
 
-    // Company Fields (Always enabled and required)
+    // Company Fields
     const [billingCompany, setBillingCompany] = useState("");
     const [billingDIC, setBillingDIC] = useState("");
-    // ICO removed for company as per requirements
 
     useEffect(() => {
         if (profile) {
             setFullName(profile.full_name || "");
 
             if (profile.address) {
-                setPhone(profile.address.phone || "");
-                setDeliveryStreet(profile.address.street || "");
-                setDeliveryCity(profile.address.city || "");
-                setDeliveryZip(profile.address.zip || "");
+                const addr = profile.address;
+                setPhone(addr.phone || "");
+                setDeliveryStreet(addr.street || "");
+                setDeliveryHouseNumber(addr.houseNumber || "");
+                setDeliveryCity(addr.city || "");
+                setDeliveryZip(addr.zip || "");
 
-                if (profile.address.billing) {
-                    setBillingSame(profile.address.billing.sameAsDelivery);
-                    setBillingStreet(profile.address.billing.street || "");
-                    setBillingCity(profile.address.billing.city || "");
-                    setBillingZip(profile.address.billing.zip || "");
+                if (addr.billing) {
+                    const billing = addr.billing;
+                    setBillingSame(billing.sameAsDelivery !== false);
+                    setBillingStreet(billing.street || "");
+                    setBillingHouseNumber(billing.houseNumber || "");
+                    setBillingCity(billing.city || "");
+                    setBillingZip(billing.zip || "");
 
-                    setBillingCompany(profile.address.billing.companyName || "");
-                    setBillingDIC(profile.address.billing.dic || "");
+                    setBillingCompany(billing.companyName || "");
+                    setBillingDIC(billing.dic || "");
                 }
             }
             setInitialLoad(false);
@@ -65,19 +71,19 @@ export default function CompanyProfile() {
         const updates = {
             id: user!.id,
             full_name: fullName,
-            // account_type is immutable/persistent from registration
             address: {
                 phone,
                 street: deliveryStreet,
+                houseNumber: deliveryHouseNumber,
                 city: deliveryCity,
                 zip: deliveryZip,
                 billing: {
                     sameAsDelivery: billingSame,
-                    isCompany: true, // Always true for Company Profile
+                    isCompany: true,
                     companyName: billingCompany,
                     dic: billingDIC,
-                    // ICO is not stored/used for company purchased in this mode
                     street: billingSame ? deliveryStreet : billingStreet,
+                    houseNumber: billingSame ? deliveryHouseNumber : billingHouseNumber,
                     city: billingSame ? deliveryCity : billingCity,
                     zip: billingSame ? deliveryZip : billingZip,
                 }
@@ -95,7 +101,7 @@ export default function CompanyProfile() {
             });
         } else {
             toast({
-                title: "Uloženo",
+                title: "Vše uloženo! ⚡",
                 description: "Váš firemní profil byl aktualizován.",
             });
         }
@@ -103,112 +109,156 @@ export default function CompanyProfile() {
     };
 
     if (initialLoad) {
-        return <div className="flex justify-center p-10"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Načítám firemní profil...</p>
+            </div>
+        );
     }
 
     return (
-        <div className="container max-w-2xl mx-auto py-10 px-4">
-            <h1 className="text-3xl font-bold mb-8">Firemní účet</h1>
-
-            <Card className="border-primary/20 shadow-lg">
-                <CardHeader className="bg-muted/30">
-                    <CardTitle className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-primary" />
-                        Nastavení firemního profilu
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-6">
-                    <form onSubmit={handleSave} className="space-y-6">
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="fullname">Kontaktní osoba</Label>
-                                <Input id="fullname" value={fullName} onChange={e => setFullName(e.target.value)} required />
+        <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <form onSubmit={handleSave} className="space-y-8 pb-10">
+                
+                {/* 1. Company & Contact Section */}
+                <Card className="border-none shadow-2xl bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
+                    <CardHeader className="bg-primary/10 border-b border-primary/5 pb-8 pt-10 px-8 sm:px-10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-black shadow-lg shadow-primary/20">
+                                <Building2 className="w-6 h-6" />
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">Telefon</Label>
-                                <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} required />
+                            <div>
+                                <CardTitle className="text-2xl font-display font-black uppercase tracking-tight italic">Firemní údaje</CardTitle>
+                                <CardDescription className="text-xs font-bold uppercase tracking-widest text-primary">Informace o vaší společnosti</CardDescription>
                             </div>
                         </div>
-
-                        <Separator />
-
-                        <div className="space-y-4">
-                            <h3 className="font-semibold text-lg">Firemní údaje</h3>
-                            {/* Always visible company fields */}
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="company">Název firmy</Label>
-                                    <Input id="company" value={billingCompany} onChange={e => setBillingCompany(e.target.value)} placeholder="Např. BoostUp s.r.o." required />
-                                </div>
-                                <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="dic">DIČ</Label>
-                                    <Input id="dic" value={billingDIC} onChange={e => setBillingDIC(e.target.value)} placeholder="CZ..." required />
-                                </div>
+                    </CardHeader>
+                    <CardContent className="p-8 sm:p-10 space-y-6">
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="space-y-3 md:col-span-2">
+                                <Label htmlFor="company" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Název firmy</Label>
+                                <Input id="company" value={billingCompany} onChange={e => setBillingCompany(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" placeholder="Např. BoostUp s.r.o." />
+                            </div>
+                            <div className="space-y-3">
+                                <Label htmlFor="dic" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">DIČ</Label>
+                                <Input id="dic" value={billingDIC} onChange={e => setBillingDIC(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" placeholder="CZ12345678" />
+                            </div>
+                            <div className="space-y-3">
+                                <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Telefonní číslo</Label>
+                                <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" placeholder="+420 777 666 555" />
+                            </div>
+                            <div className="space-y-3 md:col-span-2">
+                                <Label htmlFor="fullname" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Kontaktní osoba</Label>
+                                <Input id="fullname" value={fullName} onChange={e => setFullName(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" placeholder="Jan Novák" />
                             </div>
                         </div>
+                    </CardContent>
+                </Card>
 
-                        <Separator />
-
-                        <div className="space-y-4">
-                            <h3 className="font-semibold text-lg">Doručovací adresa</h3>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="street">Ulice a číslo popisné</Label>
-                                    <Input id="street" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} required />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="city">Město</Label>
-                                    <Input id="city" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} required />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="zip">PSČ</Label>
-                                    <Input id="zip" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} required />
-                                </div>
+                {/* 2. Delivery Address Section */}
+                <Card className="border-none shadow-2xl bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
+                    <CardHeader className="bg-primary/5 border-b border-primary/5 pb-8 pt-10 px-8 sm:px-10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center text-primary shadow-lg shadow-black/20">
+                                <MapPin className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-2xl font-display font-black uppercase tracking-tight italic">Doručovací adresa</CardTitle>
+                                <CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Kam máme zásilku doručit?</CardDescription>
                             </div>
                         </div>
+                    </CardHeader>
+                    <CardContent className="p-8 sm:p-10 space-y-6">
+                        <div className="grid md:grid-cols-12 gap-6">
+                            <div className="space-y-3 md:col-span-8">
+                                <Label htmlFor="street" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Ulice</Label>
+                                <Input id="street" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
+                            </div>
+                            <div className="space-y-3 md:col-span-4">
+                                <Label htmlFor="houseNumber" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Číslo popisné</Label>
+                                <Input id="houseNumber" value={deliveryHouseNumber} onChange={e => setDeliveryHouseNumber(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
+                            </div>
+                            <div className="space-y-3 md:col-span-8">
+                                <Label htmlFor="city" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Město</Label>
+                                <Input id="city" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
+                            </div>
+                            <div className="space-y-3 md:col-span-4">
+                                <Label htmlFor="zip" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">PSČ</Label>
+                                <Input id="zip" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} required className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h3 className="font-semibold text-lg">Fakturační adresa</h3>
-                                <div className="flex items-center space-x-2">
-                                    <input
-                                        type="checkbox"
-                                        id="billingSame"
-                                        className="rounded border-border"
-                                        checked={billingSame}
-                                        onChange={(e) => setBillingSame(e.target.checked)}
-                                    />
-                                    <Label htmlFor="billingSame" className="font-normal cursor-pointer text-sm">Shodná s doručovací</Label>
+                {/* 3. Billing Address Section */}
+                <Card className="border-none shadow-2xl bg-white/40 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
+                    <CardHeader className="bg-primary/5 border-b border-primary/5 pb-8 pt-10 px-8 sm:px-10">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-white border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-black/5">
+                                    <CreditCard className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-2xl font-display font-black uppercase tracking-tight italic">Sídlo společnosti</CardTitle>
+                                    <CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Adresa pro fakturaci</CardDescription>
                                 </div>
                             </div>
-
+                            <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-2xl border border-white">
+                                <input
+                                    type="checkbox"
+                                    id="billingSame"
+                                    className="rounded border-primary/50 accent-primary w-4 h-4"
+                                    checked={billingSame}
+                                    onChange={(e) => setBillingSame(e.target.checked)}
+                                />
+                                <Label htmlFor="billingSame" className="text-[10px] font-black uppercase tracking-widest cursor-pointer text-muted-foreground">Shodná s doručovací</Label>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className={cn("p-8 sm:p-10 space-y-6 transition-all duration-500", !billingSame ? "opacity-100" : "opacity-50 pointer-events-none grayscale-[0.5]")}>
+                        <div className="grid md:grid-cols-12 gap-6">
                             {!billingSame && (
-                                <div className="grid md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-1">
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label htmlFor="billingStreet">Ulice a číslo popisné</Label>
-                                        <Input id="billingStreet" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} required={!billingSame} />
+                                <>
+                                    <div className="space-y-3 md:col-span-8">
+                                        <Label htmlFor="billingStreet" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Ulice</Label>
+                                        <Input id="billingStreet" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} required={!billingSame} className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="billingCity">Město</Label>
-                                        <Input id="billingCity" value={billingCity} onChange={e => setBillingCity(e.target.value)} required={!billingSame} />
+                                    <div className="space-y-3 md:col-span-4">
+                                        <Label htmlFor="billingHouseNumber" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Číslo popisné</Label>
+                                        <Input id="billingHouseNumber" value={billingHouseNumber} onChange={e => setBillingHouseNumber(e.target.value)} required={!billingSame} className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="billingZip">PSČ</Label>
-                                        <Input id="billingZip" value={billingZip} onChange={e => setBillingZip(e.target.value)} required={!billingSame} />
+                                    <div className="space-y-3 md:col-span-8">
+                                        <Label htmlFor="billingCity" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">Město</Label>
+                                        <Input id="billingCity" value={billingCity} onChange={e => setBillingCity(e.target.value)} required={!billingSame} className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
                                     </div>
-                                </div>
+                                    <div className="space-y-3 md:col-span-4">
+                                        <Label htmlFor="billingZip" className="text-[10px] font-black uppercase tracking-[0.2em] ml-2 text-muted-foreground">PSČ</Label>
+                                        <Input id="billingZip" value={billingZip} onChange={e => setBillingZip(e.target.value)} required={!billingSame} className="h-14 rounded-2xl border-none bg-white shadow-inner focus-visible:ring-primary/50 font-bold" />
+                                    </div>
+                                </>
                             )}
                         </div>
+                    </CardContent>
+                </Card>
 
-                        <div className="flex justify-end pt-4">
-                            <Button type="submit" disabled={loading} size="lg">
-                                {loading ? "Ukládám..." : "Uložit změny"}
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                <div className="flex justify-end pr-4">
+                    <Button type="submit" disabled={loading} size="lg" className="h-16 px-10 rounded-[2rem] bg-black text-primary hover:bg-black/90 shadow-2xl shadow-black/20 font-display font-black uppercase tracking-widest italic group transition-all hover:scale-105 active:scale-95">
+                        {loading ? (
+                            <div className="flex items-center gap-3">
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span>Ukládám...</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                                <span>Uložit změny</span>
+                            </div>
+                        )}
+                    </Button>
+                </div>
+            </form>
         </div>
     );
 }
+
