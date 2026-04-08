@@ -21,7 +21,7 @@ const PaymentSuccess = () => {
     const amount = searchParams.get('amount') || '0';
 
     useEffect(() => {
-        // Clear cart on success
+        // Clear cart as a safety measure upon landing on success page
         clearCart();
 
         const timer = setInterval(() => {

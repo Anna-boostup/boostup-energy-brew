@@ -161,7 +161,7 @@ const StripeExpressButtons = () => {
         } else {
           ev.complete('success');
           clearCart();
-          navigate(`/payment/success?orderNumber=${orderNumber}&amount=${cartTotal}&status=success&provider=stripe`);
+          window.location.href = `/payment/success?orderNumber=${orderNumber}&amount=${cartTotal}&status=success&provider=stripe`;
         }
       } catch (err: any) {
         console.error('[Express Checkout Error]', err);
