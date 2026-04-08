@@ -163,7 +163,7 @@ const PromoCodes = () => {
 
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
-                        <Button className="h-14 px-8 bg-olive-dark hover:bg-black text-primary gap-3 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-slate-900/10 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                        <Button className="h-14 px-8 bg-olive-dark hover:bg-black text-white gap-3 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-olive-dark/10 transition-transform hover:scale-[1.02] active:scale-[0.98]">
                             <Plus className="h-5 w-5" />
                             Vytvořit nový kód
                         </Button>
@@ -184,7 +184,7 @@ const PromoCodes = () => {
                                         placeholder="Zadejte text..."
                                         value={newCode}
                                         onChange={(e) => setNewCode(e.target.value.toUpperCase())}
-                                        className="h-14 rounded-2xl border-slate-200 font-mono font-black text-xl tracking-widest uppercase focus-visible:ring-primary focus-visible:border-primary shadow-sm"
+                                        className="h-14 rounded-2xl border-background font-mono font-black text-xl tracking-widest uppercase focus-visible:ring-primary focus-visible:border-primary shadow-sm"
                                         required
                                     />
                                 </div>
@@ -198,7 +198,7 @@ const PromoCodes = () => {
                                             max="100"
                                             value={newDiscount}
                                             onChange={(e) => setNewDiscount(parseInt(e.target.value))}
-                                            className="h-14 rounded-2xl border-slate-200 font-display font-black text-xl focus-visible:ring-primary focus-visible:border-primary shadow-sm pr-12"
+                                            className="h-14 rounded-2xl border-background font-display font-black text-xl focus-visible:ring-primary focus-visible:border-primary shadow-sm pr-12"
                                             required
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">%</span>
@@ -210,7 +210,7 @@ const PromoCodes = () => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit" disabled={isSubmitting} className="w-full h-14 bg-olive-dark hover:bg-black text-primary font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-slate-900/10">
+                                <Button type="submit" disabled={isSubmitting} className="w-full h-14 bg-olive-dark hover:bg-black text-white font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-olive-dark/10">
                                     {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Vytvořit kód"}
                                 </Button>
                             </DialogFooter>
@@ -233,7 +233,7 @@ const PromoCodes = () => {
                 </CardHeader>
                 <CardContent className="py-12 px-12 space-y-10 group">
                     <div className="flex items-center gap-6 p-8 bg-white/40 rounded-[2.5rem] border border-white/60 shadow-inner group">
-                        <div className={`p-4 rounded-3xl transition-all duration-500 ${contentCZ?.hero?.showDiscountPopup ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-slate-100'}`}>
+                        <div className={`p-4 rounded-3xl transition-all duration-500 ${contentCZ?.hero?.showDiscountPopup ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-background'}`}>
                             {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-8 w-8 text-olive-dark" /> : <EyeOff className="h-8 w-8 text-olive-dark" />}
                         </div>
                         <div className="flex-1">
@@ -268,7 +268,7 @@ const PromoCodes = () => {
                                             }
                                         }}
                                         placeholder="NAPŘ. BOOST10"
-                                        className="h-16 pl-6 rounded-2xl border-none bg-white font-mono font-black text-2xl tracking-[0.4em] text-olive-dark shadow-xl shadow-slate-200/50 focus-visible:ring-primary"
+                                        className="h-16 pl-6 rounded-2xl border-none bg-white font-mono font-black text-2xl tracking-[0.4em] text-olive-dark shadow-xl shadow-background/50 focus-visible:ring-primary"
                                         disabled={popupSaving}
                                     />
                                     {popupSaving && (

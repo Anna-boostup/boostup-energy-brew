@@ -87,7 +87,7 @@ const AdminProfile = () => {
                 <div className="flex items-start gap-8">
                     <div className="w-24 h-24 rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Shield className="w-12 h-12 text-lime relative z-10" />
+                        <Shield className="w-12 h-12 text-white relative z-10" />
                     </div>
                     <div className="space-y-3">
                         <h1 className="text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Můj Profil</h1>
@@ -125,11 +125,11 @@ const AdminProfile = () => {
                         <div className="bg-olive-dark p-10 space-y-2">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-lime/10 rounded-xl">
-                                    <Fingerprint className="w-6 h-6 text-lime" />
+                                    <Fingerprint className="w-6 h-6 text-white" />
                                 </div>
                                 <h3 className="text-2xl font-black text-white font-display uppercase italic tracking-tight">Osobní údaje</h3>
                             </div>
-                            <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace jména a informací o roli</p>
+                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace jména a informací o roli</p>
                         </div>
                         <div className="p-10 flex-1">
                             <form onSubmit={handleSaveProfile} className="space-y-8">
@@ -155,9 +155,9 @@ const AdminProfile = () => {
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
                                             placeholder="Vaše jméno"
-                                            className="h-16 pl-14 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-lg text-olive-dark"
+                                            className="h-16 pl-14 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-lg text-olive-dark"
                                         />
-                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20 group-focus-within/input:text-lime transition-colors" />
+                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20 group-focus-within/input:text-white transition-colors" />
                                     </div>
                                 </div>
 
@@ -168,14 +168,14 @@ const AdminProfile = () => {
                                             <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
                                             <span className="font-display font-black text-olive-dark uppercase italic text-lg">{profile?.role || "Administrátor"}</span>
                                         </div>
-                                        <Badge className="bg-olive-dark text-lime font-black uppercase tracking-widest text-[9px] px-3 py-1 rounded-lg">Verified</Badge>
+                                        <Badge className="bg-olive-dark text-white font-black uppercase tracking-widest text-[9px] px-3 py-1 rounded-lg">Verified</Badge>
                                     </div>
                                 </div>
 
                                 <Button 
                                     type="submit" 
                                     disabled={isSavingProfile}
-                                    className="w-full h-16 bg-olive-dark hover:bg-black text-lime font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                                    className="w-full h-16 bg-olive-dark hover:bg-black text-white font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
                                 >
                                     {isSavingProfile ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                                     Uložit změny v profilu
@@ -189,11 +189,11 @@ const AdminProfile = () => {
                         <div className="bg-olive-dark p-10 space-y-2">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-lime/10 rounded-xl">
-                                    <Lock className="w-6 h-6 text-lime" />
+                                    <Lock className="w-6 h-6 text-white" />
                                 </div>
                                 <h3 className="text-2xl font-black text-white font-display uppercase italic tracking-tight">Zabezpečení</h3>
                             </div>
-                            <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace hesla a ochrana klíče</p>
+                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace hesla a ochrana klíče</p>
                         </div>
                         <div className="p-10 flex-1">
                             <form onSubmit={handleChangePassword} className="space-y-8">
@@ -205,7 +205,7 @@ const AdminProfile = () => {
                                         value={currentPassword}
                                         onChange={(e) => setCurrentPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime transition-all"
+                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                 </div>
@@ -217,7 +217,7 @@ const AdminProfile = () => {
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Minimálně 8 znaků"
-                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime transition-all"
+                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                 </div>
@@ -229,7 +229,7 @@ const AdminProfile = () => {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         placeholder="Zopakujte heslo"
-                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime transition-all"
+                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                     {newPassword && confirmPassword && (
@@ -237,7 +237,7 @@ const AdminProfile = () => {
                                             {newPassword !== confirmPassword ? (
                                                 <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest">Hesla se neshodují</p>
                                             ) : (
-                                                <p className="text-[10px] text-lime-dark font-bold uppercase tracking-widest flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2">
+                                                <p className="text-[10px] text-white-dark font-bold uppercase tracking-widest flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2">
                                                     <Fingerprint className="w-3 h-3" />
                                                     Hesla jsou identická
                                                 </p>
@@ -248,7 +248,7 @@ const AdminProfile = () => {
                                 <Button 
                                     type="submit" 
                                     disabled={isChangingPassword || !newPassword || newPassword !== confirmPassword}
-                                    className="w-full h-16 bg-olive-dark hover:bg-black text-lime font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                                    className="w-full h-16 bg-olive-dark hover:bg-black text-white font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
                                 >
                                     {isChangingPassword ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Lock className="w-5 h-5" />}
                                     Aktualizovat heslo

@@ -47,7 +47,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
     <div className="glass-card rounded-[3rem] p-8 space-y-8 mb-8 border-none animate-in fade-in slide-in-from-bottom-6">
         <div className="flex justify-between items-start">
             <div>
-                <div className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-3 shadow-xl shadow-olive-dark/10">#{sku}</div>
+                <div className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-3 shadow-xl shadow-olive-dark/10">#{sku}</div>
                 <div className="flex flex-col">
                     <span className="font-black text-2xl text-olive-dark leading-tight uppercase tracking-tight">
                         {product?.name || getFlavorLabel(sku)}
@@ -155,7 +155,7 @@ const Inventory = () => {
                                             <span className="font-display font-black text-olive-dark text-lg leading-tight uppercase tracking-tight">
                                                 {product?.name || getFlavorLabel(sku)}
                                             </span>
-                                            <span className="font-mono font-black text-[10px] text-lime bg-olive-dark px-2 py-0.5 rounded-lg w-fit mt-1.5 shadow-sm">#{sku}</span>
+                                            <span className="font-mono font-black text-[10px] text-white bg-olive-dark px-2 py-0.5 rounded-lg w-fit mt-1.5 shadow-sm">#{sku}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -178,7 +178,7 @@ const Inventory = () => {
                                                 }}
                                                 className="data-[state=checked]:bg-lime shadow-lg shadow-lime/10"
                                             />
-                                            <span className={`text-[9px] font-black uppercase tracking-widest ${product?.is_active !== false ? "text-lime-dark" : "text-olive/30"}`}>
+                                            <span className={`text-[9px] font-black uppercase tracking-widest ${product?.is_active !== false ? "text-white" : "text-olive/30"}`}>
                                                 {product?.is_active !== false ? "AKTIVNÍ" : "VYPNUTO"}
                                             </span>
                                         </div>
@@ -189,7 +189,7 @@ const Inventory = () => {
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => setHistorySku(sku)}
-                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-lime hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
+                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-white hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
                                                 title="Historie pohybů"
                                             >
                                                 <History className="h-4 w-4" />
@@ -197,7 +197,7 @@ const Inventory = () => {
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-lime hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
+                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-white hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
                                                 onClick={() => setEditSku(sku)}
                                                 title="Upravit detaily"
                                             >
@@ -214,7 +214,7 @@ const Inventory = () => {
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                className="bg-olive-dark hover:bg-olive text-lime h-10 px-5 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all duration-200 ml-1"
+                                                className="bg-olive-dark hover:bg-olive text-white h-10 px-5 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all duration-200 ml-1"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "in" })}
                                             >
                                                 <Plus className="h-3.5 w-3.5 mr-1.5" />

@@ -99,7 +99,7 @@ const ContentManagement = () => {
     // Component: badge visibility toggle
     const BadgeToggle = ({ badgeKey, label }: { badgeKey: string; label: string }) => (
         <div className="flex items-center gap-3 p-3 bg-secondary/40 rounded-lg border border-border">
-            {badgeVisible(badgeKey) ? <Eye className="h-4 w-4 text-lime" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+            {badgeVisible(badgeKey) ? <Eye className="h-4 w-4 text-white" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
             <Label className="flex-1 cursor-pointer" htmlFor={`badge-${badgeKey}`}>{label}</Label>
             <Switch
                 id={`badge-${badgeKey}`}
@@ -122,7 +122,7 @@ const ContentManagement = () => {
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="flex items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-lime" />
+                    <Loader2 className="w-8 h-8 animate-spin text-white" />
                     <span className="font-black uppercase tracking-[0.3em] text-sm text-olive-dark">Načítám obsah webu...</span>
                 </div>
             </div>
@@ -173,7 +173,7 @@ const ContentManagement = () => {
                             {isResetting ? <Loader2 className="h-5 w-5 animate-spin" /> : <RotateCcw className="h-5 w-5" />}
                             Resetovat
                         </Button>
-                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-lime font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3">
+                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3">
                             {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                             Uložit změny
                         </Button>
@@ -211,7 +211,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Type className="w-8 h-8 text-lime" />
+                                    <Type className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Hlavní Hero Sekce</h3>
@@ -308,7 +308,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <FileText className="w-8 h-8 text-lime" />
+                                    <FileText className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Naše Mise</h3>
@@ -373,7 +373,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Beaker className="w-8 h-8 text-lime" />
+                                    <Beaker className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Vědecké Informace</h3>
@@ -425,7 +425,7 @@ const ContentManagement = () => {
                                             rows={3}
                                             value={details.description}
                                             onChange={(e) => updateField(['ingredientDetails', key, 'description'], e.target.value)}
-                                            className="rounded-2xl border-olive/10 font-bold text-slate-700 p-6 focus-visible:ring-primary shadow-sm leading-relaxed"
+                                            className="rounded-2xl border-olive/10 font-bold text-olive p-6 focus-visible:ring-primary shadow-sm leading-relaxed"
                                         />
                                     </div>
 
@@ -442,7 +442,7 @@ const ContentManagement = () => {
                                                             newBenefits[i] = e.target.value;
                                                             updateField(['ingredientDetails', key, 'benefits'], newBenefits);
                                                         }}
-                                                        className="h-12 rounded-xl border-background bg-background/50 font-bold text-slate-700 pl-5 text-sm"
+                                                        className="h-12 rounded-xl border-background bg-background/50 font-bold text-olive pl-5 text-sm"
                                                     />
                                                 ))}
                                             </div>
@@ -459,7 +459,7 @@ const ContentManagement = () => {
                                                             newIngs[i] = e.target.value;
                                                             updateField(['ingredientDetails', key, 'ingredients'], newIngs);
                                                         }}
-                                                        className="h-12 rounded-xl border-background bg-background/50 font-bold text-slate-700 pl-5 text-sm"
+                                                        className="h-12 rounded-xl border-background bg-background/50 font-bold text-olive pl-5 text-sm"
                                                     />
                                                 ))}
                                             </div>
@@ -478,7 +478,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <BarChart className="w-8 h-8 text-lime" />
+                                    <BarChart className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">3B Koncept</h3>
@@ -511,7 +511,7 @@ const ContentManagement = () => {
                                     rows={3}
                                     value={localContent.concept3b.description}
                                     onChange={(e) => updateField(['concept3b', 'description'], e.target.value)}
-                                    className="rounded-2xl border-olive/10 font-bold text-slate-700 p-6 focus-visible:ring-primary shadow-sm leading-relaxed"
+                                    className="rounded-2xl border-olive/10 font-bold text-olive p-6 focus-visible:ring-primary shadow-sm leading-relaxed"
                                 />
                             </div>
 
@@ -577,11 +577,11 @@ const ContentManagement = () => {
                                             <div className="flex items-center justify-between">
                                                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40 pl-1">Hlavní detailní text (Popup okno)</Label>
                                                 <div className="flex items-center gap-4">
-                                                    <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest hidden sm:block">TIP: Použijte <code>•</code> pro odrážku</p>
+                                                    <p className="text-[10px] text-olive/20 font-bold uppercase tracking-widest hidden sm:block">TIP: Použijte <code>•</code> pro odrážku</p>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="h-8 rounded-xl bg-olive-dark text-lime font-black uppercase text-[9px] tracking-widest hover:bg-black"
+                                                        className="h-8 rounded-xl bg-olive-dark text-white font-black uppercase text-[9px] tracking-widest hover:bg-black"
                                                         onClick={() => {
                                                             const newConcepts = [...localContent.concept3b.concepts];
                                                             const currentText = newConcepts[i].fullDescription.trim();
@@ -625,7 +625,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Mail className="w-8 h-8 text-lime" />
+                                    <Mail className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Akční Výzva (CTA)</h3>
@@ -678,7 +678,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <MapPin className="w-8 h-8 text-lime" />
+                                    <MapPin className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Kontakt & Informace</h3>
@@ -740,7 +740,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Zap className="w-8 h-8 text-lime" />
+                                    <Zap className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Katalog Příchutí</h3>
@@ -753,7 +753,7 @@ const ContentManagement = () => {
                                 <div key={key} className="p-10 rounded-[2.5rem] bg-white border border-background shadow-sm space-y-10">
                                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                                         <div className="flex items-center gap-6">
-                                            <div className="w-16 h-16 rounded-2xl bg-olive-dark flex items-center justify-center text-lime text-2xl font-black shadow-xl">
+                                            <div className="w-16 h-16 rounded-2xl bg-olive-dark flex items-center justify-center text-white text-2xl font-black shadow-xl">
                                                 {flavor.name.charAt(0)}
                                             </div>
                                             <div className="space-y-1">
@@ -805,23 +805,23 @@ const ContentManagement = () => {
                                         </div>
                                         <Tabs defaultValue="nutrition" className="w-full">
                                             <TabsList className="bg-background/50 p-1 rounded-2xl h-auto flex flex-wrap gap-1 border border-olive/10/50 mb-6">
-                                                <TabsTrigger value="nutrition" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-lime transition-all">Nutrice</TabsTrigger>
-                                                <TabsTrigger value="vitamins" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-lime transition-all">Vitamíny</TabsTrigger>
-                                                <TabsTrigger value="active" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-lime transition-all">Ostatní</TabsTrigger>
+                                                <TabsTrigger value="nutrition" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">Nutrice</TabsTrigger>
+                                                <TabsTrigger value="vitamins" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">Vitamíny</TabsTrigger>
+                                                <TabsTrigger value="active" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">Ostatní</TabsTrigger>
                                             </TabsList>
 
                                             {/* Nutrition Editor */}
                                             <TabsContent value="nutrition" className="space-y-4 mt-0 bg-background p-6 rounded-2xl border border-background">
                                                 <div className="grid grid-cols-12 gap-4 px-2 mb-2">
-                                                    <Label className="col-span-4 text-[9px] font-black uppercase tracking-widest text-slate-300">Položka</Label>
-                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-slate-300 text-right">na 100g</Label>
-                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-slate-300 text-right">na porci</Label>
-                                                    <Label className="col-span-2 text-[9px] font-black uppercase tracking-widest text-slate-300 text-right">RHP (%)</Label>
+                                                    <Label className="col-span-4 text-[9px] font-black uppercase tracking-widest text-olive/20">Položka</Label>
+                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">na 100g</Label>
+                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">na porci</Label>
+                                                    <Label className="col-span-2 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">RHP (%)</Label>
                                                 </div>
                                                 {(flavor.fullSpecs?.nutrition || []).map((row: any, i: number) => (
                                                     <div key={i} className="grid grid-cols-12 gap-3 items-center group transition-all">
                                                         <Input 
-                                                            className="col-span-4 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold group-hover:border-slate-300 transition-colors" 
+                                                            className="col-span-4 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold group-hover:border-olive/20 transition-colors" 
                                                             value={row.label} 
                                                             onChange={(e) => {
                                                                 const news = [...flavor.fullSpecs.nutrition];
@@ -830,7 +830,7 @@ const ContentManagement = () => {
                                                             }}
                                                         />
                                                         <Input 
-                                                            className="col-span-3 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold text-right hover:border-slate-300" 
+                                                            className="col-span-3 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold text-right hover:border-olive/20" 
                                                             value={row.per100} 
                                                             onChange={(e) => {
                                                                 const news = [...flavor.fullSpecs.nutrition];
@@ -848,7 +848,7 @@ const ContentManagement = () => {
                                                             }}
                                                         />
                                                         <Input 
-                                                            className="col-span-2 h-10 rounded-lg border-olive/10 bg-white text-[10px] font-black text-olive/40 text-right hover:border-slate-300" 
+                                                            className="col-span-2 h-10 rounded-lg border-olive/10 bg-white text-[10px] font-black text-olive/40 text-right hover:border-olive/20" 
                                                             value={row.rhp} 
                                                             onChange={(e) => {
                                                                 const news = [...flavor.fullSpecs.nutrition];
@@ -865,7 +865,7 @@ const ContentManagement = () => {
                                                 <div className="flex justify-between items-center px-2 mb-4">
                                                     <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark italic">Přehled Mikronutrientů</Label>
                                                     <Button 
-                                                        variant="outline" size="sm" className="h-8 rounded-xl bg-olive-dark text-lime font-black uppercase text-[9px] tracking-widest hover:bg-black gap-2"
+                                                        variant="outline" size="sm" className="h-8 rounded-xl bg-olive-dark text-white font-black uppercase text-[9px] tracking-widest hover:bg-black gap-2"
                                                         onClick={() => {
                                                             const current = flavor.fullSpecs?.vitamins || [];
                                                             updateField(['flavors', key, 'fullSpecs', 'vitamins'], [...current, { label: "", per100: "", perPortion: "", rhp: "" }]);
@@ -877,16 +877,16 @@ const ContentManagement = () => {
                                                 </div>
                                                 {(flavor.fullSpecs?.vitamins || []).map((row: any, i: number) => (
                                                     <div key={i} className="grid grid-cols-12 gap-3 items-center group transition-all">
-                                                        <Input className="col-span-4 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold group-hover:border-slate-300 transition-colors" value={row.label} onChange={(e) => {
+                                                        <Input className="col-span-4 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold group-hover:border-olive/20 transition-colors" value={row.label} onChange={(e) => {
                                                             const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], label: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
                                                         }} />
-                                                        <Input className="col-span-3 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold text-right hover:border-slate-300" value={row.per100} onChange={(e) => {
+                                                        <Input className="col-span-3 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold text-right hover:border-olive/20" value={row.per100} onChange={(e) => {
                                                             const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], per100: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
                                                         }} />
                                                         <Input className="col-span-3 h-10 rounded-lg border-primary/20 bg-primary/5 text-[11px] font-black text-olive-dark text-right hover:border-primary/40 transition-colors" value={row.perPortion} onChange={(e) => {
                                                             const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], perPortion: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
                                                         }} />
-                                                        <Input className="col-span-2 h-10 rounded-lg border-olive/10 bg-white text-[10px] font-black text-olive/40 text-right hover:border-slate-300" value={row.rhp} onChange={(e) => {
+                                                        <Input className="col-span-2 h-10 rounded-lg border-olive/10 bg-white text-[10px] font-black text-olive/40 text-right hover:border-olive/20" value={row.rhp} onChange={(e) => {
                                                             const news = [...flavor.fullSpecs.vitamins]; news[i] = { ...news[i], rhp: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'vitamins'], news);
                                                         }} />
                                                     </div>
@@ -898,7 +898,7 @@ const ContentManagement = () => {
                                                 <div className="flex justify-between items-center px-2 mb-4">
                                                     <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark italic">Ostatní účinné látky</Label>
                                                     <Button 
-                                                        variant="outline" size="sm" className="h-8 rounded-xl bg-olive-dark text-lime font-black uppercase text-[9px] tracking-widest hover:bg-black gap-2"
+                                                        variant="outline" size="sm" className="h-8 rounded-xl bg-olive-dark text-white font-black uppercase text-[9px] tracking-widest hover:bg-black gap-2"
                                                         onClick={() => {
                                                             const current = flavor.fullSpecs?.activeSubstances || [];
                                                             updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], [...current, { label: "", per100: "", perPortion: "" }]);
@@ -910,10 +910,10 @@ const ContentManagement = () => {
                                                 </div>
                                                 {(flavor.fullSpecs?.activeSubstances || []).map((row: any, i: number) => (
                                                     <div key={i} className="grid grid-cols-12 gap-3 items-center group transition-all">
-                                                        <Input className="col-span-6 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold group-hover:border-slate-300 transition-colors" value={row.label} onChange={(e) => {
+                                                        <Input className="col-span-6 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold group-hover:border-olive/20 transition-colors" value={row.label} onChange={(e) => {
                                                             const news = [...flavor.fullSpecs.activeSubstances]; news[i] = { ...news[i], label: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], news);
                                                         }} />
-                                                        <Input className="col-span-3 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold text-right hover:border-slate-300" value={row.per100} onChange={(e) => {
+                                                        <Input className="col-span-3 h-10 rounded-lg border-olive/10 bg-white text-[11px] font-bold text-right hover:border-olive/20" value={row.per100} onChange={(e) => {
                                                             const news = [...flavor.fullSpecs.activeSubstances]; news[i] = { ...news[i], per100: e.target.value }; updateField(['flavors', key, 'fullSpecs', 'activeSubstances'], news);
                                                         }} />
                                                         <Input className="col-span-3 h-10 rounded-lg border-primary/20 bg-primary/5 text-[11px] font-black text-olive-dark text-right hover:border-primary/40 transition-colors" value={row.perPortion} onChange={(e) => {
@@ -937,7 +937,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Layout className="w-8 h-8 text-lime" />
+                                    <Layout className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Patička (Footer)</h3>
@@ -973,7 +973,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Settings2 className="w-8 h-8 text-lime" />
+                                    <Settings2 className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Globální Nastavení</h3>
@@ -1003,13 +1003,13 @@ const ContentManagement = () => {
 
             <div className="p-10 bg-olive-dark rounded-[3rem] border border-olive/10 shadow-2xl flex flex-col md:flex-row gap-10 items-center text-center md:text-left group transition-all duration-700 hover:scale-[1.01]">
                 <div className="p-6 bg-lime/10 rounded-3xl border border-lime/20 shrink-0 animate-pulse group-hover:bg-lime/20 transition-all">
-                    <AlertTriangle className="h-10 w-10 text-lime" />
+                    <AlertTriangle className="h-10 w-10 text-white" />
                 </div>
                 <div className="space-y-2">
                     <h4 className="text-white font-black font-display uppercase tracking-wider text-2xl italic">Nezapomeňte uložít změny!</h4>
                     <p className="text-brand-muted font-black text-[10px] uppercase tracking-[0.3em] leading-relaxed">
                         Veškeré úpravy v tomto engine se stanou aktivními až po kliknutí na 
-                        <span className="text-lime font-black mx-2 border-b-2 border-lime/30 italic">ULOŽIT ZMĚNY</span> 
+                        <span className="text-white font-black mx-2 border-b-2 border-lime/30 italic">ULOŽIT ZMĚNY</span> 
                         v horní části ovládacího panelu.
                     </p>
                 </div>
@@ -1017,7 +1017,7 @@ const ContentManagement = () => {
 
             <div className="p-10 glass-card rounded-[3rem] border-none shadow-xl text-olive/60 flex flex-col md:flex-row gap-10 items-center text-center md:text-left">
                 <div className="p-6 bg-olive-dark rounded-3xl shadow-2xl shrink-0">
-                    <Info className="h-10 w-10 text-lime" />
+                    <Info className="h-10 w-10 text-white" />
                 </div>
                 <div className="space-y-2">
                     <h4 className="text-olive-dark font-black font-display uppercase tracking-widest text-base italic">Systémové Info</h4>

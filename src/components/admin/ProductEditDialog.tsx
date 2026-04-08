@@ -125,9 +125,9 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[520px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
                 {/* Header */}
-                <DialogHeader className="px-6 pt-6 pb-4 border-b bg-slate-50 rounded-t-xl">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b bg-background rounded-t-xl">
                     <DialogTitle className="text-lg font-bold flex items-center gap-2">
-                        <span className="text-xs font-mono bg-slate-200 text-slate-600 px-2 py-0.5 rounded">{product.sku}</span>
+                        <span className="text-xs font-mono bg-background text-olive-dark/60 px-2 py-0.5 rounded">{product.sku}</span>
                         Upravit produkt
                     </DialogTitle>
                 </DialogHeader>
@@ -163,10 +163,10 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                             </div>
 
                             {/* Active toggle */}
-                            <div className="flex items-center justify-between p-3 rounded-lg border bg-blue-50 border-blue-200">
+                            <div className="flex items-center justify-between p-3 rounded-lg border bg-olive-dark/5 border-olive/10">
                                 <div>
-                                    <p className="text-sm font-semibold text-blue-800">Aktivní prodej</p>
-                                    <p className="text-xs text-blue-600">Zobrazit produkt na webu</p>
+                                    <p className="text-sm font-semibold text-olive-dark">Aktivní prodej</p>
+                                    <p className="text-xs text-olive/60">Zobrazit produkt na webu</p>
                                 </div>
                                 <Switch
                                     id="is_active"
@@ -209,7 +209,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                                 <Label className="text-sm font-semibold">Fotka produktu</Label>
                                 <div className="flex gap-3 items-start">
                                     {/* Preview */}
-                                    <div className="w-20 h-20 shrink-0 rounded-lg border bg-slate-100 flex items-center justify-center overflow-hidden">
+                                    <div className="w-20 h-20 shrink-0 rounded-lg border bg-background flex items-center justify-center overflow-hidden">
                                         {formData.image_url && !imageError ? (
                                             <img
                                                 src={formData.image_url}
@@ -218,13 +218,13 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                                                 onError={() => setImageError(true)}
                                             />
                                         ) : (
-                                            <ImageOff className="w-6 h-6 text-slate-300" />
+                                            <ImageOff className="w-6 h-6 text-olive/20" />
                                         )}
                                     </div>
 
                                     {/* Drop zone */}
                                     <div
-                                        className="flex-1 border-2 border-dashed border-slate-200 hover:border-primary rounded-lg p-3 text-center cursor-pointer transition-colors"
+                                        className="flex-1 border-2 border-dashed border-background hover:border-primary rounded-lg p-3 text-center cursor-pointer transition-colors"
                                         onDrop={handleDrop}
                                         onDragOver={(e) => e.preventDefault()}
                                         onClick={() => fileInputRef.current?.click()}
@@ -232,15 +232,15 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                                         {isUploading ? (
                                             <div className="flex flex-col items-center gap-1.5 py-1">
                                                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                                                <p className="text-xs text-slate-500">Nahrávám...</p>
+                                                <p className="text-xs text-olive/50">Nahrávám...</p>
                                             </div>
                                         ) : (
                                             <div className="flex flex-col items-center gap-1.5 py-1">
-                                                <Upload className="h-5 w-5 text-slate-400" />
-                                                <p className="text-xs text-slate-500">
+                                                <Upload className="h-5 w-5 text-olive/40" />
+                                                <p className="text-xs text-olive/50">
                                                     <span className="text-primary font-medium">Klikněte</span> nebo přetáhněte soubor
                                                 </p>
-                                                <p className="text-[10px] text-slate-400">PNG, JPG (ideálně čtvercový PNG)</p>
+                                                <p className="text-[10px] text-olive/40">PNG, JPG (ideálně čtvercový PNG)</p>
                                             </div>
                                         )}
                                         <input
@@ -257,7 +257,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                     </div>
 
                     {/* Footer */}
-                    <DialogFooter className="px-6 py-4 border-t bg-slate-50 rounded-b-xl">
+                    <DialogFooter className="px-6 py-4 border-t bg-background rounded-b-xl">
                         <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
                             Zrušit
                         </Button>

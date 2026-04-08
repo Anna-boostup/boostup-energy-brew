@@ -15,6 +15,10 @@ const COLORS = {
     white: '#ffffff'
 };
 
+const ADMIN_EMAIL = 'objednavky@drinkboostup.cz';
+const INFO_EMAIL = 'info@drinkboostup.cz';
+const BILLING_EMAIL = 'fakturace@drinkboostup.cz';
+
 // Hardened BASE_URL detection
 const getBaseUrl = (req: VercelRequest) => {
     // 1. Check x-forwarded-host (most reliable on Vercel)

@@ -97,20 +97,20 @@ const AdminLayout = () => {
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark text-white p-4 flex items-center justify-between z-50 shadow-lg px-6">
                 <Link to="/" className="font-display font-black text-2xl tracking-tighter hover:opacity-80 transition-opacity">
-                    BOOST<span className="text-lime">UP</span>
+                    BOOST<span className="text-white">UP</span>
                 </Link>
                 <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-slate-800">
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark">
                             <Menu className="w-6 h-6" />
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-72 rounded-r-[3rem]">
                         <div className="p-8 border-b border-white/5">
                             <Link to="/" className="flex items-center">
-                                <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-lime">UP</span></span>
+                                <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-white">UP</span></span>
                             </Link>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-lime/50 mt-2">Admin Engine</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">Admin Engine</p>
                         </div>
                         <ul className="p-4 space-y-2" role="list">
                             {navItems.map((item) => {
@@ -123,7 +123,7 @@ const AdminLayout = () => {
                                                 href={item.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-slate-300 hover:bg-slate-800 hover:text-white"
+                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-olive/20 hover:bg-olive-dark hover:text-white"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <Icon className="w-5 h-5" />
@@ -162,7 +162,7 @@ const AdminLayout = () => {
                                 );
                             })}
                         </ul>
-                        <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
+                        <div className="absolute bottom-0 w-full p-4 border-t border-olive-dark">
                             
                             <Button
                                 variant="ghost"
@@ -182,7 +182,7 @@ const AdminLayout = () => {
                 <div className="p-10 pb-8 shrink-0">
                     <Link to="/" className="flex items-center group">
                         <span className="font-display font-black text-3xl tracking-tighter group-hover:scale-105 transition-transform duration-500">
-                            BOOST<span className="text-lime">UP</span>
+                            BOOST<span className="text-white">UP</span>
                         </span>
                     </Link>
                     <div className="flex items-center gap-2 mt-2">
@@ -203,10 +203,10 @@ const AdminLayout = () => {
                                             href={item.path}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-800 hover:text-white group"
+                                            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-olive/20 hover:bg-olive-dark hover:text-white group"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <Icon className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                                                <Icon className="w-5 h-5 text-olive/40 group-hover:text-white transition-colors" />
                                                 <span className="text-sm">{item.label}</span>
                                             </div>
                                             <ExternalLink className="w-3.5 h-3.5 opacity-30 group-hover:opacity-60" />
@@ -221,7 +221,7 @@ const AdminLayout = () => {
                                             aria-current={isActive ? "page" : undefined}
                                         >
                                             <div className="flex items-center gap-4">
-                                                <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-lime"}`} />
+                                                <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
                                                 <span className="text-xs font-bold uppercase tracking-wider">{item.label}</span>
                                             </div>
                                             <div className="flex items-center gap-2">

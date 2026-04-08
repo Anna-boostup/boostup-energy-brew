@@ -38,11 +38,11 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="font-mono font-black text-xs text-lime bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
+                        <span className="font-mono font-black text-xs text-white bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-olive/20 hover:text-lime transition-colors" 
+                            className="h-8 w-8 text-olive/20 hover:text-white transition-colors" 
                             onClick={(e) => {
                                 e.stopPropagation();
                                 navigator.clipboard.writeText(order.id);
@@ -80,21 +80,21 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
             </div>
 
             <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Položky:</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-olive/40">Položky:</p>
                 <div className="space-y-1">
                     {order.items.map((item: any, idx: number) => (
-                        <div key={idx} className="text-xs flex justify-between items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="font-medium text-slate-700">{item.quantity}x {item.name}</span>
-                            <span className="font-bold text-slate-400">{item.price} Kč</span>
+                        <div key={idx} className="text-xs flex justify-between items-center bg-background/50 p-2 rounded-xl border border-background">
+                            <span className="font-medium text-olive">{item.quantity}x {item.name}</span>
+                            <span className="font-bold text-olive/40">{item.price} Kč</span>
                         </div>
                     ))}
                 </div>
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+            <div className="flex justify-between items-center pt-4 border-t border-background">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Celková cena</span>
-                    <span className="font-display font-black text-xl text-slate-900">{order.total} Kč</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-olive/40">Celková cena</span>
+                    <span className="font-display font-black text-xl text-olive-dark">{order.total} Kč</span>
                 </div>
                 <div className="flex gap-3">
                     <Dialog>
@@ -115,7 +115,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         </Button>
                     )}
                     <InvoiceModal order={order}>
-                        <Button size="sm" variant="ghost" className="h-10 w-10 p-0 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl" aria-label="Zobrazit fakturu">
+                        <Button size="sm" variant="ghost" className="h-10 w-10 p-0 text-olive/40 hover:text-olive-dark hover:bg-background rounded-xl" aria-label="Zobrazit fakturu">
                             <FileText className="h-5 w-5" />
                         </Button>
                     </InvoiceModal>
@@ -159,19 +159,19 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             />
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 cursor-pointer hover:text-lime transition-colors"
+                            className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 cursor-pointer hover:text-white transition-colors"
                             onClick={() => onSort('id')}
                         >
                             <div className="flex items-center gap-2">
-                                ID {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-lime" />}
+                                ID {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 cursor-pointer hover:text-lime transition-colors text-center"
+                            className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 cursor-pointer hover:text-white transition-colors text-center"
                             onClick={() => onSort('date')}
                         >
                             <div className="flex items-center justify-center gap-2">
-                                DATUM {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-lime" />}
+                                DATUM {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8">ZÁKAZNÍK</TableHead>
@@ -184,7 +184,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                 <TableBody>
                     {data.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={8} className="text-center py-20 text-slate-400 font-medium italic">
+                            <TableCell colSpan={8} className="text-center py-20 text-olive/40 font-medium italic">
                                 Žádné objednávky v této kategorii.
                             </TableCell>
                         </TableRow>
@@ -200,11 +200,11 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 </TableCell>
                                 <TableCell className="py-6">
                                     <div className="flex items-center gap-3">
-                                        <span className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
+                                        <span className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
                                         <Button 
                                             variant="ghost" 
                                             size="icon" 
-                                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all text-olive/20 hover:text-lime hover:bg-transparent" 
+                                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all text-olive/20 hover:text-white hover:bg-transparent" 
                                             onClick={() => {
                                                 navigator.clipboard.writeText(order.id);
                                                 toast({ title: "ID zkopírováno", duration: 1000 });
@@ -221,7 +221,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex flex-col min-w-0">
-                                        <span className="font-black text-olive-dark text-sm uppercase tracking-tight group-hover:text-lime transition-colors">{order.customer.name}</span>
+                                        <span className="font-black text-olive-dark text-sm uppercase tracking-tight group-hover:text-white transition-colors">{order.customer.name}</span>
                                         <span className="text-[10px] text-brand-muted font-bold tracking-wider truncate max-w-[180px]">{order.customer.email}</span>
                                     </div>
                                 </TableCell>
@@ -232,7 +232,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 {item.quantity}x {item.name.split(' ')[0]}
                                             </div>
                                         ))}
-                                        {order.items.length > 1 && <span className="text-[8px] text-lime font-black uppercase tracking-[0.2em] mt-1">+ {order.items.length - 1} DALŠÍ</span>}
+                                        {order.items.length > 1 && <span className="text-[8px] text-white font-black uppercase tracking-[0.2em] mt-1">+ {order.items.length - 1} DALŠÍ</span>}
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-right">
@@ -301,7 +301,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                         <div className="pt-6 space-y-4">
                                                             <div className="text-sm font-black text-olive-dark uppercase tracking-tight">Opravdu chcete stornovat tuto objednávku?</div>
                                                             <div className="p-5 bg-olive-dark/5 rounded-[1.5rem] border border-olive/5">
-                                                                <div className="font-mono text-xs font-black text-lime bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 8)}</div>
+                                                                <div className="font-mono text-xs font-black text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 8)}</div>
                                                                 <div className="text-xs font-black text-olive-dark uppercase tracking-tight">{order.customer.name}</div>
                                                             </div>
                                                             <p className="text-xs text-olive/40 font-bold leading-relaxed px-1">
@@ -560,7 +560,7 @@ const Orders = () => {
                     )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="gap-2 h-10 px-4 border-slate-300 shadow-sm text-slate-800 hover:text-slate-950 font-semibold" aria-label="Změnit řazení objednávek">
+                            <Button variant="outline" size="sm" className="gap-2 h-10 px-4 border-olive/20 shadow-sm text-olive-dark hover:text-olive-dark font-semibold" aria-label="Změnit řazení objednávek">
                                 <ArrowUpDown className="w-4 h-4" />
                                 <span className="hidden sm:inline">Řazení</span>
                             </Button>
@@ -586,7 +586,7 @@ const Orders = () => {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="gap-2 h-10 px-4 border-slate-300 shadow-sm text-slate-800 hover:text-slate-950 font-semibold"
+                        className="gap-2 h-10 px-4 border-olive/20 shadow-sm text-olive-dark hover:text-olive-dark font-semibold"
                         onClick={handleSyncPacketa}
                         disabled={isSyncing}
                         aria-label={isSyncing ? "Synchronizuji stav zásilek" : "Synchronizovat stav se Zásilkovnou"}
@@ -660,7 +660,7 @@ const Orders = () => {
             {selectedOrders.size > 0 && (
                 <div className="fixed bottom-10 left-1/2 -translate-x-1/2 glass-dark rounded-[3rem] px-12 py-6 flex items-center gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 min-w-fit shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-white/10">
                     <div className="flex flex-col pr-12 border-r border-white/10">
-                        <div className="text-[10px] text-lime font-black uppercase tracking-[0.2em] mb-1">VYBRÁNO</div>
+                        <div className="text-[10px] text-white font-black uppercase tracking-[0.2em] mb-1">VYBRÁNO</div>
                         <div className="text-3xl font-black text-white leading-none font-display">{selectedOrders.size} <span className="text-xs font-bold text-white/30 uppercase tracking-widest ml-1">OBJ.</span></div>
                     </div>
 
@@ -677,7 +677,7 @@ const Orders = () => {
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-12 px-8 text-lime hover:bg-lime hover:text-olive-dark font-black uppercase text-[10px] tracking-widest gap-3 rounded-[1.5rem] transition-all duration-300"
+                                className="h-12 px-8 text-white hover:bg-lime hover:text-olive-dark font-black uppercase text-[10px] tracking-widest gap-3 rounded-[1.5rem] transition-all duration-300"
                                 onClick={() => handleBulkStatusChange('processing')}
                             >
                                 <Clock className="w-4 h-4" />
@@ -687,7 +687,7 @@ const Orders = () => {
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-12 px-8 text-lime hover:bg-lime hover:text-olive-dark font-black uppercase text-[10px] tracking-widest gap-3 rounded-[1.5rem] transition-all duration-300"
+                                className="h-12 px-8 text-white hover:bg-lime hover:text-olive-dark font-black uppercase text-[10px] tracking-widest gap-3 rounded-[1.5rem] transition-all duration-300"
                                 onClick={() => handleBulkStatusChange('shipped')}
                             >
                                 <Truck className="w-4 h-4" />
@@ -762,10 +762,10 @@ const Orders = () => {
                         </Button>
                         <Button
                             variant="outline"
-                            className="h-24 flex flex-col gap-2 items-center justify-center border-2 hover:border-slate-400 hover:bg-slate-50"
+                            className="h-24 flex flex-col gap-2 items-center justify-center border-2 hover:border-olive/40 hover:bg-background"
                             onClick={executeSequentialPrint}
                         >
-                            <Layers className="w-8 h-8 text-slate-600" />
+                            <Layers className="w-8 h-8 text-olive-dark/60" />
                             <div className="flex flex-col">
                                 <span className="font-bold text-base">Tisk postupně (po jednom)</span>
                                 <span className="text-xs text-muted-foreground italic">Otevře každý štítek v novém okně</span>

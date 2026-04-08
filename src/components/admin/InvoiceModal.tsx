@@ -63,38 +63,38 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                     </div>
                 </div>
 
-                <div className="p-6 md:p-12 bg-slate-50">
+                <div className="p-6 md:p-12 bg-background">
                     <div ref={invoiceRef} className="bg-white p-8 md:p-12 text-black shadow-lg rounded-sm mx-auto max-w-[800px] min-h-[1100px]" id="invoice-print">
                         {/* Header */}
                         <div className="flex justify-between items-start mb-12 border-b pb-8">
                             <div>
-                                <h1 className="text-3xl font-bold text-slate-900">FAKTURA</h1>
-                                <p className="text-slate-500 mt-1">Číslo dokladu: {order.id}</p>
+                                <h1 className="text-3xl font-bold text-olive-dark">FAKTURA</h1>
+                                <p className="text-olive/50 mt-1">Číslo dokladu: {order.id}</p>
                             </div>
                             <div className="text-right">
                                 <h2 className="font-bold text-xl mb-2">{bank.accountName}</h2>
-                                <p className="text-sm text-slate-600">Technologická 123</p>
-                                <p className="text-sm text-slate-600">616 00 Brno</p>
-                                <p className="text-sm text-slate-600">IČ: 12345678</p>
+                                <p className="text-sm text-olive-dark/60">Technologická 123</p>
+                                <p className="text-sm text-olive-dark/60">616 00 Brno</p>
+                                <p className="text-sm text-olive-dark/60">IČ: 12345678</p>
                             </div>
                         </div>
 
                         {/* Info Grid */}
                         <div className="grid grid-cols-2 gap-12 mb-12">
                             <div>
-                                <h3 className="font-bold text-slate-900 mb-4 uppercase text-sm tracking-wider">Odběratel</h3>
-                                <div className="text-slate-700">
+                                <h3 className="font-bold text-olive-dark mb-4 uppercase text-sm tracking-wider">Odběratel</h3>
+                                <div className="text-olive">
                                     <p className="font-bold">{order.customer.name}</p>
                                     <p>{order.customer.email}</p>
                                 </div>
                             </div>
                             <div className="text-right">
                                 <div className="mb-4">
-                                    <span className="text-slate-500 text-sm block">Datum vystavení</span>
+                                    <span className="text-olive/50 text-sm block">Datum vystavení</span>
                                     <span className="font-bold">{new Date(order.date).toLocaleDateString()}</span>
                                 </div>
                                 <div>
-                                    <span className="text-slate-500 text-sm block">Datum splatnosti</span>
+                                    <span className="text-olive/50 text-sm block">Datum splatnosti</span>
                                     <span className="font-bold">{new Date(new Date(order.date).getTime() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
                                 </div>
                             </div>
@@ -103,17 +103,17 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                         {/* Items Table */}
                         <table className="w-full mb-12">
                             <thead>
-                                <tr className="border-b-2 border-slate-100">
-                                    <th className="text-left py-3 text-sm font-bold text-slate-600">Položka</th>
-                                    <th className="text-center py-3 text-sm font-bold text-slate-600">Množství</th>
-                                    <th className="text-right py-3 text-sm font-bold text-slate-600">Cena/ks</th>
-                                    <th className="text-right py-3 text-sm font-bold text-slate-600">Celkem</th>
+                                <tr className="border-b-2 border-background">
+                                    <th className="text-left py-3 text-sm font-bold text-olive-dark/60">Položka</th>
+                                    <th className="text-center py-3 text-sm font-bold text-olive-dark/60">Množství</th>
+                                    <th className="text-right py-3 text-sm font-bold text-olive-dark/60">Cena/ks</th>
+                                    <th className="text-right py-3 text-sm font-bold text-olive-dark/60">Celkem</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
+                            <tbody className="divide-y divide-background">
                                 {order.items.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="py-4 text-slate-800">
+                                        <td className="py-4 text-olive-dark">
                                             <div className="font-medium">
                                                 {item.mixConfiguration
                                                     ? item.name.replace('(MIX)', `(MIX-${(item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0)})`)
@@ -121,7 +121,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                                                 }
                                             </div>
                                             {item.mixConfiguration && (
-                                                <div className="text-xs text-slate-500 mt-1">
+                                                <div className="text-xs text-olive/50 mt-1">
                                                     — {[
                                                         item.mixConfiguration.lemon && `Lemon: ${item.mixConfiguration.lemon} ks`,
                                                         item.mixConfiguration.red && `Red: ${item.mixConfiguration.red} ks`,
@@ -131,14 +131,14 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="py-4 text-center text-slate-600">{item.quantity}</td>
-                                        <td className="py-4 text-right text-slate-600">{item.price} Kč</td>
-                                        <td className="py-4 text-right font-bold text-slate-800">{item.price * item.quantity} Kč</td>
+                                        <td className="py-4 text-center text-olive-dark/60">{item.quantity}</td>
+                                        <td className="py-4 text-right text-olive-dark/60">{item.price} Kč</td>
+                                        <td className="py-4 text-right font-bold text-olive-dark">{item.price * item.quantity} Kč</td>
                                     </tr>
                                 ))}
                             </tbody>
                             <tfoot>
-                                <tr className="border-t-2 border-slate-900">
+                                <tr className="border-t-2 border-olive-dark">
                                     <td colSpan={3} className="pt-4 text-right font-bold text-lg">CELKEM K ÚHRADĚ:</td>
                                     <td className="pt-4 text-right font-bold text-lg">{order.total} Kč</td>
                                 </tr>
@@ -147,7 +147,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
 
                         {/* Settings & QR Payment */}
                         <div className="flex justify-between items-end border-t pt-8">
-                            <div className="text-sm text-slate-500 max-w-xs">
+                            <div className="text-sm text-olive/50 max-w-xs">
                                 <p>Děkujeme za vaši objednávku.</p>
                                 <p className="mt-1">V případě dotazů nás kontaktujte na fakturace@drinkboostup.cz</p>
                             </div>
@@ -155,7 +155,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                                 <div className="border p-2 inline-block rounded-lg mb-2 bg-white">
                                     <QRCodeSVG value={generateSpad()} size={120} />
                                 </div>
-                                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">QR Platba</p>
+                                <p className="text-xs font-bold uppercase tracking-wider text-olive/40">QR Platba</p>
                             </div>
                         </div>
                     </div>

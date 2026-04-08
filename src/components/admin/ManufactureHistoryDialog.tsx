@@ -47,8 +47,8 @@ export const ManufactureHistoryDialog = ({ isOpen, onClose, material }: Props) =
                                         </TableCell>
                                         <TableCell>
                                             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${move.type === 'restock' ? 'bg-green-100 text-green-700' :
-                                                    move.type === 'use' ? 'bg-blue-100 text-blue-700' :
-                                                        'bg-slate-100 text-slate-700'
+                                                    move.type === 'use' ? 'bg-olive-dark/10 text-olive-dark' :
+                                                        'bg-background text-olive'
                                                 }`}>
                                                 {move.type === 'restock' ? 'Naskladnění' :
                                                     move.type === 'use' ? 'Spotřeba' : 'Oprava'}

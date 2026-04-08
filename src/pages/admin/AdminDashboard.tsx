@@ -69,7 +69,7 @@ const AdminDashboard = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-lime" />
+                <Loader2 className="w-12 h-12 animate-spin text-white" />
                 <p className="text-muted-foreground font-medium animate-pulse">Načítám administraci...</p>
             </div>
         );
@@ -135,14 +135,14 @@ const AdminDashboard = () => {
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                 <Card className="glass-dark rounded-[3rem] p-4 relative overflow-hidden group border-white/5">
                     <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
-                        <DollarSign className="w-48 h-48 text-lime" />
+                        <DollarSign className="w-48 h-48 text-white" />
                     </div>
                     <CardHeader className="pb-0 relative z-10">
                         <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Celkové tržby</CardTitle>
                     </CardHeader>
                     <CardContent className="relative z-10 pt-4">
                         <div className="text-5xl font-black text-white font-display tracking-tighter mb-1">
-                            {(totalRevenue || 0).toLocaleString('cs-CZ')} <span className="text-lime text-2xl ml-1">Kč</span>
+                            {(totalRevenue || 0).toLocaleString('cs-CZ')} <span className="text-white text-2xl ml-1">Kč</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-[2px] bg-lime/30" />
@@ -189,7 +189,7 @@ const AdminDashboard = () => {
                     <CardContent className="p-0">
                         <div className="grid grid-cols-1 md:grid-cols-4">
                             <div className="p-10 border-r border-olive/5 bg-olive-dark text-white flex flex-col justify-center">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-lime flex items-center gap-3 mb-4">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-white flex items-center gap-3 mb-4">
                                     <Package className="w-4 h-4" /> INVENTÁŘ
                                 </Label>
                                 <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-widest">Aktuální počty lahviček k expedici.</p>
@@ -234,8 +234,8 @@ const AdminDashboard = () => {
                     <CardContent className="p-0">
                         {orders.length === 0 ? (
                             <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
-                                <ShoppingBag className="w-12 h-12 text-slate-200" />
-                                <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Žádné aktivní objednávky</p>
+                                <ShoppingBag className="w-12 h-12 text-background" />
+                                <p className="text-olive/40 font-bold uppercase text-xs tracking-widest">Žádné aktivní objednávky</p>
                             </div>
                         ) : (
                             <div className="divide-y-2 divide-olive/8">
@@ -248,7 +248,7 @@ const AdminDashboard = () => {
                                     >
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-4 mb-4">
-                                                <span className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1.5 rounded-xl tracking-tighter uppercase whitespace-nowrap shadow-xl shadow-olive-dark/10">
+                                                <span className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl tracking-tighter uppercase whitespace-nowrap shadow-xl shadow-olive-dark/10">
                                                     #{order.id.slice(0, 8)}
                                                 </span>
                                                 <span className="text-[10px] font-black text-olive/20 uppercase tracking-[0.3em] flex items-center gap-2">

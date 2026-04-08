@@ -100,8 +100,8 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                         />
                     </div>
 
-                    <div className="border rounded-lg p-3 space-y-3 bg-slate-50">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Úrovně upozornění</p>
+                    <div className="border rounded-lg p-3 space-y-3 bg-background">
+                        <p className="text-xs font-semibold text-olive/50 uppercase tracking-wide">Úrovně upozornění</p>
                         <div className="grid gap-1.5">
                             <Label htmlFor="warning" className="flex items-center gap-1.5 text-amber-600">
                                 <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
@@ -114,7 +114,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                                 value={warningQuantity}
                                 onChange={(e) => setWarningQuantity(e.target.value)}
                             />
-                            <p className="text-xs text-slate-400">Zásoby brzy dojdou — připravte objednávku.</p>
+                            <p className="text-xs text-olive/40">Zásoby brzy dojdou — připravte objednávku.</p>
                         </div>
                         <div className="grid gap-1.5">
                             <Label htmlFor="min" className="flex items-center gap-1.5 text-red-600">
@@ -128,7 +128,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                                 value={minQuantity}
                                 onChange={(e) => setMinQuantity(e.target.value)}
                             />
-                            <p className="text-xs text-slate-400">Zásoby jsou téměř vyčerpány — okamžitě doplňte.</p>
+                            <p className="text-xs text-olive/40">Zásoby jsou téměř vyčerpány — okamžitě doplňte.</p>
                         </div>
                     </div>
 

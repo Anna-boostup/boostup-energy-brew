@@ -30,7 +30,7 @@ const ManufactureInventory = () => {
                 <div className="flex items-start gap-6">
                     <div className="w-20 h-20 rounded-[2.2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Beaker className="w-10 h-10 text-lime relative z-10" />
+                        <Beaker className="w-10 h-10 text-white relative z-10" />
                     </div>
                     <div className="space-y-2">
                         <h1 className="text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Sklad výroby</h1>
@@ -44,7 +44,7 @@ const ManufactureInventory = () => {
                 </div>
                 <Button 
                     onClick={() => setIsAddOpen(true)} 
-                    className="h-16 px-10 bg-olive-dark hover:bg-black text-lime gap-4 font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.05] active:scale-95 group"
+                    className="h-16 px-10 bg-olive-dark hover:bg-black text-white gap-4 font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.05] active:scale-95 group"
                 >
                     <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
                     Nový materiál
@@ -70,10 +70,10 @@ const ManufactureInventory = () => {
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b border-olive/10 bg-olive-dark">
-                                        <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-lime/60">Identifikace surovin</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-lime/60">Aktuální stav</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-lime/60">Limit / Varování</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-lime/60">Akce</th>
+                                        <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Identifikace surovin</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Aktuální stav</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Limit / Varování</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Akce</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-olive/5">
@@ -85,7 +85,7 @@ const ManufactureInventory = () => {
                                             <tr key={m.id} className="hover:bg-white/40 transition-colors group">
                                                 <td className="px-10 py-8">
                                                     <div className="flex items-center gap-6">
-                                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center relative shadow-lg ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-lime'}`}>
+                                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center relative shadow-lg ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-white'}`}>
                                                             <Beaker className="w-6 h-6" />
                                                             {m.notifications_enabled && (
                                                                 <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-md">
@@ -104,7 +104,7 @@ const ManufactureInventory = () => {
                                                         <div className={`text-3xl font-black font-display italic leading-none ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark'}`}>
                                                             {m.quantity} <span className="text-sm font-black uppercase text-brand-muted opacity-40">{m.unit}</span>
                                                         </div>
-                                                        <Badge variant="outline" className={`border-none px-0 text-[10px] font-black uppercase tracking-widest ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-lime-dark'}`}>
+                                                        <Badge variant="outline" className={`border-none px-0 text-[10px] font-black uppercase tracking-widest ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-white-dark'}`}>
                                                             {isCritical ? 'KRITICKÝ STAV' : isWarning ? 'NÍZKÁ ZÁSOBA' : 'STAV V POŘÁDKU'}
                                                         </Badge>
                                                     </div>
@@ -128,7 +128,7 @@ const ManufactureInventory = () => {
                                                         <Button
                                                             size="icon"
                                                             variant="ghost"
-                                                            className="h-12 w-12 rounded-2xl bg-white border border-olive/5 text-olive-dark hover:bg-olive-dark hover:text-lime transition-all"
+                                                            className="h-12 w-12 rounded-2xl bg-white border border-olive/5 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
                                                             onClick={() => setHistoryId(m.id)}
                                                         >
                                                             <History className="h-5 w-5" />
@@ -136,14 +136,14 @@ const ManufactureInventory = () => {
                                                         <Button
                                                             size="icon"
                                                             variant="ghost"
-                                                            className="h-12 w-12 rounded-2xl bg-white border border-olive/5 text-olive-dark hover:bg-olive-dark hover:text-lime transition-all"
+                                                            className="h-12 w-12 rounded-2xl bg-white border border-olive/5 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
                                                             onClick={() => setEditId(m.id)}
                                                         >
                                                             <Edit className="h-5 w-5" />
                                                         </Button>
                                                         <Button
                                                             size="icon"
-                                                            className="h-12 w-12 rounded-2xl bg-lime text-olive-dark hover:bg-olive-dark hover:text-lime shadow-lg shadow-lime/20"
+                                                            className="h-12 w-12 rounded-2xl bg-lime text-olive-dark hover:bg-olive-dark hover:text-white shadow-lg shadow-lime/20"
                                                             onClick={() => setRestockId(m.id)}
                                                         >
                                                             <Plus className="h-5 w-5" />
@@ -166,7 +166,7 @@ const ManufactureInventory = () => {
                                     <div key={m.id} className="p-8 space-y-6">
                                         <div className="flex justify-between items-start">
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-lime'}`}>
+                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-white'}`}>
                                                     <Beaker className="w-5 h-5" />
                                                 </div>
                                                 <div>
@@ -178,7 +178,7 @@ const ManufactureInventory = () => {
                                                 <p className={`text-2xl font-black font-display italic leading-none ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark'}`}>
                                                     {m.quantity} <span className="text-[10px] uppercase opacity-40">{m.unit}</span>
                                                 </p>
-                                                <p className={`text-[8px] font-black uppercase tracking-widest mt-1 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-lime-dark'}`}>
+                                                <p className={`text-[8px] font-black uppercase tracking-widest mt-1 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-white-dark'}`}>
                                                     {isCritical ? 'KRITICKÝ STAV' : isWarning ? 'NÍZKÝ STAV' : 'V POŘÁDKU'}
                                                 </p>
                                             </div>

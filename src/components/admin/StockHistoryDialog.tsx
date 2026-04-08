@@ -62,7 +62,7 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
                                                     movement.type === 'sale' ? 'secondary' : 'outline'
                                             } className={
                                                 movement.type === 'restock' ? 'bg-green-600' :
-                                                    movement.type === 'sale' ? 'bg-blue-600' : 'bg-gray-500'
+                                                    movement.type === 'sale' ? 'bg-olive-dark' : 'bg-gray-500'
                                             }>
                                                 {movement.type === 'restock' && "Naskladnění"}
                                                 {movement.type === 'sale' && "Prodej"}

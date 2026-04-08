@@ -164,7 +164,7 @@ const PricingStatistics = () => {
                                         type="number" 
                                         value={prices.pack3} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-5 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
@@ -181,7 +181,7 @@ const PricingStatistics = () => {
                                         type="number" 
                                         value={prices.pack12} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-5 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
@@ -198,7 +198,7 @@ const PricingStatistics = () => {
                                         type="number" 
                                         value={prices.pack21} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-5 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
@@ -260,10 +260,10 @@ const PricingStatistics = () => {
                                     type="monotone" 
                                     dataKey="orders" 
                                     name="Objednávky"
-                                    stroke="#1e293b" 
+                                    stroke="#3d5a2f" 
                                     strokeWidth={6}
                                     dot={{ r: 0 }}
-                                    activeDot={{ r: 8, strokeWidth: 0, fill: '#C4F135' }}
+                                    activeDot={{ r: 8, strokeWidth: 0, fill: '#d4f45d' }}
                                     animationDuration={2000}
                                 />
                             </LineChart>

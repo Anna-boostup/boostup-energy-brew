@@ -291,7 +291,7 @@ const AdminHelp = () => {
                 <div className="flex items-start gap-8">
                     <div className="w-24 h-24 rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <HelpCircle className="w-12 h-12 text-lime relative z-10" />
+                        <HelpCircle className="w-12 h-12 text-white relative z-10" />
                     </div>
                     <div className="space-y-3">
                         <h1 className="text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Centrum Pomoci</h1>
@@ -310,12 +310,12 @@ const AdminHelp = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-lime/5 blur-[80px] -translate-y-1/2 translate-x-1/3" />
                 <div className="relative flex flex-col md:flex-row gap-10 p-12 items-center">
                     <div className="w-20 h-20 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-2xl transition-all group-hover:scale-110 group-hover:border-lime/30 duration-700">
-                        <MousePointer2 className="w-10 h-10 text-lime" />
+                        <MousePointer2 className="w-10 h-10 text-white" />
                     </div>
                     <div className="space-y-2 text-center md:text-left flex-1">
                         <p className="text-2xl font-display font-black text-white uppercase italic tracking-tight">Pro rychlou navigaci</p>
-                        <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-[11px] leading-relaxed">
-                            Kliknutím na nadpis rozbalíte detailní návod. Všechny změny musí být vždy potvrzeny tlačítkem <span className="text-lime font-black border-b border-lime/30 mx-1">Uložit změny</span>.
+                        <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[11px] leading-relaxed">
+                            Kliknutím na nadpis rozbalíte detailní návod. Všechny změny musí být vždy potvrzeny tlačítkem <span className="text-white font-black border-b border-lime/30 mx-1">Uložit změny</span>.
                         </p>
                     </div>
                 </div>
@@ -335,7 +335,7 @@ const AdminHelp = () => {
                                 <div className="flex items-center gap-8 text-left">
                                     <div className="w-20 h-20 rounded-[2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform duration-700 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-lime/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <Icon className="w-9 h-9 text-lime relative z-10" />
+                                        <Icon className="w-9 h-9 text-white relative z-10" />
                                     </div>
                                     <div className="space-y-2">
                                         <h3 className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight leading-none italic">{section.title}</h3>
@@ -350,7 +350,7 @@ const AdminHelp = () => {
                                             {section.items.map((item, i) => (
                                                 <li key={i} className="flex gap-6 group/item">
                                                     <div className="mt-1.5 w-7 h-7 rounded-xl bg-olive-dark flex items-center justify-center shrink-0 shadow-xl group-hover/item:scale-110 transition-transform">
-                                                        <ChevronRight className="w-4 h-4 text-lime" />
+                                                        <ChevronRight className="w-4 h-4 text-white" />
                                                     </div>
                                                     <div className="space-y-2">
                                                         <p className="font-black text-xl text-olive-dark font-display uppercase tracking-tight leading-none italic">{item.label}</p>
@@ -399,11 +399,11 @@ const AdminHelp = () => {
                 
                 <div className="relative z-10 space-y-8">
                     <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 border border-white/10 group-hover:border-lime/50 transition-all duration-700 shadow-2xl">
-                        <HelpCircle className="w-12 h-12 text-lime" />
+                        <HelpCircle className="w-12 h-12 text-white" />
                     </div>
                     <div className="space-y-4">
                         <h3 className="text-5xl font-black font-display uppercase italic tracking-tight leading-none text-white">Technická podpora</h3>
-                        <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-sm max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-white/40 font-black uppercase tracking-[0.2em] text-sm max-w-2xl mx-auto leading-relaxed">
                             Nenašli jste odpověď nebo je něco v nepořádku? Jsme připraveni vám okamžitě pomoci se správou vašeho e-shopu.
                         </p>
                     </div>

@@ -4,7 +4,7 @@ import {
   Mail
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { useState, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
@@ -29,6 +29,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
+  const { user, profile } = useAuth();
   const { content: SITE_CONTENT } = useContent();
   const [unreadCount, setUnreadCount] = useState(0);
 
