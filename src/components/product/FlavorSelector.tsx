@@ -45,7 +45,7 @@ const FlavorSelector = ({
                 <div className="text-left min-w-0 flex-1">
                   <div className="flex items-baseline gap-2">
                     <span className="font-bold text-base leading-tight">
-                      {content.flavors[flavor.id]?.name || (eff ? cleanName(eff.name) : flavor.name)}
+                      {eff ? cleanName(eff.name) : (content.flavors[flavor.id]?.name || flavor.name)}
                     </span>
                     {eff?.is_on_sale && (
                       <span className="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider animate-pulse">
@@ -71,7 +71,7 @@ const FlavorSelector = ({
                     ? (flavor.id === 'lemon' ? 'text-primary font-medium' : 'text-white/90 font-medium') 
                     : 'text-foreground/70 font-medium'
                   }`}>
-                    {content.flavors[flavor.id]?.description || flavor.description}
+                    {eff?.description || content.flavors[flavor.id]?.description || flavor.description}
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-1 shrink-0">

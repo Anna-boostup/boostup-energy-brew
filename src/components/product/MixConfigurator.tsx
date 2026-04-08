@@ -49,7 +49,7 @@ const MixConfigurator = ({
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <div className="text-left min-w-0 flex-1 pr-10">
                 <div className="font-bold text-base leading-tight">
-                  {content.flavors[flavor.id]?.name || (getEffectiveProduct(flavor.id) ? cleanName(getEffectiveProduct(flavor.id)!.name) : flavor.name)}
+                  {(getEffectiveProduct(flavor.id) ? cleanName(getEffectiveProduct(flavor.id)!.name) : content.flavors[flavor.id]?.name) || flavor.name}
                   {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
                     <span key={label} className="ml-2 text-[8px] uppercase font-bold px-1 py-0.5 rounded-full bg-white/10 border border-white/5 inline-block align-middle">
                       {label}
