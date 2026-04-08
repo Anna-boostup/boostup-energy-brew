@@ -737,7 +737,6 @@ const Orders = () => {
                             <span>Tisk štítků</span>
                         </Button>
                     </div>
-                </div>
             )}
 
             <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
