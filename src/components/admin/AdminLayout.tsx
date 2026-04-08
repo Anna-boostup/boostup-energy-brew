@@ -7,6 +7,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
 import logoGreen from "@/assets/logo-green.png";
 import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
+import { supabase } from "@/lib/supabase";
+import { Badge } from "@/components/ui/badge";
 
 
 const AdminLayout = () => {
@@ -15,6 +17,31 @@ const AdminLayout = () => {
 
     const { user, profile, loading, signOut } = useAuth();
     const { materials } = useManufacture();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    // Fetch unread messages count
+    useEffect(() => {
+        if (!user || profile?.role !== 'admin') return;
+
+        const fetchUnreadCount = async () => {
+            try {
+                const { count, error } = await supabase
+                    .from('messages')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_read', false);
+                
+                if (error) throw error;
+                setUnreadCount(count || 0);
+            } catch (err) {
+                console.error('Error fetching unread count:', err);
+            }
+        };
+
+        fetchUnreadCount();
+        const interval = setInterval(fetchUnreadCount, 60000); // Check every minute
+
+        return () => clearInterval(interval);
+    }, [user, profile]);
 
     if (loading) {
         return <div className="p-8">Ověřuji oprávnění...</div>;
@@ -119,9 +146,16 @@ const AdminLayout = () => {
                                                     <Icon className="w-5 h-5" />
                                                     {item.label}
                                                 </div>
-                                                {item.hasAlert && (
-                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
-                                                )}
+                                                <div className="flex items-center gap-2">
+                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
+                                                            {unreadCount}
+                                                        </Badge>
+                                                    )}
+                                                    {item.hasAlert && (
+                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
+                                                    )}
+                                                </div>
                                             </button>
                                         )}
                                     </li>
@@ -190,9 +224,16 @@ const AdminLayout = () => {
                                                 <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-lime"}`} />
                                                 <span className="text-xs font-bold uppercase tracking-wider">{item.label}</span>
                                             </div>
-                                            {item.hasAlert && (
-                                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label="Upozornění: Nízký stav zásob" />
-                                            )}
+                                            <div className="flex items-center gap-2">
+                                                {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                    <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
+                                                        {unreadCount}
+                                                    </Badge>
+                                                )}
+                                                {item.hasAlert && (
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label="Upozornění: Nízký stav zásob" />
+                                                )}
+                                            </div>
                                         </button>
                                     )}
                                 </li>

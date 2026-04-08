@@ -1,7 +1,8 @@
-import { 
   Menu, 
-  X
+  X,
+  Mail
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 import { useState, lazy, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -15,6 +16,7 @@ import AuthButton from "./header/AuthButton";
 import CartButton from "./header/CartButton";
 import MobileMenu from "./header/MobileMenu";
 import LanguageToggle from "./LanguageToggle";
+import { Badge } from "./ui/badge";
 
 const CartModal = lazy(() => import("./CartModal"));
 
@@ -26,8 +28,51 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartCount } = useCart();
-  const { user, profile } = useAuth();
   const { content: SITE_CONTENT } = useContent();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch unread messages count if admin
+  useEffect(() => {
+    if (!profile || profile.role !== 'admin') {
+        setUnreadCount(0);
+        return;
+    }
+
+    const fetchUnreadCount = async () => {
+        try {
+            const { count, error } = await supabase
+                .from('messages')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_read', false);
+            
+            if (error) throw error;
+            
+            const newCount = count || 0;
+            
+            // Trigger notification if count increased
+            if (newCount > unreadCount && typeof window !== 'undefined' && Notification.permission === 'granted') {
+                new Notification('Nová zpráva! 📧', {
+                    body: `Máte ${newCount} nepřečtených zpráv od zákazníků.`,
+                    icon: '/favicon.png'
+                });
+                
+                try {
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                    audio.play().catch(() => {});
+                } catch (e) {}
+            }
+            
+            setUnreadCount(newCount);
+        } catch (err) {
+            console.error('Error fetching unread count:', err);
+        }
+    };
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [profile, unreadCount]);
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300 ${
@@ -51,6 +96,21 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <LanguageToggle />
 
             <AuthButton user={user} profile={profile} />
+
+            {profile?.role === 'admin' && (
+              <a 
+                href="/#/admin/messages" 
+                className="p-2 relative group hover:scale-110 transition-all"
+                title="Zprávy"
+              >
+                <Mail className="w-5 h-5 text-olive-dark" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-terracotta text-white font-black border-2 border-background animate-in zoom-in duration-300">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </a>
+            )}
 
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
           </div>

@@ -142,22 +142,23 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     const newOrder = payload.new as any;
                     setOrders(prev => [newOrder, ...prev]);
 
-                    // Trigger browser notification for new orders
+                    /* 
+                    // Trigger browser notification for new orders (Disabled per user request)
                     if (typeof window !== 'undefined' && Notification.permission === 'granted') {
                         const amount = newOrder.total;
                         const customer = newOrder.customer_name || 'Zákazník';
                         
                         new Notification('Nová objednávka! ⚡', {
                             body: `Částka: ${amount} Kč | Od: ${customer}`,
-                            icon: '/logo.png' // Use site logo if available
+                            icon: '/logo.png'
                         });
 
-                        // Play a subtle notification sound if possible
                         try {
                             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                            audio.play().catch(() => {/* ignore play restrictions */});
+                            audio.play().catch(() => {});
                         } catch (e) {}
                     }
+                    */
                 } else if (payload.eventType === 'UPDATE') {
                     setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
                 }

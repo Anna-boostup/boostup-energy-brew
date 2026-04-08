@@ -387,7 +387,7 @@ const Orders = () => {
             if (permission === 'granted') {
                 toast({
                     title: "Oznámení povolena! 🔔",
-                    description: "Nyní budete upozorněni na každou novou objednávku přímo v prohlížeči.",
+                    description: "Nyní budete upozorněni na každou novou zprávu od zákazníků přímo v prohlížeči.",
                 });
             }
         } catch (error) {
