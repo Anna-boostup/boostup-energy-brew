@@ -23,20 +23,20 @@ const getFlavorLabel = (sku: string) => {
 };
 
 const PackBreakdown = ({ bottles }: { bottles: number }) => (
-    <div className="flex flex-wrap gap-3 mt-4">
+    <div className="flex flex-wrap gap-2 mt-2">
         {PACK_SIZES.map(size => {
             const count = Math.floor(bottles / size);
             return (
                 <div
                     key={size}
-                    className={`flex flex-col items-center justify-center rounded-3xl border transition-all duration-500 hover:scale-105 ${
-                        count > 0 
-                            ? "bg-white border-olive/10 shadow-lg shadow-olive/5" 
+                    className={`flex items-center gap-1.5 rounded-xl border transition-all duration-500 ${
+                        count > 0
+                            ? "bg-white/80 border-olive/10 shadow-sm backdrop-blur-sm"
                             : "bg-olive-dark/5 border-transparent opacity-20"
-                    } px-5 py-3 min-w-[70px]`}
+                    } px-3 py-1.5 hover:scale-105`}
                 >
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/30 mb-1">{size}ks</span>
-                    <span className="text-lg font-black text-olive-dark font-display">{count} <span className="text-[10px] text-olive/20 tracking-normal">×</span></span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.15em] text-olive/40">{size}ks</span>
+                    <span className="text-sm font-black text-olive-dark font-display">{count}×</span>
                 </div>
             );
         })}
@@ -55,7 +55,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
                     <span className="text-[10px] text-olive/40 font-black uppercase tracking-widest mt-1">Stav zásob</span>
                 </div>
             </div>
-            <div className={`text-right ${qty < 10 ? "text-red-600" : "text-olive-dark"}`}>
+            <div className={`text-right ${qty < 10 ? "text-terracotta font-black" : "text-olive-dark"}`}>
                 <div className="text-4xl font-black font-display leading-none">{qty}</div>
                 <div className="text-[10px] font-black uppercase tracking-widest opacity-30 mt-1">Lahviček</div>
             </div>
@@ -138,37 +138,35 @@ const Inventory = () => {
                 <Table>
                     <TableHeader className="bg-white/40 border-b border-olive/5">
                         <TableRow className="hover:bg-transparent border-none">
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 px-10">PRODUKT / SKU</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 text-right w-[180px]">SKLADEM</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 pl-16">BALENÍ</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 text-center w-[140px]">PRODEJ</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-10 text-right px-10">AKCE</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 px-6">PRODUKT / SKU</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-right w-[140px]">SKLADEM</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 pl-8">BALENÍ</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-center w-[120px]">PRODEJ</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-right px-6">AKCE</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {sortedStock.map(([sku, qty]) => {
                             const product = products.find(p => p.sku === sku);
                             return (
-                                <TableRow key={sku} className="transition-all duration-500 hover:bg-white border-b border-olive/5 group">
-                                    <TableCell className="py-10 px-10">
+                                <TableRow key={sku} className="transition-all duration-300 hover:bg-white border-b border-olive/8 group">
+                                    <TableCell className="py-4 px-6">
                                         <div className="flex flex-col">
-                                            <span className="font-display font-black text-olive-dark text-2xl leading-tight group-hover:scale-105 origin-left transition-transform duration-500 uppercase tracking-tight">
+                                            <span className="font-display font-black text-olive-dark text-lg leading-tight uppercase tracking-tight">
                                                 {product?.name || getFlavorLabel(sku)}
                                             </span>
-                                            <span className="font-mono font-black text-[11px] text-lime bg-olive-dark px-3 py-1 rounded-xl w-fit mt-3 shadow-lg shadow-olive-dark/10">
-                                                #{sku}
-                                            </span>
+                                            <span className="font-mono font-black text-[10px] text-lime bg-olive-dark px-2 py-0.5 rounded-lg w-fit mt-1.5 shadow-sm">#{sku}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex flex-col items-end">
-                                            <span className={`font-display font-black text-4xl tabular-nums leading-none ${qty < 10 ? "text-red-600" : "text-olive-dark"}`}>
+                                            <span className={`font-display font-black text-3xl tabular-nums leading-none ${qty < 10 ? "text-terracotta" : "text-olive-dark"}`}>
                                                 {qty}
                                             </span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-olive/20 mt-2">Lahviček</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-olive/20 mt-1">Lahviček</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="pl-16">
+                                    <TableCell className="pl-8">
                                         <PackBreakdown bottles={qty} />
                                     </TableCell>
                                     <TableCell className="text-center">
@@ -185,41 +183,41 @@ const Inventory = () => {
                                             </span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-right px-10">
-                                        <div className="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                                    <TableCell className="text-right px-6">
+                                        <div className="flex justify-end gap-2">
                                             <Button
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => setHistorySku(sku)}
-                                                className="h-14 w-14 p-0 rounded-2xl border-olive/10 hover:bg-olive-dark hover:text-white transition-all duration-300 shadow-sm"
+                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-lime hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
                                                 title="Historie pohybů"
                                             >
-                                                <History className="h-6 w-6" />
+                                                <History className="h-4 w-4" />
                                             </Button>
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                className="h-14 w-14 p-0 rounded-2xl border-olive/10 hover:bg-white text-olive-dark/40 hover:text-olive-dark transition-all duration-300 shadow-sm"
+                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-lime hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
                                                 onClick={() => setEditSku(sku)}
                                                 title="Upravit detaily"
                                             >
-                                                <Edit className="h-6 w-6" />
+                                                <Edit className="h-4 w-4" />
                                             </Button>
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="h-14 w-14 p-0 rounded-2xl text-red-400 hover:text-red-700 hover:bg-red-50 transition-all duration-300"
+                                                className="h-10 w-10 p-0 rounded-xl text-terracotta/60 hover:text-terracotta hover:bg-terracotta/10 transition-all duration-200"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "out" })}
                                                 title="Odebrat ze skladu"
                                             >
-                                                <Minus className="h-6 w-6" />
+                                                <Minus className="h-4 w-4" />
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-lime/20 transition-all duration-300 ml-2"
+                                                className="bg-olive-dark hover:bg-olive text-lime h-10 px-5 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all duration-200 ml-1"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "in" })}
                                             >
-                                                <Plus className="h-4 w-4 mr-2" />
+                                                <Plus className="h-3.5 w-3.5 mr-1.5" />
                                                 Doplnit
                                             </Button>
                                         </div>

@@ -145,21 +145,21 @@ const PricingStatistics = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Pricing Card */}
                 <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
-                    <CardHeader className="bg-slate-900 border-b border-slate-800 py-8">
+                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-8">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 bg-primary/20 rounded-xl">
                                 <Package className="w-5 h-5 text-primary" />
                             </div>
                             <CardTitle className="text-xl text-white font-black">Cenotvorba</CardTitle>
                         </div>
-                        <CardDescription className="text-slate-400 text-xs">Globální nastavení cen pro všechna balení.</CardDescription>
+                        <CardDescription className="text-olive-dark text-xs">Globální nastavení cen pro všechna balení.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-8 space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
-                                    <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400">Balení 3 ks</Label>
-                                    <span className="text-[10px] font-black text-primary bg-slate-900 px-2 py-0.5 rounded-md">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
+                                    <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 3 ks</Label>
+                                    <span className="text-[10px] font-black text-primary bg-olive-dark px-2 py-0.5 rounded-md">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
                                 </div>
                                 <div className="relative group">
                                     <Input 
@@ -167,17 +167,17 @@ const PricingStatistics = () => {
                                         type="number" 
                                         value={prices.pack3} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-slate-900 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🍋</span>
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">Kč</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
-                                    <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400">Balení 12 ks</Label>
-                                    <span className="text-[10px] font-black text-primary bg-slate-900 px-2 py-0.5 rounded-md">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
+                                    <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 12 ks</Label>
+                                    <span className="text-[10px] font-black text-primary bg-olive-dark px-2 py-0.5 rounded-md">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
                                 </div>
                                 <div className="relative group">
                                     <Input 
@@ -185,17 +185,17 @@ const PricingStatistics = () => {
                                         type="number" 
                                         value={prices.pack12} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-slate-900 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🍓</span>
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">Kč</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
                             </div>
 
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
-                                    <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400">Balení 21 ks</Label>
-                                    <span className="text-[10px] font-black text-primary bg-slate-900 px-2 py-0.5 rounded-md">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
+                                    <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 21 ks</Label>
+                                    <span className="text-[10px] font-black text-primary bg-olive-dark px-2 py-0.5 rounded-md">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
                                 </div>
                                 <div className="relative group">
                                     <Input 
@@ -203,16 +203,16 @@ const PricingStatistics = () => {
                                         type="number" 
                                         value={prices.pack21} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-slate-900 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🌿</span>
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">Kč</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
                             </div>
                         </div>
 
                         <Button 
-                            className="w-full h-16 bg-primary hover:bg-lime-dark text-slate-900 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 gap-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                            className="w-full h-16 bg-primary hover:bg-lime-dark text-olive-dark font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 gap-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
                             onClick={handleSavePrices}
                             disabled={isSaving}
                         >
@@ -224,14 +224,14 @@ const PricingStatistics = () => {
 
                 {/* Orders Stats Card */}
                 <Card className="lg:col-span-2 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
-                    <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-8 px-8">
+                    <CardHeader className="bg-white/40 border-b border-olive/8 py-8 px-8">
                         <div className="flex items-center gap-3 mb-1">
-                            <div className="p-2 bg-slate-900 rounded-xl">
+                            <div className="p-2 bg-olive-dark rounded-xl">
                                 <ShoppingCart className="w-5 h-5 text-primary" />
                             </div>
-                            <CardTitle className="text-xl font-black text-slate-900">Objem objednávek</CardTitle>
+                            <CardTitle className="text-xl font-black text-olive-dark">Objem objednávek</CardTitle>
                         </div>
-                        <CardDescription className="text-slate-500 text-xs font-medium">Přehled počtu objednávek za posledních 30 dní.</CardDescription>
+                        <CardDescription className="text-olive-dark text-xs font-medium">Přehled počtu objednávek za posledních 30 dní.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-10 px-8 h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -279,14 +279,14 @@ const PricingStatistics = () => {
 
                 {/* Units Stats Card */}
                 <Card className="lg:col-span-3 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <CardHeader className="bg-slate-900 border-b border-slate-800 py-8 px-10">
+                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-8 px-10">
                         <div className="flex items-center gap-3 mb-1">
                             <div className="p-2 bg-primary/20 rounded-xl">
                                 <TrendingUp className="w-5 h-5 text-primary" />
                             </div>
                             <CardTitle className="text-xl font-black text-white">Prodané jednotky</CardTitle>
                         </div>
-                        <CardDescription className="text-slate-400 text-xs font-medium">Celkový počet prodaných lahviček rozdělený dle příchutí.</CardDescription>
+                        <CardDescription className="text-olive-dark text-xs font-medium">Celkový počet prodaných lahviček rozdělený dle příchutí.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-12 px-10 h-[500px]">
                         <ResponsiveContainer width="100%" height="100%">

@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
 import logoGreen from "@/assets/logo-green.png";
+import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
 
 
 const AdminLayout = () => {
@@ -50,16 +51,16 @@ const AdminLayout = () => {
         { icon: LayoutDashboard, label: "Přehled", path: "/admin" },
         { icon: ShoppingCart, label: "Objednávky", path: "/admin/orders" },
         { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
-        { icon: TrendingUp, label: "Ceny a Statistiky", path: "/admin/pricing" },
-        { icon: Sparkles, label: "Slevové kódy", path: "/admin/promo-codes" },
-        { icon: Mail, label: "Zprávy", path: "/admin/messages" },
         {
             icon: Factory,
             label: "Sklad výroby",
             path: "/admin/manufacture",
             hasAlert: hasLowStockAlert
         },
+        { icon: Mail, label: "Zprávy", path: "/admin/messages" },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
+        { icon: TrendingUp, label: "Ceny a Statistiky", path: "/admin/pricing" },
+        { icon: Sparkles, label: "Slevové kódy", path: "/admin/promo-codes" },
         { icon: User, label: "Můj účet", path: "/admin/profile" },
         { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
     ];
@@ -229,7 +230,9 @@ const AdminLayout = () => {
             {/* Main Content */}
             <main className="flex-1 md:ml-80 p-6 md:p-12 pt-28 md:pt-12 min-h-screen">
                 <div className="max-w-7xl mx-auto">
-                    <Outlet />
+                    <AdminErrorBoundary>
+                        <Outlet />
+                    </AdminErrorBoundary>
                 </div>
             </main>
         </div>

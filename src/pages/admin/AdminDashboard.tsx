@@ -69,7 +69,7 @@ const AdminDashboard = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-lime-600" />
+                <Loader2 className="w-12 h-12 animate-spin text-lime" />
                 <p className="text-muted-foreground font-medium animate-pulse">Načítám administraci...</p>
             </div>
         );
@@ -198,21 +198,21 @@ const AdminDashboard = () => {
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">Lemon Blast</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
-                                    <span className="text-[11px] font-black text-olive/30 mb-1">KS</span>
+                                    <span className="text-[11px] font-black text-olive/30 mb-1">ks</span>
                                 </div>
                             </div>
                             <div className="p-10 flex flex-col justify-center border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3 text-red-700">Red Rush</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-5xl font-black text-olive-dark font-display leading-none">{stock['red'] || 0}</span>
-                                    <span className="text-[11px] font-black text-olive/30 mb-1">KS</span>
+                                    <span className="text-[11px] font-black text-olive/30 mb-1">ks</span>
                                 </div>
                             </div>
                             <div className="p-10 flex flex-col justify-center hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">Silky Leaf</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-5xl font-black text-olive-dark font-display leading-none">{stock['silky'] || 0}</span>
-                                    <span className="text-[11px] font-black text-olive/30 mb-1">KS</span>
+                                    <span className="text-[11px] font-black text-olive/30 mb-1">ks</span>
                                 </div>
                             </div>
                         </div>
@@ -268,7 +268,7 @@ const AdminDashboard = () => {
                                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/20">Platba</span>
                                                     <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
                                                         order.status === 'pending' 
-                                                            ? 'bg-orange-500/10 text-orange-600' 
+                                                            ? 'bg-orange/10 text-orange' 
                                                             : 'bg-lime text-olive-dark shadow-lime/20'
                                                     }`}>
                                                         {order.status === 'pending' ? 'ČEKÁ' : 'ZAPLACENO'}
@@ -278,7 +278,7 @@ const AdminDashboard = () => {
                                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/20">Status</span>
                                                     <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
                                                         order.status === 'shipped' ? 'bg-olive-dark text-white' :
-                                                        order.status === 'processing' ? 'bg-indigo-600 text-white' :
+                                                        order.status === 'processing' ? 'bg-olive-light text-white' :
                                                         order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
                                                         'bg-lime/20 text-olive-dark'
                                                     }`}>

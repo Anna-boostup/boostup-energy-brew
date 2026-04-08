@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Lock, Save, Shield, ShoppingBag, RefreshCw } from "lucide-react";
+import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountOrders from "@/pages/account/Orders";
 import Subscriptions from "@/pages/account/Subscriptions";
+import { Badge } from "@/components/ui/badge";
 
 const AdminProfile = () => {
     const { user, profile } = useAuth();
@@ -80,147 +81,193 @@ const AdminProfile = () => {
     };
 
     return (
-        <div className="space-y-12 pb-24 animate-in fade-in duration-700">
-            <div className="flex items-center gap-6">
-                <div className="w-16 h-16 rounded-[2rem] bg-slate-900 flex items-center justify-center shadow-xl shadow-slate-900/10">
-                    <Shield className="w-7 h-7 text-primary" />
-                </div>
-                <div className="space-y-1">
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900 font-display uppercase">Administrace</h2>
-                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest">{user?.email}</p>
+        <div className="space-y-16 pb-32 animate-in fade-in duration-1000">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
+                <div className="flex items-start gap-8">
+                    <div className="w-24 h-24 rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Shield className="w-12 h-12 text-lime relative z-10" />
+                    </div>
+                    <div className="space-y-3">
+                        <h1 className="text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Můj Profil</h1>
+                        <div className="flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px]">
+                                Centrální správa administrátorského účtu
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <Tabs defaultValue="profile" className="space-y-10">
-                <div className="p-2 bg-slate-900 rounded-[2.5rem] w-full md:w-fit shadow-2xl">
+            <Tabs defaultValue="profile" className="space-y-12">
+                <div className="p-2 bg-olive-dark rounded-[2.5rem] w-full md:w-fit shadow-2xl">
                     <TabsList className="bg-transparent h-auto p-1 gap-2 flex flex-wrap">
-                        <TabsTrigger value="profile" className="gap-3 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest text-slate-400 data-[state=active]:bg-primary data-[state=active]:text-slate-900 transition-all duration-500 border-none">
+                        <TabsTrigger value="profile" className="gap-3 px-10 py-5 rounded-[2.2rem] font-black uppercase text-[10px] tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20">
                             <User className="w-4 h-4" />
-                            <span>Profil & Heslo</span>
+                            <span>Profil & Zabezpečení</span>
                         </TabsTrigger>
-                        <TabsTrigger value="orders" className="gap-3 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest text-slate-400 data-[state=active]:bg-primary data-[state=active]:text-slate-900 transition-all duration-500 border-none">
+                        <TabsTrigger value="orders" className="gap-3 px-10 py-5 rounded-[2.2rem] font-black uppercase text-[10px] tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20">
                             <ShoppingBag className="w-4 h-4" />
-                            <span>Moje nákupy</span>
+                            <span>Historie Nákupů</span>
                         </TabsTrigger>
-                        <TabsTrigger value="subscriptions" className="gap-3 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest text-slate-400 data-[state=active]:bg-primary data-[state=active]:text-slate-900 transition-all duration-500 border-none">
+                        <TabsTrigger value="subscriptions" className="gap-3 px-10 py-5 rounded-[2.2rem] font-black uppercase text-[10px] tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20">
                             <RefreshCw className="w-4 h-4" />
-                            <span>Předplatné</span>
+                            <span>Aktivní Předplatné</span>
                         </TabsTrigger>
                     </TabsList>
                 </div>
 
-                <TabsContent value="profile" className="space-y-8 max-w-2xl mt-0">
+                <TabsContent value="profile" className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-0">
                     {/* Profile Info Card */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <User className="w-5 h-5 text-muted-foreground" />
-                                Osobní údaje
-                            </CardTitle>
-                            <CardDescription>Aktualizujte své zobrazované jméno</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleSaveProfile} className="space-y-4">
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="email">E-mail</Label>
-                                    <Input
-                                        id="email"
-                                        value={user?.email || ""}
-                                        disabled
-                                        className="bg-slate-50 text-muted-foreground"
-                                    />
-                                    <p className="text-xs text-muted-foreground">E-mail nelze změnit.</p>
+                    <div className="glass-card rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
+                        <div className="bg-olive-dark p-10 space-y-2">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-lime/10 rounded-xl">
+                                    <Fingerprint className="w-6 h-6 text-lime" />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="fullName">Celé jméno</Label>
-                                    <Input
-                                        id="fullName"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                        placeholder="Vaše jméno a příjmení"
-                                    />
+                                <h3 className="text-2xl font-black text-white font-display uppercase italic tracking-tight">Osobní údaje</h3>
+                            </div>
+                            <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace jména a informací o roli</p>
+                        </div>
+                        <div className="p-10 flex-1">
+                            <form onSubmit={handleSaveProfile} className="space-y-8">
+                                <div className="space-y-3">
+                                    <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">E-mailová adresa</Label>
+                                    <div className="relative group/input">
+                                        <Input
+                                            id="email"
+                                            value={user?.email || ""}
+                                            disabled
+                                            className="h-16 pl-14 rounded-2xl border-none bg-olive-dark/5 text-olive-dark/60 font-medium cursor-not-allowed italic"
+                                        />
+                                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20" />
+                                    </div>
+                                    <p className="text-[9px] text-brand-muted font-bold uppercase tracking-widest pl-1">Primární email nelze v administraci měnit.</p>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label>Role</Label>
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary uppercase tracking-wide">
-                                            {profile?.role || "admin"}
-                                        </span>
+
+                                <div className="space-y-3">
+                                    <Label htmlFor="fullName" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Plné jméno</Label>
+                                    <div className="relative group/input">
+                                        <Input
+                                            id="fullName"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                            placeholder="Vaše jméno"
+                                            className="h-16 pl-14 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-lg text-olive-dark"
+                                        />
+                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20 group-focus-within/input:text-lime transition-colors" />
                                     </div>
                                 </div>
-                                <Button type="submit" disabled={isSavingProfile}>
-                                    <Save className="mr-2 h-4 w-4" />
-                                    {isSavingProfile ? "Ukládám..." : "Uložit změny"}
+
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Systémová Role</Label>
+                                    <div className="p-4 bg-cream/50rounded-[1.5rem] border border-olive/5 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
+                                            <span className="font-display font-black text-olive-dark uppercase italic text-lg">{profile?.role || "Administrátor"}</span>
+                                        </div>
+                                        <Badge className="bg-olive-dark text-lime font-black uppercase tracking-widest text-[9px] px-3 py-1 rounded-lg">Verified</Badge>
+                                    </div>
+                                </div>
+
+                                <Button 
+                                    type="submit" 
+                                    disabled={isSavingProfile}
+                                    className="w-full h-16 bg-olive-dark hover:bg-black text-lime font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                                >
+                                    {isSavingProfile ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                                    Uložit změny v profilu
                                 </Button>
                             </form>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
 
                     {/* Password Change Card */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <Lock className="w-5 h-5 text-muted-foreground" />
-                                Změna hesla
-                            </CardTitle>
-                            <CardDescription>Pro změnu hesla musíte zadat aktuální heslo</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleChangePassword} className="space-y-4">
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="currentPassword">Aktuální heslo</Label>
+                    <div className="glass-card rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
+                        <div className="bg-olive-dark p-10 space-y-2">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-lime/10 rounded-xl">
+                                    <Lock className="w-6 h-6 text-lime" />
+                                </div>
+                                <h3 className="text-2xl font-black text-white font-display uppercase italic tracking-tight">Zabezpečení</h3>
+                            </div>
+                            <p className="text-lime/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace hesla a ochrana klíče</p>
+                        </div>
+                        <div className="p-10 flex-1">
+                            <form onSubmit={handleChangePassword} className="space-y-8">
+                                <div className="space-y-3">
+                                    <Label htmlFor="currentPassword" title="Aktuální heslo" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Současné heslo</Label>
                                     <Input
                                         id="currentPassword"
                                         type="password"
                                         value={currentPassword}
                                         onChange={(e) => setCurrentPassword(e.target.value)}
-                                        placeholder="Vaše současné heslo"
+                                        placeholder="••••••••"
+                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="newPassword">Nové heslo</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="newPassword" title="Nové heslo" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Nové heslo</Label>
                                     <Input
                                         id="newPassword"
                                         type="password"
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Minimálně 8 znaků"
+                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="confirmPassword">Potvrdit nové heslo</Label>
+                                <div className="space-y-3">
+                                    <Label htmlFor="confirmPassword" title="Potvrzení hesla" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Potvrdit nové heslo</Label>
                                     <Input
                                         id="confirmPassword"
                                         type="password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        placeholder="Zopakujte nové heslo"
+                                        placeholder="Zopakujte heslo"
+                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-slate-200/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
-                                    {newPassword && confirmPassword && newPassword !== confirmPassword && (
-                                        <p className="text-xs text-red-500">Hesla se neshodují</p>
-                                    )}
-                                    {newPassword && confirmPassword && newPassword === confirmPassword && confirmPassword.length >= 8 && (
-                                        <p className="text-xs text-green-600">✓ Hesla se shodují</p>
+                                    {newPassword && confirmPassword && (
+                                        <div className="flex items-center gap-2 pl-1">
+                                            {newPassword !== confirmPassword ? (
+                                                <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest">Hesla se neshodují</p>
+                                            ) : (
+                                                <p className="text-[10px] text-lime-dark font-bold uppercase tracking-widest flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2">
+                                                    <Fingerprint className="w-3 h-3" />
+                                                    Hesla jsou identická
+                                                </p>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
-                                <Button type="submit" disabled={isChangingPassword || newPassword !== confirmPassword}>
-                                    <Lock className="mr-2 h-4 w-4" />
-                                    {isChangingPassword ? "Měním heslo..." : "Změnit heslo"}
+                                <Button 
+                                    type="submit" 
+                                    disabled={isChangingPassword || !newPassword || newPassword !== confirmPassword}
+                                    className="w-full h-16 bg-olive-dark hover:bg-black text-lime font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                                >
+                                    {isChangingPassword ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Lock className="w-5 h-5" />}
+                                    Aktualizovat heslo
                                 </Button>
                             </form>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </TabsContent>
 
-                <TabsContent value="orders" className="mt-0 space-y-6">
-                    <AccountOrders />
+                <TabsContent value="orders" className="mt-0 animate-in fade-in slide-in-from-bottom-5 duration-700">
+                    <div className="glass-card rounded-[3.5rem] p-4 overflow-hidden border border-white/40 shadow-2xl">
+                        <AccountOrders />
+                    </div>
                 </TabsContent>
 
-                <TabsContent value="subscriptions" className="mt-0 space-y-6">
-                    <Subscriptions />
+                <TabsContent value="subscriptions" className="mt-0 animate-in fade-in slide-in-from-bottom-5 duration-700">
+                    <div className="glass-card rounded-[3.5rem] p-4 overflow-hidden border border-white/40 shadow-2xl">
+                        <Subscriptions />
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>
