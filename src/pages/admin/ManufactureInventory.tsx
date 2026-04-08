@@ -19,12 +19,15 @@ const ManufactureInventory = () => {
     if (loading) return <div className="p-8">Načítám sklad výroby...</div>;
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
-                <h2 className="text-3xl font-bold tracking-tight">Sklad výroby</h2>
-                <Button onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Přidat surovinu/materiál
+        <div className="space-y-10 pb-20 animate-in fade-in duration-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
+                <div>
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900 font-display uppercase">Sklad výroby</h2>
+                    <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mt-1">Suroviny a materiály pro produkci</p>
+                </div>
+                <Button onClick={() => setIsAddOpen(true)} className="h-14 px-8 bg-slate-900 hover:bg-black text-primary gap-3 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-slate-900/10 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                    <Plus className="h-5 w-5" />
+                    Přidat surovinu
                 </Button>
             </div>
 

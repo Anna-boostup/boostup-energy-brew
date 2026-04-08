@@ -13,6 +13,7 @@ interface MixConfiguratorProps {
   content: any;
   getEffectiveProduct: (sku: string) => any;
   cleanName: (name: string) => string;
+  products: any[];
 }
 
 const MixConfigurator = ({
@@ -22,7 +23,8 @@ const MixConfigurator = ({
   isMixValid,
   content,
   getEffectiveProduct,
-  cleanName
+  cleanName,
+  products
 }: MixConfiguratorProps) => {
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
 
@@ -35,7 +37,10 @@ const MixConfigurator = ({
         </div>
       </div>
       <div className="space-y-3">
-        {FLAVORS.map((flavor, index) => (
+        {FLAVORS.filter(f => {
+          const product = products.find(p => p.sku === f.id);
+          return product?.is_active !== false;
+        }).map((flavor, index) => (
           <div
             key={flavor.id}
             className={`w-full p-4 rounded-2xl flex items-center justify-between gap-4 transition-all duration-300 border-2 ${mixCounts[flavor.id] > 0 ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-md border-transparent` : 'border-dashed border-border bg-secondary/30'}`}

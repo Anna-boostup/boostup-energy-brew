@@ -154,60 +154,64 @@ const PromoCodes = () => {
     };
 
     return (
-        <div className="space-y-6 pb-20 animate-fade-in">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
+        <div className="space-y-10 pb-20 animate-in fade-in duration-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Slevové kódy</h2>
-                    <p className="text-muted-foreground">Spravujte slevové kupóny pro své zákazníky.</p>
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900 font-display uppercase">Slevové kódy</h2>
+                    <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mt-1">Správa marketingových kampaní a slev.</p>
                 </div>
 
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 font-bold shadow-lg shadow-primary/20">
-                            <Plus className="h-4 w-4" />
-                            VYTVOŘIT KÓD
+                        <Button className="h-14 px-8 bg-slate-900 hover:bg-black text-primary gap-3 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-slate-900/10 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                            <Plus className="h-5 w-5" />
+                            Vytvořit nový kód
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                        <form onSubmit={handleAddCode}>
+                    <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] border-none shadow-2xl p-8">
+                        <form onSubmit={handleAddCode} className="space-y-8">
                             <DialogHeader>
-                                <DialogTitle>Nový slevový kód</DialogTitle>
-                                <DialogDescription>
-                                    Vytvořte kód, který zákazníci uplatní v pokladně.
+                                <DialogTitle className="text-2xl font-black text-slate-900 font-display">Nový slevový kód</DialogTitle>
+                                <DialogDescription className="text-slate-400 font-medium">
+                                    Definujte parametry slevy, kterou zákazníci uplatní v košíku.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="code">Text kódu (např. LÉTO20)</Label>
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="code" className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Unikátní kód (např. BOOST20)</Label>
                                     <Input
                                         id="code"
-                                        placeholder="Zadejte kód..."
+                                        placeholder="Zadejte text..."
                                         value={newCode}
                                         onChange={(e) => setNewCode(e.target.value.toUpperCase())}
-                                        className="font-mono font-bold"
+                                        className="h-14 rounded-2xl border-slate-200 font-mono font-black text-xl tracking-widest uppercase focus-visible:ring-primary focus-visible:border-primary shadow-sm"
                                         required
                                     />
                                 </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="discount">Sleva v procentech (%)</Label>
-                                    <Input
-                                        id="discount"
-                                        type="number"
-                                        min="1"
-                                        max="100"
-                                        value={newDiscount}
-                                        onChange={(e) => setNewDiscount(parseInt(e.target.value))}
-                                        required
-                                    />
+                                <div className="space-y-2">
+                                    <Label htmlFor="discount" className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Výše slevy v %</Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="discount"
+                                            type="number"
+                                            min="1"
+                                            max="100"
+                                            value={newDiscount}
+                                            onChange={(e) => setNewDiscount(parseInt(e.target.value))}
+                                            className="h-14 rounded-2xl border-slate-200 font-display font-black text-xl focus-visible:ring-primary focus-visible:border-primary shadow-sm pr-12"
+                                            required
+                                        />
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">%</span>
+                                    </div>
                                 </div>
-                                <div className="p-3 bg-secondary/30 rounded-lg flex gap-3 text-xs text-muted-foreground">
-                                    <AlertCircle className="w-4 h-4 shrink-0 text-primary" />
-                                    <p>Tato sleva se nebude sčítat se slevou na předplatné (15%). Systém uplatní pouze jednu z nich.</p>
+                                <div className="p-4 bg-slate-50 rounded-2xl flex gap-3 text-[11px] font-bold text-slate-500 leading-relaxed border border-slate-100 italic">
+                                    <AlertCircle className="w-4 h-4 shrink-0 text-slate-400 mt-0.5" />
+                                    <p>Sleva se nesčítá se slevou na předplatné (15%). Systém automaticky vybere výhodnější variantu.</p>
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Vytvořit kód"}
+                                <Button type="submit" disabled={isSubmitting} className="w-full h-14 bg-slate-900 hover:bg-black text-primary font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-slate-900/10">
+                                    {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Vytvořit kód"}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -215,25 +219,29 @@ const PromoCodes = () => {
                 </Dialog>
             </div>
 
-            <Card className="mb-6 border-primary/20 bg-gradient-to-r from-background to-secondary/20 shadow-lg">
-                <CardHeader className="bg-primary/5 pb-4 border-b border-primary/10">
-                    <CardTitle className="text-xl flex items-center gap-2">
-                        <Gift className="w-5 h-5 text-primary" />
-                        Uvítací Slevový Pop-up na Úvodní Stránce
-                    </CardTitle>
-                    <CardDescription>
-                        Nastavení automatického pop-upu, který se ukáže novým návštěvníkům pro motivaci k prvnímu nákupu.
+            <Card className="mb-10 border border-white/40 shadow-sm rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
+                <CardHeader className="bg-slate-900 border-b border-slate-800 py-10 px-12">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-primary/20 rounded-xl">
+                            <Gift className="w-6 h-6 text-primary" />
+                        </div>
+                        <CardTitle className="text-2xl font-black text-white font-display">Uvítací Pop-up</CardTitle>
+                    </div>
+                    <CardDescription className="text-slate-400 font-medium text-sm">
+                        Automatické okno s nabídkou slevy pro nové návštěvníky webu.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-6 space-y-5">
-                    <div className="flex items-center gap-3 p-4 bg-secondary/50 rounded-xl border border-border">
-                        {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-5 w-5 text-primary" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+                <CardContent className="py-12 px-12 space-y-10 group">
+                    <div className="flex items-center gap-6 p-8 bg-white/40 rounded-[2.5rem] border border-white/60 shadow-inner group">
+                        <div className={`p-4 rounded-3xl transition-all duration-500 ${contentCZ?.hero?.showDiscountPopup ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-slate-100'}`}>
+                            {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-8 w-8 text-slate-900" /> : <EyeOff className="h-8 w-8 text-slate-400" />}
+                        </div>
                         <div className="flex-1">
-                            <Label className="cursor-pointer font-extrabold text-base mb-1 block" htmlFor="toggle-popup">
-                                Zobrazovat slevový pop-up na úvodní straně
+                            <Label className="cursor-pointer font-black text-xl text-slate-900 mb-1 block font-display leading-tight" htmlFor="toggle-popup">
+                                Aktivovat pop-up na webu
                             </Label>
-                            <p className="text-sm text-muted-foreground">
-                                Pokud je zapnuto, návštěvníkům se po pár vteřinách od příchodu samo ukáže okno s nabídkou slevového kódu.
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                                Zobrazit nabídku slevového kódu po vstupu na stránku.
                             </p>
                         </div>
                         <Switch
@@ -241,93 +249,112 @@ const PromoCodes = () => {
                             checked={!!contentCZ?.hero?.showDiscountPopup}
                             onCheckedChange={handleTogglePopup}
                             disabled={popupSaving}
-                            className="scale-110"
+                            className="h-8 w-14 data-[state=checked]:bg-primary"
                         />
                     </div>
                     
                     {contentCZ?.hero?.showDiscountPopup && (
-                        <div className="p-4 border rounded-xl bg-background shadow-inner flex flex-col sm:flex-row gap-4 items-end animate-fade-in">
-                            <div className="grid gap-2 w-full sm:max-w-xs">
-                                <Label htmlFor="popup-discount-code" className="font-bold text-primary">Slevový kód pro zobrazení</Label>
-                                <p className="text-xs text-muted-foreground">Kód se musí vespod nacházet mezi aktivními kódy.</p>
-                                <Input
-                                    id="popup-discount-code"
-                                    defaultValue={contentCZ?.hero?.discountCode || ''}
-                                    onBlur={(e) => {
-                                        const val = e.target.value.toUpperCase();
-                                        if (val !== contentCZ?.hero?.discountCode) {
-                                            handleCodeChange(val);
-                                        }
-                                    }}
-                                    placeholder="např. BOOST10"
-                                    className="font-mono font-bold text-lg tracking-widest border-primary border-2"
-                                    disabled={popupSaving}
-                                />
+                        <div className="p-8 border-2 border-dashed border-primary/20 rounded-[2.5rem] bg-slate-50 animate-in zoom-in-95 duration-500 flex flex-col sm:flex-row gap-8 items-center">
+                            <div className="grid gap-3 w-full sm:max-w-md">
+                                <Label htmlFor="popup-discount-code" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 pl-1">Vložený slevový kód</Label>
+                                <div className="relative group/input">
+                                    <Input
+                                        id="popup-discount-code"
+                                        defaultValue={contentCZ?.hero?.discountCode || ''}
+                                        onBlur={(e) => {
+                                            const val = e.target.value.toUpperCase();
+                                            if (val !== contentCZ?.hero?.discountCode) {
+                                                handleCodeChange(val);
+                                            }
+                                        }}
+                                        placeholder="NAPŘ. BOOST10"
+                                        className="h-16 pl-6 rounded-2xl border-none bg-white font-mono font-black text-2xl tracking-[0.4em] text-slate-900 shadow-xl shadow-slate-200/50 focus-visible:ring-primary"
+                                        disabled={popupSaving}
+                                    />
+                                    {popupSaving && (
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex-1 text-center sm:text-left space-y-2">
+                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+                                    Tento kód musí být vytvořen v seznamu níže jako <span className="text-primary-dark">AKTIVNÍ</span>, aby byl funkční v objednávce.
+                                </p>
                             </div>
                         </div>
                     )}
                 </CardContent>
             </Card>
 
-            <Card className="border-border/50 shadow-xl overflow-hidden">
-                <CardHeader className="bg-muted/30 pb-4">
-                    <div className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-primary" />
-                        <CardTitle className="text-xl">Aktivní a historické kódy</CardTitle>
+            <Card className="border border-white/40 shadow-sm rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-10 px-12 flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-slate-900 rounded-2xl">
+                            <Sparkles className="w-5 h-5 text-primary" />
+                        </div>
+                        <CardTitle className="text-2xl font-black text-slate-900 font-display uppercase tracking-tight">Kódy v systému</CardTitle>
                     </div>
-                    <CardDescription>Přehled všech slevových poukazů v systému.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center p-20 gap-4">
-                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            <p className="text-muted-foreground font-medium">Načítám data...</p>
+                        <div className="flex flex-col items-center justify-center p-24 gap-6">
+                            <Loader2 className="h-12 w-12 animate-spin text-slate-400" />
+                            <p className="text-slate-400 font-black uppercase text-xs tracking-widest">Synchronizace s databází...</p>
                         </div>
                     ) : codes.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
-                                <TableHeader className="bg-muted/50">
-                                    <TableRow>
-                                        <TableHead className="font-bold">KÓD</TableHead>
-                                        <TableHead className="font-bold">SLEVA</TableHead>
-                                        <TableHead className="font-bold">STAV</TableHead>
-                                        <TableHead className="font-bold">VYTVOŘENO</TableHead>
-                                        <TableHead className="text-right font-bold">AKCE</TableHead>
+                                <TableHeader className="bg-slate-50 border-b border-slate-100">
+                                    <TableRow className="hover:bg-transparent">
+                                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-6 px-12">Referenční kód / Identita</TableHead>
+                                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-6">Výše slevy</TableHead>
+                                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-6">Stav kampaně</TableHead>
+                                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-6">Vytvořeno</TableHead>
+                                        <TableHead className="text-right font-black text-slate-900 uppercase text-[10px] tracking-widest py-6 px-12">Akce</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {codes.map((code) => (
-                                        <TableRow key={code.id} className="hover:bg-muted/20 transition-colors">
-                                            <TableCell className="font-mono font-black text-lg text-primary">
-                                                {code.code}
+                                        <TableRow key={code.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-100 group">
+                                            <TableCell className="py-8 px-12">
+                                                <div className="font-mono font-black text-2xl text-slate-900 tracking-[0.2em] uppercase">
+                                                    {code.code}
+                                                </div>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="font-bold text-lg bg-primary/10 text-primary px-3 py-1 rounded-full inline-block">
+                                                <div className="inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-primary/10 text-primary-dark font-black text-xl font-display shadow-sm">
                                                     -{code.discount_percent}%
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-4">
                                                     <Switch
                                                         checked={code.is_active}
                                                         onCheckedChange={() => toggleCodeStatus(code.id, code.is_active)}
+                                                        className="data-[state=checked]:bg-primary h-7 w-12"
                                                     />
-                                                    <span className={`text-xs font-bold uppercase tracking-widest ${code.is_active ? 'text-green-600' : 'text-muted-foreground'}`}>
-                                                        {code.is_active ? 'Aktivní' : 'Neaktivní'}
-                                                    </span>
+                                                    <div className="flex flex-col">
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${code.is_active ? 'text-primary' : 'text-slate-400'}`}>
+                                                            {code.is_active ? 'AKTIVNÍ' : 'PAUZA'}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-xs text-muted-foreground">
-                                                {new Date(code.created_at).toLocaleDateString('cs-CZ')}
+                                            <TableCell>
+                                                <span className="text-[11px] font-black uppercase tracking-tighter text-slate-400">
+                                                    {new Date(code.created_at).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </span>
                                             </TableCell>
-                                            <TableCell className="text-right">
+                                            <TableCell className="text-right px-12">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full"
+                                                    className="h-12 w-12 rounded-2xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
                                                     onClick={() => deleteCode(code.id)}
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
+                                                    <Trash2 className="h-5 w-5" />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
@@ -336,13 +363,13 @@ const PromoCodes = () => {
                             </Table>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center p-20 gap-4 text-center">
-                            <div className="bg-muted p-4 rounded-full">
-                                <Sparkles className="h-8 w-8 text-muted-foreground" />
+                        <div className="flex flex-col items-center justify-center py-32 px-10 gap-6 text-center">
+                            <div className="p-8 rounded-[2.5rem] bg-slate-50 text-slate-200">
+                                <Sparkles className="h-16 w-16" />
                             </div>
-                            <div>
-                                <p className="font-bold text-lg">Žádné slevové kódy</p>
-                                <p className="text-muted-foreground max-w-xs mx-auto">Zatím jste nevytvořili žádné slevové kódy. Klikněte na tlačítko výše a přidejte první.</p>
+                            <div className="space-y-2">
+                                <p className="font-black text-2xl text-slate-900 font-display">Žádné slevové kódy</p>
+                                <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">Vytvořte první slevovou kampaň pomocí tlačítka výše.</p>
                             </div>
                         </div>
                     )}

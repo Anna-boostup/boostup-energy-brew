@@ -80,32 +80,34 @@ const AdminProfile = () => {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-primary" />
+        <div className="space-y-12 pb-24 animate-in fade-in duration-700">
+            <div className="flex items-center gap-6">
+                <div className="w-16 h-16 rounded-[2rem] bg-slate-900 flex items-center justify-center shadow-xl shadow-slate-900/10">
+                    <Shield className="w-7 h-7 text-primary" />
                 </div>
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Můj účet</h2>
-                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <div className="space-y-1">
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900 font-display uppercase">Administrace</h2>
+                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest">{user?.email}</p>
                 </div>
             </div>
 
-            <Tabs defaultValue="profile" className="space-y-6">
-                <TabsList className="bg-slate-100 p-1 rounded-xl w-full md:w-auto flex flex-wrap h-auto">
-                    <TabsTrigger value="profile" className="gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                        <User className="w-4 h-4" />
-                        <span>Profil & Heslo</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="orders" className="gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                        <ShoppingBag className="w-4 h-4" />
-                        <span>Moje objednávky</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="subscriptions" className="gap-2 px-6 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                        <RefreshCw className="w-4 h-4" />
-                        <span>Moje předplatné</span>
-                    </TabsTrigger>
-                </TabsList>
+            <Tabs defaultValue="profile" className="space-y-10">
+                <div className="p-2 bg-slate-900 rounded-[2.5rem] w-full md:w-fit shadow-2xl">
+                    <TabsList className="bg-transparent h-auto p-1 gap-2 flex flex-wrap">
+                        <TabsTrigger value="profile" className="gap-3 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest text-slate-400 data-[state=active]:bg-primary data-[state=active]:text-slate-900 transition-all duration-500 border-none">
+                            <User className="w-4 h-4" />
+                            <span>Profil & Heslo</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="orders" className="gap-3 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest text-slate-400 data-[state=active]:bg-primary data-[state=active]:text-slate-900 transition-all duration-500 border-none">
+                            <ShoppingBag className="w-4 h-4" />
+                            <span>Moje nákupy</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="subscriptions" className="gap-3 px-8 py-4 rounded-[2rem] font-black uppercase text-[10px] tracking-widest text-slate-400 data-[state=active]:bg-primary data-[state=active]:text-slate-900 transition-all duration-500 border-none">
+                            <RefreshCw className="w-4 h-4" />
+                            <span>Předplatné</span>
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
                 <TabsContent value="profile" className="space-y-8 max-w-2xl mt-0">
                     {/* Profile Info Card */}

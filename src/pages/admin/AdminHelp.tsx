@@ -233,14 +233,6 @@ const sections: Section[] = [
                 label: "Tlačítko 'Resetovat'",
                 description: "Vrátí všechny neuložené změny na stav posledního uložení."
             }
-        ]
-    },
-    {
-        icon: Mail,
-        title: "E-mailová komunikace",
-        description: "Správa firemních e-mailových schránek drinkboostup.cz.",
-        items: [
-            {
                 label: "Webmail (Forpsi)",
                 description: "V levém menu najdete rychlý odkaz 'E-maily (Webmail)', který vás přesměruje přímo do rozhraní Forpsi."
             },
@@ -254,68 +246,71 @@ const sections: Section[] = [
 
 const AdminHelp = () => {
     return (
-        <div className="max-w-5xl mx-auto space-y-12 pb-20">
+        <div className="max-w-6xl mx-auto space-y-16 pb-32 animate-in fade-in duration-1000">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-sm">
-                        <HelpCircle className="w-8 h-8 text-primary" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
+                <div className="flex items-start gap-8">
+                    <div className="w-20 h-20 rounded-[2rem] bg-slate-900 flex items-center justify-center shrink-0 shadow-2xl">
+                        <HelpCircle className="w-10 h-10 text-primary" />
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-black text-foreground tracking-tight">Nápověda &amp; Příručka</h1>
-                        <p className="text-muted-foreground mt-1 text-lg">
-                            Kompletní průvodce správou e-shopu BoostUp.
+                    <div className="space-y-2">
+                        <h1 className="text-5xl font-black text-slate-900 tracking-tighter font-display uppercase italic">Centrum Pomoci</h1>
+                        <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs">
+                            Kompletní manuál pro administraci systému BoostUp.
                         </p>
                     </div>
                 </div>
             </div>
 
             {/* Quick tip banner */}
-            <div className="flex gap-4 p-5 bg-lime/10 border border-lime/20 rounded-2xl text-base text-slate-800 shadow-sm">
-                <div className="w-10 h-10 rounded-full bg-lime/20 flex items-center justify-center shrink-0">
-                    <MousePointer2 className="w-5 h-5 text-lime-700" />
+            <div className="relative group overflow-hidden">
+                <div className="absolute inset-0 bg-primary opacity-10 group-hover:opacity-20 transition-opacity duration-500 rounded-[3rem]" />
+                <div className="relative flex flex-col md:flex-row gap-8 p-10 items-center">
+                    <div className="w-16 h-16 rounded-[1.5rem] bg-slate-900 flex items-center justify-center shrink-0 shadow-xl transition-transform group-hover:scale-110 duration-500">
+                        <MousePointer2 className="w-8 h-8 text-primary" />
+                    </div>
+                    <div className="space-y-1 text-center md:text-left">
+                        <p className="text-xl font-display font-black text-slate-900 uppercase italic">Pro rychlou navigaci</p>
+                        <p className="text-slate-500 font-bold leading-relaxed text-sm">
+                            Kliknutím na nadpis rozbalíte detailní návod. Všechny změny musí být vždy potvrzeny tlačítkem <span className="text-slate-900 font-black">Uložit změny</span>.
+                        </p>
+                    </div>
                 </div>
-                <p className="flex items-center">
-                    <span>
-                        <strong>Tip pro rychlou práci:</strong> Kliknutím na nadpis sekce níže ji rozbalíte pro detailní návod a náhledy.
-                        Všechny změny obsahu musíte vždy potvrdit tlačítkem <strong>Uložit změny</strong>.
-                    </span>
-                </p>
             </div>
 
             {/* Accordion Sections */}
-            <Accordion type="single" collapsible className="w-full space-y-4">
+            <Accordion type="single" collapsible className="w-full space-y-6">
                 {sections.map((section, idx) => {
                     const Icon = section.icon;
                     return (
                         <AccordionItem
                             key={section.title}
                             value={`item-${idx}`}
-                            className="border border-border bg-card rounded-2xl overflow-hidden px-2 shadow-sm hover:shadow-md transition-shadow"
+                            className="border border-white shadow-sm bg-white/50 backdrop-blur-sm rounded-[3rem] overflow-hidden px-4 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 border-none"
                         >
-                            <AccordionTrigger className="hover:no-underline py-6 px-4">
-                                <div className="flex items-center gap-4 text-left">
-                                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                                        <Icon className="w-5 h-5 text-primary" />
+                            <AccordionTrigger className="hover:no-underline py-10 px-8 group">
+                                <div className="flex items-center gap-6 text-left">
+                                    <div className="w-16 h-16 rounded-[1.5rem] bg-slate-900 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-500">
+                                        <Icon className="w-7 h-7 text-primary" />
                                     </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-foreground leading-none">{section.title}</h3>
-                                        <p className="text-sm text-muted-foreground font-normal mt-1.5">{section.description}</p>
+                                    <div className="space-y-1">
+                                        <h3 className="text-2xl font-black text-slate-900 font-display uppercase tracking-tight">{section.title}</h3>
+                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{section.description}</p>
                                     </div>
                                 </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-4 pb-8 pt-2">
-                                <div className="grid lg:grid-cols-2 gap-8 items-start">
-                                    <div className="space-y-6">
-                                        <ul className="space-y-4">
+                            <AccordionContent className="px-10 pb-12 pt-4">
+                                <div className="grid lg:grid-cols-2 gap-12 items-start">
+                                    <div className="space-y-8">
+                                        <ul className="space-y-6">
                                             {section.items.map((item, i) => (
-                                                <li key={i} className="flex gap-3 group">
-                                                    <div className="mt-1 w-5 h-5 rounded-full bg-primary/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                                                <li key={i} className="flex gap-5 group">
+                                                    <div className="mt-1 w-6 h-6 rounded-xl bg-slate-900 flex items-center justify-center shrink-0 shadow-sm">
                                                         <ChevronRight className="w-3 h-3 text-primary" />
                                                     </div>
-                                                    <div>
-                                                        <p className="font-bold text-base text-foreground">{item.label}</p>
-                                                        <p className="text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
+                                                    <div className="space-y-1">
+                                                        <p className="font-black text-lg text-slate-900 font-display uppercase tracking-tight leading-none">{item.label}</p>
+                                                        <p className="text-slate-500 font-bold text-sm leading-relaxed">{item.description}</p>
                                                     </div>
                                                 </li>
                                             ))}
@@ -323,25 +318,24 @@ const AdminHelp = () => {
                                     </div>
 
                                     {section.image && (
-                                        <div className="space-y-4">
-                                            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                                <div className="w-1 h-1 rounded-full bg-primary" />
-                                                Vizuální náhled z administrace
-                                            </p>
-                                            <div className="rounded-2xl border-2 border-border overflow-hidden shadow-2xl bg-slate-900 group relative">
-                                                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                                        <div className="space-y-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vizuální reprezentace</p>
+                                            </div>
+                                            <div className="rounded-[2.5rem] border-8 border-white overflow-hidden shadow-2xl bg-slate-900 group relative">
+                                                <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
                                                 <img
                                                     src={section.image}
                                                     alt={section.title}
-                                                    className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]"
+                                                    className="w-full h-auto object-cover transform transition-transform duration-1000 group-hover:scale-110"
                                                     onError={(e) => {
-                                                        // Fallback if image is not moved to public yet
                                                         (e.target as HTMLImageElement).style.display = 'none';
                                                     }}
                                                 />
                                             </div>
-                                            <p className="text-xs text-center text-muted-foreground italic">
-                                                * Přesný vzhled se může mírně lišit podle velikosti obrazovky.
+                                            <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-widest italic">
+                                                * Interface se přizpůsobuje vašemu zařízení.
                                             </p>
                                         </div>
                                     )}
@@ -353,14 +347,24 @@ const AdminHelp = () => {
             </Accordion>
 
             {/* Footer note */}
-            <div className="bg-slate-900 text-white p-8 rounded-3xl text-center space-y-4 shadow-xl">
-                <HelpCircle className="w-10 h-10 text-primary mx-auto opacity-50" />
-                <h3 className="text-xl font-bold">Potřebujete technickou pomoc?</h3>
-                <p className="text-slate-400 max-w-md mx-auto">
-                    Pokud jste v manuálu nenašli odpověď nebo narazili na chybu v aplikaci, neváhejte mě kontaktovat pro rychlou podporu.
-                </p>
-                <div className="pt-2">
-                    <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">BoostUp Admin Panel v2.4.0</span>
+            <div className="bg-slate-900 text-white p-16 rounded-[4rem] text-center space-y-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary opacity-5 rounded-full blur-[100px] transition-all duration-1000 group-hover:scale-150" />
+                <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary opacity-5 rounded-full blur-[100px] transition-all duration-1000 group-hover:scale-150" />
+                
+                <div className="relative z-10 space-y-6">
+                    <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-4 border border-white/10 group-hover:border-primary/50 transition-all duration-500">
+                        <HelpCircle className="w-10 h-10 text-primary" />
+                    </div>
+                    <div className="space-y-3">
+                        <h3 className="text-4xl font-black font-display uppercase italic tracking-tight">Technická podpora</h3>
+                        <p className="text-slate-400 font-bold text-lg max-w-xl mx-auto leading-relaxed">
+                            Nenašli jste odpověď nebo je něco v nepořádku? Jsme připraveni vám okamžitě pomoci se správou vašeho e-shopu.
+                        </p>
+                    </div>
+                    <div className="pt-10 flex flex-col items-center gap-4">
+                        <a href="mailto:support@drinkboostup.cz" className="text-primary font-black uppercase text-xs tracking-[0.3em] hover:text-white transition-colors">support@drinkboostup.cz</a>
+                        <span className="text-[10px] font-black font-mono text-slate-700 uppercase tracking-widest">BoostUp Engine v4.0.0 // Platinum Edition</span>
+                    </div>
                 </div>
             </div>
         </div>

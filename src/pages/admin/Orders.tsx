@@ -31,90 +31,103 @@ import { FileText } from "lucide-react";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 
 
-const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => (
-    <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white shadow-sm">
-        <div className="flex justify-between items-start">
-            <div>
-                <p className="font-bold">#{order.id.slice(0, 8)}</p>
-                <p className="text-xs text-foreground/70">{new Date(order.date).toLocaleDateString()}</p>
-            </div>
-            <div className="flex flex-col gap-1 items-end">
-                <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-100 border-emerald-300' : ''}>
-                    {order.status === 'pending' ? 'Platba: Čeká' :
-                        order.status === 'cancelled' ? 'Platba: Storno' :
-                            'Platba: Zaplaceno'}
-                </Badge>
-                <Badge
-                    variant={order.status === 'shipped' ? 'default' : order.status === 'cancelled' ? 'destructive' : 'outline'}
-                    className={
-                        order.status === 'shipped' ? 'bg-blue-700' :
-                            order.status === 'processing' ? 'border-blue-300 text-blue-900 bg-blue-50' :
-                                order.status === 'cancelled' ? 'bg-red-50 text-red-900 border-red-200' :
-                                    'border-amber-300 text-amber-900 bg-amber-50/50'
-                    }
-                >
-                    {order.status === 'shipped' ? 'Stav: Vyřízena' :
-                        order.status === 'processing' ? 'Stav: Rozpracováno' :
-                            order.status === 'cancelled' ? 'Stav: Stornováno' :
-                                'Stav: Čeká k vyřízení'}
-                </Badge>
-            </div>
-        </div>
-
-        <div className="space-y-1">
-            <p className="text-sm font-semibold text-slate-900">{order.customer.name}</p>
-            <p className="text-xs text-slate-600 font-medium">{order.customer.email}</p>
-        </div>
-
-        <div className="border-t pt-2">
-            <p className="text-xs font-semibold mb-1 text-foreground/70">Položky:</p>
-            {order.items.map((item: any, idx: number) => (
-                <div key={idx} className="text-sm flex justify-between">
-                    <span>{item.quantity}x {item.name}</span>
+const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => {
+    const { toast } = useToast();
+    return (
+        <div className="border border-white/40 rounded-[2.5rem] p-6 space-y-4 mb-6 bg-white/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md overflow-hidden animate-in fade-in slide-in-from-bottom-4">
+            <div className="flex justify-between items-start">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="font-mono font-bold text-lg text-slate-900">#{order.id}</span>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 text-slate-400 hover:text-primary transition-colors" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(order.id);
+                                toast({ title: "ID zkopírováno", duration: 1000 });
+                            }}
+                            title="Kopírovat ID"
+                        >
+                            <Layers className="h-3.5 w-3.5" />
+                        </Button>
+                    </div>
+                    <p className="text-xs font-medium text-slate-500">{new Date(order.date).toLocaleString('cs-CZ')}</p>
                 </div>
-            ))}
-        </div>
-
-        <div className="flex justify-between items-center pt-2 border-t">
-            <span className="font-bold">{order.total} Kč</span>
-            <div className="flex gap-2">
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size="sm" variant="outline">Detail</Button>
-                    </DialogTrigger>
-                    <OrderDetailDialog order={order} />
-                </Dialog>
-                {order.status === 'pending' && (
-                    <Button size="sm" onClick={() => onStatusChange(order.id, 'paid')} className="bg-emerald-700 hover:bg-emerald-800" aria-label="Označit jako zaplacené">
-                        <CheckCircle className="w-4 h-4" />
-                    </Button>
-                )}
-                {(order.status === 'paid' || order.status === 'processing') && (
-                    <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-blue-700 hover:bg-blue-800" aria-label="Označit jako vyřízené">
-                        <Truck className="w-4 h-4" />
-                    </Button>
-                )}
-                {order.packeta_barcode && (
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0 text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
-                        onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
-                        title="Tisk štítku Zásilkovny"
-                        aria-label="Tisk štítku Zásilkovny"
+                <div className="flex flex-col gap-2 items-end">
+                    <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={`text-[10px] uppercase tracking-tighter ${order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-50 text-emerald-700 border-emerald-500/20' : ''}`}>
+                        {order.status === 'pending' ? 'Platba: Čeká' :
+                            order.status === 'cancelled' ? 'Platba: Storno' :
+                                'Platba: Zaplaceno'}
+                    </Badge>
+                    <Badge
+                        variant={order.status === 'shipped' ? 'default' : order.status === 'cancelled' ? 'destructive' : 'outline'}
+                        className={`text-[10px] uppercase tracking-tighter ${
+                            order.status === 'shipped' ? 'bg-slate-900 text-white' :
+                                order.status === 'processing' ? 'border-primary/30 text-lime-700 bg-lime/5' :
+                                    order.status === 'cancelled' ? 'bg-red-50 text-red-900 border-red-200' :
+                                        'border-amber-300 text-amber-900 bg-amber-50/50'
+                        }`}
                     >
-                        <Printer className="h-4 w-4" />
-                    </Button>
-                )}
-                <InvoiceModal order={order}>
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-950 hover:bg-slate-100" aria-label="Zobrazit fakturu">
-                        <FileText className="h-4 w-4" />
-                    </Button>
-                </InvoiceModal>
+                        {order.status === 'shipped' ? 'Stav: Vyřízena' :
+                            order.status === 'processing' ? 'Stav: Rozpracováno' :
+                                order.status === 'cancelled' ? 'Stav: Stornováno' :
+                                    'Stav: Čeká k vyřízení'}
+                    </Badge>
+                </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/40 border border-white/60 space-y-2">
+                <p className="text-sm font-bold text-slate-800">{order.customer.name}</p>
+                <p className="text-xs text-slate-500 font-medium truncate">{order.customer.email}</p>
+            </div>
+
+            <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Položky:</p>
+                <div className="space-y-1">
+                    {order.items.map((item: any, idx: number) => (
+                        <div key={idx} className="text-xs flex justify-between items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="font-medium text-slate-700">{item.quantity}x {item.name}</span>
+                            <span className="font-bold text-slate-400">{item.price} Kč</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+                <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Celková cena</span>
+                    <span className="font-display font-black text-xl text-slate-900">{order.total} Kč</span>
+                </div>
+                <div className="flex gap-2">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button size="sm" variant="outline" className="rounded-xl h-10 px-4 border-slate-200 hover:bg-slate-50">Detail</Button>
+                        </DialogTrigger>
+                        <OrderDetailDialog order={order} />
+                    </Dialog>
+                    {order.status === 'pending' && (
+                        <Button size="sm" onClick={() => onStatusChange(order.id, 'paid')} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10" aria-label="Označit jako zaplacené">
+                            <CheckCircle className="w-4 h-4" />
+                        </Button>
+                    )}
+                    {(order.status === 'paid' || order.status === 'processing') && (
+                        <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-slate-900 hover:bg-black text-white rounded-xl h-10 px-4" aria-label="Označit jako vyřízené">
+                            <Truck className="w-4 h-4 mr-2" />
+                            <span className="text-xs font-bold">Odeslat</span>
+                        </Button>
+                    )}
+                    <InvoiceModal order={order}>
+                        <Button size="sm" variant="ghost" className="h-10 w-10 p-0 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl" aria-label="Zobrazit fakturu">
+                            <FileText className="h-5 w-5" />
+                        </Button>
+                    </InvoiceModal>
+                </div>
             </div>
         </div>
-    </div>
-);
+    )
+};
 
 interface OrderTableProps {
     data: Order[];
@@ -126,13 +139,15 @@ interface OrderTableProps {
     sortConfig: { key: 'id' | 'date'; direction: 'asc' | 'desc' };
 }
 
-const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange, setSelectedOrders, onSort, sortConfig }: OrderTableProps) => (
+const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange, setSelectedOrders, onSort, sortConfig }: OrderTableProps) => {
+    const { toast } = useToast();
+    return (
     <>
         {/* Desktop View */}
         <div className="hidden md:block">
             <Table>
-                <TableHeader className="bg-slate-100">
-                    <TableRow className="border-b-2 border-slate-300">
+                <TableHeader className="bg-slate-50 border-b border-slate-200">
+                    <TableRow className="hover:bg-transparent">
                         <TableHead className="w-12">
                             <Checkbox
                                 checked={data.length > 0 && data.every(o => selectedOrders.has(o.id))}
@@ -145,100 +160,120 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                     setSelectedOrders(newSelected);
                                 }}
                                 aria-label="Vybrat všechny objednávky v této kategorii"
+                                className="rounded-md border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                             />
                         </TableHead>
                         <TableHead
-                            className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4 cursor-pointer hover:bg-slate-200 transition-colors"
+                            className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 cursor-pointer hover:text-primary transition-colors"
                             onClick={() => onSort('id')}
                         >
-                            <div className="flex items-center gap-1">
-                                ID {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3" />}
+                            <div className="flex items-center gap-2">
+                                Objednávka {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3" />}
                             </div>
                         </TableHead>
                         <TableHead
-                            className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4 cursor-pointer hover:bg-slate-200 transition-colors"
+                            className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 cursor-pointer hover:text-primary transition-colors text-center"
                             onClick={() => onSort('date')}
                         >
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center justify-center gap-2">
                                 Datum {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Zákazník</TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Položky</TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Cena celkem</TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4">Stav</TableHead>
-                        <TableHead className="font-extrabold text-slate-950 uppercase text-[11px] tracking-wider py-4 text-right">Akce</TableHead>
+                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5">Zákazník</TableHead>
+                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right w-[20%]">Obsah</TableHead>
+                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right">Celkem</TableHead>
+                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-center">Stav</TableHead>
+                        <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right">Akce</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {data.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={8} className="text-center py-8 text-foreground/70">
+                            <TableCell colSpan={8} className="text-center py-20 text-slate-400 font-medium italic">
                                 Žádné objednávky v této kategorii.
                             </TableCell>
                         </TableRow>
                     ) : (
                         data.map((order) => (
-                            <TableRow key={order.id} className={selectedOrders.has(order.id) ? "bg-slate-50" : ""}>
+                            <TableRow key={order.id} className={`transition-colors hover:bg-slate-50/80 border-b border-slate-100 ${selectedOrders.has(order.id) ? "bg-lime/5" : ""}`}>
                                 <TableCell>
                                     <Checkbox
                                         checked={selectedOrders.has(order.id)}
                                         onCheckedChange={() => toggleOrderSelection(order.id)}
-                                        aria-label={`Vybrat objednávku ${order.id.slice(0, 8)}`}
+                                        aria-label={`Vybrat objednávku ${order.id}`}
+                                        className="rounded-md border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                     />
                                 </TableCell>
-                                <TableCell className="font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
-                                <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <span className="font-semibold text-slate-900">{order.customer.name}</span>
-                                        <span className="text-xs text-slate-600 font-medium">{order.customer.email}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col gap-1">
-                                        {order.items.map((item, idx) => (
-                                            <div key={idx} className="text-sm">
-                                                {item.quantity}x <span className="font-medium">
-                                                    {item.mixConfiguration
-                                                        ? item.name.replace('(MIX)', `(MIX-${(item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0)})`)
-                                                        : item.name
-                                                    }
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-bold">{order.total} Kč</TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col gap-1">
-                                        <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-100 text-emerald-950 hover:bg-emerald-100 w-fit' : 'w-fit'}>
-                                            {order.status === 'pending' ? 'Platba: Čeká' :
-                                                order.status === 'cancelled' ? 'Platba: Storno' :
-                                                    'Platba: Zaplaceno'}
-                                        </Badge>
-                                        <Badge
-                                            variant={order.status === 'shipped' ? 'default' : order.status === 'cancelled' ? 'destructive' : 'outline'}
-                                            className={
-                                                order.status === 'shipped' ? 'bg-blue-700 w-fit' :
-                                                    order.status === 'processing' ? 'border-blue-300 text-blue-900 bg-blue-50 w-fit' :
-                                                        order.status === 'cancelled' ? 'bg-red-50 text-red-900 border-red-200 w-fit' :
-                                                            'border-amber-300 text-amber-900 w-fit bg-amber-50/50'
-                                            }
+                                <TableCell className="py-4">
+                                    <div className="flex items-center gap-2 group">
+                                        <span className="font-mono font-black text-sm text-slate-950 tracking-tighter">#{order.id}</span>
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all text-slate-400 hover:text-primary hover:bg-transparent" 
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(order.id);
+                                                toast({ title: "ID zkopírováno", duration: 1000 });
+                                            }}
+                                            title="Kopírovat ID"
                                         >
-                                            {order.status === 'shipped' ? 'Stav: Vyřízena' :
-                                                order.status === 'processing' ? 'Stav: Rozpracováno' :
-                                                    order.status === 'cancelled' ? 'Stav: Stornováno' :
-                                                        'Stav: Čeká k vyřízení'}
-                                        </Badge>
+                                            <Layers className="h-3.5 w-3.5" />
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                                        {new Date(order.date).toLocaleDateString('cs-CZ')}
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="font-bold text-slate-900 text-sm leading-none mb-1">{order.customer.name}</span>
+                                        <span className="text-[11px] text-slate-500 font-medium truncate max-w-[150px]">{order.customer.email}</span>
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-right">
+                                    <div className="flex flex-col gap-0.5 items-end">
+                                        {order.items.slice(0, 2).map((item, idx) => (
+                                            <div key={idx} className="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-100 px-2 rounded-md w-fit">
+                                                {item.quantity}x {item.name.split(' ')[0]}...
+                                            </div>
+                                        ))}
+                                        {order.items.length > 2 && <span className="text-[9px] text-slate-400 font-black uppercase mt-0.5">+ {order.items.length - 2} další</span>}
+                                    </div>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    <span className="font-display font-black text-slate-900">{order.total} Kč</span>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <div className="flex flex-col gap-1.5 items-center">
+                                        <Badge variant={order.status === 'pending' ? 'outline' : order.status === 'cancelled' ? 'destructive' : 'secondary'} className={`text-[9px] uppercase tracking-tighter px-2 h-5 flex items-center ${order.status !== 'pending' && order.status !== 'cancelled' ? 'bg-emerald-50 text-emerald-700 border-emerald-500/20' : 'bg-transparent text-slate-500'}`}>
+                                            {order.status === 'pending' ? 'Čeká' :
+                                                order.status === 'cancelled' ? 'Storno' :
+                                                    'Zaplaceno'}
+                                        </Badge>
+                                        <Badge
+                                            variant={order.status === 'shipped' ? 'default' : order.status === 'cancelled' ? 'destructive' : 'outline'}
+                                            className={`text-[9px] uppercase tracking-tighter px-2 h-5 flex items-center ${
+                                                order.status === 'shipped' ? 'bg-slate-900 text-white' :
+                                                    order.status === 'processing' ? 'border-primary/40 text-primary-foreground bg-primary' :
+                                                        order.status === 'cancelled' ? 'bg-red-50 text-red-900 border-red-200' :
+                                                            'border-amber-300 text-amber-900 bg-amber-50/50'
+                                            }`}
+                                        >
+                                            {order.status === 'shipped' ? 'Vyřízena' :
+                                                order.status === 'processing' ? 'Příprava' :
+                                                    order.status === 'cancelled' ? 'Zrušeno' :
+                                                        'Nová'}
+                                        </Badge>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="text-right tabular-nums">
                                     <div className="flex justify-end gap-1">
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-950" aria-label={`Zobrazit detail objednávky ${order.id.slice(0, 8)}`}>
-                                                    <Eye className="w-4 h-4" />
+                                                <Button size="sm" variant="ghost" className="h-9 w-9 p-0 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl" aria-label={`Detail objednávky ${order.id}`}>
+                                                    <Eye className="w-4.5 h-4.5" />
                                                 </Button>
                                             </DialogTrigger>
                                             <OrderDetailDialog order={order} />
@@ -249,11 +284,11 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 size="sm"
                                                 variant="ghost"
                                                 onClick={() => onStatusChange(order.id, 'paid')}
-                                                className="h-8 w-8 p-0 text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
+                                                className="h-9 w-9 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl"
                                                 title="Označit jako zaplacené"
                                                 aria-label="Označit jako zaplacené"
                                             >
-                                                <CheckCircle className="w-4 h-4" />
+                                                <CheckCircle className="w-4.5 h-4.5" />
                                             </Button>
                                         )}
                                         {order.status === 'paid' && (
@@ -261,11 +296,11 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 size="sm"
                                                 variant="ghost"
                                                 onClick={() => onStatusChange(order.id, 'processing')}
-                                                className="h-8 w-8 p-0 text-blue-700 hover:text-blue-900 hover:bg-blue-50"
+                                                className="h-9 w-9 p-0 text-primary hover:text-primary-foreground hover:bg-primary rounded-xl"
                                                 title="Označit jako rozpracované"
                                                 aria-label="Označit jako rozpracované"
                                             >
-                                                <Clock className="w-4 h-4" />
+                                                <Clock className="w-4.5 h-4.5" />
                                             </Button>
                                         )}
                                         {(order.status === 'paid' || order.status === 'processing') && (
@@ -273,11 +308,11 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 size="sm"
                                                 variant="ghost"
                                                 onClick={() => onStatusChange(order.id, 'shipped')}
-                                                className="h-8 w-8 p-0 text-blue-700 hover:text-blue-900 hover:bg-blue-50"
+                                                className="h-9 w-9 p-0 text-slate-900 hover:text-white hover:bg-slate-900 rounded-xl"
                                                 title="Označit jako vyřízené/odeslané"
                                                 aria-label="Označit jako vyřízené/odeslané"
                                             >
-                                                <Truck className="w-4 h-4" />
+                                                <Truck className="w-4.5 h-4.5" />
                                             </Button>
                                         )}
 
@@ -287,32 +322,36 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-8 w-8 p-0 text-red-700 hover:text-red-900 hover:bg-red-50"
+                                                        className="h-9 w-9 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl"
                                                         title="Stornovat objednávku"
                                                         aria-label="Stornovat objednávku"
                                                     >
-                                                        <XCircle className="w-4 h-4" />
+                                                        <XCircle className="w-4.5 h-4.5" />
                                                     </Button>
                                                 </DialogTrigger>
-                                                <DialogContent>
+                                                <DialogContent className="rounded-[2.5rem] border-red-100">
                                                     <DialogHeader>
-                                                        <DialogTitle className="flex items-center gap-2">
-                                                            <AlertTriangle className="w-5 h-5 text-red-500" />
+                                                        <DialogTitle className="flex items-center gap-2 text-red-600">
+                                                            <AlertTriangle className="w-5 h-5" />
                                                             Stornovat objednávku
                                                         </DialogTitle>
-                                                        <div className="pt-2">
-                                                            <div className="text-sm font-medium">Stornovat objednávku</div>
-                                                            <div className="text-xs text-muted-foreground mt-1">
-                                                                Opravdu chcete stornovat objednávku #${order.id.slice(0, 8)}? Tuto akci nelze vrátit.
+                                                        <div className="pt-4 space-y-3">
+                                                            <div className="text-sm font-bold text-slate-900">Opravdu chcete stornovat tuto objednávku?</div>
+                                                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                                                <div className="font-mono text-xs font-black">ID: #{order.id}</div>
+                                                                <div className="text-xs font-medium text-slate-500 mt-1">{order.customer.name}</div>
                                                             </div>
+                                                            <p className="text-xs text-muted-foreground leading-relaxed">
+                                                                Tato akce je nevratná. Zboží bude vráceno do skladových zásob a objednávka bude označena jako stornovaná.
+                                                            </p>
                                                         </div>
                                                     </DialogHeader>
-                                                    <DialogFooter className="gap-2 sm:gap-0 mt-4">
+                                                    <DialogFooter className="gap-2 sm:gap-0 mt-6">
                                                         <DialogClose asChild>
-                                                            <Button variant="outline">Zpět</Button>
+                                                            <Button variant="outline" className="rounded-xl border-slate-200">Zpět</Button>
                                                         </DialogClose>
                                                         <DialogClose asChild>
-                                                            <Button variant="destructive" onClick={() => onStatusChange(order.id, 'cancelled')}>
+                                                            <Button variant="destructive" className="rounded-xl bg-red-600 hover:bg-red-700" onClick={() => onStatusChange(order.id, 'cancelled')}>
                                                                 Potvrdit storno
                                                             </Button>
                                                         </DialogClose>
@@ -325,17 +364,17 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="h-8 w-8 p-0 text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50"
+                                                className="h-9 w-9 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl"
                                                 title="Tisk štítku Zásilkovny"
                                                 aria-label="Tisk štítku Zásilkovny"
                                                 onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
                                             >
-                                                <Printer className="w-4 h-4" />
+                                                <Printer className="w-4.5 h-4.5" />
                                             </Button>
                                         )}
                                         <InvoiceModal order={order}>
-                                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-slate-700 hover:text-slate-950 hover:bg-slate-100" aria-label={`Zobrazit fakturu pro objednávku ${order.id.slice(0, 8)}`}>
-                                                <FileText className="h-4 w-4" />
+                                            <Button size="sm" variant="ghost" className="h-9 w-9 p-0 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl" aria-label={`Faktura pro objednávku ${order.id}`}>
+                                                <FileText className="w-4.5 h-4.5" />
                                             </Button>
                                         </InvoiceModal>
                                     </div>
@@ -702,7 +741,7 @@ const Orders = () => {
                             Zrušit
                         </Button>
 
-                        <div className="flex gap-2 p-1 bg-slate-50 border rounded-xl">
+                        <div className="flex gap-2 p-1 bg-slate-50 border rounded-2xl">
                             <Button
                                 size="sm"
                                 variant="ghost"

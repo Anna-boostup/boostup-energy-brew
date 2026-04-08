@@ -144,110 +144,133 @@ const PricingStatistics = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Pricing Card */}
-                <Card className="lg:col-span-1 shadow-sm border-primary/20">
-                    <CardHeader className="bg-primary/5 border-b">
-                        <CardTitle className="flex items-center gap-2">
-                            <Package className="w-5 h-5 text-primary" />
-                            Globální ceny balení
-                        </CardTitle>
-                        <CardDescription>Tyto ceny platí pro VŠECHNY příchutě i pro MIX balení.</CardDescription>
+                <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
+                    <CardHeader className="bg-slate-900 border-b border-slate-800 py-8">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 bg-primary/20 rounded-xl">
+                                <Package className="w-5 h-5 text-primary" />
+                            </div>
+                            <CardTitle className="text-xl text-white font-black">Cenotvorba</CardTitle>
+                        </div>
+                        <CardDescription className="text-slate-400 text-xs">Globální nastavení cen pro všechna balení.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-6 space-y-6">
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="pack3" className="font-bold">Balení 3 ks (Kč)</Label>
-                                <div className="relative">
+                    <CardContent className="pt-8 space-y-8">
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-end px-1">
+                                    <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400">Balení 3 ks</Label>
+                                    <span className="text-[10px] font-black text-primary bg-slate-900 px-2 py-0.5 rounded-md">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
+                                </div>
+                                <div className="relative group">
                                     <Input 
                                         id="pack3" 
                                         type="number" 
                                         value={prices.pack3} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
-                                        className="pl-10 font-bold"
+                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-slate-900 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">🍋</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🍋</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">Kč</span>
                                 </div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest pl-1">{(prices.pack3 / 3).toFixed(2)} Kč / shot</p>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="pack12" className="font-bold">Balení 12 ks (Kč)</Label>
-                                <div className="relative">
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-end px-1">
+                                    <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400">Balení 12 ks</Label>
+                                    <span className="text-[10px] font-black text-primary bg-slate-900 px-2 py-0.5 rounded-md">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
+                                </div>
+                                <div className="relative group">
                                     <Input 
                                         id="pack12" 
                                         type="number" 
                                         value={prices.pack12} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
-                                        className="pl-10 font-bold"
+                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-slate-900 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">🍇</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🍓</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">Kč</span>
                                 </div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest pl-1">{(prices.pack12 / 12).toFixed(2)} Kč / shot</p>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="pack21" className="font-bold">Balení 21 ks (Kč)</Label>
-                                <div className="relative">
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-end px-1">
+                                    <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400">Balení 21 ks</Label>
+                                    <span className="text-[10px] font-black text-primary bg-slate-900 px-2 py-0.5 rounded-md">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
+                                </div>
+                                <div className="relative group">
                                     <Input 
                                         id="pack21" 
                                         type="number" 
                                         value={prices.pack21} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
-                                        className="pl-10 font-bold"
+                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-slate-900 focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">🌿</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🌿</span>
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-slate-300">Kč</span>
                                 </div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest pl-1">{(prices.pack21 / 21).toFixed(2)} Kč / shot</p>
                             </div>
                         </div>
 
                         <Button 
-                            className="w-full h-12 bg-primary hover:bg-primary/90 text-black font-bold uppercase tracking-widest gap-2"
+                            className="w-full h-16 bg-primary hover:bg-lime-dark text-slate-900 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 gap-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
                             onClick={handleSavePrices}
                             disabled={isSaving}
                         >
                             {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                            Uložit změny cen
+                            Uložit nové ceny
                         </Button>
                     </CardContent>
                 </Card>
 
                 {/* Orders Stats Card */}
-                <Card className="lg:col-span-2 shadow-sm">
-                    <CardHeader className="bg-slate-50 border-b">
-                        <CardTitle className="flex items-center gap-2">
-                            <ShoppingCart className="w-5 h-5 text-slate-600" />
-                            Počet objednávek (posledních 30 dní)
-                        </CardTitle>
-                        <CardDescription>Denní přehled přijatých objednávek.</CardDescription>
+                <Card className="lg:col-span-2 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
+                    <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-8 px-8">
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="p-2 bg-slate-900 rounded-xl">
+                                <ShoppingCart className="w-5 h-5 text-primary" />
+                            </div>
+                            <CardTitle className="text-xl font-black text-slate-900">Objem objednávek</CardTitle>
+                        </div>
+                        <CardDescription className="text-slate-500 text-xs font-medium">Přehled počtu objednávek za posledních 30 dní.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-6 h-[400px]">
+                    <CardContent className="pt-10 px-8 h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={statsData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 10, fontWeight: 600 }} 
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} 
                                     axisLine={false}
                                     tickLine={false}
-                                    interval={2}
+                                    interval={3}
+                                    dy={10}
                                 />
                                 <YAxis 
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 600 }}
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }}
+                                    dx={-10}
                                 />
                                 <Tooltip 
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                    cursor={{ stroke: '#f1f5f9', strokeWidth: 2 }}
+                                    contentStyle={{ 
+                                        borderRadius: '20px', 
+                                        border: '1px solid #f1f5f9', 
+                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                                        padding: '12px 16px',
+                                        fontWeight: '900',
+                                        fontSize: '12px'
+                                    }}
+                                    cursor={{ stroke: '#C4F135', strokeWidth: 2, strokeDasharray: '5 5' }}
                                 />
                                 <Line 
                                     type="monotone" 
                                     dataKey="orders" 
-                                    name="Počet objednávek"
-                                    stroke="#84cc16" 
-                                    strokeWidth={4}
-                                    dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
-                                    activeDot={{ r: 6, strokeWidth: 0 }}
+                                    name="Objednávky"
+                                    stroke="#1e293b" 
+                                    strokeWidth={6}
+                                    dot={{ r: 0 }}
+                                    activeDot={{ r: 8, strokeWidth: 0, fill: '#C4F135' }}
+                                    animationDuration={2000}
                                 />
                             </LineChart>
                         </ResponsiveContainer>
@@ -255,37 +278,52 @@ const PricingStatistics = () => {
                 </Card>
 
                 {/* Units Stats Card */}
-                <Card className="lg:col-span-3 shadow-sm">
-                    <CardHeader className="bg-slate-50 border-b">
-                        <CardTitle className="flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-slate-600" />
-                            Prodané jednotky dle příchutí
-                        </CardTitle>
-                        <CardDescription>Počet prodaných jednotlivých lahviček (včetně obsahu v mixech a baleních).</CardDescription>
+                <Card className="lg:col-span-3 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <CardHeader className="bg-slate-900 border-b border-slate-800 py-8 px-10">
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="p-2 bg-primary/20 rounded-xl">
+                                <TrendingUp className="w-5 h-5 text-primary" />
+                            </div>
+                            <CardTitle className="text-xl font-black text-white">Prodané jednotky</CardTitle>
+                        </div>
+                        <CardDescription className="text-slate-400 text-xs font-medium">Celkový počet prodaných lahviček rozdělený dle příchutí.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-6 h-[450px]">
+                    <CardContent className="pt-12 px-10 h-[500px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={statsData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                            <BarChart data={statsData} barGap={0}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 10, fontWeight: 600 }} 
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} 
                                     axisLine={false}
                                     tickLine={false}
-                                    interval={1}
+                                    interval={2}
+                                    dy={10}
                                 />
                                 <YAxis 
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 600 }}
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }}
+                                    dx={-10}
                                 />
                                 <Tooltip 
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                    contentStyle={{ 
+                                        borderRadius: '20px', 
+                                        border: '1px solid #f1f5f9', 
+                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                                        padding: '12px 16px',
+                                        fontWeight: '900'
+                                    }}
+                                    cursor={{ fill: '#f8fafc' }}
                                 />
-                                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#eab308" radius={[0, 0, 0, 0]} />
+                                <Legend 
+                                    iconType="circle" 
+                                    iconSize={8}
+                                    wrapperStyle={{ paddingTop: '40px', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
+                                />
+                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#C4F135" radius={[0, 0, 0, 0]} />
                                 <Bar dataKey="red" name="Red Rush" stackId="a" fill="#ef4444" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#1e293b" radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>

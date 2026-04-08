@@ -105,6 +105,7 @@ const ProductSection = () => {
                         content={content}
                         getEffectiveProduct={getEffectiveProduct}
                         cleanName={cleanName}
+                        products={products}
                       />
                     )}
 

@@ -24,7 +24,10 @@ const FlavorSelector = ({
     <div className="animate-fade-up">
       <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">VYBERTE PŘÍCHUŤ</h3>
       <div className="space-y-3">
-        {FLAVORS.map((flavor, index) => {
+        {FLAVORS.filter(f => {
+          const product = products.find(p => p.sku === f.id);
+          return product?.is_active !== false;
+        }).map((flavor, index) => {
           const sku = selectedPack ? `${flavor.id}-${selectedPack}` : flavor.id;
           const isSelected = selectedFlavor === flavor.id;
           const eff = getEffectiveProduct(sku);

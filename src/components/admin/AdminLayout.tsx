@@ -106,7 +106,7 @@ const AdminLayout = () => {
                                                 onClick={() => {
                                                     navigate(item.path);
                                                 }}
-                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${isActive
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all ${isActive
                                                     ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
                                                     } `}
@@ -172,7 +172,7 @@ const AdminLayout = () => {
                                     ) : (
                                         <button
                                             onClick={() => navigate(item.path)}
-                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all ${isActive
+                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all ${isActive
                                                 ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20"
                                                 : "text-slate-300 hover:bg-slate-800 hover:text-white"
                                                 } `}

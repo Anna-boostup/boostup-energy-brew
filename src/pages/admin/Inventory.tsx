@@ -23,20 +23,26 @@ const getFlavorLabel = (sku: string) => {
 };
 
 const PackBreakdown = ({ bottles }: { bottles: number }) => (
-    <div className="flex flex-wrap gap-1 mt-1">
-        {PACK_SIZES.map(size => (
-            <span
-                key={size}
-                className="inline-flex items-center rounded-full border bg-muted/50 px-2 py-0.5 text-xs font-medium"
-            >
-                {Math.floor(bottles / size)}× po {size}
-            </span>
-        ))}
+    <div className="flex flex-wrap gap-2 mt-2">
+        {PACK_SIZES.map(size => {
+            const count = Math.floor(bottles / size);
+            return (
+                <div
+                    key={size}
+                    className={`flex flex-col items-center justify-center rounded-2xl border px-3 py-2 transition-all ${
+                        count > 0 ? "bg-white border-slate-200 shadow-sm" : "bg-slate-50/50 border-slate-100 opacity-40"
+                    }`}
+                >
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{size}ks</span>
+                    <span className="text-sm font-black text-slate-900">{count}×</span>
+                </div>
+            );
+        })}
     </div>
 );
 
 const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void }) => (
-    <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white shadow-sm">
+    <div className="border border-white/40 rounded-[2.5rem] p-6 space-y-4 mb-6 bg-white/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
         <div className="flex justify-between items-start">
             <div>
                 <p className="font-mono font-bold text-lg">{sku}</p>
@@ -56,8 +62,14 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }
             <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Aktivní prodej</span>
             <Switch
                 checked={product?.is_active !== false}
-                onCheckedChange={(checked) => onEdit()}
-                className="scale-75"
+                onCheckedChange={async (checked) => {
+                    if (product) {
+                        try {
+                            await onEdit(); // We keep this if it triggers a refresh or similar but we need direct update
+                        } catch (e) {}
+                    }
+                }}
+                className="scale-75 data-[state=checked]:bg-lime"
             />
         </div>
 
@@ -122,86 +134,96 @@ const Inventory = () => {
                 </div>
             </div>
 
-            {/* Desktop Table */}
-            <div className="bg-white rounded-md border shadow-sm hidden md:block">
+            {/* Desktop Table Container */}
+            <div className="bg-white/50 backdrop-blur-sm rounded-[2.5rem] border border-white/40 shadow-sm hidden md:block overflow-hidden transition-all hover:shadow-md animate-in fade-in zoom-in-95 duration-500">
                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>SKU (Kód)</TableHead>
-                            <TableHead>Příchuť</TableHead>
-                            <TableHead className="text-right">Lahvičky na skladě</TableHead>
-                            <TableHead>Odpovídá balením</TableHead>
-                            <TableHead className="text-center">Aktivní prodej</TableHead>
-                            <TableHead className="text-right">Akce</TableHead>
+                    <TableHeader className="bg-slate-50 border-b border-slate-200">
+                        <TableRow className="hover:bg-transparent">
+                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 px-6">Produkt / SKU</TableHead>
+                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right w-[150px]">Skladem</TableHead>
+                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 pl-10">Přepočet na balení</TableHead>
+                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-center w-[120px]">Prodej</TableHead>
+                            <TableHead className="font-black text-slate-900 uppercase text-[10px] tracking-widest py-5 text-right px-6">Akce</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {sortedStock.map(([sku, qty]) => {
                             const product = products.find(p => p.sku === sku);
                             return (
-                                <TableRow key={sku}>
-                                    <TableCell className="font-mono font-medium">{sku}</TableCell>
-                                    <TableCell>
-                                        <span className="font-bold">
-                                            {product?.name || getFlavorLabel(sku)}
-                                        </span>
+                                <TableRow key={sku} className="transition-colors hover:bg-slate-50/80 border-b border-slate-100 group">
+                                    <TableCell className="py-6 px-6">
+                                        <div className="flex flex-col">
+                                            <span className="font-display font-black text-slate-900 text-base leading-tight mb-1">
+                                                {product?.name || getFlavorLabel(sku)}
+                                            </span>
+                                            <span className="font-mono font-black text-[10px] text-primary bg-slate-900 px-2 py-0.5 rounded-md w-fit tracking-tighter uppercase">
+                                                {sku}
+                                            </span>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <span className={`font-bold text-lg ${qty < 10 ? "text-terracotta" : ""}`}>
-                                            {qty} ks
-                                        </span>
+                                        <div className="flex flex-col items-end">
+                                            <span className={`font-display font-black text-2xl tabular-nums leading-none ${qty < 10 ? "text-red-500" : "text-slate-900"}`}>
+                                                {qty}
+                                            </span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Lahviček</span>
+                                        </div>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="pl-10">
                                         <PackBreakdown bottles={qty} />
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Switch
-                                            checked={product?.is_active !== false}
-                                            onCheckedChange={async (checked) => {
-                                                if (product) {
-                                                    await updateProduct(product.sku, { is_active: checked });
-                                                }
-                                            }}
-                                        />
+                                        <div className="flex flex-col items-center gap-1">
+                                            <Switch
+                                                checked={product?.is_active !== false}
+                                                onCheckedChange={async (checked) => {
+                                                    if (product) {
+                                                        await updateProduct(product.sku, { is_active: checked });
+                                                    }
+                                                }}
+                                                className="data-[state=checked]:bg-primary shadow-sm"
+                                            />
+                                            <span className="text-[9px] font-black uppercase tracking-tighter text-slate-400">
+                                                {product?.is_active !== false ? "Aktivní" : "Vypnuto"}
+                                            </span>
+                                        </div>
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
+                                    <TableCell className="text-right px-6 tabular-nums">
+                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                                             <Button
                                                 size="sm"
-                                                variant="outline"
+                                                variant="ghost"
                                                 onClick={() => setHistorySku(sku)}
-                                                aria-label={`Historie pohybů pro ${sku}`}
+                                                className="h-10 w-10 p-0 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100"
                                                 title="Historie pohybů"
                                             >
-                                                <History className="h-4 w-4" />
+                                                <History className="h-4.5 w-4.5" />
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                variant="outline"
+                                                variant="ghost"
+                                                className="h-10 w-10 p-0 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100"
                                                 onClick={() => setEditSku(sku)}
-                                                aria-label={`Upravit detaily pro ${sku}`}
                                                 title="Upravit detaily"
                                             >
-                                                <Edit className="h-4 w-4" />
+                                                <Edit className="h-4.5 w-4.5" />
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                variant="outline"
-                                                className="text-terracotta border-terracotta/20 hover:bg-terracotta/10"
+                                                variant="ghost"
+                                                className="h-10 w-10 p-0 rounded-xl text-red-400 hover:text-red-600 hover:bg-red-50"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "out" })}
-                                                aria-label={`Odebrat ze skladu ${sku}`}
                                                 title="Odebrat ze skladu"
                                             >
-                                                <Minus className="h-4 w-4" />
+                                                <Minus className="h-4.5 w-4.5" />
                                             </Button>
                                             <Button
                                                 size="sm"
-                                                className="bg-lime hover:bg-lime-dark text-white"
+                                                className="bg-slate-900 hover:bg-black text-white h-10 px-4 rounded-xl font-bold shadow-lg shadow-slate-900/10"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "in" })}
-                                                aria-label={`Naskladnit ${sku}`}
-                                                title="Naskladnit"
                                             >
-                                                <Plus className="h-4 w-4" />
+                                                <Plus className="h-4 w-4 mr-2" />
+                                                Doplnit
                                             </Button>
                                         </div>
                                     </TableCell>
