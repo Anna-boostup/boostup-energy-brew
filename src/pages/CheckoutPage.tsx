@@ -445,6 +445,7 @@ const CheckoutPage = () => {
 
           const stripeData = await stripeRes.json();
           if (stripeRes.ok && stripeData.url) {
+            clearCart(); // Clear cart before redirect
             window.location.href = stripeData.url;
             return;
           } else {
@@ -483,6 +484,7 @@ const CheckoutPage = () => {
 
         const gopayData = await gopayRes.json();
         if (gopayRes.ok && gopayData.gw_url) {
+          clearCart(); // Clear cart before redirect
           window.location.href = gopayData.gw_url;
           return;
         } else {
