@@ -20,7 +20,7 @@
 
 @layer base {
   :root {
-    /* BoostUp Brand Colors - Original Palette */
+    /* BoostUp Brand Colors - Original Palette with Official Brand Codes */
     /* #f4f1e6 - Cream/Background */
     --background: 47 30% 93%;
     --foreground: 99 33% 26%;
@@ -32,9 +32,9 @@
     --popover: 47 30% 93%;
     --popover-foreground: 99 33% 26%;
 
-    /* Primary: #3a572c - Dark Green */
-    --primary: 99 33% 26%;
-    --primary-foreground: 47 30% 93%;
+    /* Primary: #3d5a2f - Dark Green / Olive */
+    --primary: 101 31% 27%;
+    --primary-foreground: 47 39% 93%;
 
     /* Secondary: Lighter cream */
     --secondary: 47 25% 88%;
@@ -44,58 +44,58 @@
     --muted: 47 20% 85%;
     --muted-foreground: 99 25% 40%;
 
-    /* Accent: #aa263e - Red/Burgundy */
-    --accent: 349 63% 41%;
-    --accent-foreground: 47 30% 93%;
+    /* Accent: #dfdf57 - Official Lime */
+    --accent: 60 68% 61%;
+    --accent-foreground: 101 31% 27%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 349 63% 41%;
+    --destructive-foreground: 47 30% 93%;
 
     --border: 99 15% 78%;
     --input: 99 15% 82%;
-    --ring: 99 33% 26%;
+    --ring: 101 31% 27%;
 
     --radius: 0.75rem;
 
-    /* Custom Brand Colors - Original Values */
-    /* #3a572c - Dark Green (Main) */
-    --olive: 99 33% 26%;
-    --olive-dark: 99 33% 18%;
-    --olive-light: 99 33% 35%;
+    /* Custom Brand Colors - Official Hex Values */
+    /* #3d5a2f - Dark Green (Olive) */
+    --olive: 101 31% 27%;
+    --olive-dark: 101 35% 15%;
+    --olive-light: 101 25% 40%;
 
-    /* #dee16b - Lime Yellow */
-    --lime: 61 65% 65%;
-    --lime-dark: 61 65% 50%;
+    /* #dfdf57 - Official Lime */
+    --lime: 60 68% 61%;
+    --lime-dark: 60 68% 48%;
 
-    /* #aa263e - Red/Burgundy (Accent) */
+    /* #aa263e - Terracotta (Red Rush) */
     --terracotta: 349 63% 41%;
     --terracotta-dark: 349 63% 32%;
 
-    /* #d56230 - Orange */
-    --orange: 18 65% 51%;
-    --orange-dark: 18 65% 42%;
+    /* #f29739 - Orange */
+    --orange: 31 88% 58%;
+    --orange-dark: 31 88% 46%;
 
     /* #f4f1e6 - Cream (Background) */
     --cream: 47 30% 93%;
     --cream-dark: 47 30% 88%;
 
     /* Admin background */
-    --admin-bg: 100 20% 18%;
+    --admin-bg: 101 20% 18%;
 
     /* Contrast text on dark bg */
-    --text-primary: 100 35% 10%;
-    --text-muted: 100 20% 38%;
+    --text-primary: 101 35% 10%;
+    --text-muted: 101 20% 38%;
 
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(48 30% 93%) 0%, hsl(48 25% 88%) 100%);
-    --gradient-olive: linear-gradient(135deg, hsl(100 35% 27%) 0%, hsl(100 40% 35%) 100%);
-    --gradient-energy: linear-gradient(135deg, hsl(60 67% 61%) 0%, hsl(32 88% 58%) 50%, hsl(350 64% 41%) 100%);
+    --gradient-olive: linear-gradient(135deg, hsl(101 35% 15%) 0%, hsl(101 31% 27%) 100%);
+    --gradient-energy: linear-gradient(135deg, hsl(60 68% 61%) 0%, hsl(31 88% 58%) 50%, hsl(349 63% 41%) 100%);
 
     /* Shadows */
-    --shadow-product: 0 30px 60px -15px hsl(100 35% 15% / 0.35);
-    --shadow-card: 0 8px 30px -8px hsl(100 25% 18% / 0.15);
-    --shadow-button: 0 6px 20px -4px hsl(100 35% 27% / 0.4);
-    --shadow-levitate: 0 40px 60px -20px hsl(100 40% 15% / 0.4);
+    --shadow-product: 0 30px 60px -15px hsl(101 35% 15% / 0.35);
+    --shadow-card: 0 8px 30px -8px hsl(101 25% 18% / 0.15);
+    --shadow-button: 0 6px 20px -4px hsl(101 31% 27% / 0.4);
+    --shadow-levitate: 0 40px 60px -20px hsl(101 40% 15% / 0.4);
 
     /* Sidebar defaults */
     --sidebar-background: 0 0% 98%;
