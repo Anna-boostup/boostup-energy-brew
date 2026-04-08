@@ -7,7 +7,7 @@ import {
 import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
-    AlertTriangle, Mail, MousePointer2, BarChart3, Gift, Settings2, Zap, Layout
+    AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout
 } from "lucide-react";
 
 interface HelpItem {
@@ -143,7 +143,7 @@ const sections: Section[] = [
         ]
     },
     {
-        icon: BarChart3,
+        icon: BarChart,
         title: "Ceny a Statistiky",
         description: "Globální správa cen a přehled výkonu e-shopu. Cesta: Admin → Ceny a Statistiky",
         items: [

@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker } from 'lucide-react';
+import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker, BarChart } from 'lucide-react';
 import { AVAILABLE_FONTS, FONT_WEIGHTS } from '@/hooks/useDynamicFonts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -478,7 +478,7 @@ const ContentManagement = () => {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center gap-6 relative z-10">
                                 <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <BarChart3 className="w-8 h-8 text-lime" />
+                                    <BarChart className="w-8 h-8 text-lime" />
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">3B Koncept</h3>

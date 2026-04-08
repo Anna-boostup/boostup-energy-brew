@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Package, Save, Loader2, BarChart3, ShoppingCart } from "lucide-react";
+import { TrendingUp, Package, Save, Loader2, BarChart as BarChartIcon, ShoppingCart } from "lucide-react";
 import { format, parseISO, subDays, isWithinInterval, startOfDay } from 'date-fns';
 import { cs } from 'date-fns/locale';
 

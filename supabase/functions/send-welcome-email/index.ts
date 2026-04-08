@@ -78,7 +78,7 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               
               <div style="text-align: center; margin-bottom: 16px;">
-                  <a href="https://test.drinkboostup.cz/products" style="background-color: #3a572c; color: white; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-weight: bold; display: inline-block; font-size: 16px;">
+                  <a href="https://drinkboostup.cz/products" style="background-color: #3a572c; color: white; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-weight: bold; display: inline-block; font-size: 16px;">
                       Jít nakupovat energii
                   </a>
               </div>
@@ -87,7 +87,7 @@ const handler = async (req: Request): Promise<Response> => {
             <div style="margin-top: 32px; text-align: center; font-size: 14px; color: #6b7280;">
                 <p style="margin: 0 0 12px 0;">BoostUp &middot; Chaloupkova 3002/1a &middot; 612 00 Brno</p>
                 <p style="margin: 0;">
-                    <a href="https://test.drinkboostup.cz" style="color: #3a572c; text-decoration: none; font-weight: bold;">drinkboostup.cz</a>
+                    <a href="https://drinkboostup.cz" style="color: #3a572c; text-decoration: none; font-weight: bold;">drinkboostup.cz</a>
                     &nbsp;&nbsp;&middot;&nbsp;&nbsp;
                     <a href="mailto:info@drinkboostup.cz" style="color: #3a572c; text-decoration: none;">info@drinkboostup.cz</a>
                 </p>

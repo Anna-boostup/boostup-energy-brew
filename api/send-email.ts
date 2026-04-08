@@ -31,8 +31,8 @@ const getBaseUrl = (req: VercelRequest) => {
         return `${protocol}://${host}`.replace(/\/$/, "");
     }
 
-    // 3. Fallback: Always default to the known test domain if the above fail or return localhost
-    return 'https://test.drinkboostup.cz';
+    // 3. Fallback: Always default to the known production domain if the above fail or return localhost
+    return 'https://drinkboostup.cz';
 };
 
 // Initialize Supabase Admin
