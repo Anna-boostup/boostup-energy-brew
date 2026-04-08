@@ -321,9 +321,9 @@ const PricingStatistics = () => {
                                     iconSize={8}
                                     wrapperStyle={{ paddingTop: '40px', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
                                 />
-                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#dfdf57" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="red" name="Red Rush" stackId="a" fill="#aa263e" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#3d5a2f" radius={[10, 10, 0, 0]} />
+                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#C4F135" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="red" name="Red Rush" stackId="a" fill="#ef4444" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#1e293b" radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
