@@ -15,12 +15,24 @@ const COLORS = {
     white: '#ffffff'
 };
 
-// Dynamic BASE_URL detection
+// Hardened BASE_URL detection
 const getBaseUrl = (req: VercelRequest) => {
+    // 1. Priority: Explicit site URL from environment
+    if (process.env.VITE_SITE_URL && !process.env.VITE_SITE_URL.includes('localhost')) {
+        return process.env.VITE_SITE_URL.replace(/\/$/, "");
+    }
+
+    // 2. Secondary: Detected host from headers
     const protocol = req.headers['x-forwarded-proto'] || 'https';
-    const host = req.headers['x-forwarded-host'] || req.headers.host || 'test.drinkboostup.cz';
-    const url = `${protocol}://${host}`;
-    return url.replace(/\/$/, "");
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    
+    // Only use detected host if it's a real domain (not localhost in production-like environment)
+    if (host && !host.includes('localhost')) {
+        return `${protocol}://${host}`.replace(/\/$/, "");
+    }
+
+    // 3. Fallback: Always default to the known test domain if the above fail or return localhost
+    return 'https://test.drinkboostup.cz';
 };
 
 // Initialize Supabase Admin

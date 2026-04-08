@@ -19,10 +19,10 @@ import {
 } from "lucide-react";
 
 /**
- * Modern Login component using original brand colors:
- * Primary Green: #3a572c
- * Lime: #dfdf57
- * Background: #f9fafb
+ * Modern Login component using EXACT brand colors from index.css variables:
+ * Primary: hsl(var(--olive))
+ * Accent: hsl(var(--lime))
+ * Background: hsl(var(--cream))
  */
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -33,21 +33,16 @@ const Login = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    // Use HEX codes to ensure consistency with brand colors
-    const COLORS = {
-        primary: "#3a572c",
-        lime: "#dfdf57",
-        bg: "#f9fafb"
-    };
-
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setSuccessMessage(null);
 
+        const trimmedEmail = email.trim();
+
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
-                email,
+                email: trimmedEmail,
                 password,
             });
 
@@ -81,11 +76,13 @@ const Login = () => {
             }
         } catch (error: any) {
             console.error("Login error:", error);
+            const isInvalidCredentials = error.message?.includes("Invalid login credentials");
+            
             toast({
                 title: "Chyba přihlášení",
-                description: error.message === "Invalid login credentials" 
-                    ? "Neplatný e-mail nebo heslo. Zkuste to znovu." 
-                    : error.message || "Nastala neočekávaná chyba",
+                description: isInvalidCredentials 
+                    ? "Neplatný e-mail nebo heslo. Zkontrolujte prosím své údaje a zkuste to znovu." 
+                    : (error.message || "Nastala neočekávaná chyba při přihlašování."),
                 variant: "destructive",
             });
         } finally {
@@ -94,7 +91,8 @@ const Login = () => {
     };
 
     const handleForgotPassword = async () => {
-        if (!email) {
+        const trimmedEmail = email.trim();
+        if (!trimmedEmail) {
             toast({
                 title: "Zadejte email",
                 description: "Pro obnovu hesla musíte vyplnit emailovou adresu.",
@@ -109,7 +107,7 @@ const Login = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    to: email,
+                    to: trimmedEmail,
                     type: 'reset_password'
                 })
             });
@@ -136,7 +134,8 @@ const Login = () => {
     };
 
     const handleMagicLink = async () => {
-        if (!email) {
+        const trimmedEmail = email.trim();
+        if (!trimmedEmail) {
             toast({
                 title: "Zadejte email",
                 description: "Pro odeslání magického odkazu musíte vyplnit email.",
@@ -150,7 +149,7 @@ const Login = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    to: email,
+                    to: trimmedEmail,
                     type: 'magic_link'
                 })
             });
@@ -177,55 +176,58 @@ const Login = () => {
     };
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-[#f9fafb] px-4 py-12">
+        <main className="min-h-screen flex items-center justify-center bg-[hsl(var(--cream))] px-4 py-12">
             <Link 
                 to="/" 
-                className="absolute top-8 left-8 flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-[#3a572c] transition-colors"
+                className="absolute top-8 left-8 flex items-center gap-2 text-sm font-semibold text-[hsl(var(--olive))] hover:opacity-70 transition-opacity"
             >
                 <ChevronLeft className="w-4 h-4" />
                 Zpět na web
             </Link>
 
             <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-[420px]"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                className="w-full max-w-[440px]"
             >
-                <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 space-y-8">
-                    <div className="text-center space-y-2">
-                        <div className="flex justify-center mb-6">
-                            <div className="w-12 h-12 bg-[#3a572c] rounded-xl flex items-center justify-center shadow-lg shadow-[#3a572c]/10">
-                                <Zap className="w-6 h-6 text-[#dfdf57]" fill="#dfdf57" />
-                            </div>
+                <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-card border border-olive/5 space-y-10">
+                    <div className="text-center space-y-3">
+                        <div className="flex justify-center mb-4">
+                            <motion.div 
+                                whileHover={{ scale: 1.05 }}
+                                className="w-16 h-16 bg-[hsl(var(--olive))] rounded-2xl flex items-center justify-center shadow-button"
+                            >
+                                <Zap className="w-8 h-8 text-[hsl(var(--lime))]" fill="currentColor" />
+                            </motion.div>
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900">Přihlášení</h1>
-                        <p className="text-slate-500 text-sm">Vítejte zpět v BoostUp</p>
+                        <h1 className="text-3xl font-black text-[hsl(var(--olive))] tracking-tight">PŘIHLÁŠENÍ</h1>
+                        <p className="text-olive/60 font-medium text-sm">Vítejte zpět v boostup.cz</p>
                     </div>
 
                     <AnimatePresence>
                         {successMessage && (
                             <motion.div 
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="bg-[#3a572c]/5 border border-[#3a572c]/10 rounded-xl p-4 flex items-start gap-3"
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-olive/5 border border-olive/10 rounded-2xl p-4 flex items-start gap-3"
                             >
-                                <CheckCircle2 className="w-5 h-5 text-[#3a572c] mt-0.5" />
-                                <p className="text-sm font-medium text-[#3a572c]">{successMessage}</p>
+                                <CheckCircle2 className="w-5 h-5 text-olive mt-0.5" />
+                                <p className="text-sm font-semibold text-olive leading-relaxed">{successMessage}</p>
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-5">
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-sm font-semibold text-slate-700">Email</Label>
-                            <div className="relative">
-                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-olive/40 ml-1">Email</Label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/30 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="email"
                                     type="email"
                                     placeholder="vas@email.cz"
-                                    className="h-12 pl-10 bg-slate-50 border-slate-200 rounded-xl focus:bg-white transition-all shadow-none"
+                                    className="h-14 pl-12 bg-[hsl(var(--cream))]/30 border-none rounded-2xl focus:ring-2 focus:ring-olive/10 transition-all font-medium"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -234,24 +236,24 @@ const Login = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password" className="text-sm font-semibold text-slate-700">Heslo</Label>
+                            <div className="flex items-center justify-between ml-1">
+                                <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-olive/40">Heslo</Label>
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
-                                    className="text-xs font-semibold text-[#3a572c] hover:underline"
+                                    className="text-[10px] font-bold uppercase tracking-widest text-olive/30 hover:text-olive transition-colors"
                                     disabled={loading}
                                 >
-                                    Zapomenuté heslo?
+                                    Zapomenuto?
                                 </button>
                             </div>
-                            <div className="relative">
-                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/30 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    className="h-12 pl-10 pr-10 bg-slate-50 border-slate-200 rounded-xl focus:bg-white transition-all shadow-none"
+                                    className="h-14 pl-12 pr-12 bg-[hsl(var(--cream))]/30 border-none rounded-2xl focus:ring-2 focus:ring-olive/10 transition-all font-medium"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -259,7 +261,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-olive/20 hover:text-olive transition-colors"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -268,42 +270,42 @@ const Login = () => {
 
                         <Button 
                             type="submit" 
-                            className="w-full h-12 bg-[#3a572c] hover:bg-[#2d4322] text-white font-bold rounded-xl shadow-lg shadow-[#3a572c]/10 transition-all flex items-center justify-center gap-2" 
+                            className="w-full h-14 bg-[hsl(var(--olive))] hover:bg-[hsl(var(--olive-dark))] text-[hsl(var(--cream))] font-black text-lg rounded-2xl shadow-button transition-all flex items-center justify-center gap-3 active:scale-[0.98]" 
                             disabled={loading}
                         >
-                            {loading ? "Přihlašování..." : (
+                            {loading ? "ČEKEJ..." : (
                                 <>
-                                    Přihlásit se <ArrowRight className="w-4 h-4" />
+                                    PŘIHLÁSIT SE <ArrowRight className="w-5 h-5" />
                                 </>
                             )}
                         </Button>
                     </form>
 
-                    <div className="relative">
+                    <div className="relative py-2">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-slate-100" />
+                            <span className="w-full border-t border-olive/5" />
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase font-bold text-slate-400">
-                            <span className="bg-white px-4">Nebo</span>
+                        <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest text-olive/20">
+                            <span className="bg-white px-6">NEBO</span>
                         </div>
                     </div>
 
                     <Button
                         type="button"
-                        variant="outline"
-                        className="w-full h-12 border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                        variant="ghost"
+                        className="w-full h-14 border-2 border-olive/5 hover:bg-olive hover:text-white rounded-2xl transition-all flex items-center justify-center gap-3 font-bold group"
                         onClick={handleMagicLink}
                         disabled={loading}
                     >
-                        <Zap className="w-4 h-4 text-[#3a572c]" />
-                        Přihlásit se přes Magic Link
+                        <Zap className="w-4 h-4 text-[hsl(var(--lime))] group-hover:text-white transition-colors" />
+                        PŘIHLÁSIT MAGIC LINKEM
                     </Button>
 
-                    <div className="text-center pt-2">
-                        <p className="text-sm text-slate-500">
+                    <div className="text-center">
+                        <p className="text-xs font-medium text-olive/40">
                             Nemáte účet?{" "}
-                            <Link to="/register" className="text-[#3a572c] font-bold hover:underline">
-                                Zaregistrujte se
+                            <Link to="/register" className="text-olive font-black hover:underline underline-offset-4">
+                                ZAREGISTROVAT SE
                             </Link>
                         </p>
                     </div>
