@@ -633,6 +633,14 @@ const ContentManagement = () => {
                             <StyledTextField
                                 label="Doplňující text pod nadpisem"
                                 value={localContent.cta.description}
+                                onChange={(v) => updateField(['cta', 'description'], v)}
+                                style={ts('cta.description')}
+                                onStyleChange={(s) => updateStyle('cta.description', s)}
+                            />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 {/* CONTACT SECTION */}
                 <TabsContent value="contact" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <Card className="border border-white/40 shadow-xl rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden">
