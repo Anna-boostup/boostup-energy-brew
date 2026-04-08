@@ -85,6 +85,7 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: Mail, label: "Zprávy", path: "/admin/messages" },
+        { icon: LayoutDashboard, label: "E-mailové šablony", path: "/admin/emails" },
         { icon: FileText, label: "Obsah webu", path: "/admin/content" },
         { icon: TrendingUp, label: "Ceny a Statistiky", path: "/admin/pricing" },
         { icon: Sparkles, label: "Slevové kódy", path: "/admin/promo-codes" },

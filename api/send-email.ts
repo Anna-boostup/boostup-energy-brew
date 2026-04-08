@@ -66,6 +66,14 @@ const supabaseAdmin = createClient(
     }
 );
 
+// Helper to replace {{tags}} with data
+const replacePlaceholders = (template: string, data: any) => {
+    return template.replace(/\{\{(.*?)\}\}/g, (match, tag) => {
+        const key = tag.trim();
+        return data[key] !== undefined ? data[key] : match;
+    });
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -99,6 +107,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let contentHtml = '';
     let heroImageUrl = '';
     let heroCid = '';
+    let itemsHtml = ''; // For order confirmation CMS
+
+    // Try to fetch template from DB
+    let dbTemplate = null;
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('email_templates')
+            .select('*')
+            .eq('id', type)
+            .single();
+        
+        if (!error && data) {
+            dbTemplate = data;
+        }
+    } catch (err) {
+        console.error('Error fetching DB template:', err);
+    }
 
     switch (type) {
         case 'confirm_signup': {
@@ -229,7 +254,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         case 'order_confirmation': {
             subject = `✅ Potvrzení objednávky ${orderNumber} | BoostUp`;
-            const itemsHtml = items.map((i: any) => {
+            itemsHtml = items.map((i: any) => {
                 let details = '';
                 let displayName = i.name;
 
@@ -338,6 +363,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 console.error('Failed to store message inquiry:', err);
             }
             break;
+    }
+
+    // Apply DB Template override if available
+    if (dbTemplate) {
+        const templateData = {
+            ...req.body,
+            customerName,
+            orderNumber,
+            total: total ? Number(total).toFixed(0) : '',
+            itemsHtml,
+            trackingNumber,
+            message,
+            confirmationLink: req.body.confirmationLink, // Will be replaced by code if missing
+            resetLink: req.body.resetLink,
+            magicLink: req.body.magicLink,
+            subscriberEmail: req.body.subscriberEmail,
+            BASE_URL
+        };
+
+        subject = replacePlaceholders(dbTemplate.subject, templateData);
+        contentHtml = replacePlaceholders(dbTemplate.content_html, templateData);
     }
 
     const emailHtml = `
