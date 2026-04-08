@@ -7,7 +7,7 @@ import {
 import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
-    AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout
+    AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette
 } from "lucide-react";
 
 interface HelpItem {
@@ -240,6 +240,44 @@ const sections: Section[] = [
             {
                 label: "Mobilní a desktopové aplikace",
                 description: "Doporučujeme si e-mail napojit přímo do telefonu nebo počítače pomocí IMAP a SMTP údajů."
+            }
+        ]
+    },
+    {
+        icon: ShieldCheck,
+        title: "Autentizace a Bezpečí",
+        description: "Důležité informace o přihlašování a konfiguraci zabezpečení systému.",
+        items: [
+            {
+                label: "Magic Link a obnova hesla",
+                description: "Odkazy v e-mailech jsou generovány automaticky. Po kliknutí na Magic Link je uživatel přesměrován přímo do svého uživatelského profilu."
+            },
+            {
+                label: "Automatická detekce domény",
+                description: "Systém rozpozná, zda se nacházíte na testovacím nebo produkčním prostředí, a podle toho generuje správné odkazy. Není vyžadováno žádné ruční přepínání v kódu."
+            },
+            {
+                label: "Whitelist v Supabase (Důležité!)",
+                description: "Pro správné fungování přesměrování musí být adresy https://drinkboostup.cz a https://test.drinkboostup.cz přidány v Supabase Dashboardu v sekci Authentication -> URL Configuration -> Redirect URLs."
+            }
+        ]
+    },
+    {
+        icon: Palette,
+        title: "Design a Branding",
+        description: "Standardy pro vizuální identitu a čitelnost rozhraní.",
+        items: [
+            {
+                label: "Oficiální barevná paleta",
+                description: "Hlavní barvy jsou Olive (#3D5A2F), Lime (#DFDF57) a Terracotta (#AA263E). Používejte tyto barvy pro zachování jednotného brandu."
+            },
+            {
+                label: "Barevné kódování grafů",
+                description: "V grafech prodejů (Ceny a Statistiky) odpovídají barvy příchutím: Žlutá/Limetková = Lemon Blast, Červená = Red Rush, Tmavě zelená = Silky Leaf."
+            },
+            {
+                label: "Čitelnost a kontrast",
+                description: "U prvků s barevným gradientem (např. výběr příchutě) je automaticky aplikován vysoký kontrast textu (Cream na tmavém podkladu) pro maximální přístupnost."
             }
         ]
     }
