@@ -147,19 +147,16 @@ const PricingStatistics = () => {
                 <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
                     <CardHeader className="bg-olive-dark border-b border-olive/10 py-8">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-primary/20 rounded-xl">
-                                <Package className="w-5 h-5 text-primary" />
-                            </div>
                             <CardTitle className="text-xl text-white font-black">Cenotvorba</CardTitle>
                         </div>
-                        <CardDescription className="text-lime/60 text-xs font-bold">Globální nastavení cen pro všechna balení.</CardDescription>
+                        <CardDescription className="text-white/60 text-xs font-bold font-display">Globální nastavení cen pro všechna balení.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-8 space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
                                     <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 3 ks</Label>
-                                    <span className="text-xs font-black text-lime bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
+                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
                                 </div>
                                 <div className="relative">
                                     <Input 
@@ -176,7 +173,7 @@ const PricingStatistics = () => {
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
                                     <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 12 ks</Label>
-                                    <span className="text-xs font-black text-lime bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
+                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
                                 </div>
                                 <div className="relative">
                                     <Input 
@@ -193,7 +190,7 @@ const PricingStatistics = () => {
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
                                     <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 21 ks</Label>
-                                    <span className="text-xs font-black text-lime bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
+                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
                                 </div>
                                 <div className="relative">
                                     <Input 
@@ -318,9 +315,9 @@ const PricingStatistics = () => {
                                     iconSize={8}
                                     wrapperStyle={{ paddingTop: '40px', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
                                 />
-                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#C4F135" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#d4f45d" radius={[0, 0, 0, 0]} />
                                 <Bar dataKey="red" name="Red Rush" stackId="a" fill="#aa263e" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#1e293b" radius={[10, 10, 0, 0]} />
+                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#1b2e1b" radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
