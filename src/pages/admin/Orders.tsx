@@ -396,8 +396,8 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                 ))
             )}
         </div>
-    </>
-);
+    );
+};
 
 const Orders = () => {
     const { orders, updateOrderStatus } = useInventory();
