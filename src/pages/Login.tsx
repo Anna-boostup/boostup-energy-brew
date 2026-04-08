@@ -19,10 +19,10 @@ import {
 } from "lucide-react";
 
 /**
- * Modern Login component using EXACT brand colors from index.css variables:
- * Primary: hsl(var(--olive))
- * Accent: hsl(var(--lime))
- * Background: hsl(var(--cream))
+ * Modern Login component - Integrated Version (v7)
+ * - Removed harsh white background
+ * - Adjusted rounding to match dashboard (2xl instead of 2.5rem)
+ * - Using glassmorphism for a lighter feel
  */
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -53,7 +53,6 @@ const Login = () => {
                 description: "Vítejte zpět!",
             });
 
-            // Immediate fetch of profile to determine redirect
             if (data.user) {
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
@@ -81,51 +80,8 @@ const Login = () => {
             toast({
                 title: "Chyba přihlášení",
                 description: isInvalidCredentials 
-                    ? "Neplatný e-mail nebo heslo. Zkontrolujte prosím své údaje a zkuste to znovu." 
-                    : (error.message || "Nastala neočekávaná chyba při přihlašování."),
-                variant: "destructive",
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleForgotPassword = async () => {
-        const trimmedEmail = email.trim();
-        if (!trimmedEmail) {
-            toast({
-                title: "Zadejte email",
-                description: "Pro obnovu hesla musíte vyplnit emailovou adresu.",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const response = await fetch('/api/send-email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    to: trimmedEmail,
-                    type: 'reset_password'
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'Nepodařilo se odeslat email');
-            }
-
-            setSuccessMessage("Odkaz pro obnovu hesla byl odeslán na váš e-mail.");
-            toast({
-                title: "Odkaz odeslán",
-                description: "Zkontrolujte svůj email pro instrukce k obnově hesla.",
-            });
-        } catch (error: any) {
-            toast({
-                title: "Chyba",
-                description: error.message,
+                    ? "Neplatný e-mail nebo heslo. Zkuste to znovu." 
+                    : (error.message || "Chyba při přihlašování."),
                 variant: "destructive",
             });
         } finally {
@@ -138,7 +94,7 @@ const Login = () => {
         if (!trimmedEmail) {
             toast({
                 title: "Zadejte email",
-                description: "Pro odeslání magického odkazu musíte vyplnit email.",
+                description: "Pro odeslání odkazu musíte vyplnit email.",
                 variant: "destructive",
             });
             return;
@@ -154,15 +110,12 @@ const Login = () => {
                 })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'Nepodařilo se odeslat magic link');
-            }
+            if (!response.ok) throw new Error('Nepodařilo se odeslat email');
 
-            setSuccessMessage("Přihlašovací odkaz byl odeslán. Klikněte na něj ve svém e-mailu.");
+            setSuccessMessage("Přihlašovací odkaz byl odeslán do vašeho e-mailu.");
             toast({
-                title: "Odkaz odeslán! 🚀",
-                description: "Zkontrolujte si emailovou schránku.",
+                title: "Odkaz odeslán!",
+                description: "Zkontrolujte si schránku.",
             });
         } catch (error: any) {
             toast({
@@ -175,59 +128,88 @@ const Login = () => {
         }
     };
 
+    const handleForgotPassword = async () => {
+        const trimmedEmail = email.trim();
+        if (!trimmedEmail) {
+            toast({
+                title: "Zadejte email",
+                description: "Pro obnovu hesla vyplňte email.",
+                variant: "destructive",
+            });
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: trimmedEmail,
+                    type: 'reset_password'
+                })
+            });
+            if (!response.ok) throw new Error('Chyba odesílání');
+            setSuccessMessage("Odkaz pro obnovu hesla byl odeslán.");
+        } catch (error: any) {
+            toast({ title: "Chyba", description: error.message, variant: "destructive" });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <main className="min-h-screen flex items-center justify-center bg-[hsl(var(--cream))] px-4 py-12">
+        <main className="min-h-screen flex items-center justify-center bg-[hsl(var(--cream))] px-4 relative overflow-hidden">
+            {/* Subtle background glow */}
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-olive/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-lime/5 blur-[120px] rounded-full pointer-events-none" />
+
             <Link 
                 to="/" 
-                className="absolute top-8 left-8 flex items-center gap-2 text-sm font-semibold text-[hsl(var(--olive))] hover:opacity-70 transition-opacity"
+                className="absolute top-8 left-8 flex items-center gap-2 text-sm font-bold text-olive/60 hover:text-olive transition-colors"
             >
                 <ChevronLeft className="w-4 h-4" />
                 Zpět na web
             </Link>
 
             <motion.div 
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-                className="w-full max-w-[440px]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-[420px] z-10"
             >
-                <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-card border border-olive/5 space-y-10">
+                <div className="bg-white/40 backdrop-blur-xl p-8 md:p-10 rounded-2xl border border-white/50 shadow-card space-y-8">
                     <div className="text-center space-y-3">
-                        <div className="flex justify-center mb-4">
-                            <motion.div 
-                                whileHover={{ scale: 1.05 }}
-                                className="w-16 h-16 bg-[hsl(var(--olive))] rounded-2xl flex items-center justify-center shadow-button"
-                            >
-                                <Zap className="w-8 h-8 text-[hsl(var(--lime))]" fill="currentColor" />
-                            </motion.div>
+                        <div className="flex justify-center mb-2">
+                            <div className="w-14 h-14 bg-olive rounded-xl flex items-center justify-center shadow-button">
+                                <Zap className="w-7 h-7 text-lime" fill="currentColor" />
+                            </div>
                         </div>
-                        <h1 className="text-3xl font-black text-[hsl(var(--olive))] tracking-tight">PŘIHLÁŠENÍ</h1>
-                        <p className="text-olive/60 font-medium text-sm">Vítejte zpět v boostup.cz</p>
+                        <h1 className="text-2xl font-black text-olive tracking-tight">PŘIHLÁŠENÍ</h1>
+                        <p className="text-olive/50 text-xs font-bold uppercase tracking-widest">drinkboostup.cz</p>
                     </div>
 
                     <AnimatePresence>
                         {successMessage && (
                             <motion.div 
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="bg-olive/5 border border-olive/10 rounded-2xl p-4 flex items-start gap-3"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                className="bg-olive/5 border border-olive/10 rounded-xl p-4 flex items-start gap-3"
                             >
-                                <CheckCircle2 className="w-5 h-5 text-olive mt-0.5" />
-                                <p className="text-sm font-semibold text-olive leading-relaxed">{successMessage}</p>
+                                <CheckCircle2 className="w-5 h-5 text-olive mt-0.5 shrink-0" />
+                                <p className="text-sm font-bold text-olive leading-snug">{successMessage}</p>
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-olive/40 ml-1">Email</Label>
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-olive/30 ml-1">Váš Email</Label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/30 group-focus-within:text-olive transition-colors" />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="email"
                                     type="email"
                                     placeholder="vas@email.cz"
-                                    className="h-14 pl-12 bg-[hsl(var(--cream))]/30 border-none rounded-2xl focus:ring-2 focus:ring-olive/10 transition-all font-medium"
+                                    className="h-12 pl-12 bg-cream/30 border-none rounded-xl focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -235,25 +217,25 @@ const Login = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-1.5">
                             <div className="flex items-center justify-between ml-1">
-                                <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-olive/40">Heslo</Label>
+                                <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-olive/30">Heslo</Label>
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
-                                    className="text-[10px] font-bold uppercase tracking-widest text-olive/30 hover:text-olive transition-colors"
+                                    className="text-[9px] font-black uppercase tracking-widest text-olive/20 hover:text-olive transition-colors"
                                     disabled={loading}
                                 >
                                     Zapomenuto?
                                 </button>
                             </div>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/30 group-focus-within:text-olive transition-colors" />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    className="h-14 pl-12 pr-12 bg-[hsl(var(--cream))]/30 border-none rounded-2xl focus:ring-2 focus:ring-olive/10 transition-all font-medium"
+                                    className="h-12 pl-12 pr-12 bg-cream/30 border-none rounded-xl focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -270,42 +252,38 @@ const Login = () => {
 
                         <Button 
                             type="submit" 
-                            className="w-full h-14 bg-[hsl(var(--olive))] hover:bg-[hsl(var(--olive-dark))] text-[hsl(var(--cream))] font-black text-lg rounded-2xl shadow-button transition-all flex items-center justify-center gap-3 active:scale-[0.98]" 
+                            className="w-full h-12 bg-olive hover:bg-olive-dark text-cream font-black text-base rounded-xl shadow-button transition-all active:scale-[0.98]" 
                             disabled={loading}
                         >
-                            {loading ? "ČEKEJ..." : (
-                                <>
-                                    PŘIHLÁSIT SE <ArrowRight className="w-5 h-5" />
-                                </>
-                            )}
+                            {loading ? "ČEKEJTE..." : "PŘIHLÁSIT SE"}
                         </Button>
                     </form>
 
-                    <div className="relative py-2">
+                    <div className="relative py-1">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-olive/5" />
                         </div>
-                        <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest text-olive/20">
-                            <span className="bg-white px-6">NEBO</span>
+                        <div className="relative flex justify-center text-[9px] font-black tracking-[0.2em] text-olive/10">
+                            <span className="bg-transparent px-4">NEBO</span>
                         </div>
                     </div>
 
                     <Button
                         type="button"
                         variant="ghost"
-                        className="w-full h-14 border-2 border-olive/5 hover:bg-olive hover:text-white rounded-2xl transition-all flex items-center justify-center gap-3 font-bold group"
+                        className="w-full h-12 bg-white/50 border border-olive/5 hover:bg-olive hover:text-white rounded-xl transition-all font-bold text-xs"
                         onClick={handleMagicLink}
                         disabled={loading}
                     >
-                        <Zap className="w-4 h-4 text-[hsl(var(--lime))] group-hover:text-white transition-colors" />
+                        <Zap className="w-3.5 h-3.5 text-lime mr-2" />
                         PŘIHLÁSIT MAGIC LINKEM
                     </Button>
 
-                    <div className="text-center">
-                        <p className="text-xs font-medium text-olive/40">
+                    <div className="text-center pt-2">
+                        <p className="text-[10px] font-bold text-olive/30 uppercase tracking-widest">
                             Nemáte účet?{" "}
                             <Link to="/register" className="text-olive font-black hover:underline underline-offset-4">
-                                ZAREGISTROVAT SE
+                                Zaregistrovat
                             </Link>
                         </p>
                     </div>
