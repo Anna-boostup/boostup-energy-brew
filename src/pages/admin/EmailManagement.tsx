@@ -294,19 +294,19 @@ const EmailManagement = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Sidebar - Template List */}
                 <div className="lg:col-span-4 space-y-6">
-                    <Card className="glass-card border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-olive-dark shadow-olive-dark/10">
+                    <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-olive-dark shadow-olive-dark/20">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">Systémové Emaily</CardTitle>
+                            <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">E-mailové Šablony</CardTitle>
                             <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Vyberte šablonu k úpravě</CardDescription>
                             
                             <div className="flex items-center justify-between gap-4 mt-6">
                                 <div className="relative flex-1">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                                     <Input 
                                         placeholder="Hledat šablonu..." 
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="bg-white/5 border-white/10 rounded-xl pl-12 h-12 text-sm text-white focus-visible:ring-lime"
+                                        className="bg-white/10 border-white/5 rounded-xl pl-12 h-12 text-sm text-white focus-visible:ring-lime placeholder:text-white/20"
                                     />
                                 </div>
                                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -361,7 +361,7 @@ const EmailManagement = () => {
                                                 className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group ${
                                                     isActive 
                                                     ? 'bg-lime text-olive-dark shadow-lg shadow-lime/20' 
-                                                    : 'hover:bg-white/5 text-white/60 hover:text-white'
+                                                    : 'hover:bg-white/5 text-white/50 hover:text-white'
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-4">
@@ -373,7 +373,7 @@ const EmailManagement = () => {
                                                             {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">VLASTNÍ</span>}
                                                             {type.label}
                                                         </span>
-                                                        <span className={`text-[9px] font-bold tracking-widest opacity-40 uppercase`}>
+                                                        <span className={`text-[9px] font-bold tracking-widest opacity-30 uppercase`}>
                                                             {type.id}
                                                         </span>
                                                     </div>
@@ -409,24 +409,24 @@ const EmailManagement = () => {
 
                 {/* Main Editor */}
                 <div className="lg:col-span-8 space-y-8">
-                    <Card className="glass-card border-none shadow-2xl rounded-[3rem] overflow-hidden bg-white shadow-olive/10">
+                    <Card className="border-none shadow-2xl rounded-[3rem] overflow-hidden bg-white shadow-olive/10">
                         <div className="bg-olive-dark py-10 px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center justify-between relative z-10">
                                 <div className="flex items-center gap-6">
                                     <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                        <Code className="w-8 h-8 text-white" />
+                                        <Code className="w-8 h-8 text-lime" />
                                     </div>
                                     <div>
                                         <h3 className="text-3xl font-black text-white font-display uppercase tracking-tight italic">
                                             {selectedType?.label}
                                         </h3>
-                                        <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Editace HTML šablony a metadat</p>
+                                        <p className="text-white/60 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Editace HTML šablony a metadat</p>
                                     </div>
                                 </div>
                                 {!templates.some(t => t.id === selectedTypeId) && (
                                     <Badge className="bg-terracotta text-white border-none py-1.5 px-4 rounded-full font-black text-[9px] tracking-widest">
-                                        POUŽÍVÁ SE VÝCHOZÍ KÓD
+                                        VÝCHOZÍ SYSTÉMOVÝ KÓD
                                     </Badge>
                                 )}
                             </div>
@@ -438,7 +438,7 @@ const EmailManagement = () => {
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">Předmět E-mailu</Label>
                                     <div className="flex items-center gap-2">
-                                        <Badge variant="outline" className="text-olive/30 hover:bg-olive/5 cursor-pointer text-[9px] border-olive/10" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {"{{orderNumber}}"}</Badge>
+                                        <Badge variant="outline" className="text-olive/50 hover:bg-lime hover:text-olive-dark cursor-pointer text-[9px] border-olive/10 font-black transition-all" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {"{{orderNumber}}"}</Badge>
                                     </div>
                                 </div>
                                 <Input 
