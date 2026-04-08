@@ -79,9 +79,9 @@ const AdminDashboard = () => {
 
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-1000">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
                 <div>
-                    <h2 className="text-6xl font-black tracking-tighter text-olive-dark font-display leading-tight">DASHBOARD</h2>
+                    <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display leading-tight">DASHBOARD</h2>
                     <div className="flex items-center gap-3 mt-2">
                         <div className="flex -space-x-1">
                             <div className="w-2 h-2 rounded-full bg-lime" />
@@ -141,8 +141,8 @@ const AdminDashboard = () => {
                         <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Celkové tržby</CardTitle>
                     </CardHeader>
                     <CardContent className="relative z-10 pt-4">
-                        <div className="text-5xl font-black text-white font-display tracking-tighter mb-1">
-                            {(totalRevenue || 0).toLocaleString('cs-CZ')} <span className="text-white text-2xl ml-1">Kč</span>
+                        <div className="text-3xl sm:text-5xl font-black text-white font-display tracking-tighter mb-1">
+                            {(totalRevenue || 0).toLocaleString('cs-CZ')} <span className="text-white text-lg sm:text-2xl ml-1">Kč</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-[2px] bg-lime/30" />
@@ -162,24 +162,24 @@ const AdminDashboard = () => {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
                             <div className="relative group/stat">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">Nové / Placené</p>
-                                <div className="text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
                                 <div className="mt-4 inline-flex items-center px-4 py-1.5 rounded-full bg-lime text-olive-dark text-[9px] font-black shadow-lg shadow-lime/20">
                                     +{todayOrders} DNES
                                 </div>
                             </div>
                             <div className="group/stat">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">Ve výrobě</p>
-                                <div className="text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{processingCount}</div>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{processingCount}</div>
                                 <div className="w-6 h-1 bg-olive/10 mt-5 rounded-full" />
                             </div>
                             <div className="group/stat">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">Odesláno</p>
-                                <div className="text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{shippedCount}</div>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{shippedCount}</div>
                                 <div className="w-6 h-1 bg-lime mt-5 rounded-full" />
                             </div>
                             <div className="group/stat opacity-40 grayscale-[0.5]">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/60 mb-3 ml-1">Zrušeno</p>
-                                <div className="text-5xl font-black text-olive-dark font-display leading-none">{cancelledCount}</div>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none">{cancelledCount}</div>
                             </div>
                         </div>
                     </CardContent>
@@ -197,21 +197,21 @@ const AdminDashboard = () => {
                             <div className="p-10 flex flex-col justify-center border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">Lemon Blast</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
-                                    <span className="text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
+                                    <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">ks</span>
                                 </div>
                             </div>
                             <div className="p-10 flex flex-col justify-center border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3 text-red-700">Red Rush</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
-                                    <span className="text-5xl font-black text-olive-dark font-display leading-none">{stock['red'] || 0}</span>
+                                    <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['red'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">ks</span>
                                 </div>
                             </div>
                             <div className="p-10 flex flex-col justify-center hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">Silky Leaf</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
-                                    <span className="text-5xl font-black text-olive-dark font-display leading-none">{stock['silky'] || 0}</span>
+                                    <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['silky'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">ks</span>
                                 </div>
                             </div>
@@ -242,7 +242,7 @@ const AdminDashboard = () => {
                                 {orders.slice(0, 10).map((order, index) => (
                                     <div
                                         key={order.id}
-                                        className={`flex flex-col xl:flex-row xl:items-center justify-between p-8 sm:p-10 transition-all duration-300 gap-8 group hover:bg-white/80 ${
+                                        className={`flex flex-col xl:flex-row xl:items-center justify-between p-6 sm:p-10 transition-all duration-300 gap-8 group hover:bg-white/80 ${
                                             index % 2 === 0 ? 'bg-white/30' : 'bg-cream/60'
                                         }`}
                                     >
@@ -257,8 +257,8 @@ const AdminDashboard = () => {
                                                 </span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <h4 className="text-2xl font-black text-olive-dark group-hover:scale-105 origin-left transition-transform duration-500">{order.customer.name}</h4>
-                                                <span className="text-xs font-bold text-brand-muted mt-1 group-hover:text-olive-dark transition-colors">{order.customer.email}</span>
+                                                <h4 className="text-xl sm:text-2xl font-black text-olive-dark group-hover:scale-105 origin-left transition-transform duration-500">{order.customer.name}</h4>
+                                                <span className="text-[10px] sm:text-xs font-bold text-brand-muted mt-1 group-hover:text-olive-dark transition-colors">{order.customer.email}</span>
                                             </div>
                                         </div>
                                         

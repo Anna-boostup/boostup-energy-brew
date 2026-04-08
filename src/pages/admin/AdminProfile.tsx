@@ -84,17 +84,17 @@ const AdminProfile = () => {
         <div className="space-y-16 pb-32 animate-in fade-in duration-1000">
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
-                <div className="flex items-start gap-8">
-                    <div className="w-24 h-24 rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
+                <div className="flex items-start gap-4 sm:gap-8">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-[1.8rem] sm:rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Shield className="w-12 h-12 text-white relative z-10" />
+                        <Shield className="w-8 h-8 sm:w-12 sm:h-12 text-white relative z-10" />
                     </div>
-                    <div className="space-y-3">
-                        <h1 className="text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Můj Profil</h1>
+                    <div className="space-y-1 sm:space-y-3">
+                        <h1 className="text-3xl sm:text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Můj Profil</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px]">
-                                Centrální správa administrátorského účtu
+                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
+                                Správa administrátorského účtu
                             </p>
                         </div>
                     </div>
@@ -102,36 +102,36 @@ const AdminProfile = () => {
             </div>
 
             <Tabs defaultValue="profile" className="space-y-12">
-                <div className="p-2 bg-olive-dark rounded-[2.5rem] w-full md:w-fit shadow-2xl">
-                    <TabsList className="bg-transparent h-auto p-1 gap-2 flex flex-wrap">
-                        <TabsTrigger value="profile" className="gap-3 px-10 py-5 rounded-[2.2rem] font-black uppercase text-[10px] tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20">
-                            <User className="w-4 h-4" />
+                <div className="p-1.5 sm:p-2 bg-olive-dark rounded-[2rem] sm:rounded-[2.5rem] w-full md:w-fit shadow-2xl overflow-hidden">
+                    <TabsList className="bg-transparent h-auto p-0.5 sm:p-1 gap-1 sm:gap-2 flex sm:flex-nowrap overflow-x-auto no-scrollbar">
+                        <TabsTrigger value="profile" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
+                            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             <span>Profil & Zabezpečení</span>
                         </TabsTrigger>
-                        <TabsTrigger value="orders" className="gap-3 px-10 py-5 rounded-[2.2rem] font-black uppercase text-[10px] tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20">
-                            <ShoppingBag className="w-4 h-4" />
-                            <span>Historie Nákupů</span>
+                        <TabsTrigger value="orders" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
+                            <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span>Historie</span>
                         </TabsTrigger>
-                        <TabsTrigger value="subscriptions" className="gap-3 px-10 py-5 rounded-[2.2rem] font-black uppercase text-[10px] tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20">
-                            <RefreshCw className="w-4 h-4" />
-                            <span>Aktivní Předplatné</span>
+                        <TabsTrigger value="subscriptions" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
+                            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span>Předplatné</span>
                         </TabsTrigger>
                     </TabsList>
                 </div>
 
                 <TabsContent value="profile" className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-0">
                     {/* Profile Info Card */}
-                    <div className="glass-card rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
-                        <div className="bg-olive-dark p-10 space-y-2">
+                    <div className="glass-card rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
+                        <div className="bg-olive-dark p-6 sm:p-10 space-y-2">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-lime/10 rounded-xl">
-                                    <Fingerprint className="w-6 h-6 text-white" />
+                                    <Fingerprint className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
-                                <h3 className="text-2xl font-black text-white font-display uppercase italic tracking-tight">Osobní údaje</h3>
+                                <h3 className="text-xl sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">Osobní údaje</h3>
                             </div>
-                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace jména a informací o roli</p>
+                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px] sm:text-[10px]">Aktualizace jména a informací o roli</p>
                         </div>
-                        <div className="p-10 flex-1">
+                        <div className="p-6 sm:p-10 flex-1">
                             <form onSubmit={handleSaveProfile} className="space-y-8">
                                 <div className="space-y-3">
                                     <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">E-mailová adresa</Label>
@@ -175,27 +175,27 @@ const AdminProfile = () => {
                                 <Button 
                                     type="submit" 
                                     disabled={isSavingProfile}
-                                    className="w-full h-16 bg-olive-dark hover:bg-black text-white font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                                    className="w-full h-14 sm:h-16 bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
                                 >
-                                    {isSavingProfile ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                                    Uložit změny v profilu
+                                    {isSavingProfile ? <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Save className="w-4 h-4 sm:w-5 sm:h-5" />}
+                                    Uložit profil
                                 </Button>
                             </form>
                         </div>
                     </div>
 
                     {/* Password Change Card */}
-                    <div className="glass-card rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
-                        <div className="bg-olive-dark p-10 space-y-2">
+                    <div className="glass-card rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
+                        <div className="bg-olive-dark p-6 sm:p-10 space-y-2">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-lime/10 rounded-xl">
-                                    <Lock className="w-6 h-6 text-white" />
+                                    <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
-                                <h3 className="text-2xl font-black text-white font-display uppercase italic tracking-tight">Zabezpečení</h3>
+                                <h3 className="text-xl sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">Zabezpečení</h3>
                             </div>
-                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Aktualizace hesla a ochrana klíče</p>
+                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px] sm:text-[10px]">Aktualizace hesla a ochrana klíče</p>
                         </div>
-                        <div className="p-10 flex-1">
+                        <div className="p-6 sm:p-10 flex-1">
                             <form onSubmit={handleChangePassword} className="space-y-8">
                                 <div className="space-y-3">
                                     <Label htmlFor="currentPassword" title="Aktuální heslo" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Současné heslo</Label>
@@ -248,9 +248,9 @@ const AdminProfile = () => {
                                 <Button 
                                     type="submit" 
                                     disabled={isChangingPassword || !newPassword || newPassword !== confirmPassword}
-                                    className="w-full h-16 bg-olive-dark hover:bg-black text-white font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
+                                    className="w-full h-14 sm:h-16 bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] sm:text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.02] active:scale-95 gap-3"
                                 >
-                                    {isChangingPassword ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Lock className="w-5 h-5" />}
+                                    {isChangingPassword ? <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Lock className="w-4 h-4 sm:w-5 sm:h-5" />}
                                     Aktualizovat heslo
                                 </Button>
                             </form>
@@ -259,13 +259,13 @@ const AdminProfile = () => {
                 </TabsContent>
 
                 <TabsContent value="orders" className="mt-0 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                    <div className="glass-card rounded-[3.5rem] p-4 overflow-hidden border border-white/40 shadow-2xl">
+                    <div className="glass-card rounded-[2.5rem] sm:rounded-[3.5rem] p-2 sm:p-4 overflow-hidden border border-white/40 shadow-2xl">
                         <AccountOrders />
                     </div>
                 </TabsContent>
 
                 <TabsContent value="subscriptions" className="mt-0 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                    <div className="glass-card rounded-[3.5rem] p-4 overflow-hidden border border-white/40 shadow-2xl">
+                    <div className="glass-card rounded-[2.5rem] sm:rounded-[3.5rem] p-2 sm:p-4 overflow-hidden border border-white/40 shadow-2xl">
                         <Subscriptions />
                     </div>
                 </TabsContent>

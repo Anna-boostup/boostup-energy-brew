@@ -137,21 +137,21 @@ const PricingStatistics = () => {
         <div className="space-y-8 pb-12">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Ceny a Statistiky</h1>
-                    <p className="text-muted-foreground">Správa prodejních cen a přehled výkonu e-shopu.</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">Ceny a Statistiky</h1>
+                    <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">Správa prodejních cen a přehled výkonu e-shopu.</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Pricing Card */}
-                <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
-                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-8">
+                <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
+                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-8 px-6 sm:px-10">
                         <div className="flex items-center gap-3 mb-2">
-                            <CardTitle className="text-xl text-white font-black">Cenotvorba</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl text-white font-black">Cenotvorba</CardTitle>
                         </div>
-                        <CardDescription className="text-white/60 text-xs font-bold font-display">Globální nastavení cen pro všechna balení.</CardDescription>
+                        <CardDescription className="text-white/60 text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest">Globální nastavení cen pro všechna balení.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-8 space-y-8">
+                    <CardContent className="p-6 sm:pt-8 sm:px-10 space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
@@ -217,17 +217,17 @@ const PricingStatistics = () => {
                 </Card>
 
                 {/* Orders Stats Card */}
-                <Card className="lg:col-span-2 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
-                    <CardHeader className="bg-white/40 border-b border-olive/8 py-8 px-8">
+                <Card className="lg:col-span-2 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
+                    <CardHeader className="bg-white/40 border-b border-olive/8 py-6 sm:py-8 px-6 sm:px-10">
                         <div className="flex items-center gap-3 mb-1">
                             <div className="p-2 bg-olive-dark rounded-xl">
                                 <ShoppingCart className="w-5 h-5 text-primary" />
                             </div>
-                            <CardTitle className="text-xl font-black text-olive-dark">Objem objednávek</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl font-black text-olive-dark">Objem objednávek</CardTitle>
                         </div>
-                        <CardDescription className="text-olive-dark text-xs font-medium">Přehled počtu objednávek za posledních 30 dní.</CardDescription>
+                        <CardDescription className="text-olive-dark text-[10px] sm:text-xs font-bold uppercase tracking-widest">Objednávky za posledních 30 dní.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-10 px-8 h-[400px]">
+                    <CardContent className="pt-8 sm:pt-10 px-4 sm:px-8 h-[300px] sm:h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={statsData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -272,17 +272,17 @@ const PricingStatistics = () => {
                 </Card>
 
                 {/* Units Stats Card */}
-                <Card className="lg:col-span-3 border border-white/40 shadow-sm rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-8 px-10">
+                <Card className="lg:col-span-3 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-8 px-6 sm:px-10">
                         <div className="flex items-center gap-3 mb-1">
                             <div className="p-2 bg-primary/20 rounded-xl">
                                 <TrendingUp className="w-5 h-5 text-primary" />
                             </div>
-                            <CardTitle className="text-xl font-black text-white">Prodané jednotky</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl font-black text-white">Prodané jednotky</CardTitle>
                         </div>
-                        <CardDescription className="text-olive-dark text-xs font-medium">Celkový počet prodaných lahviček rozdělený dle příchutí.</CardDescription>
+                        <CardDescription className="text-white/40 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Prodané lahvičky dle příchutí.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-12 px-10 h-[500px]">
+                    <CardContent className="pt-10 sm:pt-12 px-2 sm:px-10 h-[350px] sm:h-[500px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={statsData} barGap={0}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />

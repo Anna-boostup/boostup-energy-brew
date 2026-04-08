@@ -27,16 +27,16 @@ const ManufactureInventory = () => {
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-                <div className="flex items-start gap-6">
-                    <div className="w-20 h-20 rounded-[2.2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
+                <div className="flex items-start gap-4 sm:gap-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[1.8rem] sm:rounded-[2.2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Beaker className="w-10 h-10 text-white relative z-10" />
+                        <Beaker className="w-8 h-8 sm:w-10 sm:h-10 text-white relative z-10" />
                     </div>
-                    <div className="space-y-2">
-                        <h1 className="text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Sklad výroby</h1>
+                    <div className="space-y-1 sm:space-y-2">
+                        <h1 className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Sklad výroby</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px]">
+                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
                                 Správa surovin a produkčních materiálů
                             </p>
                         </div>
@@ -44,7 +44,7 @@ const ManufactureInventory = () => {
                 </div>
                 <Button 
                     onClick={() => setIsAddOpen(true)} 
-                    className="h-16 px-10 bg-olive-dark hover:bg-black text-white gap-4 font-black uppercase text-xs tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.05] active:scale-95 group"
+                    className="h-14 sm:h-16 px-8 sm:px-10 bg-olive-dark hover:bg-black text-white gap-4 font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.05] active:scale-95 group w-full sm:w-auto"
                 >
                     <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
                     Nový materiál
@@ -163,7 +163,7 @@ const ManufactureInventory = () => {
                                 const isCritical = m.quantity <= m.min_quantity;
                                 const isWarning = !isCritical && m.warning_quantity > 0 && m.quantity <= m.warning_quantity;
                                 return (
-                                    <div key={m.id} className="p-8 space-y-6">
+                                    <div key={m.id} className="p-6 sm:p-8 space-y-6">
                                         <div className="flex justify-between items-start">
                                             <div className="flex items-center gap-4">
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-white'}`}>

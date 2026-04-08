@@ -280,31 +280,31 @@ const EmailManagement = () => {
             {/* Header */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
                 <div className="space-y-3">
-                    <h2 className="text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">EMAIL CMS</h2>
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">EMAIL CMS</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">Správa systémových emailů a šablon</p>
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[9px] sm:text-[10px] leading-none">Správa systémových emailů a šablon</p>
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 ml-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
                     <Button 
                         variant="outline" 
                         onClick={handleSendTest} 
                         disabled={sendingTest || saving} 
-                        className="h-14 px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white transition-all gap-3"
+                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white transition-all gap-3"
                     >
                         {sendingTest ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-                        Odeslat test na můj mail
+                        Odeslat test
                     </Button>
                     <Button 
                         variant="ghost"
                         onClick={handleResetToDefault}
                         disabled={saving || sendingTest}
-                        className="h-14 px-8 rounded-2xl text-olive-dark/40 font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-terracotta transition-all gap-3 group"
+                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl text-olive-dark/40 font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-terracotta transition-all gap-3 group"
                     >
                         <RefreshCcw className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
-                        Resetovat na výchozí
+                        Reset
                     </Button>
                     <Button 
                         onClick={handleSave} 
@@ -312,12 +312,12 @@ const EmailManagement = () => {
                         className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
                     >
                         {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                        Uložit šablonu
+                        Uložit
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
                 {/* Sidebar - Template List */}
                 <div className="lg:col-span-4 space-y-6">
                     <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-olive-dark shadow-olive-dark/20">
@@ -435,46 +435,46 @@ const EmailManagement = () => {
 
                 {/* Main Editor */}
                 <div className="lg:col-span-8 space-y-8">
-                    <Card className="border-none shadow-2xl rounded-[3rem] overflow-hidden bg-white shadow-olive/10">
-                        <div className="bg-olive-dark py-10 px-12 relative overflow-hidden">
+                    <Card className="border-none shadow-2xl rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-white shadow-olive/10">
+                        <div className="bg-olive-dark py-8 sm:py-10 px-6 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
                             <div className="flex items-center justify-between relative z-10">
-                                <div className="flex items-center gap-6">
-                                    <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                        <Code className="w-8 h-8 text-lime" />
+                                <div className="flex items-center gap-4 sm:gap-6">
+                                    <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                        <Code className="w-6 h-6 sm:w-8 sm:h-8 text-lime" />
                                     </div>
                                     <div>
-                                        <h3 className="text-3xl font-black text-white font-display uppercase tracking-tight italic">
+                                        <h3 className="text-xl sm:text-3xl font-black text-white font-display uppercase tracking-tight italic">
                                             {selectedType?.label}
                                         </h3>
-                                        <p className="text-white/60 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Editace HTML šablony a metadat</p>
+                                        <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Editace šablony</p>
                                     </div>
                                 </div>
                                 {!templates.some(t => t.id === selectedTypeId) && (
-                                    <Badge className="bg-olive/20 text-lime border-none py-1.5 px-4 rounded-full font-black text-[9px] tracking-widest flex items-center gap-2">
+                                    <Badge className="bg-olive/20 text-lime border-none py-1.5 px-4 rounded-full font-black text-[8px] sm:text-[9px] tracking-widest hidden sm:flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                                        VÝCHOZÍ SYSTÉMOVÝ KÓD
+                                        VÝCHOZÍ
                                     </Badge>
                                 )}
                             </div>
                         </div>
 
-                        <CardContent className="p-12 space-y-10">
+                        <CardContent className="p-6 sm:p-12 space-y-10">
                             {/* Layout Reference Alert */}
-                            <div className="bg-lime/5 border border-lime/20 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 mb-4">
-                                <div className="flex items-center gap-4 text-left">
-                                    <div className="p-3 bg-lime/10 rounded-xl">
-                                        <FileCode className="w-5 h-5 text-lime" />
+                            <div className="bg-lime/5 border border-lime/20 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 mb-4">
+                                <div className="flex items-center gap-3 sm:gap-4 text-left mr-auto">
+                                    <div className="p-2 sm:p-3 bg-lime/10 rounded-xl">
+                                        <FileCode className="w-4 h-4 sm:w-5 sm:h-5 text-lime" />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-black text-olive-dark uppercase tracking-wide">Struktura šablony</h4>
-                                        <p className="text-[11px] text-olive-dark/40 font-bold">Text v editoru se automaticky vkládá do fixního e-mailového rámu s logem.</p>
+                                        <h4 className="text-xs sm:text-sm font-black text-olive-dark uppercase tracking-wide">Struktura šablony</h4>
+                                        <p className="text-[9px] sm:text-[11px] text-olive-dark/40 font-bold">Vkládá se do fixního rámu s logem.</p>
                                     </div>
                                 </div>
                                 <Dialog>
                                     <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="bg-white border-lime/30 text-olive-dark font-black text-[10px] uppercase tracking-widest px-6 rounded-xl hover:bg-lime hover:border-lime transition-all">
-                                            Zobrazit základní HTML
+                                        <Button variant="outline" size="sm" className="w-full sm:w-auto bg-white border-lime/30 text-olive-dark font-black text-[9px] uppercase tracking-widest px-4 rounded-xl hover:bg-lime hover:border-lime transition-all h-10">
+                                            Zobrazit HTML
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col p-0 border-none bg-olive-dark">

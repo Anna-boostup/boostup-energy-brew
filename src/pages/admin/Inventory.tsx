@@ -44,7 +44,7 @@ const PackBreakdown = ({ bottles }: { bottles: number }) => (
 );
 
 const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void }) => (
-    <div className="glass-card rounded-[3rem] p-8 space-y-8 mb-8 border-none animate-in fade-in slide-in-from-bottom-6">
+    <div className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 sm:space-y-8 mb-6 border-none animate-in fade-in slide-in-from-bottom-6">
         <div className="flex justify-between items-start">
             <div>
                 <div className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-3 shadow-xl shadow-olive-dark/10">#{sku}</div>
@@ -125,7 +125,7 @@ const Inventory = () => {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>
-                    <h2 className="text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic">SKLAD VÝROBKŮ</h2>
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic">SKLAD VÝROBKŮ</h2>
                     <div className="flex items-center gap-3 mt-2">
                         <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted leading-none">Kontrola zásob a naskladnění hotových lahviček.</p>

@@ -288,17 +288,17 @@ const AdminHelp = () => {
         <div className="max-w-6xl mx-auto space-y-16 pb-32 animate-in fade-in duration-1000">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
-                <div className="flex items-start gap-8">
-                    <div className="w-24 h-24 rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
+                <div className="flex items-start gap-4 sm:gap-8">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-[1.8rem] sm:rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <HelpCircle className="w-12 h-12 text-white relative z-10" />
+                        <HelpCircle className="w-8 h-8 sm:w-12 sm:h-12 text-white relative z-10" />
                     </div>
-                    <div className="space-y-3">
-                        <h1 className="text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Centrum Pomoci</h1>
+                    <div className="space-y-1 sm:space-y-3">
+                        <h1 className="text-3xl sm:text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">Centrum Pomoci</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px]">
-                                Kompletní manuál pro administraci systému BoostUp
+                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
+                                Manuál pro administraci systému BoostUp
                             </p>
                         </div>
                     </div>
@@ -306,15 +306,15 @@ const AdminHelp = () => {
             </div>
 
             {/* Quick tip banner */}
-            <div className="relative group overflow-hidden bg-olive-dark rounded-[3.5rem] shadow-2xl">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-lime/5 blur-[80px] -translate-y-1/2 translate-x-1/3" />
-                <div className="relative flex flex-col md:flex-row gap-10 p-12 items-center">
-                    <div className="w-20 h-20 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-2xl transition-all group-hover:scale-110 group-hover:border-lime/30 duration-700">
-                        <MousePointer2 className="w-10 h-10 text-white" />
+            <div className="relative group overflow-hidden bg-olive-dark rounded-[2.5rem] sm:rounded-[3.5rem] shadow-2xl">
+                <div className="absolute top-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-lime/5 blur-[60px] sm:blur-[80px] -translate-y-1/2 translate-x-1/3" />
+                <div className="relative flex flex-col md:flex-row gap-6 sm:gap-10 p-8 sm:p-12 items-center">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 shadow-2xl transition-all group-hover:scale-110 group-hover:border-lime/30 duration-700">
+                        <MousePointer2 className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                     </div>
                     <div className="space-y-2 text-center md:text-left flex-1">
-                        <p className="text-2xl font-display font-black text-white uppercase italic tracking-tight">Pro rychlou navigaci</p>
-                        <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[11px] leading-relaxed">
+                        <p className="text-lg sm:text-2xl font-display font-black text-white uppercase italic tracking-tight">Pro rychlou navigaci</p>
+                        <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px] sm:text-[11px] leading-relaxed">
                             Kliknutím na nadpis rozbalíte detailní návod. Všechny změny musí být vždy potvrzeny tlačítkem <span className="text-white font-black border-b border-lime/30 mx-1">Uložit změny</span>.
                         </p>
                     </div>
@@ -331,19 +331,19 @@ const AdminHelp = () => {
                             value={`item-${idx}`}
                             className="border-none glass-card rounded-[3rem] overflow-hidden px-2 hover:shadow-2xl hover:shadow-olive/10 transition-all duration-700"
                         >
-                            <AccordionTrigger className="hover:no-underline py-12 px-8 group border-none">
-                                <div className="flex items-center gap-8 text-left">
-                                    <div className="w-20 h-20 rounded-[2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform duration-700 relative overflow-hidden">
+                            <AccordionTrigger className="hover:no-underline py-8 sm:py-12 px-6 sm:px-8 group border-none">
+                                <div className="flex items-center gap-5 sm:gap-8 text-left">
+                                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl group-hover:scale-110 transition-transform duration-700 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-lime/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <Icon className="w-9 h-9 text-white relative z-10" />
+                                        <Icon className="w-7 h-7 sm:w-9 sm:h-9 text-white relative z-10" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <h3 className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight leading-none italic">{section.title}</h3>
-                                        <p className="text-[10px] text-brand-muted font-black uppercase tracking-[0.3em]">{section.description}</p>
+                                    <div className="space-y-1.5 sm:space-y-2">
+                                        <h3 className="text-xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight leading-none italic">{section.title}</h3>
+                                        <p className="text-[9px] sm:text-[10px] text-brand-muted font-black uppercase tracking-[0.2em] sm:tracking-[0.3em]">{section.description}</p>
                                     </div>
                                 </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-12 pb-14 pt-2">
+                            <AccordionContent className="px-6 sm:px-12 pb-10 sm:pb-14 pt-2">
                                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                                     <div className="space-y-10">
                                         <ul className="space-y-8">
@@ -393,28 +393,28 @@ const AdminHelp = () => {
             </Accordion>
 
             {/* Footer note */}
-            <div className="bg-olive-dark text-white p-20 rounded-[4.5rem] text-center space-y-10 shadow-2xl relative overflow-hidden group">
+            <div className="bg-olive-dark text-white p-10 sm:p-20 rounded-[3rem] sm:rounded-[4.5rem] text-center space-y-8 sm:space-y-10 shadow-2xl relative overflow-hidden group">
                 <div className="absolute -top-32 -right-32 w-96 h-96 bg-lime/10 rounded-full blur-[120px] transition-all duration-1000 group-hover:scale-150" />
                 <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-lime/10 rounded-full blur-[120px] transition-all duration-1000 group-hover:scale-150" />
                 
-                <div className="relative z-10 space-y-8">
-                    <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 border border-white/10 group-hover:border-lime/50 transition-all duration-700 shadow-2xl">
-                        <HelpCircle className="w-12 h-12 text-white" />
+                <div className="relative z-10 space-y-6 sm:space-y-8">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white/5 rounded-[1.8rem] sm:rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 border border-white/10 group-hover:border-lime/50 transition-all duration-700 shadow-2xl">
+                        <HelpCircle className="w-8 h-8 sm:w-12 sm:h-12 text-white" />
                     </div>
-                    <div className="space-y-4">
-                        <h3 className="text-5xl font-black font-display uppercase italic tracking-tight leading-none text-white">Technická podpora</h3>
-                        <p className="text-white/40 font-black uppercase tracking-[0.2em] text-sm max-w-2xl mx-auto leading-relaxed">
-                            Nenašli jste odpověď nebo je něco v nepořádku? Jsme připraveni vám okamžitě pomoci se správou vašeho e-shopu.
+                    <div className="space-y-3 sm:space-y-4">
+                        <h3 className="text-3xl sm:text-5xl font-black font-display uppercase italic tracking-tight leading-none text-white">Technická podpora</h3>
+                        <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px] sm:text-sm max-w-2xl mx-auto leading-relaxed">
+                            Nenašli jste odpověď nebo je něco v nepořádku? Jsme připraveni vám okamžitě pomoci.
                         </p>
                     </div>
-                    <div className="pt-12 flex flex-col items-center gap-6">
-                        <a href="mailto:support@drinkboostup.cz" className="h-16 px-12 rounded-2xl bg-lime text-olive-dark flex items-center justify-center font-black uppercase text-xs tracking-[0.4em] hover:bg-white hover:scale-105 transition-all duration-500 shadow-2xl shadow-lime/20 group">
+                    <div className="pt-8 sm:pt-12 flex flex-col items-center gap-6">
+                        <a href="mailto:support@drinkboostup.cz" className="h-14 sm:h-16 px-8 sm:px-12 rounded-2xl bg-lime text-olive-dark flex items-center justify-center font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.4em] hover:bg-white hover:scale-105 transition-all duration-500 shadow-2xl shadow-lime/20 group">
                             support@drinkboostup.cz
                         </a>
-                        <div className="flex items-center gap-4 text-white/20">
-                            <div className="w-8 h-[1px] bg-white/10" />
-                            <span className="text-[10px] font-black font-mono uppercase tracking-[0.5em]">BoostUp Engine v5.0 // Platinum Premium</span>
-                            <div className="w-8 h-[1px] bg-white/10" />
+                        <div className="flex flex-wrap items-center justify-center gap-4 text-white/20">
+                            <div className="hidden sm:block w-8 h-[1px] bg-white/10" />
+                            <span className="text-[8px] sm:text-[10px] font-black font-mono uppercase tracking-[0.3em] sm:tracking-[0.5em]">BoostUp Engine v5.0 // Platinum</span>
+                            <div className="hidden sm:block w-8 h-[1px] bg-white/10" />
                         </div>
                     </div>
                 </div>

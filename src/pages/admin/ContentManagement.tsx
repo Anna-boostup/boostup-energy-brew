@@ -133,10 +133,10 @@ const ContentManagement = () => {
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
                 <div className="space-y-3">
-                    <h2 className="text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">CONTENT ENGINE</h2>
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">CONTENT ENGINE</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">Správa vizuálního a textového obsahu webu</p>
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">Správa vizuálního a textového obsahu webu</p>
                     </div>
                 </div>
 
@@ -164,17 +164,17 @@ const ContentManagement = () => {
                         </Button>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 ml-auto">
-                        <Button variant="outline" onClick={handlePreview} className="h-14 px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white hover:border-olive transition-all gap-3">
-                            <Eye className="h-5 w-5" />
+                    <div className="flex flex-wrap gap-3 sm:gap-4 ml-auto w-full lg:w-auto">
+                        <Button variant="outline" onClick={handlePreview} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white hover:border-olive transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
+                            <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
                             Náhled
                         </Button>
-                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-14 px-8 rounded-2xl bg-white border-olive/10 text-olive/40 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all gap-3">
-                            {isResetting ? <Loader2 className="h-5 w-5 animate-spin" /> : <RotateCcw className="h-5 w-5" />}
+                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive/40 font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
+                            {isResetting ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <RotateCcw className="h-4 sm:h-5 w-4 sm:w-5" />}
                             Resetovat
                         </Button>
-                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3">
-                            {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                        <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-12 sm:h-14 px-8 sm:px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-2 sm:gap-3 w-full sm:w-auto">
+                            {isSaving ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <Save className="h-4 sm:h-5 w-4 sm:w-5" />}
                             Uložit změny
                         </Button>
                     </div>
@@ -207,19 +207,19 @@ const ContentManagement = () => {
                 {/* HERO SECTION */}
                 <TabsContent value="hero" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Type className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Type className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Hlavní Hero Sekce</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Vizuální středobod vaší webové prezentace</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Hlavní Hero Sekce</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Vizuální středobod vaší webové prezentace</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
                                 <BadgeToggle badgeKey="hero.announcement" label="Viditelnost oznamovacího banneru" />
                             </div>
@@ -304,19 +304,19 @@ const ContentManagement = () => {
                 {/* MISSION SECTION */}
                 <TabsContent value="mission" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <FileText className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Naše Mise</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Sekce vyprávějící příběh vaší značky</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Naše Mise</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Sekce vyprávějící příběh vaší značky</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
                                 <BadgeToggle badgeKey="mission.badge" label="Viditelnost štítku (O NÁS)" />
                             </div>
@@ -369,19 +369,19 @@ const ContentManagement = () => {
                 {/* INGREDIENTS SECTION */}
                 <TabsContent value="ingredients" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Beaker className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Beaker className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Vědecké Informace</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Detailní rozpis ingrediencí a jejich benefitů</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Vědecké Informace</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Detailní rozpis ingrediencí a jejich benefitů</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             {Object.entries(localContent.ingredientDetails || {}).map(([key, details]: [string, any]) => (
                                 <div key={key} className="space-y-8 p-10 rounded-[2.5rem] bg-white border border-background shadow-sm relative group overflow-hidden">
                                     <div className={`absolute top-0 right-0 w-32 h-32 opacity-5 translate-x-12 -translate-y-12 rounded-full transition-transform duration-700 group-hover:scale-150 ${
@@ -474,19 +474,19 @@ const ContentManagement = () => {
                 {/* CONCEPT SECTION */}
                 <TabsContent value="concept" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <BarChart className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <BarChart className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">3B Koncept</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Hlavní pilíře výkonu a funkčnosti</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">3B Koncept</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Hlavní pilíře výkonu a funkčnosti</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Hlavní Nadpis Sekce</Label>
@@ -621,19 +621,19 @@ const ContentManagement = () => {
                 {/* CTA SECTION */}
                 <TabsContent value="cta" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Mail className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Akční Výzva (CTA)</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Sekce pro konverzi návštěvníků v odběratele</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Akční Výzva (CTA)</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Sekce pro konverzi návštěvníků v odběratele</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="bg-background p-8 rounded-[2rem] border border-background">
                                 <BadgeToggle badgeKey="cta.badge" label="Viditelnost konverzního badge" />
                             </div>
@@ -674,19 +674,19 @@ const ContentManagement = () => {
                 {/* CONTACT SECTION */}
                 <TabsContent value="contact" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <MapPin className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Kontakt & Informace</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Kontaktní údaje a lokace firmy</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Kontakt & Informace</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Kontaktní údaje a lokace firmy</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-3 mb-2">
@@ -736,19 +736,19 @@ const ContentManagement = () => {
                 {/* FLAVORS SECTION */}
                 <TabsContent value="flavors" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
-                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                        <div className="bg-olive-dark py-8 px-6 sm:py-12 sm:px-12 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
-                            <div className="flex items-center gap-6 relative z-10">
-                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
-                                    <Zap className="w-8 h-8 text-white" />
+                            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                                <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Katalog Příchutí</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Správa parametrů a specifikací jednotlivých produktů</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Katalog Příchutí</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Správa parametrů a specifikací jednotlivých produktů</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-12 space-y-12">
+                        <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             {Object.entries(localContent.flavors || {}).map(([key, flavor]: [string, any]) => (
                                 <div key={key} className="p-10 rounded-[2.5rem] bg-white border border-background shadow-sm space-y-10">
                                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

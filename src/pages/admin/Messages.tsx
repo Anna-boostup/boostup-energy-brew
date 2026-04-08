@@ -56,6 +56,7 @@ const Messages = () => {
     const [isReplyMode, setIsReplyMode] = useState(false);
     const [replyText, setReplyText] = useState("");
     const [isSending, setIsSending] = useState(false);
+    const [showDetailOnMobile, setShowDetailOnMobile] = useState(false);
     const { toast } = useToast();
 
     const selectedMessage = messages.find(m => m.id === selectedMessageId);
@@ -173,11 +174,11 @@ const Messages = () => {
             setIsSending(false);
         }
     };
-
     const handleSelectMessage = (id: string) => {
         setSelectedMessageId(id);
         setIsReplyMode(false);
         setReplyText("");
+        setShowDetailOnMobile(true);
         const msg = messages.find(m => m.id === id);
         if (msg && !msg.is_read) {
             markAsRead(id);
@@ -196,13 +197,13 @@ const Messages = () => {
         <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-64px)] overflow-hidden bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/60 shadow-2xl animate-in fade-in duration-700">
             {/* Header Content */}
             <div className="p-8 md:p-10 border-b border-background flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/60">
-                <div className="flex items-center gap-5">
-                    <div className="p-4 bg-olive-dark rounded-[1.5rem] shadow-lg shadow-olive-dark/10">
-                        <Mail className="w-6 h-6 text-primary" />
+                <div className="flex items-center gap-4 sm:gap-5">
+                    <div className="p-3 sm:p-4 bg-olive-dark rounded-[1.2rem] sm:rounded-[1.5rem] shadow-lg shadow-olive-dark/10">
+                        <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight">Centrum Zpráv</h1>
-                        <p className="text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-1">Interakce se zákazníky</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight">Centrum Zpráv</h1>
+                        <p className="text-[10px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-0.5 sm:mt-1">Interakce se zákazníky</p>
                     </div>
                     {unreadCount > 0 && (
                         <Badge className="bg-primary text-olive-dark font-black ml-4 px-4 py-1.5 rounded-xl text-[10px] tracking-widest border-none">
@@ -285,7 +286,7 @@ const Messages = () => {
                 </div>
 
                 {/* Detail View */}
-                <div className="hidden md:flex flex-1 bg-white/40 flex-col">
+                <div className={`${showDetailOnMobile ? 'flex' : 'hidden'} md:flex flex-1 bg-white/40 flex-col`}>
                     <AnimatePresence mode="wait">
                         {selectedMessage ? (
                             <motion.div 
@@ -297,33 +298,44 @@ const Messages = () => {
                                 className="flex-1 flex flex-col h-full"
                             >
                                 {/* Detail Header */}
-                                <div className="p-10 border-b border-background bg-white/40 space-y-8">
-                                    <div className="flex justify-between items-start gap-6">
-                                        <div className="space-y-4 flex-1">
-                                            <h2 className="text-4xl font-black text-olive-dark font-display leading-[1.1] uppercase tracking-tight">
+                                <div className="p-6 sm:p-10 border-b border-background bg-white/40 space-y-6 sm:space-y-8">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
+                                        <div className="space-y-4 flex-1 w-full">
+                                            <div className="flex items-center gap-3 md:hidden mb-2">
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="sm" 
+                                                    onClick={() => setShowDetailOnMobile(false)}
+                                                    className="h-8 px-2 font-black uppercase text-[10px] tracking-widest text-primary hover:text-olive-dark"
+                                                >
+                                                    <ChevronRight className="w-4 h-4 rotate-180 mr-1" />
+                                                    Zpět
+                                                </Button>
+                                            </div>
+                                            <h2 className="text-2xl sm:text-4xl font-black text-olive-dark font-display leading-[1.1] uppercase tracking-tight">
                                                 {selectedMessage.subject}
                                             </h2>
                                             <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 rounded-2xl bg-olive-dark flex items-center justify-center shadow-lg">
-                                                    <User className="w-6 h-6 text-primary" />
+                                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-olive-dark flex items-center justify-center shadow-lg">
+                                                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-xl font-black text-olive-dark leading-tight">
+                                                    <p className="text-lg sm:text-xl font-black text-olive-dark leading-tight">
                                                         {selectedMessage.from_name || "Host"}
                                                     </p>
-                                                    <p className="text-sm text-olive/40 font-bold uppercase tracking-widest mt-0.5">
+                                                    <p className="text-xs sm:text-sm text-olive/40 font-bold uppercase tracking-widest mt-0.5">
                                                         {selectedMessage.from_email}
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-3">
+                                        <div className="flex gap-3 w-full sm:w-auto">
                                             {!isReplyMode && (
                                                 <Button 
                                                     onClick={() => setIsReplyMode(true)}
-                                                    className="h-14 px-8 bg-olive-dark hover:bg-black text-primary font-black uppercase text-xs tracking-widest rounded-2xl shadow-xl shadow-olive-dark/10"
+                                                    className="h-12 sm:h-14 flex-1 sm:flex-initial px-6 sm:px-8 bg-olive-dark hover:bg-black text-primary font-black uppercase text-[10px] sm:text-xs tracking-widest rounded-2xl shadow-xl shadow-olive-dark/10"
                                                 >
-                                                    <Mail className="w-5 h-5 mr-3" />
+                                                    <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                                                     Odpovědět
                                                 </Button>
                                             )}
@@ -354,15 +366,15 @@ const Messages = () => {
                                         </div>
                                     </div>
                                     
-                                    <div className="flex items-center gap-8 border-t border-background pt-8">
-                                        <div className="flex items-center gap-3 text-[10px] font-black text-olive/40 uppercase tracking-[0.2em]">
-                                            <Clock className="w-4 h-4 text-background" />
+                                    <div className="flex flex-wrap items-center gap-4 sm:gap-8 border-t border-background pt-6 sm:pt-8">
+                                        <div className="flex items-center gap-3 text-[9px] sm:text-[10px] font-black text-olive/40 uppercase tracking-[0.2em]">
+                                            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-background" />
                                             PŘIJATO: {format(new Date(selectedMessage.created_at), "d. MMMM yyyy HH:mm", { locale: cs })}
                                         </div>
                                         {selectedMessage.replied_at && (
-                                            <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+                                            <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-black text-primary uppercase tracking-[0.2em]">
                                                 <div className="p-1 bg-primary/20 rounded-md">
-                                                    <CheckCheck className="w-3.5 h-3.5" />
+                                                    <CheckCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                                 </div>
                                                 VYŘÍZENO: {format(new Date(selectedMessage.replied_at), "d. MMM HH:mm", { locale: cs })}
                                             </div>
@@ -372,19 +384,19 @@ const Messages = () => {
 
                                 {/* Body Content */}
                                 <ScrollArea className="flex-1">
-                                    <div className="p-10 space-y-12">
+                                    <div className="p-6 sm:p-10 space-y-8 sm:space-y-12">
                                         {/* Original Message */}
-                                        <div className="space-y-6">
+                                        <div className="space-y-4 sm:space-y-6">
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-1 h-4 bg-primary rounded-full" />
-                                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40">Původní dopis</h3>
+                                                    <div className="w-1 h-3 sm:h-4 bg-primary rounded-full" />
+                                                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive/40">Původní dopis</h3>
                                                 </div>
                                             </div>
-                                            <div className="rounded-[2.5rem] bg-white border border-background p-10 shadow-sm leading-relaxed overflow-hidden">
+                                            <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-white border border-background p-6 sm:p-10 shadow-sm leading-relaxed overflow-hidden">
                                                 {selectedMessage.body_html ? (
                                                     <div 
-                                                        className="prose prose-slate max-w-none prose-p:font-bold prose-p:text-olive-dark/60 prose-headings:font-black"
+                                                        className="prose prose-slate max-w-none prose-p:font-bold prose-p:text-olive-dark/60 prose-headings:font-black text-sm sm:text-base"
                                                         dangerouslySetInnerHTML={{ __html: selectedMessage.body_html }} 
                                                     />
                                                 ) : (
@@ -397,14 +409,14 @@ const Messages = () => {
 
                                         {/* Reply History */}
                                         {selectedMessage.reply_text && (
-                                            <div className="space-y-6">
+                                            <div className="space-y-4 sm:space-y-6">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-1 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(196,241,53,0.5)]" />
-                                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Vaše reakce</h3>
+                                                    <div className="w-1 h-3 sm:h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(196,241,53,0.5)]" />
+                                                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-primary">Vaše reakce</h3>
                                                 </div>
-                                                <div className="rounded-[2.5rem] bg-olive-dark border border-olive-dark p-10 shadow-2xl relative overflow-hidden group">
+                                                <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-olive-dark border border-olive-dark p-6 sm:p-10 shadow-2xl relative overflow-hidden group">
                                                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-20 transition-opacity">
-                                                        <CheckCheck className="w-20 h-20 text-primary rotate-12" />
+                                                        <CheckCheck className="w-16 h-16 sm:w-20 sm:h-20 text-primary rotate-12" />
                                                     </div>
                                                     <p className="whitespace-pre-wrap font-display font-black text-white text-lg leading-relaxed relative z-10">
                                                         {selectedMessage.reply_text}
@@ -423,12 +435,12 @@ const Messages = () => {
                                                 <div className="flex justify-between items-center">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-1 h-4 bg-olive-dark rounded-full" />
-                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark">Napsat odpověď</h3>
+                                                        <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark">Napsat odpověď</h3>
                                                     </div>
-                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="px-4 h-8 text-[10px] font-black uppercase tracking-widest text-olive/40 hover:text-olive-dark rounded-xl">Zrušit</Button>
+                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="px-4 h-8 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-olive/40 hover:text-olive-dark rounded-xl">Zrušit</Button>
                                                 </div>
                                                 <textarea 
-                                                    className="w-full min-h-[250px] p-10 rounded-[2.5rem] border-2 border-background bg-white shadow-inner focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all outline-none font-display font-black text-xl text-olive-dark placeholder:text-background"
+                                                    className="w-full min-h-[200px] sm:min-h-[250px] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border-2 border-background bg-white shadow-inner focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all outline-none font-display font-black text-lg sm:text-xl text-olive-dark placeholder:text-background"
                                                     placeholder="Napište něco skvělého..."
                                                     value={replyText}
                                                     onChange={(e) => setReplyText(e.target.value)}
@@ -437,12 +449,12 @@ const Messages = () => {
                                                     <Button 
                                                         onClick={handleSendReply}
                                                         disabled={isSending || !replyText.trim()}
-                                                        className="h-16 px-10 bg-olive-dark hover:bg-black text-primary font-black uppercase text-sm tracking-[0.2em] rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                                                        className="h-14 sm:h-16 px-8 sm:px-10 bg-olive-dark hover:bg-black text-primary font-black uppercase text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 w-full sm:w-auto"
                                                     >
                                                         {isSending ? (
-                                                            <><RefreshCcw className="w-5 h-5 mr-3 animate-spin" /> Odesílám...</>
+                                                            <><RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-3 animate-spin" /> Odesílám...</>
                                                         ) : (
-                                                            <><Mail className="w-5 h-5 mr-3" /> Odeslat Teď</>
+                                                            <><Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-3" /> Odeslat Teď</>
                                                         )}
                                                     </Button>
                                                 </div>

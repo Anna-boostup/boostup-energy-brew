@@ -96,17 +96,17 @@ const AdminLayout = () => {
     return (
         <div className="min-h-screen bg-admin-canvas flex font-sans">
             {/* Mobile Header */}
-            <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark text-white p-4 flex items-center justify-between z-50 shadow-lg px-6">
-                <Link to="/" className="font-display font-black text-2xl tracking-tighter hover:opacity-80 transition-opacity">
+            <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark text-white p-4 flex items-center justify-between z-50 shadow-lg px-4">
+                <Link to="/" className="font-display font-black text-xl tracking-tighter hover:opacity-80 transition-opacity">
                     BOOST<span className="text-white">UP</span>
                 </Link>
                 <Sheet>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark">
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark -mr-2">
                             <Menu className="w-6 h-6" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-72 rounded-r-[3rem]">
+                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-[85vw] max-w-[300px] rounded-r-[2.5rem]">
                         <div className="p-8 border-b border-white/5">
                             <Link to="/" className="flex items-center">
                                 <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-white">UP</span></span>
@@ -137,8 +137,8 @@ const AdminLayout = () => {
                                                 onClick={() => {
                                                     navigate(item.path);
                                                 }}
-                                                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 ${isActive
-                                                    ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.02]"
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
+                                                    ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
                                                     : "text-white/60 hover:bg-white/5 hover:text-white"
                                                     } `}
                                                 aria-current={isActive ? "page" : undefined}
@@ -270,7 +270,7 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-80 p-6 md:p-12 pt-28 md:pt-12 min-h-screen">
+            <main className="flex-1 md:ml-80 p-4 md:p-12 pt-24 md:pt-12 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     <AdminErrorBoundary>
                         <Outlet />

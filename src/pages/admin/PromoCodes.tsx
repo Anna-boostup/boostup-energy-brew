@@ -157,23 +157,23 @@ const PromoCodes = () => {
         <div className="space-y-10 pb-20 animate-in fade-in duration-700">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-olive-dark font-display uppercase">Slevové kódy</h2>
-                    <p className="text-olive-dark font-bold text-sm uppercase tracking-widest mt-1">Správa marketingových kampaní a slev.</p>
+                    <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-olive-dark font-display uppercase italic">Slevové kódy</h2>
+                    <p className="text-brand-muted font-bold text-[10px] sm:text-sm uppercase tracking-widest mt-0.5 sm:mt-1">Marketingové kampaně a slevy.</p>
                 </div>
 
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
-                        <Button className="h-14 px-8 bg-olive-dark hover:bg-black text-white gap-3 font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-olive-dark/10 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                        <Button className="h-12 sm:h-14 px-6 sm:px-8 bg-olive-dark hover:bg-black text-white gap-3 font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-olive-dark/10 transition-transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto">
                             <Plus className="h-5 w-5" />
                             Vytvořit nový kód
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] border-none shadow-2xl p-8">
+                    <DialogContent className="w-[95vw] sm:max-w-[450px] rounded-[2rem] sm:rounded-[2.5rem] border-none shadow-2xl p-6 sm:p-10">
                         <form onSubmit={handleAddCode} className="space-y-8">
-                            <DialogHeader>
-                                <DialogTitle className="text-2xl font-black text-olive-dark font-display">Nový slevový kód</DialogTitle>
-                                <DialogDescription className="text-olive-dark font-medium">
-                                    Definujte parametry slevy, kterou zákazníci uplatní v košíku.
+                            <DialogHeader className="space-y-2">
+                                <DialogTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase italic tracking-tight">Nový slevový kód</DialogTitle>
+                                <DialogDescription className="text-brand-muted font-bold text-[10px] uppercase tracking-widest">
+                                    Definujte parametry slevy pro košík.
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-6">
@@ -219,29 +219,29 @@ const PromoCodes = () => {
                 </Dialog>
             </div>
 
-            <Card className="mb-10 border border-white/40 shadow-sm rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
-                <CardHeader className="bg-olive-dark border-b border-olive/10 py-10 px-12">
+            <Card className="mb-10 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
+                <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-10 px-6 sm:px-12">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-primary/20 rounded-xl">
                             <Gift className="w-6 h-6 text-primary" />
                         </div>
-                        <CardTitle className="text-2xl font-black text-white font-display">Uvítací Pop-up</CardTitle>
+                        <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">Uvítací Pop-up</CardTitle>
                     </div>
-                    <CardDescription className="text-olive-dark font-medium text-sm">
-                        Automatické okno s nabídkou slevy pro nové návštěvníky webu.
+                    <CardDescription className="text-white/40 font-bold text-[10px] sm:text-sm uppercase tracking-widest leading-relaxed">
+                        Nabídka slevy pro nové návštěvníky.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="py-12 px-12 space-y-10 group">
-                    <div className="flex items-center gap-6 p-8 bg-white/40 rounded-[2.5rem] border border-white/60 shadow-inner group">
-                        <div className={`p-4 rounded-3xl transition-all duration-500 ${contentCZ?.hero?.showDiscountPopup ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-background'}`}>
-                            {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-8 w-8 text-olive-dark" /> : <EyeOff className="h-8 w-8 text-olive-dark" />}
+                <CardContent className="p-6 sm:py-12 sm:px-12 space-y-8 sm:space-y-10 group">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 p-6 sm:p-8 bg-white/40 rounded-[2rem] sm:rounded-[2.5rem] border border-white/60 shadow-inner group">
+                        <div className={`p-4 rounded-2xl sm:rounded-3xl transition-all duration-500 ${contentCZ?.hero?.showDiscountPopup ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-background'}`}>
+                            {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-6 w-6 sm:h-8 sm:w-8 text-olive-dark" /> : <EyeOff className="h-6 w-6 sm:h-8 sm:w-8 text-olive-dark" />}
                         </div>
                         <div className="flex-1">
-                            <Label className="cursor-pointer font-black text-xl text-olive-dark mb-1 block font-display leading-tight" htmlFor="toggle-popup">
-                                Aktivovat pop-up na webu
+                            <Label className="cursor-pointer font-black text-lg sm:text-xl text-olive-dark mb-1 block font-display leading-tight uppercase italic" htmlFor="toggle-popup">
+                                Aktivovat pop-up
                             </Label>
-                            <p className="text-sm font-bold text-olive-dark uppercase tracking-widest">
-                                Zobrazit nabídku slevového kódu po vstupu na stránku.
+                            <p className="text-[10px] sm:text-sm font-bold text-brand-muted uppercase tracking-widest">
+                                Zobrazit nabídku slevy při vstupu.
                             </p>
                         </div>
                         <Switch
@@ -249,7 +249,7 @@ const PromoCodes = () => {
                             checked={!!contentCZ?.hero?.showDiscountPopup}
                             onCheckedChange={handleTogglePopup}
                             disabled={popupSaving}
-                            className="h-8 w-14 data-[state=checked]:bg-primary"
+                            className="h-7 w-12 sm:h-8 sm:w-14 data-[state=checked]:bg-primary"
                         />
                     </div>
                     
@@ -288,13 +288,13 @@ const PromoCodes = () => {
                 </CardContent>
             </Card>
 
-            <Card className="border border-white/40 shadow-sm rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <CardHeader className="bg-white/40 border-b border-olive/8 py-10 px-12 flex flex-row items-center justify-between">
+            <Card className="border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <CardHeader className="bg-white/40 border-b border-olive/8 py-6 sm:py-10 px-6 sm:px-12 flex flex-row items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-olive-dark rounded-2xl">
+                        <div className="p-2 bg-olive-dark rounded-xl">
                             <Sparkles className="w-5 h-5 text-primary" />
                         </div>
-                        <CardTitle className="text-2xl font-black text-olive-dark font-display uppercase tracking-tight">Kódy v systému</CardTitle>
+                        <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase tracking-tight italic">Kódy v systému</CardTitle>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">

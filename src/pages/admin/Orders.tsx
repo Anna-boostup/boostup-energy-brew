@@ -34,7 +34,7 @@ import InvoiceModal from "@/components/admin/InvoiceModal";
 const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => {
     const { toast } = useToast();
     return (
-        <div className="glass-card rounded-[3rem] p-8 space-y-6 mb-8 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
+        <div className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 mb-6 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
@@ -544,8 +544,8 @@ const Orders = () => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap">
-                <h2 className="text-3xl font-bold tracking-tight">Správa objednávek</h2>
-                <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Správa objednávek</h2>
+               <div className="flex flex-wrap items-center gap-2">
                     {notificationPermission !== 'granted' && (
                         <Button
                             variant="outline"
@@ -658,20 +658,20 @@ const Orders = () => {
             </Tabs>
 
             {selectedOrders.size > 0 && (
-                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 glass-dark rounded-[3rem] px-12 py-6 flex items-center gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 min-w-fit shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-white/10">
-                    <div className="flex flex-col pr-12 border-r border-white/10">
-                        <div className="text-[10px] text-white font-black uppercase tracking-[0.2em] mb-1">VYBRÁNO</div>
-                        <div className="text-3xl font-black text-white leading-none font-display">{selectedOrders.size} <span className="text-xs font-bold text-white/30 uppercase tracking-widest ml-1">OBJ.</span></div>
-                    </div>
-
-                    <div className="flex items-center gap-6">
+                <div className="fixed bottom-4 sm:bottom-10 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 glass-dark rounded-[2rem] sm:rounded-[3rem] px-6 sm:px-12 py-4 sm:py-6 flex flex-col md:flex-row items-center gap-6 sm:gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-white/10">
+                    <div className="flex items-center gap-6 pr-0 md:pr-12 border-b md:border-b-0 md:border-r border-white/10 pb-4 md:pb-0 w-full md:w-auto justify-between md:justify-start">
+                        <div className="flex flex-col">
+                            <div className="text-[9px] sm:text-[10px] text-white font-black uppercase tracking-[0.2em] mb-1">VYBRÁNO</div>
+                            <div className="text-2xl sm:text-3xl font-black text-white leading-none font-display">{selectedOrders.size} <span className="text-[10px] sm:text-xs font-bold text-white/30 uppercase tracking-widest ml-1">OBJ.</span></div>
+                        </div>
                         <Button
                             variant="ghost"
-                            className="text-white/40 hover:text-white font-black uppercase text-[10px] tracking-widest h-12 px-8 rounded-2xl hover:bg-white/5 transition-all"
+                            className="text-white/40 hover:text-white font-black uppercase text-[9px] sm:text-[10px] tracking-widest h-10 px-4 rounded-xl hover:bg-white/5 transition-all"
                             onClick={() => setSelectedOrders(new Set())}
                         >
                             Zrušit
                         </Button>
+                    </div>
 
                         <div className="flex gap-3 p-2 bg-white/5 rounded-[2.5rem] border border-white/5">
                             <Button
