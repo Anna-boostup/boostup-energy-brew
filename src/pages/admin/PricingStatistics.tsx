@@ -152,24 +152,23 @@ const PricingStatistics = () => {
                             </div>
                             <CardTitle className="text-xl text-white font-black">Cenotvorba</CardTitle>
                         </div>
-                        <CardDescription className="text-olive-dark text-xs">Globální nastavení cen pro všechna balení.</CardDescription>
+                        <CardDescription className="text-lime/60 text-xs font-bold">Globální nastavení cen pro všechna balení.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-8 space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
                                     <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 3 ks</Label>
-                                    <span className="text-[10px] font-black text-primary bg-olive-dark px-2 py-0.5 rounded-md">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
+                                    <span className="text-xs font-black text-lime bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
                                 </div>
-                                <div className="relative group">
+                                <div className="relative">
                                     <Input 
                                         id="pack3" 
                                         type="number" 
                                         value={prices.pack3} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-5 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🍋</span>
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
                             </div>
@@ -177,17 +176,16 @@ const PricingStatistics = () => {
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
                                     <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 12 ks</Label>
-                                    <span className="text-[10px] font-black text-primary bg-olive-dark px-2 py-0.5 rounded-md">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
+                                    <span className="text-xs font-black text-lime bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
                                 </div>
-                                <div className="relative group">
+                                <div className="relative">
                                     <Input 
                                         id="pack12" 
                                         type="number" 
                                         value={prices.pack12} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-5 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🍓</span>
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
                             </div>
@@ -195,17 +193,16 @@ const PricingStatistics = () => {
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
                                     <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 21 ks</Label>
-                                    <span className="text-[10px] font-black text-primary bg-olive-dark px-2 py-0.5 rounded-md">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
+                                    <span className="text-xs font-black text-lime bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
                                 </div>
-                                <div className="relative group">
+                                <div className="relative">
                                     <Input 
                                         id="pack21" 
                                         type="number" 
                                         value={prices.pack21} 
                                         onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-12 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        className="h-14 pl-5 rounded-2xl border-slate-200 bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                     />
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl filter grayscale group-focus-within:grayscale-0 transition-all">🌿</span>
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
                                 </div>
                             </div>
@@ -322,7 +319,7 @@ const PricingStatistics = () => {
                                     wrapperStyle={{ paddingTop: '40px', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
                                 />
                                 <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#C4F135" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="red" name="Red Rush" stackId="a" fill="#ef4444" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="red" name="Red Rush" stackId="a" fill="#aa263e" radius={[0, 0, 0, 0]} />
                                 <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#1e293b" radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>

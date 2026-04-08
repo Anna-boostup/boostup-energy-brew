@@ -22,6 +22,17 @@ export class AdminErrorBoundary extends React.Component<Props, State> {
 
     componentDidCatch(error: Error, info: React.ErrorInfo) {
         console.error('[AdminErrorBoundary] Caught error:', error, info);
+
+        // Auto-recover from stale chunk errors after deployment
+        const isChunkError = 
+            error.message?.includes('text/html') ||
+            error.message?.includes('Failed to fetch dynamically imported module') ||
+            error.message?.includes('Importing a module script failed');
+
+        if (isChunkError && !sessionStorage.getItem('chunk_reload_attempted')) {
+            sessionStorage.setItem('chunk_reload_attempted', '1');
+            window.location.reload();
+        }
     }
 
     render() {
