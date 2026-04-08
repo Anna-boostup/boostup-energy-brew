@@ -146,7 +146,7 @@ const ContentManagement = () => {
                             variant="ghost"
                             size="sm"
                             className={`h-12 px-8 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all duration-500 border-none ${
-                                editingLang === 'cs' ? 'bg-lime text-olive-dark shadow-xl' : 'text-olive/40 hover:text-white hover:bg-white/5'
+                                editingLang === 'cs' ? 'bg-lime text-olive-dark shadow-xl' : 'text-white/50 hover:text-white hover:bg-white/5'
                             }`}
                             onClick={() => setEditingLang('cs')}
                         >
@@ -156,7 +156,7 @@ const ContentManagement = () => {
                             variant="ghost"
                             size="sm"
                             className={`h-12 px-8 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all duration-500 border-none ${
-                                editingLang === 'en' ? 'bg-lime text-olive-dark shadow-xl' : 'text-olive/40 hover:text-white hover:bg-white/5'
+                                editingLang === 'en' ? 'bg-lime text-olive-dark shadow-xl' : 'text-white/50 hover:text-white hover:bg-white/5'
                             }`}
                             onClick={() => setEditingLang('en')}
                         >
