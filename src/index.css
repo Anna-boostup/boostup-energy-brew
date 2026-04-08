@@ -20,68 +20,75 @@
 
 @layer base {
   :root {
-    /* BoostUp Brand Colors - Precise Palette from User */
-    /* #f4f1e6 - Cream/Background */
-    --background: 47 30% 93%;
-    --foreground: 99 33% 26%;
+    /* BoostUp Official Brand Palette */
+    /* #f4f1e6 - Cream */
+    --background: 47 39% 93%;
+    --foreground: 101 31% 12%;
 
-    /* Cards slightly darker cream */
-    --card: 47 25% 90%;
-    --card-foreground: 99 33% 26%;
+    --card: 47 35% 89%;
+    --card-foreground: 101 31% 12%;
 
-    --popover: 47 30% 93%;
-    --popover-foreground: 99 33% 26%;
+    --popover: 47 39% 93%;
+    --popover-foreground: 101 31% 12%;
 
-    /* Primary: #3d5a2f - Dark Green */
-    --primary: 97 31% 27%;
-    --primary-foreground: 47 30% 93%;
+    /* Primary: #3d5a2f - Olive */
+    --primary: 101 31% 27%;
+    --primary-foreground: 47 39% 93%;
 
-    /* Secondary: Lighter cream */
-    --secondary: 47 25% 88%;
-    --secondary-foreground: 99 33% 26%;
+    --secondary: 47 30% 84%;
+    --secondary-foreground: 101 31% 20%;
 
-    /* Custom Brand Colors - Exact HEX conversions to HSL */
-    /* #3d5a2f - Dark Green (Main Olive) */
-    --olive: 97 31% 27%;
-    --olive-dark: 97 31% 20%;
-    --olive-light: 97 31% 35%;
+    --muted: 47 20% 80%;
+    --muted-foreground: 101 25% 35%;
 
-    /* #C4F135 - Official BoostUp Lime */
-    --lime: 74 87% 58%;
-    --lime-dark: 74 87% 45%;
+    --accent: 60 68% 61%;
+    --accent-foreground: 101 31% 12%;
 
-    /* #3D5A2F - Official BoostUp Olive */
-    --olive: 101 31% 27%;
-    --olive-dark: 101 45% 8%; 
-    --olive-light: 101 25% 40%;
+    --destructive: 349 63% 41%;
+    --destructive-foreground: 47 39% 93%;
 
-    /* #F4F1E6 - Official BoostUp Cream */
-    --cream: 47 30% 93%;
-    --cream-dark: 47 25% 82%;
-    
-    /* Background for Admin (Slightly darker for contrast) */
-    --admin-bg: 47 15% 82%;
-    
-    /* Contrast Text */
-    --text-primary: 101 45% 5%;
-    --text-muted: 101 30% 25%;
+    --border: 47 20% 78%;
+    --input: 47 20% 78%;
+    --ring: 60 68% 61%;
 
-    /* Premium Accents */
-    --terracotta: 349 63% 41%;
-    --orange: 31 88% 58%;
+    --radius: 0.75rem;
+
+    /* BoostUp Brand Colors — Exact HEX → HSL */
+    /* #3d5a2f */ --olive: 101 31% 27%;
+    /* #3d5a2f dark */ --olive-dark: 101 35% 14%;
+    /* #3d5a2f light */ --olive-light: 101 25% 40%;
+
+    /* #dfdf57 */ --lime: 60 68% 61%;
+    /* darker */ --lime-dark: 60 68% 48%;
+
+    /* #aa263e */ --terracotta: 349 63% 41%;
+    --terracotta-dark: 349 63% 32%;
+
+    /* #f29739 */ --orange: 31 88% 58%;
+    --orange-dark: 31 88% 46%;
+
+    /* #f4f1e6 */ --cream: 47 39% 93%;
+    --cream-dark: 47 30% 82%;
+
+    /* Admin background */
+    --admin-bg: 101 20% 18%;
+
+    /* Contrast text on dark bg */
+    --text-primary: 101 35% 10%;
+    --text-muted: 101 20% 38%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(48 30% 93%) 0%, hsl(48 25% 88%) 100%);
-    --gradient-olive: linear-gradient(135deg, hsl(100 35% 27%) 0%, hsl(100 40% 35%) 100%);
-    --gradient-energy: linear-gradient(135deg, hsl(60 67% 61%) 0%, hsl(32 88% 58%) 50%, hsl(350 64% 41%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(47 39% 93%) 0%, hsl(47 30% 86%) 100%);
+    --gradient-olive: linear-gradient(135deg, hsl(101 31% 14%) 0%, hsl(101 35% 20%) 100%);
+    --gradient-energy: linear-gradient(135deg, hsl(60 68% 61%) 0%, hsl(31 88% 58%) 50%, hsl(349 63% 41%) 100%);
 
     /* Shadows */
-    --shadow-product: 0 30px 60px -15px hsl(100 35% 15% / 0.35);
-    --shadow-card: 0 8px 30px -8px hsl(100 25% 18% / 0.15);
-    --shadow-button: 0 6px 20px -4px hsl(100 35% 27% / 0.4);
-    --shadow-levitate: 0 40px 60px -20px hsl(100 40% 15% / 0.4);
+    --shadow-product: 0 30px 60px -15px hsl(101 35% 15% / 0.35);
+    --shadow-card: 0 8px 30px -8px hsl(101 25% 18% / 0.15);
+    --shadow-button: 0 6px 20px -4px hsl(101 31% 27% / 0.4);
+    --shadow-levitate: 0 40px 60px -20px hsl(101 40% 15% / 0.4);
 
-    /* Sidebar defaults */
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -93,25 +100,25 @@
   }
 
   .dark {
-    --background: 100 25% 8%;
-    --foreground: 48 30% 93%;
-    --card: 100 25% 12%;
-    --card-foreground: 48 30% 93%;
-    --popover: 100 25% 8%;
-    --popover-foreground: 48 30% 93%;
-    --primary: 60 67% 61%;
-    --primary-foreground: 100 35% 15%;
-    --secondary: 100 20% 15%;
-    --secondary-foreground: 48 30% 93%;
-    --muted: 100 20% 20%;
-    --muted-foreground: 48 20% 70%;
-    --accent: 350 64% 50%;
-    --accent-foreground: 48 30% 93%;
+    --background: 101 35% 10%;
+    --foreground: 47 39% 93%;
+    --card: 101 30% 14%;
+    --card-foreground: 47 39% 93%;
+    --popover: 101 35% 10%;
+    --popover-foreground: 47 39% 93%;
+    --primary: 60 68% 61%;
+    --primary-foreground: 101 35% 10%;
+    --secondary: 101 25% 18%;
+    --secondary-foreground: 47 39% 93%;
+    --muted: 101 20% 20%;
+    --muted-foreground: 47 20% 70%;
+    --accent: 349 63% 41%;
+    --accent-foreground: 47 39% 93%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 100 20% 20%;
-    --input: 100 20% 20%;
-    --ring: 60 67% 61%;
+    --border: 101 20% 22%;
+    --input: 101 20% 22%;
+    --ring: 60 68% 61%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -212,15 +219,23 @@
   }
 
   .glass-card {
-    @apply bg-white/90 backdrop-blur-2xl border border-white/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.2)];
+    /* Olivová karta na krémovém pozadí — vizuálně jasně oddělená */
+    background: rgba(244, 241, 230, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(61, 90, 47, 0.12);
+    box-shadow: 0 20px 50px -12px rgba(61, 90, 47, 0.15);
   }
 
   .glass-dark {
-    @apply bg-black/60 backdrop-blur-2xl border border-white/10 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)];
+    background: rgba(29, 47, 20, 0.85);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(223, 223, 87, 0.12);
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5);
   }
 
   .bg-admin-canvas {
-    background: radial-gradient(circle at top left, hsl(47 15% 88%), hsl(47 15% 80%));
+    /* Tmavý olivový gradient #3d5a2f → ještě tmavší */
+    background: radial-gradient(ellipse at top left, hsl(101 31% 18%) 0%, hsl(101 35% 10%) 60%, hsl(101 40% 7%) 100%);
   }
   
   .text-brand-primary {
@@ -228,7 +243,7 @@
   }
   
   .text-brand-muted {
-    color: hsl(var(--text-muted));
+    color: hsl(47 39% 70%);
   }
 
   .sidebar-premium {

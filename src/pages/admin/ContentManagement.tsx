@@ -29,7 +29,7 @@ const ContentManagement = () => {
 
     // Update local state when context content changes or language switches
     React.useEffect(() => {
-        setLocalContent(currentContent);
+        if (currentContent) setLocalContent(currentContent);
     }, [currentContent, editingLang]);
 
     const handleSave = async () => {
@@ -116,6 +116,18 @@ const ContentManagement = () => {
         toast.success("Náhled byl vygenerován");
         window.open(`/?preview=true&lang=${lang}`, '_blank');
     };
+
+    // Guard: čekáme na načtení obsahu z databáze
+    if (!localContent) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="flex items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-lime" />
+                    <span className="font-black uppercase tracking-[0.3em] text-sm text-olive-dark">Načítám obsah webu...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
