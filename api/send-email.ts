@@ -17,21 +17,20 @@ const COLORS = {
 
 // Hardened BASE_URL detection
 const getBaseUrl = (req: VercelRequest) => {
-    // 1. Priority: Explicit site URL from environment
-    if (process.env.VITE_SITE_URL && !process.env.VITE_SITE_URL.includes('localhost')) {
-        return process.env.VITE_SITE_URL.replace(/\/$/, "");
-    }
-
-    // 2. Secondary: Detected host from headers
+    // 1. Detected host from headers (This is most reliable for identifying current env)
     const protocol = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers['x-forwarded-host'] || req.headers.host;
     
-    // Only use detected host if it's a real domain (not localhost in production-like environment)
     if (host && !host.includes('localhost')) {
         return `${protocol}://${host}`.replace(/\/$/, "");
     }
 
-    // 3. Fallback: Always default to the known production domain if the above fail or return localhost
+    // 2. Explicit site URL from environment (Backup/Overrides)
+    if (process.env.VITE_SITE_URL && !process.env.VITE_SITE_URL.includes('localhost')) {
+        return process.env.VITE_SITE_URL.replace(/\/$/, "");
+    }
+
+    // 3. Fallback: Always default to the known production domain
     return 'https://drinkboostup.cz';
 };
 
