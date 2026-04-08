@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Layers, ArrowUpDown, Bell, MousePointer2 } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Copy, ArrowUpDown, Bell, MousePointer2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -42,14 +42,14 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-olive/20 hover:text-white transition-colors" 
+                            className="h-8 w-8 text-olive/50 hover:text-black hover:bg-olive/10 transition-colors" 
                             onClick={(e) => {
                                 e.stopPropagation();
                                 navigator.clipboard.writeText(order.id);
                                 toast({ title: "ID zkopírováno", duration: 1000 });
                             }}
                         >
-                            <Layers className="h-4 w-4" />
+                            <Copy className="h-4 w-4" />
                         </Button>
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/30">{new Date(order.date).toLocaleString('cs-CZ')}</p>
@@ -204,13 +204,13 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                         <Button 
                                             variant="ghost" 
                                             size="icon" 
-                                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all text-olive/20 hover:text-white hover:bg-transparent" 
+                                            className="h-8 w-8 opacity-40 group-hover:opacity-100 transition-all text-olive/80 hover:text-black hover:bg-olive/10" 
                                             onClick={() => {
                                                 navigator.clipboard.writeText(order.id);
                                                 toast({ title: "ID zkopírováno", duration: 1000 });
                                             }}
                                         >
-                                            <Layers className="h-4 w-4" />
+                                            <Copy className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </TableCell>
