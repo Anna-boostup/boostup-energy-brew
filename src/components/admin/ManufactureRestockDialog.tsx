@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useContent } from "@/context/ContentContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,16 +33,16 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
             await addMovement(material.id, finalAmount, type, note);
 
             toast({
-                title: content.admin.inventory.manufacture.dialogs.restock.success,
-                description: content.admin.inventory.manufacture.dialogs.restock.successDesc.replace('{name}', material.name),
+                title: content?.admin?.inventory?.manufacture?.dialogs?.restock?.success,
+                description: content?.admin?.inventory?.manufacture?.dialogs?.restock?.successDesc?.replace('{name}', material.name),
             });
             onClose();
             setAmount("");
             setNote("");
         } catch (error) {
             toast({
-                title: content.admin.inventory.manufacture.dialogs.restock.error,
-                description: content.admin.inventory.manufacture.dialogs.restock.errorDesc,
+                title: content?.admin?.inventory?.manufacture?.dialogs?.restock?.error,
+                description: content?.admin?.inventory?.manufacture?.dialogs?.restock?.errorDesc,
                 variant: "destructive",
             });
         } finally {
@@ -50,7 +51,7 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
     };
 
     if (!content) return null;
-    const t = content.admin.inventory.manufacture.dialogs.restock;
+    const t = content?.admin?.inventory?.manufacture?.dialogs?.restock || {};
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

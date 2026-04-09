@@ -29,7 +29,8 @@ import {
     Save,
     HelpCircle,
     Code,
-    RefreshCw
+    RefreshCw,
+    Eye
 } from "lucide-react";
 import { EMAIL_DEFAULTS, EMAIL_BASE_LAYOUT } from '@/data/emailDefaults';
 import { useAuth } from "@/context/AuthContext";

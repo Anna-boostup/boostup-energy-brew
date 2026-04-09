@@ -19,6 +19,7 @@ const AdminLayout = () => {
     const { user, profile, loading, signOut } = useAuth();
     const { materials } = useManufacture();
     const { content } = useContent();
+    if (!content) return null;
     const [unreadCount, setUnreadCount] = useState(0);
 
     // Fetch unread messages count
@@ -46,7 +47,7 @@ const AdminLayout = () => {
     }, [user, profile]);
 
     if (loading) {
-        return <div className="p-8">{content.admin.auth.verifying}</div>;
+        return <div className="p-8">{content?.admin?.auth?.verifying || "Verifying..."}</div>;
     }
 
     if (!user) {
@@ -56,9 +57,9 @@ const AdminLayout = () => {
     if (profile?.role !== 'admin') {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-                <p className="text-red-500 font-bold">{content.admin.auth.noPermission}</p>
+                <p className="text-red-500 font-bold">{content?.admin?.auth?.noPermission || "Access Denied"}</p>
                 <Link to="/">
-                    <Button>{content.admin.auth.backToHome}</Button>
+                    <Button>{content?.admin?.auth?.backToHome || "Back to Home"}</Button>
                 </Link>
             </div>
         );
@@ -77,22 +78,22 @@ const AdminLayout = () => {
     );
 
     const navItems = [
-        { icon: LayoutDashboard, label: content.admin.navigation.dashboard, path: "/admin" },
-        { icon: ShoppingCart, label: content.admin.navigation.orders, path: "/admin/orders" },
-        { icon: Package, label: content.admin.navigation.inventory, path: "/admin/inventory" },
+        { icon: LayoutDashboard, label: content?.admin?.navigation?.dashboard, path: "/admin" },
+        { icon: ShoppingCart, label: content?.admin?.navigation?.orders, path: "/admin/orders" },
+        { icon: Package, label: content?.admin?.navigation?.inventory, path: "/admin/inventory" },
         {
             icon: Factory,
-            label: content.admin.navigation.manufacture,
+            label: content?.admin?.navigation?.manufacture,
             path: "/admin/manufacture",
             hasAlert: hasLowStockAlert
         },
-        { icon: Mail, label: content.admin.navigation.messages, path: "/admin/messages" },
-        { icon: LayoutDashboard, label: content.admin.navigation.emails, path: "/admin/emails" },
-        { icon: FileText, label: content.admin.navigation.content, path: "/admin/content" },
-        { icon: TrendingUp, label: content.admin.navigation.pricing, path: "/admin/pricing" },
-        { icon: Sparkles, label: content.admin.navigation.promoCodes, path: "/admin/promo-codes" },
-        { icon: User, label: content.admin.navigation.profile, path: "/admin/profile" },
-        { icon: HelpCircle, label: content.admin.navigation.help, path: "/admin/help" },
+        { icon: Mail, label: content?.admin?.navigation?.messages, path: "/admin/messages" },
+        { icon: LayoutDashboard, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
+        { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
+        { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
+        { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
+        { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },
+        { icon: HelpCircle, label: content?.admin?.navigation?.help, path: "/admin/help" },
     ];
 
     return (
@@ -113,7 +114,7 @@ const AdminLayout = () => {
                             <Link to="/" className="flex items-center">
                                 <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-white">UP</span></span>
                             </Link>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">{content.admin.terminalLabel}</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
                         </div>
                         <ul className="p-4 space-y-2" role="list">
                             {navItems.map((item) => {
@@ -190,7 +191,7 @@ const AdminLayout = () => {
                     </Link>
                     <div className="flex items-center gap-2 mt-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">{content.admin.terminalLabel}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
                     </div>
                 </div>
 
@@ -266,7 +267,7 @@ const AdminLayout = () => {
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 mr-3" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content.admin.auth.logout}</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.logout || "Logout"}</span>
                     </Button>
                 </div>
             </aside>

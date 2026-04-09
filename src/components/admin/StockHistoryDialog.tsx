@@ -18,8 +18,8 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
     const { history } = useInventory();
 
     if (!content) return null;
-    const t = content.admin.inventory.stock.history;
-    const dateLocale = content.lang === 'en' ? enGB : cs;
+    const t = content?.admin?.inventory?.stock?.history || {};
+    const dateLocale = content?.lang === 'en' ? enGB : cs;
 
     const stockHistory = sku ? history.filter(h => h.sku === sku).sort((a, b) => 
         new Date(b.date).getTime() - new Date(a.date).getTime()

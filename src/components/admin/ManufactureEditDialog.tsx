@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useContent } from "@/context/ContentContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,14 +61,14 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
             }
 
             toast({
-                title: content.admin.inventory.manufacture.dialogs.edit.success,
-                description: content.admin.inventory.manufacture.dialogs.edit.successDesc.replace('{name}', name),
+                title: content?.admin?.inventory?.manufacture?.dialogs?.edit?.success,
+                description: content?.admin?.inventory?.manufacture?.dialogs?.edit?.successDesc?.replace('{name}', name),
             });
             onClose();
         } catch (error) {
             toast({
-                title: content.admin.inventory.manufacture.dialogs.edit.error,
-                description: content.admin.inventory.manufacture.dialogs.edit.errorDesc,
+                title: content?.admin?.inventory?.manufacture?.dialogs?.edit?.error,
+                description: content?.admin?.inventory?.manufacture?.dialogs?.edit?.errorDesc,
                 variant: "destructive",
             });
         } finally {
@@ -76,7 +77,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
     };
 
     if (!content) return null;
-    const t = content.admin.inventory.manufacture.dialogs.edit;
+    const t = content?.admin?.inventory?.manufacture?.dialogs?.edit || {};
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -152,10 +153,10 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose} disabled={loading}>
-                        {content.admin.orders.cancel}
+                        {content?.admin?.orders?.cancel || "Cancel"}
                     </Button>
                     <Button onClick={handleSave} disabled={loading || !name || !unit}>
-                        {loading ? t.savingBtn : t.saveBtn}
+                        {loading ? t?.savingBtn : t?.saveBtn}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -44,7 +44,7 @@ const StyledTextField: React.FC<StyledTextFieldProps> = ({
     };
 
     if (!content) return null;
-    const t = content.admin.editor;
+    const t = content?.admin?.editor || {};
 
     return (
         <div className="space-y-2">

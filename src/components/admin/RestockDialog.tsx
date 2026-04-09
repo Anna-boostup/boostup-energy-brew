@@ -36,7 +36,7 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
     }, [isOpen, initialMode]);
 
     if (!content) return null;
-    const t = content.admin.inventory.stock.restock;
+    const t = content?.admin?.inventory?.stock?.restock || {};
 
     // Derive the base flavor SKU (e.g. "lemon-3" → "lemon")
     const baseFlavor = sku ? sku.split('-')[0] : null;
@@ -149,7 +149,7 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
                 </Tabs>
 
                 <DialogFooter className="gap-2 sm:gap-0">
-                    <Button variant="outline" onClick={resetAndClose} className="flex-1">{content.admin.orders.cancel}</Button>
+                    <Button variant="outline" onClick={resetAndClose} className="flex-1">{content?.admin?.orders?.cancel || "Cancel"}</Button>
                     <Button 
                         onClick={handleMovement} 
                         className={`flex-1 font-bold ${mode === "in" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-red-600 hover:bg-red-700 text-white"}`}

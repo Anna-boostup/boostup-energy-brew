@@ -18,8 +18,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
     const bank = SITE_CONTENT.bankInfo;
 
     if (!content) return null;
-    const t = content.admin.invoices;
-    const lang = content.lang;
+    const t = content?.admin?.invoices || {};
+    const lang = content?.lang;
 
     // SPAD (Short Payment Descriptor) string generation
     const generateSpad = () => {

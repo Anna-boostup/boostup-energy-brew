@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useContent } from "@/context/ContentContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,12 +71,12 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
             setImageError(false);
 
             toast({
-                title: content.admin.inventory.products.edit.imageSuccess,
-                description: content.admin.inventory.products.edit.imageSuccessDesc,
+                title: content?.admin?.inventory?.products?.edit?.imageSuccess,
+                description: content?.admin?.inventory?.products?.edit?.imageSuccessDesc,
             });
         } catch (error: any) {
             toast({
-                title: content.admin.inventory.products.edit.imageError,
+                title: content?.admin?.inventory?.products?.edit?.imageError,
                 description: error.message,
                 variant: "destructive"
             });
@@ -103,13 +104,13 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         try {
             await updateProduct(product.sku, formData);
             toast({
-                title: content.admin.inventory.products.edit.success,
-                description: content.admin.inventory.products.edit.successDesc.replace('{sku}', product.sku),
+                title: content?.admin?.inventory?.products?.edit?.success,
+                description: content?.admin?.inventory?.products?.edit?.successDesc?.replace('{sku}', product.sku),
             });
             onClose();
         } catch (error: any) {
             toast({
-                title: content.admin.inventory.products.edit.error,
+                title: content?.admin?.inventory?.products?.edit?.error,
                 description: error.message,
                 variant: "destructive"
             });
@@ -119,7 +120,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
     };
 
     if (!product || !content) return null;
-    const t = content.admin.inventory.products.edit;
+    const t = content?.admin?.inventory?.products?.edit || {};
     const isMixProduct = product.sku.startsWith('mix-');
 
     return (
@@ -260,11 +261,11 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                     {/* Footer */}
                     <DialogFooter className="px-6 py-4 border-t bg-background rounded-b-xl">
                         <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-                            {content.admin.orders.cancel}
+                            {content?.admin?.orders?.cancel || "Cancel"}
                         </Button>
                         <Button type="submit" disabled={isLoading || isUploading}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {t.saveBtn}
+                            {t?.saveBtn}
                         </Button>
                     </DialogFooter>
                 </form>
