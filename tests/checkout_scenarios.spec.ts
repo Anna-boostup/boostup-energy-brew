@@ -28,7 +28,7 @@ const identities = [
 ];
 
 test.describe('Multi-Identity Checkout Scenarios', () => {
-  for const identity of identities) {
+  for (const identity of identities) {
     test(`Purchase flow as ${identity.name}`, async ({ page }, testInfo) => {
       const workerId = testInfo.workerIndex;
       
