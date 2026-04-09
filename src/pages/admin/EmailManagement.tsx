@@ -92,7 +92,7 @@ const EmailManagement = () => {
     const [currentContent, setCurrentContent] = useState('');
 
     // Campaign state
-    const [subscribers, setSubscribers] = useState<{email: string}[]>([]);
+    const [subscribers, setSubscribers] = useState<{id: string, email: string}[]>([]);
     const [campaignLoading, setCampaignLoading] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [sendProgress, setSendProgress] = useState(0);
@@ -274,7 +274,8 @@ const EmailManagement = () => {
             setCampaignLoading(true);
             const { data, error } = await supabase
                 .from('newsletter_subscriptions')
-                .select('email');
+                .select('id, email')
+                .eq('is_active', true);
             
             if (error) throw error;
             setSubscribers(data || []);
@@ -316,7 +317,8 @@ const EmailManagement = () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             to: sub.email,
-                            type: selectedCampaignTemplate
+                            type: selectedCampaignTemplate,
+                            subscription_id: sub.id
                         })
                     });
                     setSentCount(prev => prev + 1);

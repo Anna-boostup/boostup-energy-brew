@@ -153,6 +153,13 @@ export const EMAIL_BASE_LAYOUT = `
                                 &nbsp;&nbsp;&middot;&nbsp;&nbsp;
                                 <a href="mailto:info@drinkboostup.cz" style="color:#3a572c;text-decoration:none;font-weight:500">info@drinkboostup.cz</a>
                             </p>
+                            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                                <p style="margin:0; font-size:11px; color:#9ca3af; line-height:1.5;">
+                                    Tento e-mail byl odeslán na základě vašeho zájmu o BoostUp.<br>
+                                    Pokud si již nepřejete dostávat naše zprávy, můžete se 
+                                    <a href="{{unsubscribe_url}}" style="color:#9ca3af; text-decoration:underline;">odhlásit zde</a>.
+                                </p>
+                            </div>
                         </td>
                     </tr>
                 </table>

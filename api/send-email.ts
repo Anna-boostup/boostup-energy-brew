@@ -97,6 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         total,
         trackingNumber,
         message, // For contact auto-reply
+        subscription_id, // For unsubscribe link
     } = req.body;
 
     if (!to) {
@@ -396,6 +397,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             resetLink: req.body.resetLink,
             magicLink: req.body.magicLink,
             subscriberEmail: req.body.subscriberEmail,
+            unsubscribe_url: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
             BASE_URL
         };
 
