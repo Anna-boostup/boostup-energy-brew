@@ -55,7 +55,11 @@ jobs:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-        run: npm run test:e2e
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts
 
       - name: Upload Test Report
         if: failure()
@@ -111,7 +115,11 @@ jobs:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-        run: npx playwright test tests/smoke.spec.ts
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts
 
   Deploy-Production:
     runs-on: ubuntu-latest
@@ -150,7 +158,11 @@ jobs:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-        run: npx playwright test tests/smoke.spec.ts
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts
 
       - name: Upload Test Report
         if: failure()
