@@ -17,6 +17,7 @@ interface ProductEditDialogProps {
 }
 
 export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialogProps) => {
+    const { content } = useContent();
     const { updateProduct } = useInventory();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
@@ -69,12 +70,12 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
             setImageError(false);
 
             toast({
-                title: "Obrázek nahrán",
-                description: "Obrázek byl úspěšně nahrán.",
+                title: content.admin.inventory.products.edit.imageSuccess,
+                description: content.admin.inventory.products.edit.imageSuccessDesc,
             });
         } catch (error: any) {
             toast({
-                title: "Chyba při nahrávání",
+                title: content.admin.inventory.products.edit.imageError,
                 description: error.message,
                 variant: "destructive"
             });
@@ -102,13 +103,13 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         try {
             await updateProduct(product.sku, formData);
             toast({
-                title: "Produkt aktualizován",
-                description: `Změny u ${product.sku} byly úspěšně uloženy.`,
+                title: content.admin.inventory.products.edit.success,
+                description: content.admin.inventory.products.edit.successDesc.replace('{sku}', product.sku),
             });
             onClose();
         } catch (error: any) {
             toast({
-                title: "Chyba při ukládání",
+                title: content.admin.inventory.products.edit.error,
                 description: error.message,
                 variant: "destructive"
             });
@@ -117,8 +118,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         }
     };
 
-    if (!product) return null;
-
+    if (!product || !content) return null;
+    const t = content.admin.inventory.products.edit;
     const isMixProduct = product.sku.startsWith('mix-');
 
     return (
@@ -128,7 +129,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                 <DialogHeader className="px-6 pt-6 pb-4 border-b bg-background rounded-t-xl">
                     <DialogTitle className="text-lg font-bold flex items-center gap-2">
                         <span className="text-xs font-mono bg-background text-olive-dark/60 px-2 py-0.5 rounded">{product.sku}</span>
-                        Upravit produkt
+                        {t.title}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -138,7 +139,7 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
 
                         {/* Name */}
                         <div className="space-y-1.5">
-                            <Label htmlFor="name" className="text-sm font-semibold">Název produktu</Label>
+                            <Label htmlFor="name" className="text-sm font-semibold">{t.nameLabel}</Label>
                             <Input
                                 id="name"
                                 value={formData.name}
@@ -152,8 +153,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                             {/* Sale toggle */}
                             <div className="flex items-center justify-between p-3 rounded-lg border bg-amber-50 border-amber-200">
                                 <div>
-                                    <p className="text-sm font-semibold text-amber-800">Akce</p>
-                                    <p className="text-xs text-amber-600">Zobrazí štítek AKCE</p>
+                                    <p className="text-sm font-semibold text-amber-800">{t.saleLabel}</p>
+                                    <p className="text-xs text-amber-600">{t.saleDesc}</p>
                                 </div>
                                 <Switch
                                     id="is_on_sale"
@@ -165,8 +166,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                             {/* Active toggle */}
                             <div className="flex items-center justify-between p-3 rounded-lg border bg-olive-dark/5 border-olive/10">
                                 <div>
-                                    <p className="text-sm font-semibold text-olive-dark">Aktivní prodej</p>
-                                    <p className="text-xs text-olive/60">Zobrazit produkt na webu</p>
+                                    <p className="text-sm font-semibold text-olive-dark">{t.activeLabel}</p>
+                                    <p className="text-xs text-olive/60">{t.activeDesc}</p>
                                 </div>
                                 <Switch
                                     id="is_active"
@@ -179,12 +180,12 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
 
                         {/* Description */}
                         <div className="space-y-1.5">
-                            <Label htmlFor="description" className="text-sm font-semibold">Popis</Label>
+                            <Label htmlFor="description" className="text-sm font-semibold">{t.descLabel}</Label>
                             <Textarea
                                 id="description"
                                 value={formData.description}
                                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                placeholder="Např. Citrusová svěžest a energie..."
+                                placeholder={t.descPlaceholder}
                                 className="text-sm resize-none"
                                 rows={2}
                             />
@@ -192,12 +193,12 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
 
                         {/* Tooltip */}
                         <div className="space-y-1.5">
-                            <Label htmlFor="tooltip" className="text-sm font-semibold">Tooltip (text v bublině "i")</Label>
+                            <Label htmlFor="tooltip" className="text-sm font-semibold">{t.tooltipLabel}</Label>
                             <Textarea
                                 id="tooltip"
                                 value={formData.tooltip}
                                 onChange={(e) => setFormData(prev => ({ ...prev, tooltip: e.target.value }))}
-                                placeholder="Text, který se zobrazí v bublině..."
+                                placeholder={t.tooltipPlaceholder}
                                 className="text-sm resize-none"
                                 rows={2}
                             />
@@ -206,14 +207,14 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                         {/* Image upload — only for non-mix products */}
                         {!isMixProduct && (
                             <div className="space-y-2">
-                                <Label className="text-sm font-semibold">Fotka produktu</Label>
+                                <Label className="text-sm font-semibold">{t.imageLabel}</Label>
                                 <div className="flex gap-3 items-start">
                                     {/* Preview */}
                                     <div className="w-20 h-20 shrink-0 rounded-lg border bg-background flex items-center justify-center overflow-hidden">
                                         {formData.image_url && !imageError ? (
                                             <img
                                                 src={formData.image_url}
-                                                alt="Náhled produktu"
+                                                alt={t.imagePreview}
                                                 className="w-full h-full object-contain"
                                                 onError={() => setImageError(true)}
                                             />
@@ -232,15 +233,15 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                                         {isUploading ? (
                                             <div className="flex flex-col items-center gap-1.5 py-1">
                                                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                                                <p className="text-xs text-olive/50">Nahrávám...</p>
+                                                <p className="text-xs text-olive/50">{t.uploading}</p>
                                             </div>
                                         ) : (
                                             <div className="flex flex-col items-center gap-1.5 py-1">
                                                 <Upload className="h-5 w-5 text-olive/40" />
                                                 <p className="text-xs text-olive/50">
-                                                    <span className="text-primary font-medium">Klikněte</span> nebo přetáhněte soubor
+                                                    {t.uploadHint}
                                                 </p>
-                                                <p className="text-[10px] text-olive/40">PNG, JPG (ideálně čtvercový PNG)</p>
+                                                <p className="text-[10px] text-olive/40">{t.uploadFormat}</p>
                                             </div>
                                         )}
                                         <input
@@ -259,11 +260,11 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                     {/* Footer */}
                     <DialogFooter className="px-6 py-4 border-t bg-background rounded-b-xl">
                         <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-                            Zrušit
+                            {content.admin.orders.cancel}
                         </Button>
                         <Button type="submit" disabled={isLoading || isUploading}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Uložit změny
+                            {t.saveBtn}
                         </Button>
                     </DialogFooter>
                 </form>

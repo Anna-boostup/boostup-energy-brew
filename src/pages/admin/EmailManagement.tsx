@@ -17,10 +17,13 @@ import {
     CheckCircle,
     Clock,
     ArrowRight,
-    AlertCircle
+    AlertCircle,
+    Search
 } from "lucide-react";
 import { EMAIL_DEFAULTS, EMAIL_BASE_LAYOUT } from '@/data/emailDefaults';
 import { useAuth } from "@/context/AuthContext";
+import { useContent } from "@/context/ContentContext";
+import { Database, Send, Mail, Zap, Key, Info } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -54,19 +57,21 @@ interface EmailTemplate {
     updated_at: string;
 }
 
-const SYSTEM_TEMPLATES = [
-    { id: 'order_confirmation', label: 'Potvrzení objednávky', icon: Database },
-    { id: 'shipping', label: 'Odeslání zásilky', icon: Send },
-    { id: 'contact_auto_reply', label: 'Automatická odpověď kontaktu', icon: Mail },
-    { id: 'registration', label: 'Uvítání nového uživatele', icon: Zap },
-    { id: 'reset_password', label: 'Reset hesla', icon: Key },
-    { id: 'magic_link', label: 'Rychlé přihlášení', icon: Key },
-    { id: 'contact_inquiry', label: 'Nová zpráva (pro admina)', icon: Info },
-    { id: 'newsletter_signup', label: 'Přihlášení newsletteru', icon: Mail },
-];
-
 const EmailManagement = () => {
     const { user } = useAuth();
+    const { content } = useContent();
+
+    const SYSTEM_TEMPLATES = [
+        { id: 'order_confirmation', label: content.admin.emailManager.templates.order_confirmation, icon: Database },
+        { id: 'shipping', label: content.admin.emailManager.templates.shipping, icon: Send },
+        { id: 'contact_auto_reply', label: content.admin.emailManager.templates.contact_auto_reply, icon: Mail },
+        { id: 'registration', label: content.admin.emailManager.templates.registration, icon: Zap },
+        { id: 'reset_password', label: content.admin.emailManager.templates.reset_password, icon: Key },
+        { id: 'magic_link', label: content.admin.emailManager.templates.magic_link, icon: Key },
+        { id: 'contact_inquiry', label: content.admin.emailManager.templates.contact_inquiry, icon: Info },
+        { id: 'newsletter_signup', label: content.admin.emailManager.templates.newsletter_signup, icon: Mail },
+    ];
+
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
     const [templateTypes, setTemplateTypes] = useState(SYSTEM_TEMPLATES);
     const [selectedTypeId, setSelectedTypeId] = useState<string>(SYSTEM_TEMPLATES[0].id);
@@ -128,7 +133,7 @@ const EmailManagement = () => {
             }
         } catch (err: any) {
             console.error('Error fetching templates:', err);
-            toast.error("Nepodařilo se načíst šablony");
+            toast.error(content.admin.emailManager.errors.load);
         } finally {
             setLoading(false);
         }
@@ -151,25 +156,25 @@ const EmailManagement = () => {
 
     const handleResetToDefault = () => {
         if (!EMAIL_DEFAULTS[selectedTypeId]) {
-            toast.error("Pro tuto šablonu neexistuje výchozí systémový kód.");
+            toast.error(content.admin.emailManager.errors.defaultMissing);
             return;
         }
 
         setCurrentSubject(EMAIL_DEFAULTS[selectedTypeId].subject);
         setCurrentContent(EMAIL_DEFAULTS[selectedTypeId].content_html);
-        toast.success("Načten výchozí systémový kód.");
+        toast.success(content.admin.emailManager.success.defaultLoaded);
     };
 
     const handleCreateTemplate = async () => {
         if (!newId.trim()) {
-            toast.error("ID šablony je povinné");
+            toast.error(content.admin.emailManager.errors.idRequired);
             return;
         }
 
         const sanitizedId = newId.trim().toLowerCase().replace(/\s+/g, '_');
         
         if (templateTypes.some(t => t.id === sanitizedId)) {
-            toast.error("Šablona s tímto ID již existuje");
+            toast.error(content.admin.emailManager.errors.idExists);
             return;
         }
 
@@ -179,21 +184,21 @@ const EmailManagement = () => {
                 .from('email_templates')
                 .insert({
                     id: sanitizedId,
-                    subject: 'Nový e-mail',
-                    content_html: '<p>Tady začněte psát svůj e-mail...</p>',
+                    subject: content.admin.emailManager.editor.newSubject,
+                    content_html: content.admin.emailManager.editor.newContent,
                     updated_at: new Date().toISOString()
                 });
 
             if (error) throw error;
             
-            toast.success("Nová šablona byla vytvořena");
+            toast.success(content.admin.emailManager.success.created);
             setIsCreateOpen(false);
             setNewId('');
             setNewLabel('');
             await fetchTemplates();
             setSelectedTypeId(sanitizedId);
         } catch (err: any) {
-            toast.error("Chyba při vytváření: " + err.message);
+            toast.error(content.admin.emailManager.errors.create + ": " + err.message);
         } finally {
             setSaving(false);
         }
@@ -201,7 +206,7 @@ const EmailManagement = () => {
 
     const handleSave = async () => {
         if (!currentSubject.trim() || !currentContent.trim()) {
-            toast.error("Předmět i obsah musí být vyplněny");
+            toast.error(content.admin.emailManager.errors.fieldsRequired);
             return;
         }
 
@@ -218,11 +223,11 @@ const EmailManagement = () => {
 
             if (error) throw error;
             
-            toast.success("Šablona byla uložena");
+            toast.success(content.admin.emailManager.success.saved);
             fetchTemplates();
         } catch (err: any) {
             console.error('Error saving template:', err);
-            toast.error("Nepodařilo se uložit šablonu: " + err.message);
+            toast.error(content.admin.emailManager.errors.save + ": " + err.message);
         } finally {
             setSaving(false);
         }
@@ -239,24 +244,24 @@ const EmailManagement = () => {
                 body: JSON.stringify({
                     to: user.email,
                     type: selectedTypeId,
-                    customerName: 'Test Testovič',
-                    orderNumber: 'TEST-12345',
+                    customerName: content.admin.emailManager.testData.customerName,
+                    orderNumber: content.admin.emailManager.testData.orderNumber,
                     total: 999,
                     trackingNumber: 'Z123456789',
-                    message: 'Toto je testovací zpráva pro náhled šablony.',
+                    message: content.admin.emailManager.testData.message,
                     items: [
-                        { name: 'BoostUp Lemon Blast', price: 69, quantity: 3 },
-                        { name: 'BoostUp Mixed Pack', price: 290, quantity: 1 }
+                        { name: content.admin.emailManager.testData.itemName1, price: 69, quantity: 3 },
+                        { name: content.admin.emailManager.testData.itemName2, price: 290, quantity: 1 }
                     ]
                 })
             });
 
             if (!response.ok) throw new Error('Failed to send email');
             
-            toast.success(`Testovací email byl odeslán na ${user.email}`);
+            toast.success(content.admin.emailManager.success.testSent.replace('{email}', user.email));
         } catch (err) {
             console.error('Test email error:', err);
-            toast.error("Chyba při odesílání testovacího emailu");
+            toast.error(content.admin.emailManager.errors.test);
         } finally {
             setSendingTest(false);
         }
@@ -273,7 +278,7 @@ const EmailManagement = () => {
             setSubscribers(data || []);
         } catch (err: any) {
             console.error('Error fetching subscribers:', err);
-            toast.error("Nepodařilo se načíst odběratele");
+            toast.error(content.admin.emailManager.errors.subscribers);
         } finally {
             setCampaignLoading(false);
         }
@@ -281,16 +286,16 @@ const EmailManagement = () => {
 
     const handleSendCampaign = async () => {
         if (!selectedCampaignTemplate) {
-            toast.error("Vyberte prosím šablonu pro kampaně");
+            toast.error(content.admin.emailManager.campaign.selectTemplate);
             return;
         }
 
         if (subscribers.length === 0) {
-            toast.error("Nejsou žádní odběratelé");
+            toast.error(content.admin.emailManager.campaign.noSubscribers);
             return;
         }
 
-        const confirmSend = window.confirm(`Opravdu chcete odeslat tuto kampaň ${subscribers.length} lidem?`);
+        const confirmSend = window.confirm(content.admin.emailManager.campaign.confirm.replace('{count}', subscribers.length.toString()));
         if (!confirmSend) return;
 
         setIsSending(true);
@@ -328,7 +333,7 @@ const EmailManagement = () => {
         }
 
         setIsSending(false);
-        toast.success("Kampaň byla odeslána všem odběratelům!");
+        toast.success(content.admin.emailManager.success.campaignSent);
     };
 
     const selectedType = templateTypes.find(t => t.id === selectedTypeId);
@@ -355,7 +360,7 @@ const EmailManagement = () => {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-lime" />
-                <p className="text-olive-dark font-black uppercase tracking-[0.3em] text-xs">Načítám engine šablon...</p>
+                <p className="text-olive-dark font-black uppercase tracking-[0.3em] text-xs">{content.admin.emailManager.loading || content.admin.general.loading}</p>
             </div>
         );
     }
@@ -370,11 +375,11 @@ const EmailManagement = () => {
                 <TabsList className="bg-olive-dark/20 p-1 rounded-2xl mb-8 flex-wrap justify-start">
                     <TabsTrigger value="templates" className="rounded-xl px-8 py-3 data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase text-[10px] tracking-widest transition-all">
                         <Mail className="w-4 h-4 mr-2" />
-                        Správa Šablon
+                        {content.admin.emailManager.tabs.settings}
                     </TabsTrigger>
                     <TabsTrigger value="campaigns" className="rounded-xl px-8 py-3 data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase text-[10px] tracking-widest transition-all">
                         <Megaphone className="w-4 h-4 mr-2" />
-                        Marketingové Kampaně
+                        {content.admin.emailManager.campaign.title}
                     </TabsTrigger>
                 </TabsList>
 
@@ -382,10 +387,10 @@ const EmailManagement = () => {
                     {/* Header */}
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
                 <div className="space-y-3">
-                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">EMAIL CMS</h2>
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content.admin.emailManager.title}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[9px] sm:text-[10px] leading-none">Správa systémových emailů a šablon</p>
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[9px] sm:text-[10px] leading-none">{content.admin.emailManager.description}</p>
                     </div>
                 </div>
 
@@ -397,7 +402,7 @@ const EmailManagement = () => {
                         className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white transition-all gap-3"
                     >
                         {sendingTest ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-                        Odeslat test
+                        {content.admin.emailManager.form.test}
                     </Button>
                     <Button 
                         variant="ghost"
@@ -406,7 +411,7 @@ const EmailManagement = () => {
                         className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl text-olive-dark/40 font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-terracotta transition-all gap-3 group"
                     >
                         <RefreshCcw className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
-                        Reset
+                        {content.admin.contentManager.reset || "Reset"}
                     </Button>
                     <Button 
                         onClick={handleSave} 
@@ -414,7 +419,7 @@ const EmailManagement = () => {
                         className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
                     >
                         {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                        Uložit
+                        {content.admin.emailManager.form.save}
                     </Button>
                 </div>
             </div>
@@ -424,14 +429,14 @@ const EmailManagement = () => {
                 <div className="lg:col-span-4 space-y-6">
                     <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-olive-dark shadow-olive-dark/20">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">E-mailové Šablony</CardTitle>
-                            <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Vyberte šablonu k úpravě</CardDescription>
+                            <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">{content.admin.emailManager.templatesTitle}</CardTitle>
+                            <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{content.admin.emailManager.templatesDesc}</CardDescription>
                             
                             <div className="flex items-center justify-between gap-4 mt-6">
                                 <div className="relative flex-1">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                                     <Input 
-                                        placeholder="Hledat šablonu..." 
+                                        placeholder={content.admin.emailManager.editor.searchPlaceholder} 
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="bg-white/10 border-white/5 rounded-xl pl-12 h-12 text-sm text-white focus-visible:ring-lime placeholder:text-white/20"
@@ -445,18 +450,18 @@ const EmailManagement = () => {
                                     </DialogTrigger>
                                     <DialogContent className="bg-olive-dark border-white/10 text-white rounded-[2rem]">
                                         <DialogHeader>
-                                            <DialogTitle className="text-2xl font-black uppercase italic italic tracking-tight">Vytvořit nový e-mail</DialogTitle>
+                                            <DialogTitle className="text-2xl font-black uppercase italic italic tracking-tight">{content.admin.emailManager.dialogs.createTitle}</DialogTitle>
                                             <DialogDescription className="text-white/40 font-bold uppercase text-[10px] tracking-widest mt-2">
-                                                Definujte ID šablony pro systémové použití.
+                                                {content.admin.emailManager.dialogs.createDesc}
                                             </DialogDescription>
                                         </DialogHeader>
                                         <div className="space-y-6 py-4">
                                             <div className="space-y-2">
-                                                <Label className="text-[10px] font-black uppercase tracking-widest text-white/40">Unikátní ID (např. leto_akce)</Label>
+                                                <Label className="text-[10px] font-black uppercase tracking-widest text-white/40">{content.admin.emailManager.dialogs.idLabel}</Label>
                                                 <Input 
                                                     value={newId}
                                                     onChange={(e) => setNewId(e.target.value)}
-                                                    placeholder="bez mezer a diakritiky"
+                                                    placeholder={content.admin.emailManager.dialogs.idPlaceholder}
                                                     className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold"
                                                 />
                                             </div>
@@ -467,7 +472,7 @@ const EmailManagement = () => {
                                                 disabled={saving}
                                                 className="w-full h-14 bg-lime text-olive-dark font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-white transition-all shadow-xl shadow-lime/10"
                                             >
-                                                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Vytvořit šablonu"}
+                                                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : content.admin.emailManager.dialogs.createBtn}
                                             </Button>
                                         </DialogFooter>
                                     </DialogContent>
@@ -498,7 +503,7 @@ const EmailManagement = () => {
                                                     </div>
                                                     <div className="flex flex-col items-start">
                                                         <span className="text-xs font-black uppercase tracking-wider text-left">
-                                                            {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">VLASTNÍ</span>}
+                                                            {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">{content.admin.emailManager.editor.customBadge}</span>}
                                                             {type.label}
                                                         </span>
                                                         <span className={`text-[9px] font-bold tracking-widest opacity-30 uppercase`}>
@@ -520,13 +525,13 @@ const EmailManagement = () => {
                     <Card className="bg-olive-dark border-none shadow-2xl rounded-[2rem] p-8 space-y-4">
                         <div className="flex items-center gap-4 text-lime">
                             <HelpCircle className="w-5 h-5" />
-                            <h4 className="font-black uppercase text-xs tracking-widest">Jak to funguje?</h4>
+                            <h4 className="font-black uppercase text-xs tracking-widest">{content.admin.emailManager.editor.howItWorks}</h4>
                         </div>
                         <p className="text-white/50 text-[11px] leading-relaxed font-bold">
-                            Texty, které vložíte do databáze, přepíší výchozí nastavení v kódu. Pokud chcete obnovit původní text, stačí smazat obsah a uložit, nebo ponechat šablonu prázdnou.
+                            {content.admin.emailManager.editor.howItWorksDesc}
                         </p>
                         <div className="pt-4 border-t border-white/5 text-white/30 text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-between">
-                            <span>Status Engine:</span>
+                            <span>{content.admin.emailManager.editor.status}:</span>
                             <span className="text-lime flex items-center gap-1">
                                 <RefreshCw className="w-3 h-3 animate-spin" />
                                 LIVE
@@ -549,13 +554,13 @@ const EmailManagement = () => {
                                         <h3 className="text-xl sm:text-3xl font-black text-white font-display uppercase tracking-tight italic">
                                             {selectedType?.label}
                                         </h3>
-                                        <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Editace šablony</p>
+                                        <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.emailManager.description}</p>
                                     </div>
                                 </div>
                                 {!templates.some(t => t.id === selectedTypeId) && (
                                     <Badge className="bg-olive/20 text-lime border-none py-1.5 px-4 rounded-full font-black text-[8px] sm:text-[9px] tracking-widest hidden sm:flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                                        VÝCHOZÍ
+                                        {content.admin.emailManager.editor.default}
                                     </Badge>
                                 )}
                             </div>
@@ -569,20 +574,20 @@ const EmailManagement = () => {
                                         <FileCode className="w-4 h-4 sm:w-5 sm:h-5 text-lime" />
                                     </div>
                                     <div>
-                                        <h4 className="text-xs sm:text-sm font-black text-olive-dark uppercase tracking-wide">Struktura šablony</h4>
-                                        <p className="text-[9px] sm:text-[11px] text-olive-dark/40 font-bold">Vkládá se do fixního rámu s logem.</p>
+                                        <h4 className="text-xs sm:text-sm font-black text-olive-dark uppercase tracking-wide">{content.admin.emailManager.editor.structure}</h4>
+                                        <p className="text-[9px] sm:text-[11px] text-olive-dark/40 font-bold">{content.admin.emailManager.editor.structureDesc}</p>
                                     </div>
                                 </div>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="outline" size="sm" className="w-full sm:w-auto bg-white border-lime/30 text-olive-dark font-black text-[9px] uppercase tracking-widest px-4 rounded-xl hover:bg-lime hover:border-lime transition-all h-10">
-                                            Zobrazit HTML
+                                            {content.admin.emailManager.editor.viewHtml}
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col p-0 border-none bg-olive-dark">
                                         <div className="p-8 border-b border-white/5">
-                                            <h3 className="text-xl font-black text-white uppercase italic tracking-tight">Základní HTML struktura</h3>
-                                            <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold mt-1">Pouze pro čtení – tato část je fixní pro všechny e-maily.</p>
+                                            <h3 className="text-xl font-black text-white uppercase italic tracking-tight">{content.admin.emailManager.dialogs.htmlTitle}</h3>
+                                            <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold mt-1">{content.admin.emailManager.dialogs.htmlDesc}</p>
                                         </div>
                                         <ScrollArea className="flex-1 p-8">
                                             <pre className="text-[11px] text-white/70 font-mono leading-relaxed bg-black/30 p-8 rounded-2xl whitespace-pre-wrap">
@@ -602,16 +607,16 @@ const EmailManagement = () => {
                                                     window.open(url, '_blank');
                                                 }}
                                             >
-                                                Náhled celého e-mailu
+                                                {content.admin.emailManager.editor.previewFull}
                                             </Button>
                                             <Button 
                                                 className="bg-lime text-olive-dark font-black uppercase text-[10px] tracking-widest px-8 rounded-xl h-11 shadow-lg shadow-lime/20"
                                                 onClick={() => {
                                                     navigator.clipboard.writeText(EMAIL_BASE_LAYOUT);
-                                                    toast.success("Základní HTML kód byl zkopírován.");
+                                                    toast.success(content.admin.emailManager.editor.copySuccess);
                                                 }}
                                             >
-                                                Zkopírovat základ
+                                                {content.admin.emailManager.editor.copyBase}
                                             </Button>
                                         </div>
                                     </DialogContent>
@@ -620,7 +625,7 @@ const EmailManagement = () => {
                             {/* Subject Field */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">Předmět E-mailu</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content.admin.emailManager.editor.subject}</Label>
                                     <div className="flex items-center gap-2">
                                         <Badge variant="outline" className="text-olive/50 hover:bg-lime hover:text-olive-dark cursor-pointer text-[9px] border-olive/10 font-black transition-all" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {"{{orderNumber}}"}</Badge>
                                     </div>
@@ -628,7 +633,7 @@ const EmailManagement = () => {
                                 <Input 
                                     value={currentSubject}
                                     onChange={(e) => setCurrentSubject(e.target.value)}
-                                    placeholder="Zadejte předmět emailu..."
+                                    placeholder={content.admin.emailManager.editor.subjectPlaceholder}
                                     className="h-16 rounded-2xl bg-background border-transparent font-black text-olive-dark text-lg px-8 focus-visible:ring-lime shadow-sm"
                                 />
                             </div>
@@ -636,16 +641,16 @@ const EmailManagement = () => {
                             {/* HTML Content Editor */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">HTML Tělo E-mailu</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content.admin.emailManager.editor.content}</Label>
                                     <div className="flex items-center gap-4">
-                                        <span className="text-[9px] font-black text-olive/20 uppercase tracking-widest">Styl: BoostUp Premium Layout</span>
+                                        <span className="text-[9px] font-black text-olive/20 uppercase tracking-widest">{content.admin.emailManager.editor.styleLabel}</span>
                                     </div>
                                 </div>
                                 <div className="relative group">
                                     <Textarea 
                                         value={currentContent}
                                         onChange={(e) => setCurrentContent(e.target.value)}
-                                        placeholder="Zadejte HTML kód šablony..."
+                                        placeholder={content.admin.emailManager.editor.contentPlaceholder}
                                         className="min-h-[500px] rounded-[2rem] bg-background border-transparent font-mono text-sm text-olive-dark p-10 focus-visible:ring-lime shadow-sm leading-relaxed resize-none"
                                     />
                                 </div>
@@ -655,7 +660,7 @@ const EmailManagement = () => {
                             <div className="p-10 bg-olive-dark rounded-[2rem] space-y-6 shadow-xl">
                                 <div className="flex items-center gap-4">
                                     <Info className="w-5 h-5 text-lime" />
-                                    <h4 className="font-black uppercase text-xs tracking-widest text-white">Dostupné Značky (Placeholders)</h4>
+                                    <h4 className="font-black uppercase text-xs tracking-widest text-white">{content.admin.emailManager.editor.tagsTitle}</h4>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                     {getPlaceholdersForType(selectedTypeId).map((tag) => (
@@ -671,7 +676,7 @@ const EmailManagement = () => {
                                     ))}
                                 </div>
                                 <p className="text-[9px] font-bold text-white/20 italic tracking-wider">
-                                    Kliknutím na značku ji vložíte do editoru. Tyto značky budou při odesílání automaticky nahrazeny reálnými údaji.
+                                    {content.admin.emailManager.editor.tagsNote}
                                 </p>
                             </div>
                         </CardContent>
@@ -685,8 +690,8 @@ const EmailManagement = () => {
                                 <Eye className="w-7 h-7" />
                             </div>
                             <div>
-                                <h4 className="text-olive-dark font-black uppercase text-sm tracking-tight">Chcete vidět jak to vypadá?</h4>
-                                <p className="text-olive-dark/60 text-[10px] font-bold uppercase tracking-widest mt-1">Odešlete si testovací email s těmito změnami</p>
+                                <h4 className="text-olive-dark font-black uppercase text-sm tracking-tight">{content.admin.emailManager.editor.previewCtaTitle}</h4>
+                                <p className="text-olive-dark/60 text-[10px] font-bold uppercase tracking-widest mt-1">{content.admin.emailManager.editor.previewCtaDesc}</p>
                             </div>
                         </div>
                         <Button 
@@ -696,7 +701,7 @@ const EmailManagement = () => {
                             className="bg-olive-dark text-white rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest hover:bg-black hover:scale-105 transition-all w-full sm:w-auto relative z-10"
                         >
                             {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                            Odeslat náhled
+                            {content.admin.emailManager.form.test}
                         </Button>
                     </Card>
                 </div>
@@ -709,10 +714,10 @@ const EmailManagement = () => {
                     <div className="lg:col-span-12">
                         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 mb-12">
                             <div className="space-y-3">
-                                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">MARKETING</h2>
+                                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content.admin.emailManager.campaign.title}</h2>
                                 <div className="flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                                    <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">Hromadné rozesílání newsletterů</p>
+                                    <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">{content.admin.emailManager.campaign.description}</p>
                                 </div>
                             </div>
 
@@ -722,7 +727,7 @@ const EmailManagement = () => {
                                 className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
                             >
                                 {isSending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-                                Spustit kampaň
+                                {isSending ? content.admin.emailManager.campaign.sending : content.admin.emailManager.campaign.start}
                             </Button>
                         </div>
 
@@ -736,8 +741,8 @@ const EmailManagement = () => {
                                             <Users className="w-6 h-6 text-lime" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Cílové publikum</p>
-                                            <h4 className="text-xl font-black uppercase italic">Odběratelé Newsletteru</h4>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{content.admin.emailManager.campaign.target}</p>
+                                            <h4 className="text-xl font-black uppercase italic">{content.admin.emailManager.campaign.subscribers}</h4>
                                         </div>
                                     </div>
                                     
@@ -747,12 +752,12 @@ const EmailManagement = () => {
                                         ) : (
                                             <p className="text-6xl font-black tracking-tighter text-lime">{subscribers.length}</p>
                                         )}
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mt-2">Aktivních emailů</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mt-2">{content.admin.emailManager.campaign.activeEmails}</p>
                                     </div>
                                     
                                     <div className="flex items-center gap-2 text-[10px] font-bold text-lime/60 italic mt-6">
                                         <Info className="w-3 h-3" />
-                                        Načteno z newsletter_subscriptions
+                                        {content.admin.emailManager.campaign.sourceNote}
                                     </div>
                                 </div>
                             </Card>
@@ -761,7 +766,7 @@ const EmailManagement = () => {
                             <Card className="lg:col-span-2 border-none shadow-2xl rounded-[2.5rem] bg-white p-10">
                                 <div className="space-y-8">
                                     <div className="space-y-4">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/40">Krok 1: Vyberte šablonu</Label>
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/40">{content.admin.emailManager.campaign.selectTemplate}</Label>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             {templateTypes.map((type) => (
                                                 <button
@@ -790,13 +795,13 @@ const EmailManagement = () => {
                                             <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
                                                 <span className="flex items-center gap-2">
                                                     <Clock className="w-4 h-4 animate-spin text-lime" />
-                                                    Probíhá odesílání...
+                                                    {content.admin.emailManager.campaign.sending}
                                                 </span>
                                                 <span className="text-lime">{sendProgress}%</span>
                                             </div>
                                             <Progress value={sendProgress} className="h-3 bg-olive/5" />
                                             <p className="text-center text-[10px] font-bold text-olive-dark/40 uppercase tracking-widest">
-                                                Odesláno {sentCount} z {totalToSend} emailů
+                                                {content.admin.emailManager.campaign.progressStatus.replace('{sentCount}', sentCount.toString()).replace('{totalToSend}', totalToSend.toString())}
                                             </p>
                                         </div>
                                     )}
@@ -806,10 +811,9 @@ const EmailManagement = () => {
                                             <div className="p-6 bg-lime/10 border border-lime/30 rounded-2xl flex items-start gap-4">
                                                 <AlertCircle className="w-6 h-6 text-lime shrink-0 mt-1" />
                                                 <div className="space-y-1">
-                                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-olive-dark">PŘIPRAVENO K ODESLÁNÍ</h5>
+                                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-olive-dark">{content.admin.emailManager.campaign.completed.toUpperCase()}</h5>
                                                     <p className="text-[11px] font-bold text-olive-dark/60">
-                                                        Po stisknutí tlačítka bude šablona "<strong>{templateTypes.find(t => t.id === selectedCampaignTemplate)?.label}</strong>" odeslána všem {subscribers.length} odběratelům.
-                                                        Tuto akci nelze vzít zpět.
+                                                        {content.admin.emailManager.campaign.startDesc}
                                                     </p>
                                                 </div>
                                             </div>

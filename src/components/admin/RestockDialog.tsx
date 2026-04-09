@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInventory, SKU } from "@/context/InventoryContext";
 import { Plus, Minus, AlertCircle } from "lucide-react";
 import { FLAVORS, FlavorType } from "@/config/product-data";
+import { useContent } from "@/context/ContentContext";
 
 const BASE_FLAVOR_IDS = FLAVORS.map(f => f.id);
 const isValidFlavor = (value: string): value is FlavorType =>
@@ -21,6 +22,7 @@ interface RestockDialogProps {
 }
 
 export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode = "in" }: RestockDialogProps) => {
+    const { content } = useContent();
     const { addMovement } = useInventory();
     const [bottles, setBottles] = useState<string>("10");
     const [note, setNote] = useState("");
@@ -32,6 +34,9 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
             setMode(initialMode);
         }
     }, [isOpen, initialMode]);
+
+    if (!content) return null;
+    const t = content.admin.inventory.stock.restock;
 
     // Derive the base flavor SKU (e.g. "lemon-3" → "lemon")
     const baseFlavor = sku ? sku.split('-')[0] : null;
@@ -53,7 +58,7 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
 
         const finalQty = mode === "in" ? qty : -qty;
         const type = mode === "in" ? 'restock' : 'correction';
-        const defaultNote = mode === "in" ? "Naskladnění lahviček" : "Odkladnění / Korekce zásob";
+        const defaultNote = mode === "in" ? t.defaultNoteIn : t.defaultNoteOut;
 
         addMovement(baseFlavor as SKU, finalQty, type, note || defaultNote);
         resetAndClose();
@@ -72,25 +77,25 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         {mode === "in" ? <Plus className="w-5 h-5 text-green-600" /> : <Minus className="w-5 h-5 text-red-600" />}
-                        {mode === "in" ? "Naskladnit" : "Odkladnit"}: {flavorDisplayName}
+                        {mode === "in" ? t.titleIn : t.titleOut}: {flavorDisplayName}
                     </DialogTitle>
                 </DialogHeader>
 
                 <Tabs value={mode} onValueChange={(v) => setMode(v as any)} className="w-full">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="in" className="data-[state=active]:bg-green-50 data-[state=active]:text-green-700">Naskladnění</TabsTrigger>
-                        <TabsTrigger value="out" className="data-[state=active]:bg-red-50 data-[state=active]:text-red-700">Odkladnění</TabsTrigger>
+                        <TabsTrigger value="in" className="data-[state=active]:bg-green-50 data-[state=active]:text-green-700">{t.tabIn}</TabsTrigger>
+                        <TabsTrigger value="out" className="data-[state=active]:bg-red-50 data-[state=active]:text-red-700">{t.tabOut}</TabsTrigger>
                     </TabsList>
 
                     <div className="grid gap-4 py-6">
                         <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30 border border-border/50">
-                            <Label className="text-muted-foreground font-medium text-xs uppercase tracking-wider">Aktuální stav</Label>
-                            <div className="font-bold text-lg">{currentStock} ks</div>
+                            <Label className="text-muted-foreground font-medium text-xs uppercase tracking-wider">{t.currentLabel}</Label>
+                            <div className="font-bold text-lg">{currentStock} {t.unit}</div>
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="bottles" className="text-sm font-semibold">
-                                {mode === "in" ? "Počet lahviček k naskladnění" : "Počet lahviček k odkladnění"}
+                                {mode === "in" ? t.countLabelIn : t.countLabelOut}
                             </Label>
                             <Input
                                 id="bottles"
@@ -105,7 +110,7 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
                         {inputCount > 0 && (
                             <div className={`rounded-xl border p-4 space-y-2 transition-colors ${mode === 'in' ? 'bg-green-50/50 border-green-100' : 'bg-red-50/50 border-red-100'}`}>
                                 <p className="text-xs font-bold uppercase tracking-widest opacity-60">
-                                    Předpokládaný stav: <span className="text-base text-foreground ml-1">{newTotal} ks</span>
+                                    {t.nextTotal}: <span className="text-base text-foreground ml-1">{newTotal} {t.unit}</span>
                                 </p>
                                 <div className="grid grid-cols-3 gap-2 pt-1">
                                     <div className="bg-background/80 rounded-lg p-2 text-center border shadow-sm">
@@ -123,19 +128,19 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
                                 </div>
                                 {mode === 'out' && newTotal < 0 && (
                                     <p className="text-[10px] text-red-600 font-bold flex items-center gap-1">
-                                        <AlertCircle className="w-3 h-3" /> Pozor: Stav bude záporný!
+                                        <AlertCircle className="w-3 h-3" /> {t.negativeWarning}
                                     </p>
                                 )}
                             </div>
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="note" className="text-sm font-semibold">Poznámka</Label>
+                            <Label htmlFor="note" className="text-sm font-semibold">{t.noteLabel}</Label>
                             <Textarea
                                 id="note"
                                 value={note}
                                 onChange={(e) => setNote(e.target.value)}
-                                placeholder={mode === "in" ? "Např. Dodávka od výrobce #123" : "Např. Likvidace poškozených kusů"}
+                                placeholder={mode === "in" ? t.notePlaceholderIn : t.notePlaceholderOut}
                                 className="text-sm resize-none"
                                 rows={2}
                             />
@@ -144,13 +149,13 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
                 </Tabs>
 
                 <DialogFooter className="gap-2 sm:gap-0">
-                    <Button variant="outline" onClick={resetAndClose} className="flex-1">Zrušit</Button>
+                    <Button variant="outline" onClick={resetAndClose} className="flex-1">{content.admin.orders.cancel}</Button>
                     <Button 
                         onClick={handleMovement} 
                         className={`flex-1 font-bold ${mode === "in" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-red-600 hover:bg-red-700 text-white"}`}
                     >
                         {mode === "in" ? <Plus className="mr-2 h-4 w-4" /> : <Minus className="mr-2 h-4 w-4" />}
-                        {mode === "in" ? "Naskladnit" : "Odkladnit"}
+                        {mode === "in" ? t.titleIn : t.titleOut}
                     </Button>
                 </DialogFooter>
             </DialogContent>

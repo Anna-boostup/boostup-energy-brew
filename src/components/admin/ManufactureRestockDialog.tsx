@@ -14,6 +14,7 @@ interface Props {
 }
 
 export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) => {
+    const { content } = useContent();
     const { addMovement } = useManufacture();
     const { toast } = useToast();
     const [amount, setAmount] = useState<string>("");
@@ -31,16 +32,16 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
             await addMovement(material.id, finalAmount, type, note);
 
             toast({
-                title: "Úspěšně uloženo",
-                description: `Zásoba položky ${material.name} byla upravena.`,
+                title: content.admin.inventory.manufacture.dialogs.restock.success,
+                description: content.admin.inventory.manufacture.dialogs.restock.successDesc.replace('{name}', material.name),
             });
             onClose();
             setAmount("");
             setNote("");
         } catch (error) {
             toast({
-                title: "Chyba",
-                description: "Nepodařilo se aktualizovat stav skladu.",
+                title: content.admin.inventory.manufacture.dialogs.restock.error,
+                description: content.admin.inventory.manufacture.dialogs.restock.errorDesc,
                 variant: "destructive",
             });
         } finally {
@@ -48,31 +49,34 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
         }
     };
 
+    if (!content) return null;
+    const t = content.admin.inventory.manufacture.dialogs.restock;
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Upravit stav: {material?.name}</DialogTitle>
+                    <DialogTitle>{t.title.replace('{name}', material?.name || "")}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="amount">Množství ({material?.unit})</Label>
+                        <Label htmlFor="amount">{t.amountLabel.replace('{unit}', material?.unit || "")}</Label>
                         <Input
                             id="amount"
                             type="number"
                             step="0.01"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            placeholder="Zadejte množství..."
+                            placeholder={t.amountPlaceholder}
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="note">Poznámka (volitelné)</Label>
+                        <Label htmlFor="note">{t.noteLabel}</Label>
                         <Textarea
                             id="note"
                             value={note}
                             onChange={(e) => setNote(e.target.value)}
-                            placeholder="Důvod změny..."
+                            placeholder={t.notePlaceholder}
                         />
                     </div>
                 </div>
@@ -83,7 +87,7 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
                         disabled={loading || !amount}
                         className="flex-1"
                     >
-                        Spotřebovat (-)
+                        {t.consumeBtn}
                     </Button>
                     <Button
                         variant="default"
@@ -91,7 +95,7 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
                         onClick={() => handleAction('restock')}
                         disabled={loading || !amount}
                     >
-                        Naskladnit (+)
+                        {t.restockBtn}
                     </Button>
                 </DialogFooter>
             </DialogContent>

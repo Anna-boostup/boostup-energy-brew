@@ -65,13 +65,13 @@ const PricingStatistics = () => {
 
             await refreshContent();
             toast({
-                title: "Ceny aktualizovány",
-                description: "Nové ceny byly úspěšně uloženy a projeví se na webu.",
+                title: content.admin.pricing.card.success,
+                description: content.admin.pricing.card.successDesc,
             });
         } catch (error: any) {
             toast({
-                title: "Chyba při ukládání",
-                description: error.message,
+                title: content.admin.pricing.card.errorTitle,
+                description: content.admin.pricing.card.errorDesc,
                 variant: "destructive"
             });
         } finally {
@@ -91,7 +91,7 @@ const PricingStatistics = () => {
         last30Days.forEach(date => {
             dataMap.set(date, {
                 date,
-                label: format(parseISO(date), 'd. MMM', { locale: cs }),
+                label: format(parseISO(date), 'd. MMM', { locale: content.lang === 'cs' ? cs : undefined }),
                 orders: 0,
                 lemon: 0,
                 red: 0,
@@ -137,8 +137,8 @@ const PricingStatistics = () => {
         <div className="space-y-8 pb-12">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">Ceny a Statistiky</h1>
-                    <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">Správa prodejních cen a přehled výkonu e-shopu.</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content.admin.pricing.title}</h1>
+                    <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">{content.admin.pricing.description}</p>
                 </div>
             </div>
 
@@ -147,61 +147,61 @@ const PricingStatistics = () => {
                 <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
                     <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-8 px-6 sm:px-10">
                         <div className="flex items-center gap-3 mb-2">
-                            <CardTitle className="text-lg sm:text-xl text-white font-black">Cenotvorba</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl text-white font-black">{content.admin.pricing.card.title}</CardTitle>
                         </div>
-                        <CardDescription className="text-white/60 text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest">Globální nastavení cen pro všechna balení.</CardDescription>
+                        <CardDescription className="text-white/60 text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest">{content.admin.pricing.card.subtitle}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-6 sm:pt-8 sm:px-10 space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
-                                    <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 3 ks</Label>
-                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack3 / 3).toFixed(0)} Kč / kus</span>
+                                    <Label htmlFor="pack3" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">{content.admin.pricing.card.pack3}</Label>
+                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack3 / 3).toFixed(0)} {content.admin.pricing.card.perUnit}</span>
                                 </div>
                                 <div className="relative">
-                                    <Input 
-                                        id="pack3" 
-                                        type="number" 
-                                        value={prices.pack3} 
-                                        onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
-                                </div>
+                                        <Input 
+                                            id="pack3" 
+                                            type="number" 
+                                            value={prices.pack3} 
+                                            onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
+                                            className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        />
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">{content.admin.pricing.card.currency}</span>
+                                    </div>
                             </div>
 
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
-                                    <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 12 ks</Label>
-                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack12 / 12).toFixed(0)} Kč / kus</span>
+                                    <Label htmlFor="pack12" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">{content.admin.pricing.card.pack12}</Label>
+                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack12 / 12).toFixed(0)} {content.admin.pricing.card.perUnit}</span>
                                 </div>
                                 <div className="relative">
-                                    <Input 
-                                        id="pack12" 
-                                        type="number" 
-                                        value={prices.pack12} 
-                                        onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
-                                </div>
+                                        <Input 
+                                            id="pack12" 
+                                            type="number" 
+                                            value={prices.pack12} 
+                                            onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
+                                            className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        />
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">{content.admin.pricing.card.currency}</span>
+                                    </div>
                             </div>
 
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
-                                    <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">Balení 21 ks</Label>
-                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack21 / 21).toFixed(0)} Kč / kus</span>
+                                    <Label htmlFor="pack21" className="font-black text-[10px] uppercase tracking-[0.2em] text-olive-dark">{content.admin.pricing.card.pack21}</Label>
+                                    <span className="text-xs font-black text-white bg-olive-dark px-3 py-1 rounded-lg">{(prices.pack21 / 21).toFixed(0)} {content.admin.pricing.card.perUnit}</span>
                                 </div>
                                 <div className="relative">
-                                    <Input 
-                                        id="pack21" 
-                                        type="number" 
-                                        value={prices.pack21} 
-                                        onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
-                                        className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
-                                    />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">Kč</span>
-                                </div>
+                                        <Input 
+                                            id="pack21" 
+                                            type="number" 
+                                            value={prices.pack21} 
+                                            onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
+                                            className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                        />
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">{content.admin.pricing.card.currency}</span>
+                                    </div>
                             </div>
                         </div>
 
@@ -211,7 +211,7 @@ const PricingStatistics = () => {
                             disabled={isSaving}
                         >
                             {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                            Uložit nové ceny
+                            {content.admin.pricing.card.save}
                         </Button>
                     </CardContent>
                 </Card>
@@ -223,9 +223,9 @@ const PricingStatistics = () => {
                             <div className="p-2 bg-olive-dark rounded-xl">
                                 <ShoppingCart className="w-5 h-5 text-primary" />
                             </div>
-                            <CardTitle className="text-lg sm:text-xl font-black text-olive-dark">Objem objednávek</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl font-black text-olive-dark">{content.admin.pricing.stats.ordersTitle}</CardTitle>
                         </div>
-                        <CardDescription className="text-olive-dark text-[10px] sm:text-xs font-bold uppercase tracking-widest">Objednávky za posledních 30 dní.</CardDescription>
+                        <CardDescription className="text-olive-dark text-[10px] sm:text-xs font-bold uppercase tracking-widest">{content.admin.pricing.stats.ordersSubtitle}</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-8 sm:pt-10 px-4 sm:px-8 h-[300px] sm:h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -259,7 +259,7 @@ const PricingStatistics = () => {
                                 <Line 
                                     type="monotone" 
                                     dataKey="orders" 
-                                    name="Objednávky"
+                                    name={content.admin.pricing.stats.ordersLabel}
                                     stroke="#3d5a2f" 
                                     strokeWidth={6}
                                     dot={{ r: 0 }}
@@ -278,9 +278,9 @@ const PricingStatistics = () => {
                             <div className="p-2 bg-primary/20 rounded-xl">
                                 <TrendingUp className="w-5 h-5 text-primary" />
                             </div>
-                            <CardTitle className="text-lg sm:text-xl font-black text-white">Prodané jednotky</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl font-black text-white">{content.admin.pricing.stats.unitsTitle}</CardTitle>
                         </div>
-                        <CardDescription className="text-white/40 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Prodané lahvičky dle příchutí.</CardDescription>
+                        <CardDescription className="text-white/40 text-[10px] sm:text-xs font-bold uppercase tracking-widest">{content.admin.pricing.stats.unitsSubtitle}</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-10 sm:pt-12 px-2 sm:px-10 h-[350px] sm:h-[500px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -315,9 +315,9 @@ const PricingStatistics = () => {
                                     iconSize={8}
                                     wrapperStyle={{ paddingTop: '40px', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
                                 />
-                                <Bar dataKey="lemon" name="Lemon Blast" stackId="a" fill="#d4f45d" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="red" name="Red Rush" stackId="a" fill="#aa263e" radius={[0, 0, 0, 0]} />
-                                <Bar dataKey="silky" name="Silky Leaf" stackId="a" fill="#1b2e1b" radius={[10, 10, 0, 0]} />
+                                <Bar dataKey="lemon" name={content.admin.pricing.stats.flavors.lemon} stackId="a" fill="#d4f45d" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="red" name={content.admin.pricing.stats.flavors.red} stackId="a" fill="#aa263e" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="silky" name={content.admin.pricing.stats.flavors.silky} stackId="a" fill="#1b2e1b" radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>

@@ -17,7 +17,7 @@ import StyledTextField from '@/components/admin/StyledTextField';
 import type { TextStyle } from '@/lib/textStyles';
 
 const ContentManagement = () => {
-    const { contentCZ, contentEN, refreshContent } = useContent();
+    const { content, contentCZ, contentEN, refreshContent } = useContent();
     const [editingLang, setEditingLang] = useState<'cs' | 'en'>('cs');
     
     // Select the base content based on editing language
@@ -37,26 +37,25 @@ const ContentManagement = () => {
             setIsSaving(true);
             await updateSiteContent(localContent, editingLang === 'en' ? 'en' : 'main');
             await refreshContent();
-            toast.success(`Obsah (${editingLang === 'cs' ? 'CZ' : 'EN'}) byl úspěšně uložen`);
+            toast.success(`${content.admin.contentManager.saveSuccess}`);
         } catch (error: any) {
             console.error('Save error:', error);
-            toast.error('Chyba při ukládání obsahu: ' + (error.message || 'Neznámá chyba'));
+            toast.error(error.message || content.admin.general.error);
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleReset = async () => {
-        const langName = editingLang === 'cs' ? 'český' : 'anglický';
-        if (!window.confirm(`Opravdu chcete resetovat veškerý ${langName} obsah na výchozí hodnoty? Tato akce je nevratná.`)) return;
+        if (!window.confirm(content.admin.contentManager.resetConfirm)) return;
 
         try {
             setIsResetting(true);
             await resetToDefaultContent(editingLang === 'en' ? 'en' : 'main');
             await refreshContent();
-            toast.success(`Obsah (${editingLang === 'cs' ? 'CZ' : 'EN'}) byl resetován na výchozí hodnoty`);
+            toast.success(content.admin.contentManager.resetSuccess);
         } catch (error: any) {
-            toast.error('Chyba při resetování obsahu: ' + (error.message || 'Neznámá chyba'));
+            toast.error(error.message || content.admin.general.error);
         } finally {
             setIsResetting(false);
         }
@@ -111,19 +110,18 @@ const ContentManagement = () => {
 
     const handlePreview = () => {
         const lang = editingLang;
-        // Save the current draft correctly to localStorage
         localStorage.setItem(`boostup_preview_content_${lang}`, JSON.stringify(localContent));
-        toast.success("Náhled byl vygenerován");
+        toast.success(content.admin.contentManager.previewGenerated);
         window.open(`/?preview=true&lang=${lang}`, '_blank');
     };
 
-    // Guard: čekáme na načtení obsahu z databáze
+    // Guard: waiting for content to load from database
     if (!localContent) {
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="flex items-center gap-4">
                     <Loader2 className="w-8 h-8 animate-spin text-white" />
-                    <span className="font-black uppercase tracking-[0.3em] text-sm text-olive-dark">Načítám obsah webu...</span>
+                    <span className="font-black uppercase tracking-[0.3em] text-sm text-olive-dark">{content.admin.contentManager.loading}</span>
                 </div>
             </div>
         );
@@ -133,10 +131,10 @@ const ContentManagement = () => {
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
                 <div className="space-y-3">
-                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">CONTENT ENGINE</h2>
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content.admin.contentManager.title}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">Správa vizuálního a textového obsahu webu</p>
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content.admin.contentManager.description}</p>
                     </div>
                 </div>
 
@@ -150,7 +148,7 @@ const ContentManagement = () => {
                             }`}
                             onClick={() => setEditingLang('cs')}
                         >
-                            🇨🇿 ČEŠTINA
+                            {content.admin.contentManager.langCZ}
                         </Button>
                         <Button
                             variant="ghost"
@@ -160,22 +158,22 @@ const ContentManagement = () => {
                             }`}
                             onClick={() => setEditingLang('en')}
                         >
-                            🇬🇧 ENGLISH
+                            {content.admin.contentManager.langEN}
                         </Button>
                     </div>
 
                     <div className="flex flex-wrap gap-3 sm:gap-4 ml-auto w-full lg:w-auto">
                         <Button variant="outline" onClick={handlePreview} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white hover:border-olive transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
                             <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
-                            Náhled
+                            {content.admin.contentManager.preview}
                         </Button>
                         <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive/40 font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
                             {isResetting ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <RotateCcw className="h-4 sm:h-5 w-4 sm:w-5" />}
-                            Resetovat
+                            {content.admin.contentManager.reset}
                         </Button>
                         <Button onClick={handleSave} disabled={isSaving || isResetting} className="h-12 sm:h-14 px-8 sm:px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-2 sm:gap-3 w-full sm:w-auto">
                             {isSaving ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <Save className="h-4 sm:h-5 w-4 sm:w-5" />}
-                            Uložit změny
+                            {content.admin.contentManager.save}
                         </Button>
                     </div>
                 </div>
@@ -190,15 +188,7 @@ const ContentManagement = () => {
                                 value={tab} 
                                 className="px-8 py-5 rounded-[2rem] font-black uppercase text-[10px] tracking-[0.2em] text-olive/40 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none"
                             >
-                                {tab === 'hero' && 'Hero (Úvod)'}
-                                {tab === 'mission' && 'Mise'}
-                                {tab === 'ingredients' && 'Ingredience'}
-                                {tab === 'concept' && '3B Koncept'}
-                                {tab === 'cta' && 'CTA (Odběr)'}
-                                {tab === 'contact' && 'Kontakt'}
-                                {tab === 'flavors' && 'Příchutě'}
-                                {tab === 'footer' && 'Patička'}
-                                {tab === 'settings' && 'Nastavení'}
+                                {content.admin.contentManager.tabs[tab as keyof typeof content.admin.contentManager.tabs]}
                             </TabsTrigger>
                         ))}
                     </TabsList>
@@ -214,17 +204,17 @@ const ContentManagement = () => {
                                     <Type className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Hlavní Hero Sekce</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Vizuální středobod vaší webové prezentace</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.hero.title}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.hero.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
-                                <BadgeToggle badgeKey="hero.announcement" label="Viditelnost oznamovacího banneru" />
+                                <BadgeToggle badgeKey="hero.announcement" label={content.admin.contentManager.sections.hero.visibility} />
                             </div>
                             <StyledTextField
-                                label="Badge text (BRZY NA TRHU)"
+                                label={content.admin.contentManager.sections.hero.badge}
                                 value={localContent.hero.announcement}
                                 onChange={(v) => updateField(['hero', 'announcement'], v)}
                                 style={ts('hero.announcement')}
@@ -233,21 +223,21 @@ const ContentManagement = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <StyledTextField
-                                    label="Nadpis Část 1"
+                                    label={content.admin.contentManager.sections.hero.headlinePart1}
                                     value={localContent.hero.headline.part1}
                                     onChange={(v) => updateField(['hero', 'headline', 'part1'], v)}
                                     style={ts('hero.headline.part1')}
                                     onStyleChange={(s) => updateStyle('hero.headline.part1', s)}
                                 />
                                 <StyledTextField
-                                    label="Nadpis Zvýrazněný"
+                                    label={content.admin.contentManager.sections.hero.headlineGradient}
                                     value={localContent.hero.headline.gradient}
                                     onChange={(v) => updateField(['hero', 'headline', 'gradient'], v)}
                                     style={ts('hero.headline.gradient')}
                                     onStyleChange={(s) => updateStyle('hero.headline.gradient', s)}
                                 />
                                 <StyledTextField
-                                    label="Nadpis Část 2"
+                                    label={content.admin.contentManager.sections.hero.headlinePart2}
                                     value={localContent.hero.headline.part2}
                                     onChange={(v) => updateField(['hero', 'headline', 'part2'], v)}
                                     style={ts('hero.headline.part2')}
@@ -256,7 +246,7 @@ const ContentManagement = () => {
                             </div>
 
                             <StyledTextField
-                                label="Hlavní popis"
+                                label={content.admin.contentManager.sections.hero.description}
                                 value={localContent.hero.description}
                                 onChange={(v) => updateField(['hero', 'description'], v)}
                                 style={ts('hero.description')}
@@ -266,31 +256,31 @@ const ContentManagement = () => {
                             />
 
                             <StyledTextField
-                                label="Podnadpis pod tlačítky (Testimonial)"
+                                label={content.admin.contentManager.sections.hero.testimonial}
                                 value={localContent.hero.testimonial || ''}
                                 onChange={(v) => updateField(['hero', 'testimonial'], v)}
                                 style={ts('hero.testimonial')}
                                 onStyleChange={(s) => updateStyle('hero.testimonial', s)}
-                                placeholder="Zadejte text pod tlačítka..."
+                                placeholder={content.admin.contentManager.sections.hero.placeholder}
                             />
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-olive/5 pt-10">
                                 <StyledTextField
-                                    label="Tlačítko Primární"
+                                    label={content.admin.contentManager.sections.hero.ctaPrimary}
                                     value={localContent.hero.cta.primary}
                                     onChange={(v) => updateField(['hero', 'cta', 'primary'], v)}
                                     style={ts('hero.cta.primary')}
                                     onStyleChange={(s) => updateStyle('hero.cta.primary', s)}
                                 />
                                 <StyledTextField
-                                    label="Tlačítko Sekundární"
+                                    label={content.admin.contentManager.sections.hero.ctaSecondary}
                                     value={localContent.hero.cta.secondary}
-                                    onChange={(v) => updateField(['hero', 'cta', 'secondary'], v)}
+                                    onChange={(v) => updateField(['hero.cta.secondary'], v)}
                                     style={ts('hero.cta.secondary')}
                                     onStyleChange={(s) => updateStyle('hero.cta.secondary', s)}
                                 />
                                 <StyledTextField
-                                    label="Text Koncept 3B"
+                                    label={content.admin.contentManager.sections.hero.cta3b}
                                     value={localContent.hero.cta.concept3b}
                                     onChange={(v) => updateField(['hero', 'cta', 'concept3b'], v)}
                                     style={ts('hero.cta.concept3b')}
@@ -311,17 +301,17 @@ const ContentManagement = () => {
                                     <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Naše Mise</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Sekce vyprávějící příběh vaší značky</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.mission.title}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.mission.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
-                                <BadgeToggle badgeKey="mission.badge" label="Viditelnost štítku (O NÁS)" />
+                                <BadgeToggle badgeKey="mission.badge" label={content.admin.contentManager.sections.mission.visibility} />
                             </div>
                             <StyledTextField
-                                label="Text štítku"
+                                label={content.admin.contentManager.sections.mission.badge}
                                 value={localContent.mission.badge}
                                 onChange={(v) => updateField(['mission', 'badge'], v)}
                                 style={ts('mission.badge')}
@@ -329,14 +319,14 @@ const ContentManagement = () => {
                             />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <StyledTextField
-                                    label="Nadpis Část 1"
+                                    label={content.admin.contentManager.sections.mission.headlinePart1}
                                     value={localContent.mission.headline.part1}
                                     onChange={(v) => updateField(['mission', 'headline', 'part1'], v)}
                                     style={ts('mission.headline.part1')}
                                     onStyleChange={(s) => updateStyle('mission.headline.part1', s)}
                                 />
                                 <StyledTextField
-                                    label="Zvýrazněný text nadpisu"
+                                    label={content.admin.contentManager.sections.mission.highlight}
                                     value={localContent.mission.headline.highlight}
                                     onChange={(v) => updateField(['mission', 'headline', 'highlight'], v)}
                                     style={ts('mission.headline.highlight')}
@@ -344,11 +334,11 @@ const ContentManagement = () => {
                                 />
                             </div>
                             <div className="space-y-8 pt-8 border-t border-background">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40 pl-1">Obsahové odstavce příběhu</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40 pl-1">{content.admin.contentManager.sections.mission.paragraphs}</Label>
                                 {localContent.mission.paragraphs.map((text, i) => (
                                     <StyledTextField
                                         key={i}
-                                        label={`Blok příběhu ${i + 1}`}
+                                        label={`${content.admin.contentManager.sections.mission.paragraphLabel} ${i + 1}`}
                                         value={text}
                                         onChange={(v) => {
                                             const newParas = [...localContent.mission.paragraphs];
@@ -376,8 +366,8 @@ const ContentManagement = () => {
                                     <Beaker className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Vědecké Informace</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Detailní rozpis ingrediencí a jejich benefitů</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.ingredients.title}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.ingredients.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -402,7 +392,7 @@ const ContentManagement = () => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Název Kategorie</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.ingredients.category}</Label>
                                             <Input
                                                 value={details.title}
                                                 onChange={(e) => updateField(['ingredientDetails', key, 'title'], e.target.value)}
@@ -410,7 +400,7 @@ const ContentManagement = () => {
                                             />
                                         </div>
                                         <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Vedlejší titulek</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.ingredients.subtitle}</Label>
                                             <Input
                                                 value={details.subtitle}
                                                 onChange={(e) => updateField(['ingredientDetails', key, 'subtitle'], e.target.value)}
@@ -420,7 +410,7 @@ const ContentManagement = () => {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Shrnutí účinků</Label>
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.ingredients.summary}</Label>
                                         <Textarea
                                             rows={3}
                                             value={details.description}
@@ -431,7 +421,7 @@ const ContentManagement = () => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4">
                                         <div className="space-y-6">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1 block">Klíčové Výhody (seznam)</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1 block">{content.admin.contentManager.sections.ingredients.benefits}</Label>
                                             <div className="space-y-3">
                                                 {details.benefits.map((benefit: string, i: number) => (
                                                     <Input
@@ -448,7 +438,7 @@ const ContentManagement = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-6">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1 block">Specifické Látky (tagy)</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1 block">{content.admin.contentManager.sections.ingredients.tags}</Label>
                                             <div className="space-y-3">
                                                 {details.ingredients.map((ing: string, i: number) => (
                                                     <Input
@@ -481,15 +471,15 @@ const ContentManagement = () => {
                                     <BarChart className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">3B Koncept</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Hlavní pilíře výkonu a funkčnosti</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.concept.title}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.concept.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Hlavní Nadpis Sekce</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.concept.headline}</Label>
                                     <Input
                                         value={localContent.concept3b.headline}
                                         onChange={(e) => updateField(['concept3b', 'headline'], e.target.value)}
@@ -497,7 +487,7 @@ const ContentManagement = () => {
                                     />
                                 </div>
                                 <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Text Tlačítka (CTA)</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.concept.cta}</Label>
                                     <Input
                                         value={localContent.concept3b.cta}
                                         onChange={(e) => updateField(['concept3b', 'cta'], e.target.value)}
@@ -506,7 +496,7 @@ const ContentManagement = () => {
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Úvodní Popis Konceptu</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.concept.intro}</Label>
                                 <Textarea
                                     rows={3}
                                     value={localContent.concept3b.description}
@@ -518,7 +508,7 @@ const ContentManagement = () => {
                             <div className="space-y-10 pt-12 border-t border-background">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-1.5 h-6 bg-primary rounded-full" />
-                                    <h3 className="text-xl font-black font-display uppercase italic tracking-tight text-olive-dark">Jednotlivé Pilíře (Karty)</h3>
+                                    <h3 className="text-xl font-black font-display uppercase italic tracking-tight text-olive-dark">{content.admin.contentManager.sections.concept.pillars}</h3>
                                 </div>
                                 {localContent.concept3b.concepts.map((concept, i) => (
                                     <div key={concept.id} className="p-10 rounded-[2.5rem] bg-background border border-background space-y-10 group relative transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-olive/10/50">
@@ -527,7 +517,7 @@ const ContentManagement = () => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <StyledTextField
-                                                label="Klíčové slovo (Např. BRAIN)"
+                                                label={content.admin.contentManager.sections.concept.pillarTitlePlaceholder}
                                                 value={concept.title}
                                                 onChange={(v) => {
                                                     const newConcepts = [...localContent.concept3b.concepts];
@@ -538,7 +528,7 @@ const ContentManagement = () => {
                                                 onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.title`, s)}
                                             />
                                             <StyledTextField
-                                                label="Poutavý podnadpis"
+                                                label={content.admin.contentManager.sections.concept.pillarSubtitle}
                                                 value={concept.subtitle}
                                                 onChange={(v) => {
                                                     const newConcepts = [...localContent.concept3b.concepts];
@@ -551,7 +541,7 @@ const ContentManagement = () => {
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <StyledTextField
-                                                label="Výkonnostní statistika"
+                                                label={content.admin.contentManager.sections.concept.pillarStats}
                                                 value={concept.stats}
                                                 onChange={(v) => {
                                                     const newConcepts = [...localContent.concept3b.concepts];
@@ -562,7 +552,7 @@ const ContentManagement = () => {
                                                 onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.stats`, s)}
                                             />
                                             <StyledTextField
-                                                label="Text na kartě (Limitovaný prostor)"
+                                                label={content.admin.contentManager.sections.concept.pillarDesc}
                                                 value={concept.description}
                                                 onChange={(v) => {
                                                     const newConcepts = [...localContent.concept3b.concepts];
@@ -575,9 +565,9 @@ const ContentManagement = () => {
                                         </div>
                                         <div className="space-y-6 pt-6 border-t border-olive/10">
                                             <div className="flex items-center justify-between">
-                                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40 pl-1">Hlavní detailní text (Popup okno)</Label>
+                                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40 pl-1">{content.admin.contentManager.sections.concept.pillarFullDesc}</Label>
                                                 <div className="flex items-center gap-4">
-                                                    <p className="text-[10px] text-olive/20 font-bold uppercase tracking-widest hidden sm:block">TIP: Použijte <code>•</code> pro odrážku</p>
+                                                    <p className="text-[10px] text-olive/20 font-bold uppercase tracking-widest hidden sm:block">{content.admin.contentManager.sections.concept.pillarTip}</p>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
@@ -592,7 +582,7 @@ const ContentManagement = () => {
                                                             updateField(['concept3b', 'concepts'], newConcepts);
                                                         }}
                                                     >
-                                                        + PŘIDAT ODRÁŽKU
+                                                        {content.admin.contentManager.sections.concept.pillarAddBullet}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -627,18 +617,18 @@ const ContentManagement = () => {
                                 <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
                                     <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
-                                <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Akční Výzva (CTA)</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Sekce pro konverzi návštěvníků v odběratele</p>
+                                 <div>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.cta.title}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.cta.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="bg-background p-8 rounded-[2rem] border border-background">
-                                <BadgeToggle badgeKey="cta.badge" label="Viditelnost konverzního badge" />
+                                <BadgeToggle badgeKey="cta.badge" label={content.admin.contentManager.sections.cta.visibility} />
                             </div>
                             <StyledTextField
-                                label="Text badge"
+                                label={content.admin.contentManager.sections.cta.badge}
                                 value={localContent.cta.badge}
                                 onChange={(v) => updateField(['cta', 'badge'], v)}
                                 style={ts('cta.badge')}
@@ -646,14 +636,14 @@ const ContentManagement = () => {
                             />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <StyledTextField
-                                    label="Hlavní nadpis CTA"
+                                    label={content.admin.contentManager.sections.cta.headline}
                                     value={localContent.cta.headline.part1}
                                     onChange={(v) => updateField(['cta', 'headline', 'part1'], v)}
                                     style={ts('cta.headline.part1')}
                                     onStyleChange={(s) => updateStyle('cta.headline.part1', s)}
                                 />
                                 <StyledTextField
-                                    label="Zvýrazněný text (Gradient)"
+                                    label={content.admin.contentManager.sections.cta.highlight}
                                     value={localContent.cta.headline.highlight}
                                     onChange={(v) => updateField(['cta', 'headline', 'highlight'], v)}
                                     style={ts('cta.headline.highlight')}
@@ -661,7 +651,7 @@ const ContentManagement = () => {
                                 />
                             </div>
                             <StyledTextField
-                                label="Doplňující text pod nadpisem"
+                                label={content.admin.contentManager.sections.cta.description}
                                 value={localContent.cta.description}
                                 onChange={(v) => updateField(['cta', 'description'], v)}
                                 style={ts('cta.description')}
@@ -681,8 +671,8 @@ const ContentManagement = () => {
                                     <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Kontakt & Informace</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Kontaktní údaje a lokace firmy</p>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.contact.title}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.contact.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -691,17 +681,17 @@ const ContentManagement = () => {
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="w-1.5 h-6 bg-primary rounded-full" />
-                                        <h3 className="text-lg font-black font-display uppercase italic tracking-tight text-olive-dark">Základní Kontakt</h3>
+                                        <h3 className="text-lg font-black font-display uppercase italic tracking-tight text-olive-dark">{content.admin.contentManager.sections.contact.headline}</h3>
                                     </div>
                                     <StyledTextField
-                                        label="Emailová adresa"
+                                        label={content.admin.contentManager.sections.contact.email}
                                         value={localContent.contact.info.email}
                                         onChange={(v) => updateField(['contact', 'info', 'email'], v)}
                                         style={ts('contact.info.email')}
                                         onStyleChange={(s) => updateStyle('contact.info.email', s)}
                                     />
                                     <StyledTextField
-                                        label="Telefonní číslo"
+                                        label={content.admin.contentManager.sections.contact.phone}
                                         value={localContent.contact.info.phone}
                                         onChange={(v) => updateField(['contact', 'info', 'phone'], v)}
                                         style={ts('contact.info.phone')}
@@ -711,17 +701,17 @@ const ContentManagement = () => {
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-3 mb-2">
                                         <div className="w-1.5 h-6 bg-primary rounded-full" />
-                                        <h3 className="text-lg font-black font-display uppercase italic tracking-tight text-olive-dark">Adresa Sídla</h3>
+                                        <h3 className="text-lg font-black font-display uppercase italic tracking-tight text-olive-dark">{content.admin.contentManager.sections.contact.address}</h3>
                                     </div>
                                     <StyledTextField
-                                        label="Ulice a č.p."
+                                        label={content.admin.contentManager.sections.contact.street}
                                         value={localContent.contact.info.address.street}
                                         onChange={(v) => updateField(['contact', 'info', 'address', 'street'], v)}
                                         style={ts('contact.info.address.street')}
                                         onStyleChange={(s) => updateStyle('contact.info.address.street', s)}
                                     />
                                     <StyledTextField
-                                        label="Město a PSČ"
+                                        label={content.admin.contentManager.sections.contact.city}
                                         value={localContent.contact.info.address.city}
                                         onChange={(v) => updateField(['contact', 'info', 'address', 'city'], v)}
                                         style={ts('contact.info.address.city')}
@@ -742,9 +732,9 @@ const ContentManagement = () => {
                                 <div className="p-3 sm:p-4 bg-lime/10 rounded-2xl border border-lime/20">
                                     <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
-                                <div>
-                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">Katalog Příchutí</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">Správa parametrů a specifikací jednotlivých produktů</p>
+                                 <div>
+                                    <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.flavors.sectionTitle}</h3>
+                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.flavors.sectionDesc}</p>
                                 </div>
                             </div>
                         </div>
@@ -763,7 +753,7 @@ const ContentManagement = () => {
                                         </div>
                                         <div className="flex flex-wrap gap-4">
                                             <div className="px-4 py-2 bg-background rounded-xl border border-background flex items-center gap-3">
-                                                <span className="text-[10px] font-black text-olive/40 uppercase tracking-widest">Kód:</span>
+                                                <span className="text-[10px] font-black text-olive/40 uppercase tracking-widest">{content.admin.contentManager.sections.flavors.code}:</span>
                                                 <span className="text-xs font-black text-olive-dark uppercase">{key}</span>
                                             </div>
                                         </div>
@@ -771,7 +761,7 @@ const ContentManagement = () => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-6 border-t border-background">
                                         <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Název příchutě</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.flavors.name}</Label>
                                             <Input
                                                 value={flavor.name}
                                                 onChange={(e) => updateField(['flavors', key, 'name'], e.target.value)}
@@ -779,7 +769,7 @@ const ContentManagement = () => {
                                             />
                                         </div>
                                         <div className="space-y-3 lg:col-span-2">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Slogan (Tagline)</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.flavors.tagline}</Label>
                                             <Input
                                                 value={flavor.tagline}
                                                 onChange={(e) => updateField(['flavors', key, 'tagline'], e.target.value)}
@@ -787,13 +777,13 @@ const ContentManagement = () => {
                                             />
                                         </div>
                                         <div className="space-y-3 lg:col-span-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">Krátký popis (zobrazí se na stránce u výběru příchutě)</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content.admin.contentManager.sections.flavors.description}</Label>
                                             <Textarea
                                                 value={flavor.description || ''}
                                                 onChange={(e) => updateField(['flavors', key, 'description'], e.target.value)}
                                                 className="rounded-xl border-olive/10 font-medium text-olive-dark focus-visible:ring-primary shadow-sm resize-none"
                                                 rows={2}
-                                                placeholder="Krátký popis příchutě, který se zobrazí zákazníkům..."
+                                                placeholder={content.admin.contentManager.sections.flavors.descPlaceholder}
                                             />
                                         </div>
                                     </div>
@@ -801,22 +791,22 @@ const ContentManagement = () => {
                                     <div className="space-y-6 pt-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-1 h-4 bg-olive-dark rounded-full" />
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark">Detailní Specifikace & Nutriční Hodnoty</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark">{content.admin.contentManager.sections.flavors.specsTitle}</Label>
                                         </div>
                                         <Tabs defaultValue="nutrition" className="w-full">
                                             <TabsList className="bg-background/50 p-1 rounded-2xl h-auto flex flex-wrap gap-1 border border-olive/10/50 mb-6">
-                                                <TabsTrigger value="nutrition" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">Nutrice</TabsTrigger>
-                                                <TabsTrigger value="vitamins" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">Vitamíny</TabsTrigger>
-                                                <TabsTrigger value="active" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">Ostatní</TabsTrigger>
+                                                <TabsTrigger value="nutrition" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">{content.admin.contentManager.sections.flavors.tabs.nutrition}</TabsTrigger>
+                                                <TabsTrigger value="vitamins" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">{content.admin.contentManager.sections.flavors.tabs.vitamins}</TabsTrigger>
+                                                <TabsTrigger value="active" className="flex-1 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest data-[state=active]:bg-olive-dark data-[state=active]:text-white transition-all">{content.admin.contentManager.sections.flavors.tabs.active}</TabsTrigger>
                                             </TabsList>
 
                                             {/* Nutrition Editor */}
                                             <TabsContent value="nutrition" className="space-y-4 mt-0 bg-background p-6 rounded-2xl border border-background">
                                                 <div className="grid grid-cols-12 gap-4 px-2 mb-2">
-                                                    <Label className="col-span-4 text-[9px] font-black uppercase tracking-widest text-olive/20">Položka</Label>
-                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">na 100g</Label>
-                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">na porci</Label>
-                                                    <Label className="col-span-2 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">RHP (%)</Label>
+                                                    <Label className="col-span-4 text-[9px] font-black uppercase tracking-widest text-olive/20">{content.admin.contentManager.sections.flavors.table.item}</Label>
+                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">{content.admin.contentManager.sections.flavors.table.per100}</Label>
+                                                    <Label className="col-span-3 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">{content.admin.contentManager.sections.flavors.table.perPortion}</Label>
+                                                    <Label className="col-span-2 text-[9px] font-black uppercase tracking-widest text-olive/20 text-right">{content.admin.contentManager.sections.flavors.table.rhp}</Label>
                                                 </div>
                                                 {(flavor.fullSpecs?.nutrition || []).map((row: any, i: number) => (
                                                     <div key={i} className="grid grid-cols-12 gap-3 items-center group transition-all">
@@ -863,7 +853,7 @@ const ContentManagement = () => {
                                             {/* Vitamins Editor */}
                                             <TabsContent value="vitamins" className="space-y-4 mt-0 bg-background p-6 rounded-2xl border border-background">
                                                 <div className="flex justify-between items-center px-2 mb-4">
-                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark italic">Přehled Mikronutrientů</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark italic">{content.admin.contentManager.sections.flavors.micronutrients}</Label>
                                                     <Button 
                                                         variant="outline" size="sm" className="h-8 rounded-xl bg-olive-dark text-white font-black uppercase text-[9px] tracking-widest hover:bg-black gap-2"
                                                         onClick={() => {
@@ -872,7 +862,7 @@ const ContentManagement = () => {
                                                         }}
                                                     >
                                                         <Plus className="h-3 w-3" />
-                                                        Přidat řádek
+                                                        {content.admin.contentManager.sections.flavors.addRow}
                                                     </Button>
                                                 </div>
                                                 {(flavor.fullSpecs?.vitamins || []).map((row: any, i: number) => (
@@ -896,7 +886,7 @@ const ContentManagement = () => {
                                             {/* Active Substances Editor */}
                                             <TabsContent value="active" className="space-y-4 mt-0 bg-background p-6 rounded-2xl border border-background">
                                                 <div className="flex justify-between items-center px-2 mb-4">
-                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark italic">Ostatní účinné látky</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark italic">{content.admin.contentManager.sections.flavors.activeSubstances}</Label>
                                                     <Button 
                                                         variant="outline" size="sm" className="h-8 rounded-xl bg-olive-dark text-white font-black uppercase text-[9px] tracking-widest hover:bg-black gap-2"
                                                         onClick={() => {
@@ -905,7 +895,7 @@ const ContentManagement = () => {
                                                         }}
                                                     >
                                                         <Plus className="h-3 w-3" />
-                                                        Přidat řádek
+                                                        {content.admin.contentManager.sections.flavors.addRow}
                                                     </Button>
                                                 </div>
                                                 {(flavor.fullSpecs?.activeSubstances || []).map((row: any, i: number) => (
@@ -940,14 +930,14 @@ const ContentManagement = () => {
                                     <Layout className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Patička (Footer)</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Upravte copyright and značkový popis ve spodní části webu</p>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.footer.title}</h3>
+                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.footer.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-12 space-y-12">
                             <StyledTextField
-                                label="Krátký popis značky"
+                                label={content.admin.contentManager.sections.footer.brandLabel}
                                 value={localContent.footer.brand.description}
                                 onChange={(v) => updateField(['footer', 'brand', 'description'], v)}
                                 style={ts('footer.brand.description')}
@@ -956,7 +946,7 @@ const ContentManagement = () => {
                                 rows={3}
                             />
                             <StyledTextField
-                                label="Copyright text"
+                                label={content.admin.contentManager.sections.footer.copyrightLabel}
                                 value={localContent.footer.bottom.copyright}
                                 onChange={(v) => updateField(['footer', 'bottom', 'copyright'], v)}
                                 style={ts('footer.bottom.copyright')}
@@ -976,17 +966,17 @@ const ContentManagement = () => {
                                     <Settings2 className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Globální Nastavení</h3>
-                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Ovládání globálních funkcí a behaviorálních prvků</p>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">{content.admin.contentManager.sections.settings.title}</h3>
+                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">{content.admin.contentManager.sections.settings.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-12 space-y-12">
                             <div className="flex items-center justify-between p-8 rounded-[2rem] bg-white border border-background shadow-sm group transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
                                 <div className="space-y-1">
-                                    <Label className="text-lg font-black font-display uppercase tracking-tight text-olive-dark">Slevový Pop-up (Engagement)</Label>
+                                    <Label className="text-lg font-black font-display uppercase tracking-tight text-olive-dark">{content.admin.contentManager.sections.settings.discountPopup}</Label>
                                     <p className="text-sm text-olive/40 font-bold uppercase tracking-widest text-[10px]">
-                                        Zobrazit vyskakovací okno s nabídkou slevy při první návštěvě.
+                                        {content.admin.contentManager.sections.settings.discountPopupDesc}
                                     </p>
                                 </div>
                                 <Switch
@@ -1006,11 +996,9 @@ const ContentManagement = () => {
                     <AlertTriangle className="h-10 w-10 text-white" />
                 </div>
                 <div className="space-y-2">
-                    <h4 className="text-white font-black font-display uppercase tracking-wider text-2xl italic">Nezapomeňte uložít změny!</h4>
+                    <h4 className="text-white font-black font-display uppercase tracking-wider text-2xl italic">{content.admin.contentManager.notices.saveWarning.title}</h4>
                     <p className="text-brand-muted font-black text-[10px] uppercase tracking-[0.3em] leading-relaxed">
-                        Veškeré úpravy v tomto engine se stanou aktivními až po kliknutí na 
-                        <span className="text-white font-black mx-2 border-b-2 border-lime/30 italic">ULOŽIT ZMĚNY</span> 
-                        v horní části ovládacího panelu.
+                        {content.admin.contentManager.notices.saveWarning.description}
                     </p>
                 </div>
             </div>
@@ -1020,10 +1008,9 @@ const ContentManagement = () => {
                     <Info className="h-10 w-10 text-white" />
                 </div>
                 <div className="space-y-2">
-                    <h4 className="text-olive-dark font-black font-display uppercase tracking-widest text-base italic">Systémové Info</h4>
+                    <h4 className="text-olive-dark font-black font-display uppercase tracking-widest text-base italic">{content.admin.contentManager.notices.systemInfo.title}</h4>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed text-brand-muted">
-                        Změny se po uložení projeví okamžitě na celém webu. Pokud dojde k neočekávané chybě synchronizace, 
-                        systém se automaticky přepne do záložního režimu a načte statický obsah.
+                        {content.admin.contentManager.notices.systemInfo.description}
                     </p>
                 </div>
             </div>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { AVAILABLE_FONTS } from '@/hooks/useDynamicFonts';
 import type { TextStyle } from '@/lib/textStyles';
+import { Bold, Italic, RotateCcw } from 'lucide-react';
+import { useContent } from '@/context/ContentContext';
 
 interface StyledTextFieldProps {
     label: string;
@@ -19,7 +19,7 @@ interface StyledTextFieldProps {
     id?: string;
 }
 
-const FONT_SIZES = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '20', '22', '24', '28', '32', '36', '40', '48', '56', '64', '72'];
+const FONT_SIZES = ['10', '11', '12', '14', '16', '18', '20', '24', '32', '40', '48', '56', '64', '72'];
 
 const StyledTextField: React.FC<StyledTextFieldProps> = ({
     label,
@@ -32,48 +32,33 @@ const StyledTextField: React.FC<StyledTextFieldProps> = ({
     placeholder,
     id,
 }) => {
-    const isBold = style.fontWeight === '700' || style.fontWeight === 'bold' || style.fontWeight === '800' || style.fontWeight === '900';
+    const { content } = useContent();
+    const isBold = style.fontWeight === '700' || style.fontWeight === 'bold';
     const isItalic = style.fontStyle === 'italic';
 
     const previewStyle: React.CSSProperties = {
-        fontFamily: style.fontFamily ? `"${style.fontFamily}", system-ui, sans-serif` : undefined,
+        fontFamily: style.fontFamily ? `"${style.fontFamily}", sans-serif` : undefined,
         fontSize: style.fontSize ? `${style.fontSize}px` : undefined,
-        fontWeight: (style.fontWeight || undefined) as any,
-        fontStyle: (style.fontStyle || undefined) as any,
+        fontWeight: isBold ? '700' : '400',
+        fontStyle: isItalic ? 'italic' : 'normal',
     };
 
-    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-
-    React.useEffect(() => {
-        if (textareaRef.current) {
-            // Reset height to strictly recalculate
-            textareaRef.current.style.height = '0px';
-            const scrollHeight = textareaRef.current.scrollHeight;
-            // Set new height based on scroll height, adding a small buffer for borders/padding if necessary
-            textareaRef.current.style.height = `${scrollHeight}px`;
-        }
-    }, [value, previewStyle.fontSize, previewStyle.fontWeight, previewStyle.fontFamily, previewStyle.fontStyle]);
+    if (!content) return null;
+    const t = content.admin.editor;
 
     return (
-        <div className="grid gap-1">
-            <Label
-                htmlFor={id}
-                className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest px-0.5"
-            >
-                {label}
-            </Label>
-
-            {/* Single unified card: toolbar + input */}
-            <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-primary/25 focus-within:border-primary/40 transition-all duration-200">
-
-                {/* Toolbar strip */}
-                <div className="flex flex-wrap items-center gap-1.5 px-3 py-2 bg-muted/40 border-b border-border">
-                    {/* Font family */}
-                    <Select
-                        value={style.fontFamily || 'Poppins'}
+        <div className="space-y-2">
+            <Label htmlFor={id} className="text-[11px] font-black uppercase tracking-[0.3em] text-olive/40 pl-1">{label}</Label>
+            
+            <div className="rounded-2xl border border-olive/10 bg-white shadow-sm overflow-hidden focus-within:border-lime/40 focus-within:ring-4 focus-within:ring-lime/5 transition-all">
+                {/* Toolbar */}
+                <div className="flex flex-wrap items-center gap-2 px-3 py-2 bg-olive-dark/[0.02] border-b border-olive/5">
+                    {/* Font Family */}
+                    <Select 
+                        value={style.fontFamily || 'Poppins'} 
                         onValueChange={(v) => onStyleChange({ ...style, fontFamily: v })}
                     >
-                        <SelectTrigger className="h-7 text-xs w-36 border border-border/60 bg-background shadow-none rounded-md">
+                        <SelectTrigger className="h-8 w-[140px] text-[10px] font-bold uppercase tracking-widest border-olive/10 bg-white">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -85,77 +70,80 @@ const StyledTextField: React.FC<StyledTextFieldProps> = ({
                         </SelectContent>
                     </Select>
 
-                    {/* Font size */}
-                    <Select
-                        value={style.fontSize || ''}
-                        onValueChange={(v) => onStyleChange({ ...style, fontSize: v === '__clear__' ? '' : v })}
+                    {/* Font Size */}
+                    <Select 
+                        value={style.fontSize || ""} 
+                        onValueChange={(v) => onStyleChange({ ...style, fontSize: v === '__default' ? '' : v })}
                     >
-                        <SelectTrigger className="h-7 text-xs w-20 border border-border/60 bg-background shadow-none rounded-md">
-                            <SelectValue placeholder="Vel." />
+                        <SelectTrigger className="h-8 w-[80px] text-[10px] font-bold uppercase tracking-widest border-olive/10 bg-white">
+                            <SelectValue placeholder={t.sizePlaceholder} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="__clear__" className="text-xs text-muted-foreground">Výchozí</SelectItem>
+                            <SelectItem value="__default" className="text-xs italic text-muted-foreground">{t.defaultSize}</SelectItem>
                             {FONT_SIZES.map(s => (
                                 <SelectItem key={s} value={s} className="text-xs">{s}px</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
 
-                    {/* Separator */}
-                    <div className="h-5 w-px bg-border/60 mx-0.5" />
+                    <div className="w-px h-4 bg-olive/10 mx-1" />
 
-                    {/* Bold */}
                     <Button
                         type="button"
-                        variant={isBold ? 'default' : 'outline'}
+                        variant={isBold ? "default" : "outline"}
                         size="sm"
-                        className="h-7 w-7 p-0 text-sm font-black rounded-md"
-                        onClick={() => onStyleChange({ ...style, fontWeight: isBold ? '' : '700' })}
-                        title="Tučné"
+                        className={`h-8 w-8 p-0 rounded-lg ${isBold ? "bg-olive-dark text-white" : "border-olive/10 text-olive-dark/40"}`}
+                        onClick={() => onStyleChange({ ...style, fontWeight: isBold ? '400' : '700' })}
+                        title={t.bold}
                     >
-                        B
+                        <Bold className="h-3.5 w-3.5" />
                     </Button>
 
-                    {/* Italic */}
                     <Button
                         type="button"
-                        variant={isItalic ? 'default' : 'outline'}
+                        variant={isItalic ? "default" : "outline"}
                         size="sm"
-                        className="h-7 w-7 p-0 text-sm italic font-medium rounded-md"
+                        className={`h-8 w-8 p-0 rounded-lg ${isItalic ? "bg-olive-dark text-white" : "border-olive/10 text-olive-dark/40"}`}
                         onClick={() => onStyleChange({ ...style, fontStyle: isItalic ? 'normal' : 'italic' })}
-                        title="Kurzíva"
+                        title={t.italic}
                     >
-                        i
+                        <Italic className="h-3.5 w-3.5" />
                     </Button>
 
-                    {/* Reset – visible only when something changed */}
-                    {(style.fontSize || style.fontWeight || style.fontStyle === 'italic' || (style.fontFamily && style.fontFamily !== 'Poppins')) && (
-                        <>
-                            <div className="h-5 w-px bg-border/60 mx-0.5" />
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 px-2 text-[10px] text-muted-foreground rounded-md"
-                                onClick={() => onStyleChange({ fontFamily: 'Poppins', fontWeight: '', fontStyle: 'normal', fontSize: '' })}
-                                title="Resetovat styl"
-                            >
-                                Reset
-                            </Button>
-                        </>
-                    )}
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 ml-auto text-[10px] font-black uppercase tracking-widest text-olive-dark/30 hover:text-terracotta transition-colors"
+                        onClick={() => onStyleChange({ fontFamily: '', fontWeight: '', fontStyle: 'normal', fontSize: '' })}
+                        title={t.reset}
+                    >
+                        <RotateCcw className="h-3 w-3 mr-1.5" />
+                        {t.reset}
+                    </Button>
                 </div>
 
-                {/* Auto-sizing Text area */}
-                <textarea
-                    ref={textareaRef}
-                    id={id}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder={placeholder}
-                    style={{ ...previewStyle, minHeight: multiline ? '80px' : '40px' }}
-                    className="w-full p-3 resize-none border-0 rounded-none shadow-none focus-visible:outline-none bg-transparent overflow-hidden"
-                />
+                {multiline ? (
+                    <textarea
+                        id={id}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder={placeholder}
+                        rows={rows}
+                        style={previewStyle}
+                        className="w-full p-4 resize-none border-none focus:ring-0 text-sm font-medium leading-relaxed bg-transparent"
+                    />
+                ) : (
+                    <input
+                        id={id}
+                        type="text"
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder={placeholder}
+                        style={previewStyle}
+                        className="w-full px-4 h-14 border-none focus:ring-0 text-sm font-medium bg-transparent"
+                    />
+                )}
             </div>
         </div>
     );

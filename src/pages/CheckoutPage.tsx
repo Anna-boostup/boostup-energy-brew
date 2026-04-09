@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StripePaymentModal } from '@/components/stripe/StripePaymentModal';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import StripeExpressButtons from '@/components/stripe/StripeExpressButtons';
+// Stripe element removed for development deploy
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -539,17 +539,17 @@ const CheckoutPage = () => {
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
               <ArrowLeft size={16} />
             </div>
-            <span className="uppercase tracking-widest text-[10px] font-black">Zpět k výběru balení</span>
+            <span className="uppercase tracking-widest text-[10px] font-black">{content.checkout.backToCart}</span>
           </button>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h1 className="text-4xl md:text-7xl font-display font-black text-foreground leading-none tracking-tighter uppercase">
-                DOKONČENÍ <br />
-                <span className="text-gradient-energy italic pr-4 inline-block pb-2">NÁKUPU</span>
+                {content.checkout.titleLine1} <br />
+                <span className="text-gradient-energy italic pr-4 inline-block pb-2">{content.checkout.titleLine2}</span>
               </h1>
               <p className="text-foreground/60 mt-4 font-medium uppercase tracking-[0.2em] text-[10px]">
-                Zabezpečená pokladna / Doručení do 48 hodin
+                {content.checkout.subTitle}
               </p>
             </div>
             
@@ -562,8 +562,8 @@ const CheckoutPage = () => {
                 ))}
               </div>
               <div className="text-left">
-                <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">Krok 3 ze 3</div>
-                <div className="text-xs font-black uppercase tracking-tight">Potvrzení objednávky</div>
+                <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">{content.checkout.steps.stepCount}</div>
+                <div className="text-xs font-black uppercase tracking-tight">{content.checkout.steps.confirmation}</div>
               </div>
             </div>
           </div>
@@ -572,89 +572,7 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form Side */}
           <div className="lg:col-span-8 space-y-6">
-            {/* Express Checkout Section */}
-            {isSalesEnabled && cart.length > 0 && (
-              <div className="bg-primary/90 text-primary-foreground rounded-[2.5rem] p-8 sm:p-10 border-4 border-olive-dark/10 shadow-2xl mb-12 relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/5 opacity-20 animate-pulse" />
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/3" />
-                
-                <div className="relative z-10 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shadow-2xl shadow-black/20">
-                        <Zap className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl sm:text-4xl font-display font-black uppercase italic tracking-tighter leading-none">Expresní nákup</h2>
-                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] opacity-60 mt-1">Nativní platba / Bez vyplňování</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-xs sm:text-sm font-bold opacity-80 leading-relaxed max-w-xl">
-                    Nejrychlejší cesta k energii. Adresa a kontakt se načtou bezpečně z vašeho telefonu.
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                    <div className="w-full sm:w-auto min-w-[280px]">
-                      <Elements stripe={stripePromise}>
-                        <StripeExpressButtons />
-                      </Elements>
-                    </div>
-                    
-                    <div className="h-px sm:h-12 w-full sm:w-px bg-white/10" />
-                    
-                    <div className="flex-1 w-full sm:w-auto">
-                      {!appliedPromoCode ? (
-                        <div className="flex gap-2">
-                          <div className="relative flex-1">
-                            <input
-                              type="text"
-                              value={promoInput}
-                              onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
-                              placeholder="Máte slevový kód?"
-                              className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3.5 text-sm font-bold placeholder:text-white/40 focus:outline-none focus:border-white/50 tracking-wider transition-colors"
-                            />
-                            <Sparkles className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                          </div>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            disabled={!promoInput || isApplyingPromo}
-                            onClick={async () => {
-                              setIsApplyingPromo(true);
-                              await applyPromoCode(promoInput);
-                              setPromoInput("");
-                              setIsApplyingPromo(false);
-                            }}
-                            className="h-auto px-6 font-black text-[10px] uppercase tracking-widest bg-white text-black hover:bg-white/90 shadow-xl shadow-white/10"
-                          >
-                            {isApplyingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : 'POUŽÍT'}
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between bg-white/10 rounded-xl px-5 py-3.5 border border-white/20 backdrop-blur-md">
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                              <CheckCircle className="w-3.5 h-3.5 text-white" />
-                            </div>
-                            <span className="font-black text-xs tracking-[0.2em]">{appliedPromoCode.code}</span>
-                            <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-md">-{appliedPromoCode.discount}%</span>
-                          </div>
-                          <button 
-                            onClick={removePromoCode}
-                            type="button"
-                            className="text-[10px] font-black uppercase text-white/50 hover:text-white transition-colors underline underline-offset-4"
-                          >
-                            Odebrat
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Express Checkout Section removed for development deploy */}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               
@@ -666,9 +584,9 @@ const CheckoutPage = () => {
                   <div className="space-y-1">
                     <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight">
                       <Truck className="w-7 h-7 text-primary" />
-                      Doprava a kontakt
+                      {content.checkout.personalInfo.title}
                     </h2>
-                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest ml-10">Zadejte své doručovací údaje</p>
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest ml-10">{content.checkout.personalInfo.description}</p>
                   </div>
 
                   <div className="flex bg-secondary/30 p-1 rounded-2xl border border-border/50 backdrop-blur-sm">
@@ -677,14 +595,14 @@ const CheckoutPage = () => {
                       onClick={() => setFormData(prev => ({ ...prev, isCompany: false }))}
                       className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!formData.isCompany ? 'bg-primary text-black shadow-lg shadow-primary/20 scale-105' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                      Osobní
+                      {content.checkout.personalInfo.mode_personal}
                     </button>
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, isCompany: true }))}
                       className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.isCompany ? 'bg-primary text-black shadow-lg shadow-primary/20 scale-105' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                      Firemní
+                      {content.checkout.personalInfo.mode_company}
                     </button>
                   </div>
                 </div>
@@ -696,7 +614,7 @@ const CheckoutPage = () => {
                       className="md:col-span-2 grid md:grid-cols-3 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
                     >
                       <div className="md:col-span-2 space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">Název společnosti *</label>
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.companyName} *</label>
                         <input
                           name="companyName"
                           value={formData.companyName}
@@ -706,7 +624,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">IČO *</label>
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.ico} *</label>
                         <input
                           name="ico"
                           value={formData.ico}
@@ -719,7 +637,7 @@ const CheckoutPage = () => {
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Jméno *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.firstName} *</label>
                     <input
                       name="firstName"
                       autoComplete="given-name"
@@ -730,7 +648,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Příjmení *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.lastName} *</label>
                     <input
                       name="lastName"
                       autoComplete="family-name"
@@ -741,7 +659,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Emailová adresa *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.email} *</label>
                     <input
                       type="email"
                       name="email"
@@ -753,7 +671,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Telefonní kontakt *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.phone} *</label>
                     <input
                       type="tel"
                       name="phone"
@@ -777,7 +695,7 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
-                      <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Č. popisné *</label>
+                      <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
                       <input
                         name="houseNumber"
                         autoComplete="address-line2"
@@ -790,7 +708,7 @@ const CheckoutPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Město / Obec *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
                     <input
                       name="city"
                       autoComplete="address-level2"
@@ -801,7 +719,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Poštovní směrovací č. *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
                     <input
                       name="zip"
                       autoComplete="postal-code"
@@ -820,7 +738,7 @@ const CheckoutPage = () => {
                   <div className="space-y-1">
                     <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight">
                       <FileText className="w-7 h-7 text-primary" />
-                      Fakturační údaje
+                      {content.checkout.address.title}
                     </h2>
                   </div>
 
@@ -831,7 +749,7 @@ const CheckoutPage = () => {
                       onCheckedChange={(checked) => setBillingSameAsDelivery(checked as boolean)}
                       className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
-                    <Label htmlFor="billingSame" className="font-bold cursor-pointer text-xs uppercase tracking-widest">Stejné jako doručovací</Label>
+                    <Label htmlFor="billingSame" className="font-bold cursor-pointer text-xs uppercase tracking-widest">{content.checkout.address.billingSame}</Label>
                   </div>
                 </div>
 
@@ -840,7 +758,7 @@ const CheckoutPage = () => {
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="md:col-span-2 grid grid-cols-6 gap-6">
                         <div className="col-span-4 space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Ulice</label>
+                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.street}</label>
                           <input
                             name="billingStreet"
                             value={formData.billingStreet}
@@ -849,7 +767,7 @@ const CheckoutPage = () => {
                           />
                         </div>
                         <div className="col-span-2 space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Č.p. *</label>
+                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
                           <input
                             name="billingHouseNumber"
                             value={formData.billingHouseNumber}
@@ -859,7 +777,7 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Město *</label>
+                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
                         <input
                           name="billingCity"
                           value={formData.billingCity}
@@ -868,7 +786,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">PSČ *</label>
+                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
                         <input
                           name="billingZip"
                           value={formData.billingZip}
@@ -885,7 +803,7 @@ const CheckoutPage = () => {
               <div className="bg-card rounded-[2.5rem] p-6 sm:p-10 border border-border shadow-2xl">
                 <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight mb-8">
                   <MapPin className="w-7 h-7 text-primary" />
-                  Způsob dopravy
+                  {content.checkout.delivery.title}
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -929,7 +847,7 @@ const CheckoutPage = () => {
                             <MapPin size={24} />
                           </div>
                           <div>
-                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Vybrané výdejní místo</p>
+                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{content.checkout.delivery.pickupPoint}</p>
                             <p className="font-black text-lg leading-tight">{selectedPoint.name}</p>
                             <p className="text-xs font-bold text-muted-foreground">{selectedPoint.street}, {selectedPoint.city}</p>
                           </div>
@@ -940,7 +858,7 @@ const CheckoutPage = () => {
                           onClick={() => { setSelectedPoint(null); setFormData(prev => ({ ...prev, packetaPointId: '' })); }}
                           className="rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-destructive/10 hover:text-destructive"
                         >
-                          Změnit
+                          {content.checkout.delivery.changePoint}
                         </Button>
                       </div>
                     )}
@@ -952,23 +870,23 @@ const CheckoutPage = () => {
               <div className="bg-card rounded-[2.5rem] p-6 sm:p-10 border border-border shadow-2xl">
                 <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight mb-8">
                   <CreditCard className="w-7 h-7 text-primary" />
-                  Způsob platby
+                  {content.checkout.payment.title}
                 </h2>
 
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <PaymentMethodCard 
                       id="card" 
-                      name="Platební karta" 
-                      sub={hasSubscription ? 'Stripe Checkout' : 'GoPay brána'}
+                      name={content.checkout.payment.method_card} 
+                      sub={hasSubscription ? 'Stripe Checkout' : content.checkout.payment.method_card_sub}
                       active={formData.paymentMethod === 'card'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'card' }))}
                       icon={<CreditCard size={24} />}
                     />
                     <PaymentMethodCard 
                       id="transfer_manual" 
-                      name="Bankovní převod" 
-                      sub="Tradiční proforma"
+                      name={content.checkout.payment.method_bank} 
+                      sub={content.checkout.payment.method_bank_sub}
                       active={formData.paymentMethod === 'transfer_manual'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_manual' }))}
                       icon={<FileText size={24} />}
@@ -978,8 +896,8 @@ const CheckoutPage = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <PaymentMethodCard 
                       id="applepay" 
-                      name="Apple Pay" 
-                      sub="Rychlá platba"
+                      name={content.checkout.payment.method_apple} 
+                      sub={content.checkout.payment.method_apple_sub}
                       active={formData.paymentMethod === 'applepay'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'applepay' }))}
                       icon={
@@ -990,8 +908,8 @@ const CheckoutPage = () => {
                     />
                     <PaymentMethodCard 
                       id="googlepay" 
-                      name="Google Pay" 
-                      sub="Rychlá platba"
+                      name={content.checkout.payment.method_google} 
+                      sub={content.checkout.payment.method_google_sub}
                       active={formData.paymentMethod === 'googlepay'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'googlepay' }))}
                       icon={
@@ -1015,7 +933,7 @@ const CheckoutPage = () => {
               <div className="relative z-10">
                 <h2 className="text-2xl font-display font-black flex items-center gap-3 uppercase italic tracking-tight mb-8 border-b border-white/10 pb-4">
                   <ShoppingBag className="w-6 h-6 text-primary" />
-                  Shrnutí
+                  {content.checkout.summaryTitle}
                 </h2>
 
                 <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -1049,30 +967,30 @@ const CheckoutPage = () => {
 
                 <div className="pt-8 space-y-4 border-t border-white/10 mt-8">
                   <div className="flex justify-between items-center opacity-70">
-                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Mezisoučet</span>
+                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.subtotal}</span>
                     <span className="font-bold">{(cartTotal + discountAmount).toFixed(2)} Kč</span>
                   </div>
                   
                   {discountAmount > 0 && (
                     <div className="flex justify-between items-center text-primary">
-                      <span className="uppercase font-bold text-[10px] tracking-[0.2em]">Sleva celkem</span>
+                      <span className="uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.discount}</span>
                       <span className="font-bold italic">-{discountAmount.toFixed(2)} Kč</span>
                     </div>
                   )}
 
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Doprava</span>
+                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.shipping}</span>
                     {(() => {
                       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
                       const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
-                      return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? 'ZDARMA' : `${shippingCost} Kč`}</span>;
+                      return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? content.checkout.delivery.free : `${shippingCost} Kč`}</span>;
                     })()}
                   </div>
                   
                   <div className="pt-6 border-t-2 border-primary-foreground/20 flex justify-between items-end">
                     <div>
-                      <span className="font-display font-black text-4xl uppercase italic leading-none block">CELKEM</span>
-                      <span className="text-[10px] text-primary-foreground/60 font-bold uppercase tracking-[0.3em]">včetně DPH</span>
+                      <span className="font-display font-black text-4xl uppercase italic leading-none block">{content.checkout.summary.totalLabel}</span>
+                      <span className="text-[10px] text-primary-foreground/60 font-bold uppercase tracking-[0.3em]">{content.checkout.summary.totalWithVat}</span>
                     </div>
                     <div className="text-right flex items-baseline">
                       <span className="text-4xl font-display font-black leading-none">
@@ -1098,9 +1016,9 @@ const CheckoutPage = () => {
                     <Loader2 className="animate-spin w-8 h-8" />
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="leading-none">{!isSalesEnabled ? 'Prodej pozastaven' : 'Závazně objednat'}</span>
+                      <span className="leading-none">{!isSalesEnabled ? content.checkout.summary.salesDisabled : content.checkout.summary.submitButton}</span>
                       <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">
-                        {!isSalesEnabled ? 'DOČASNĚ NEDOSTUPNÉ' : 'SSL Zabezpečená platba'}
+                        {!isSalesEnabled ? content.checkout.summary.salesDisabledSub : content.checkout.summary.submitButtonSub}
                       </span>
                     </div>
                   )}
@@ -1110,8 +1028,8 @@ const CheckoutPage = () => {
                   <div className="mt-4 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
                     <div className="space-y-1 text-left">
-                      <p className="text-sm font-bold text-red-800">Prodej je dočasně pozastaven</p>
-                      <p className="text-xs text-red-700">Momentálně nepřijímáme nové objednávky. Zkuste to prosím později.</p>
+                      <p className="text-sm font-bold text-red-800">{content.checkout.summary.salesDisabledAlert}</p>
+                      <p className="text-xs text-red-700">{content.checkout.summary.salesDisabledDesc}</p>
                     </div>
                   </div>
                 )}
@@ -1127,7 +1045,7 @@ const CheckoutPage = () => {
             
             <div className="lg:col-span-12">
               <p className="mt-12 text-[10px] text-center text-muted-foreground leading-relaxed px-4 max-w-2xl mx-auto">
-                Odesláním objednávky souhlasíte s <a href="/obchodni-podminky" className="underline font-bold">obchodními podmínkami</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">zásadami soukromí</a>.
+                {content.checkout.summary.legalConsent} <a href="/obchodni-podminky" className="underline font-bold">{content.checkout.summary.terms}</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">{content.checkout.summary.privacy}</a>.
               </p>
             </div>
           </div>

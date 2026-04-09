@@ -43,7 +43,7 @@ const PromoCodes = () => {
             setCodes(data || []);
         } catch (error: any) {
             console.error("Error fetching promo codes:", error);
-            toast.error("Nepodařilo se načíst slevové kódy: " + error.message);
+            toast.error(`${content.promoCodes.notifications.loadError}: ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -69,14 +69,14 @@ const PromoCodes = () => {
 
             if (error) throw error;
 
-            toast.success("Slevový kód byl úspěšně vytvořen");
+            toast.success(content.promoCodes.notifications.createSuccess);
             setIsAddOpen(false);
             setNewCode("");
             setNewDiscount(10);
             fetchCodes();
         } catch (error: any) {
             console.error("Error adding promo code:", error);
-            toast.error("Nepodařilo se vytvořit kód: " + error.message);
+            toast.error(`${content.promoCodes.notifications.createError}: ${error.message}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -92,15 +92,15 @@ const PromoCodes = () => {
             if (error) throw error;
             
             setCodes(codes.map(c => c.id === id ? { ...c, is_active: !currentStatus } : c));
-            toast.success(`Kód byl ${!currentStatus ? 'aktivován' : 'deaktivován'}`);
+            toast.success(!currentStatus ? content.promoCodes.notifications.activated : content.promoCodes.notifications.deactivated);
         } catch (error: any) {
             console.error("Error toggling promo code:", error);
-            toast.error("Chyba při změně stavu kódu");
+            toast.error(content.promoCodes.notifications.toggleError);
         }
     };
 
     const deleteCode = async (id: string) => {
-        if (!window.confirm("Opravdu chcete tento slevový kód smazat?")) return;
+        if (!window.confirm(content.promoCodes.deleteConfirm)) return;
 
         try {
             const { error } = await supabase
@@ -111,10 +111,10 @@ const PromoCodes = () => {
             if (error) throw error;
 
             setCodes(codes.filter(c => c.id !== id));
-            toast.success("Kód byl smazán");
+            toast.success(content.promoCodes.notifications.deleteSuccess);
         } catch (error: any) {
             console.error("Error deleting promo code:", error);
-            toast.error("Chyba při mazání kódu");
+            toast.error(content.promoCodes.notifications.deleteError);
         }
     };
 
@@ -129,9 +129,9 @@ const PromoCodes = () => {
             await updateSiteContent(newCz, 'main');
             await updateSiteContent(newEn, 'en');
             await refreshContent();
-            toast.success(`Pop-up byl ${visible ? 'zapnut' : 'vypnut'}`);
+            toast.success(visible ? content.promoCodes.notifications.popupOn : content.promoCodes.notifications.popupOff);
         } catch (error) {
-            toast.error('Chyba při změně pop-upu');
+            toast.error(content.promoCodes.notifications.popupError);
         } finally {
             setPopupSaving(false);
         }
@@ -145,9 +145,9 @@ const PromoCodes = () => {
             await updateSiteContent(newCz, 'main');
             await updateSiteContent(newEn, 'en');
             await refreshContent();
-            toast.success(`Kód pop-upu změněn na ${newCodeValue}`);
+            toast.success(content.promoCodes.notifications.popupCodeChanged.replace('{code}', newCodeValue));
         } catch (error) {
-            toast.error('Chyba při změně kódu');
+            toast.error(content.promoCodes.notifications.popupCodeError);
         } finally {
             setPopupSaving(false);
         }
@@ -157,31 +157,31 @@ const PromoCodes = () => {
         <div className="space-y-10 pb-20 animate-in fade-in duration-700">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
                 <div>
-                    <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-olive-dark font-display uppercase italic">Slevové kódy</h2>
-                    <p className="text-brand-muted font-bold text-[10px] sm:text-sm uppercase tracking-widest mt-0.5 sm:mt-1">Marketingové kampaně a slevy.</p>
+                    <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-olive-dark font-display uppercase italic">{content.promoCodes.title}</h2>
+                    <p className="text-brand-muted font-bold text-[10px] sm:text-sm uppercase tracking-widest mt-0.5 sm:mt-1">{content.promoCodes.description}</p>
                 </div>
 
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
                         <Button className="h-12 sm:h-14 px-6 sm:px-8 bg-olive-dark hover:bg-black text-white gap-3 font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-olive-dark/10 transition-transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto">
                             <Plus className="h-5 w-5" />
-                            Vytvořit nový kód
+                            {content.promoCodes.createButton}
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="w-[95vw] sm:max-w-[450px] rounded-[2rem] sm:rounded-[2.5rem] border-none shadow-2xl p-6 sm:p-10">
                         <form onSubmit={handleAddCode} className="space-y-8">
                             <DialogHeader className="space-y-2">
-                                <DialogTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase italic tracking-tight">Nový slevový kód</DialogTitle>
+                                <DialogTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase italic tracking-tight">{content.promoCodes.newPromoTitle}</DialogTitle>
                                 <DialogDescription className="text-brand-muted font-bold text-[10px] uppercase tracking-widest">
-                                    Definujte parametry slevy pro košík.
+                                    {content.promoCodes.newPromoDesc}
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="space-y-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="code" className="text-[10px] font-black uppercase tracking-widest text-olive-dark pl-1">Unikátní kód (např. BOOST20)</Label>
+                                    <Label htmlFor="code" className="text-[10px] font-black uppercase tracking-widest text-olive-dark pl-1">{content.promoCodes.codeLabel}</Label>
                                     <Input
                                         id="code"
-                                        placeholder="Zadejte text..."
+                                        placeholder={content.promoCodes.codePlaceholder}
                                         value={newCode}
                                         onChange={(e) => setNewCode(e.target.value.toUpperCase())}
                                         className="h-14 rounded-2xl border-background font-mono font-black text-xl tracking-widest uppercase focus-visible:ring-primary focus-visible:border-primary shadow-sm"
@@ -189,7 +189,7 @@ const PromoCodes = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="discount" className="text-[10px] font-black uppercase tracking-widest text-olive-dark pl-1">Výše slevy v %</Label>
+                                    <Label htmlFor="discount" className="text-[10px] font-black uppercase tracking-widest text-olive-dark pl-1">{content.promoCodes.discountLabel}</Label>
                                     <div className="relative">
                                         <Input
                                             id="discount"
@@ -206,12 +206,12 @@ const PromoCodes = () => {
                                 </div>
                                 <div className="p-4 bg-cream/50rounded-2xl flex gap-3 text-[11px] font-bold text-olive-dark leading-relaxed border border-olive/8 italic">
                                     <AlertCircle className="w-4 h-4 shrink-0 text-olive-dark mt-0.5" />
-                                    <p>Sleva se nesčítá se slevou na předplatné (15%). Systém automaticky vybere výhodnější variantu.</p>
+                                    <p>{content.promoCodes.discountNote}</p>
                                 </div>
                             </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={isSubmitting} className="w-full h-14 bg-olive-dark hover:bg-black text-white font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-xl shadow-olive-dark/10">
-                                    {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Vytvořit kód"}
+                                    {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : content.promoCodes.createButton}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -225,10 +225,10 @@ const PromoCodes = () => {
                         <div className="p-2 bg-primary/20 rounded-xl">
                             <Gift className="w-6 h-6 text-primary" />
                         </div>
-                        <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">Uvítací Pop-up</CardTitle>
+                        <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">{content.promoCodes.popupSection.title}</CardTitle>
                     </div>
                     <CardDescription className="text-white/40 font-bold text-[10px] sm:text-sm uppercase tracking-widest leading-relaxed">
-                        Nabídka slevy pro nové návštěvníky.
+                        {content.promoCodes.popupSection.description}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-6 sm:py-12 sm:px-12 space-y-8 sm:space-y-10 group">
@@ -238,10 +238,10 @@ const PromoCodes = () => {
                         </div>
                         <div className="flex-1">
                             <Label className="cursor-pointer font-black text-lg sm:text-xl text-olive-dark mb-1 block font-display leading-tight uppercase italic" htmlFor="toggle-popup">
-                                Aktivovat pop-up
+                                {content.promoCodes.popupSection.toggleLabel}
                             </Label>
                             <p className="text-[10px] sm:text-sm font-bold text-brand-muted uppercase tracking-widest">
-                                Zobrazit nabídku slevy při vstupu.
+                                {content.promoCodes.popupSection.toggleDesc}
                             </p>
                         </div>
                         <Switch
@@ -256,7 +256,7 @@ const PromoCodes = () => {
                     {contentCZ?.hero?.showDiscountPopup && (
                         <div className="p-8 border-2 border-dashed border-primary/20 rounded-[2.5rem] bg-cream/50animate-in zoom-in-95 duration-500 flex flex-col sm:flex-row gap-8 items-center">
                             <div className="grid gap-3 w-full sm:max-w-md">
-                                <Label htmlFor="popup-discount-code" className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark pl-1">Vložený slevový kód</Label>
+                                <Label htmlFor="popup-discount-code" className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark pl-1">{content.promoCodes.popupSection.codeLabel}</Label>
                                 <div className="relative group/input">
                                     <Input
                                         id="popup-discount-code"
@@ -267,7 +267,7 @@ const PromoCodes = () => {
                                                 handleCodeChange(val);
                                             }
                                         }}
-                                        placeholder="NAPŘ. BOOST10"
+                                        placeholder={content.promoCodes.codePlaceholder}
                                         className="h-16 pl-6 rounded-2xl border-none bg-white font-mono font-black text-2xl tracking-[0.4em] text-olive-dark shadow-xl shadow-background/50 focus-visible:ring-primary"
                                         disabled={popupSaving}
                                     />
@@ -280,7 +280,7 @@ const PromoCodes = () => {
                             </div>
                             <div className="flex-1 text-center sm:text-left space-y-2">
                                 <p className="text-xs font-black text-olive-dark uppercase tracking-widest leading-relaxed">
-                                    Tento kód musí být vytvořen v seznamu níže jako <span className="text-primary-dark">AKTIVNÍ</span>, aby byl funkční v objednávce.
+                                    {content.promoCodes.popupSection.helpText}
                                 </p>
                             </div>
                         </div>
@@ -294,25 +294,25 @@ const PromoCodes = () => {
                         <div className="p-2 bg-olive-dark rounded-xl">
                             <Sparkles className="w-5 h-5 text-primary" />
                         </div>
-                        <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase tracking-tight italic">Kódy v systému</CardTitle>
+                        <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase tracking-tight italic">{content.promoCodes.listSection.title}</CardTitle>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center p-24 gap-6">
                             <Loader2 className="h-12 w-12 animate-spin text-olive-dark" />
-                            <p className="text-olive-dark font-black uppercase text-xs tracking-widest">Synchronizace s databází...</p>
+                            <p className="text-olive-dark font-black uppercase text-xs tracking-widest">{content.promoCodes.syncing}</p>
                         </div>
                     ) : codes.length > 0 ? (
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader className="bg-cream/50border-b border-olive/8">
                                     <TableRow className="hover:bg-transparent">
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">Referenční kód / Identita</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">Výše slevy</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">Stav kampaně</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">Vytvořeno</TableHead>
-                                        <TableHead className="text-right font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">Akce</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">{content.promoCodes.listSection.table.code}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content.promoCodes.listSection.table.discount}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content.promoCodes.listSection.table.status}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content.promoCodes.listSection.table.created}</TableHead>
+                                        <TableHead className="text-right font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">{content.promoCodes.listSection.table.actions}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -337,14 +337,14 @@ const PromoCodes = () => {
                                                     />
                                                     <div className="flex flex-col">
                                                         <span className={`text-[10px] font-black uppercase tracking-widest ${code.is_active ? 'text-primary' : 'text-olive-dark'}`}>
-                                                            {code.is_active ? 'AKTIVNÍ' : 'PAUZA'}
+                                                            {code.is_active ? content.promoCodes.statusActive : content.promoCodes.statusPaused}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <span className="text-[11px] font-black uppercase tracking-tighter text-olive-dark">
-                                                    {new Date(code.created_at).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                    {new Date(code.created_at).toLocaleDateString(content.lang, { day: 'numeric', month: 'short', year: 'numeric' })}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-right px-12">
@@ -368,8 +368,8 @@ const PromoCodes = () => {
                                 <Sparkles className="h-16 w-16" />
                             </div>
                             <div className="space-y-2">
-                                <p className="font-black text-2xl text-olive-dark font-display">Žádné slevové kódy</p>
-                                <p className="text-olive-dark font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">Vytvořte první slevovou kampaň pomocí tlačítka výše.</p>
+                                <p className="font-black text-2xl text-olive-dark font-display">{content.promoCodes.listSection.empty}</p>
+                                <p className="text-olive-dark font-bold uppercase text-[10px] tracking-widest max-w-xs mx-auto">{content.promoCodes.listSection.emptyDesc}</p>
                             </div>
                         </div>
                     )}

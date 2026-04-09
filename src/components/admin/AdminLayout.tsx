@@ -9,6 +9,7 @@ import logoGreen from "@/assets/logo-green.png";
 import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
 import { supabase } from "@/lib/supabase";
 import { Badge } from "@/components/ui/badge";
+import { useContent } from "@/context/ContentContext";
 
 
 const AdminLayout = () => {
@@ -17,6 +18,7 @@ const AdminLayout = () => {
 
     const { user, profile, loading, signOut } = useAuth();
     const { materials } = useManufacture();
+    const { content } = useContent();
     const [unreadCount, setUnreadCount] = useState(0);
 
     // Fetch unread messages count
@@ -44,7 +46,7 @@ const AdminLayout = () => {
     }, [user, profile]);
 
     if (loading) {
-        return <div className="p-8">Ověřuji oprávnění...</div>;
+        return <div className="p-8">{content.admin.auth.verifying}</div>;
     }
 
     if (!user) {
@@ -54,9 +56,9 @@ const AdminLayout = () => {
     if (profile?.role !== 'admin') {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-                <p className="text-red-500 font-bold">Nemáte oprávnění pro přístup do administrace.</p>
+                <p className="text-red-500 font-bold">{content.admin.auth.noPermission}</p>
                 <Link to="/">
-                    <Button>Zpět na hlavní stránku</Button>
+                    <Button>{content.admin.auth.backToHome}</Button>
                 </Link>
             </div>
         );
@@ -75,22 +77,22 @@ const AdminLayout = () => {
     );
 
     const navItems = [
-        { icon: LayoutDashboard, label: "Přehled", path: "/admin" },
-        { icon: ShoppingCart, label: "Objednávky", path: "/admin/orders" },
-        { icon: Package, label: "Sklad produktů", path: "/admin/inventory" },
+        { icon: LayoutDashboard, label: content.admin.navigation.dashboard, path: "/admin" },
+        { icon: ShoppingCart, label: content.admin.navigation.orders, path: "/admin/orders" },
+        { icon: Package, label: content.admin.navigation.inventory, path: "/admin/inventory" },
         {
             icon: Factory,
-            label: "Sklad výroby",
+            label: content.admin.navigation.manufacture,
             path: "/admin/manufacture",
             hasAlert: hasLowStockAlert
         },
-        { icon: Mail, label: "Zprávy", path: "/admin/messages" },
-        { icon: LayoutDashboard, label: "E-mailové šablony", path: "/admin/emails" },
-        { icon: FileText, label: "Obsah webu", path: "/admin/content" },
-        { icon: TrendingUp, label: "Ceny a Statistiky", path: "/admin/pricing" },
-        { icon: Sparkles, label: "Slevové kódy", path: "/admin/promo-codes" },
-        { icon: User, label: "Můj účet", path: "/admin/profile" },
-        { icon: HelpCircle, label: "Nápověda", path: "/admin/help" },
+        { icon: Mail, label: content.admin.navigation.messages, path: "/admin/messages" },
+        { icon: LayoutDashboard, label: content.admin.navigation.emails, path: "/admin/emails" },
+        { icon: FileText, label: content.admin.navigation.content, path: "/admin/content" },
+        { icon: TrendingUp, label: content.admin.navigation.pricing, path: "/admin/pricing" },
+        { icon: Sparkles, label: content.admin.navigation.promoCodes, path: "/admin/promo-codes" },
+        { icon: User, label: content.admin.navigation.profile, path: "/admin/profile" },
+        { icon: HelpCircle, label: content.admin.navigation.help, path: "/admin/help" },
     ];
 
     return (
@@ -111,7 +113,7 @@ const AdminLayout = () => {
                             <Link to="/" className="flex items-center">
                                 <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-white">UP</span></span>
                             </Link>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">Admin Engine</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">{content.admin.terminalLabel}</p>
                         </div>
                         <ul className="p-4 space-y-2" role="list">
                             {navItems.map((item) => {
@@ -154,7 +156,7 @@ const AdminLayout = () => {
                                                         </Badge>
                                                     )}
                                                     {item.hasAlert && (
-                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label="Upozornění: Nízký stav zásob" />
+                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label={content.admin.alerts.lowStock} />
                                                     )}
                                                 </div>
                                             </button>
@@ -171,7 +173,7 @@ const AdminLayout = () => {
                                 onClick={handleLogout}
                             >
                                 <LogOut className="w-4 h-4 mr-2" />
-                                Odhlásit se
+                                {content.admin.auth.logout}
                             </Button>
                         </div>
                     </SheetContent>
@@ -188,7 +190,7 @@ const AdminLayout = () => {
                     </Link>
                     <div className="flex items-center gap-2 mt-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Admin Terminal</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">{content.admin.terminalLabel}</p>
                     </div>
                 </div>
 
@@ -232,7 +234,7 @@ const AdminLayout = () => {
                                                     </Badge>
                                                 )}
                                                 {item.hasAlert && (
-                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label="Upozornění: Nízký stav zásob" />
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label={content.admin.alerts.lowStock} />
                                                 )}
                                             </div>
                                         </button>
@@ -264,7 +266,7 @@ const AdminLayout = () => {
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 mr-3" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Odhlásit se</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content.admin.auth.logout}</span>
                     </Button>
                 </div>
             </aside>
