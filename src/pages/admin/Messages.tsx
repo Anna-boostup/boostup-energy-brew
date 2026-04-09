@@ -76,8 +76,8 @@ const Messages = () => {
         } catch (error) {
             console.error('Error fetching messages:', error);
             toast({
-                title: content.admin.general.error,
-                description: content.admin.messages.error,
+                title: content?.admin?.general?.error || "Error",
+                description: content?.admin?.messages?.error || "Failed to fetch messages",
                 variant: "destructive"
             });
         } finally {
@@ -114,14 +114,14 @@ const Messages = () => {
             setMessages(prev => prev.filter(m => m.id !== id));
             if (selectedMessageId === id) setSelectedMessageId(null);
             toast({
-                title: content.admin.messages.actions.confirmDelete,
-                description: content.admin.messages.deleteDesc,
+                title: content?.admin?.messages?.actions?.confirmDelete || "Deleted",
+                description: content?.admin?.messages?.deleteDesc || "Message deleted successfully",
             });
         } catch (error) {
             console.error('Error deleting message:', error);
             toast({
-                title: content.admin.general.error,
-                description: content.admin.general.errorDesc,
+                title: content?.admin?.general?.error || "Error",
+                description: content?.admin?.general?.errorDesc || "Operation failed",
                 variant: "destructive"
             });
         }
@@ -152,8 +152,8 @@ const Messages = () => {
             if (!response.ok) throw new Error(result.error || 'Failed to send reply');
 
             toast({
-                title: content.admin.messages.success.replied,
-                description: content.admin.messages.success.repliedDesc,
+                title: content?.admin?.messages?.success?.replied || "Replied",
+                description: content?.admin?.messages?.success?.repliedDesc || "Reply sent successfully",
             });
 
             // Update local state
@@ -168,7 +168,7 @@ const Messages = () => {
         } catch (error: any) {
             console.error('Error sending reply:', error);
             toast({
-                title: content.admin.general.error,
+                title: content?.admin?.general?.error || "Error",
                 description: error.message,
                 variant: "destructive"
             });
@@ -188,8 +188,8 @@ const Messages = () => {
     };
 
     const filteredMessages = messages.filter(m => 
-        m.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.from_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (m.subject || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (m.from_email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (m.from_name && m.from_name.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
@@ -204,12 +204,12 @@ const Messages = () => {
                         <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content.admin.messages.title}</h1>
-                        <p className="text-[10px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-0.5 sm:mt-1">{content.admin.messages.description}</p>
+                        <h1 className="text-2xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content?.admin?.messages?.title || "Messages"}</h1>
+                        <p className="text-[10px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-0.5 sm:mt-1">{content?.admin?.messages?.description}</p>
                     </div>
                     {unreadCount > 0 && (
                         <Badge className="bg-primary text-olive-dark font-black ml-4 px-4 py-1.5 rounded-xl text-[10px] tracking-widest border-none">
-                            {unreadCount} {content.admin.messages.status.unread.toUpperCase()}
+                            {unreadCount} {(content?.admin?.messages?.status?.unread || "UNREAD").toUpperCase()}
                         </Badge>
                     )}
                 </div>
@@ -217,7 +217,7 @@ const Messages = () => {
                     <div className="relative w-full md:w-72 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/40 transition-colors group-focus-within:text-primary" />
                         <Input 
-                            placeholder={content.admin.messages.search} 
+                            placeholder={content?.admin?.messages?.search || "Search..."} 
                             className="h-12 pl-11 bg-white/80 border-none rounded-2xl shadow-sm focus-visible:ring-primary focus-visible:ring-offset-0 text-sm font-bold"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -239,8 +239,8 @@ const Messages = () => {
                                     <div className="p-8 bg-white rounded-[2.5rem] shadow-inner mb-6">
                                         <Inbox className="w-10 h-10 text-background" />
                                     </div>
-                                    <p className="text-olive-dark font-black text-lg font-display uppercase tracking-tight"> {content.admin.messages.empty}</p>
-                                    <p className="text-[10px] text-olive/40 font-bold uppercase tracking-widest mt-2">{content.admin.messages.allResolved}</p>
+                                    <p className="text-olive-dark font-black text-lg font-display uppercase tracking-tight"> {content?.admin?.messages?.empty || "Inbox empty"}</p>
+                                    <p className="text-[10px] text-olive/40 font-bold uppercase tracking-widest mt-2">{content?.admin?.messages?.allResolved}</p>
                                 </div>
                             ) : (
                                 filteredMessages.map((msg) => (
@@ -276,7 +276,7 @@ const Messages = () => {
                                             {msg.replied_at && (
                                                 <div className="mt-1 flex items-center gap-1.5 pt-2 border-t border-background">
                                                     <CheckCheck className="w-3 h-3 text-primary" />
-                                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{content.admin.messages.status.replied}</span>
+                                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{content?.admin?.messages?.status?.replied || "Replied"}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -311,7 +311,7 @@ const Messages = () => {
                                                     className="h-8 px-2 font-black uppercase text-[10px] tracking-widest text-primary hover:text-olive-dark"
                                                 >
                                                     <ChevronRight className="w-4 h-4 rotate-180 mr-1" />
-                                                    {content.admin.general.back}
+                                                    {content?.admin?.general?.back || "Back"}
                                                 </Button>
                                             </div>
                                             <h2 className="text-2xl sm:text-4xl font-black text-olive-dark font-display leading-[1.1] uppercase tracking-tight">
@@ -323,7 +323,7 @@ const Messages = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-lg sm:text-xl font-black text-olive-dark leading-tight">
-                                                        {selectedMessage.from_name || content.admin.messages.status.guest}
+                                                        {selectedMessage.from_name || content?.admin?.messages?.status?.guest || "Guest"}
                                                     </p>
                                                     <p className="text-xs sm:text-sm text-olive/40 font-bold uppercase tracking-widest mt-0.5">
                                                         {selectedMessage.from_email}
@@ -338,7 +338,7 @@ const Messages = () => {
                                                     className="h-12 sm:h-14 flex-1 sm:flex-initial px-6 sm:px-8 bg-olive-dark hover:bg-black text-primary font-black uppercase text-[10px] sm:text-xs tracking-widest rounded-2xl shadow-xl shadow-olive-dark/10"
                                                 >
                                                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
-                                                    {content.admin.messages.actions.reply}
+                                                    {content?.admin?.messages?.actions?.reply || "Reply"}
                                                 </Button>
                                             )}
                                             <AlertDialog>
@@ -349,18 +349,18 @@ const Messages = () => {
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent className="rounded-[2.5rem] border-none p-10 shadow-2xl">
                                                     <AlertDialogHeader className="space-y-4">
-                                                        <AlertDialogTitle className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content.admin.messages.deleteTitle}</AlertDialogTitle>
+                                                        <AlertDialogTitle className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content?.admin?.messages?.deleteTitle || "Delete Message"}</AlertDialogTitle>
                                                         <AlertDialogDescription className="text-olive/40 font-bold text-sm leading-relaxed">
-                                                            {content.admin.messages.deleteDesc}
+                                                            {content?.admin?.messages?.deleteDesc}
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter className="mt-8 gap-4">
-                                                        <AlertDialogCancel className="h-14 px-8 rounded-2xl font-black uppercase text-xs tracking-widest border-background">{content.admin.messages.actions.cancel}</AlertDialogCancel>
+                                                        <AlertDialogCancel className="h-14 px-8 rounded-2xl font-black uppercase text-xs tracking-widest border-background">{content?.admin?.messages?.actions?.cancel || "Cancel"}</AlertDialogCancel>
                                                         <AlertDialogAction 
                                                             onClick={() => deleteMessage(selectedMessage.id)}
                                                             className="h-14 px-8 bg-red-600 hover:bg-red-700 text-white font-black uppercase text-xs tracking-widest rounded-2xl"
                                                         >
-                                                            {content.admin.messages.actions.confirmDelete}
+                                                            {content?.admin?.messages?.actions?.confirmDelete || "Delete"}
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>
@@ -371,14 +371,14 @@ const Messages = () => {
                                     <div className="flex flex-wrap items-center gap-4 sm:gap-8 border-t border-background pt-6 sm:pt-8">
                                         <div className="flex items-center gap-3 text-[9px] sm:text-[10px] font-black text-olive/40 uppercase tracking-[0.2em]">
                                             <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-background" />
-                                            {content.admin.messages.received} {format(new Date(selectedMessage.created_at), "d. MMMM yyyy HH:mm", { locale: content.lang === 'cs' ? cs : undefined })}
+                                            {content?.admin?.messages?.received || "Received"}: {format(new Date(selectedMessage.created_at), "d. MMMM yyyy HH:mm", { locale: content?.lang === 'cs' ? cs : undefined })}
                                         </div>
                                         {selectedMessage.replied_at && (
                                             <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-black text-primary uppercase tracking-[0.2em]">
                                                 <div className="p-1 bg-primary/20 rounded-md">
                                                     <CheckCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                                 </div>
-                                                {content.admin.messages.resolved} {format(new Date(selectedMessage.replied_at), "d. MMM HH:mm", { locale: content.lang === 'cs' ? cs : undefined })}
+                                                {content?.admin?.messages?.resolved || "Resolved"}: {format(new Date(selectedMessage.replied_at), "d. MMM HH:mm", { locale: content?.lang === 'cs' ? cs : undefined })}
                                             </div>
                                         )}
                                     </div>
@@ -392,7 +392,7 @@ const Messages = () => {
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-1 h-3 sm:h-4 bg-primary rounded-full" />
-                                                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive/40">{content.admin.messages.originalLabel}</h3>
+                                                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive/40">{content?.admin?.messages?.originalLabel || "Original Message"}</h3>
                                                 </div>
                                             </div>
                                             <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-white border border-background p-6 sm:p-10 shadow-sm leading-relaxed overflow-hidden">
@@ -403,7 +403,7 @@ const Messages = () => {
                                                     />
                                                 ) : (
                                                     <p className="whitespace-pre-wrap font-display font-black text-olive-dark text-lg leading-relaxed">
-                                                        {selectedMessage.body_text || content.admin.messages.noContent}
+                                                        {selectedMessage.body_text || content?.admin?.messages?.noContent || "No content"}
                                                     </p>
                                                 )}
                                             </div>
@@ -414,7 +414,7 @@ const Messages = () => {
                                             <div className="space-y-4 sm:space-y-6">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-1 h-3 sm:h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(196,241,53,0.5)]" />
-                                                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-primary">{content.admin.messages.replyLabel}</h3>
+                                                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-primary">{content?.admin?.messages?.replyLabel || "Reply"}</h3>
                                                 </div>
                                                 <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-olive-dark border border-olive-dark p-6 sm:p-10 shadow-2xl relative overflow-hidden group">
                                                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-20 transition-opacity">
@@ -437,13 +437,13 @@ const Messages = () => {
                                                 <div className="flex justify-between items-center">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-1 h-4 bg-olive-dark rounded-full" />
-                                                        <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark">{content.admin.messages.writeReply}</h3>
+                                                        <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark">{content?.admin?.messages?.writeReply || "Write Reply"}</h3>
                                                     </div>
-                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="px-4 h-8 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-olive/40 hover:text-olive-dark rounded-xl">{content.admin.messages.actions.cancel}</Button>
+                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="px-4 h-8 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-olive/40 hover:text-olive-dark rounded-xl">{content?.admin?.messages?.actions?.cancel || "Cancel"}</Button>
                                                 </div>
                                                 <textarea 
                                                     className="w-full min-h-[200px] sm:min-h-[250px] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border-2 border-background bg-white shadow-inner focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all outline-none font-display font-black text-lg sm:text-xl text-olive-dark placeholder:text-background"
-                                                    placeholder={content.admin.messages.replyPlaceholder}
+                                                    placeholder={content?.admin?.messages?.replyPlaceholder || "Type your reply..."}
                                                     value={replyText}
                                                     onChange={(e) => setReplyText(e.target.value)}
                                                 />
@@ -454,9 +454,9 @@ const Messages = () => {
                                                         className="h-14 sm:h-16 px-8 sm:px-10 bg-olive-dark hover:bg-black text-primary font-black uppercase text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 w-full sm:w-auto"
                                                     >
                                                         {isSending ? (
-                                                            <><RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-3 animate-spin" /> {content.admin.messages.actions.saving}</>
+                                                            <><RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-3 animate-spin" /> {content?.admin?.messages?.actions?.saving || "Saving..."}</>
                                                         ) : (
-                                                            <><Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-3" /> {content.admin.messages.actions.send}</>
+                                                            <><Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-3" /> {content?.admin?.messages?.actions?.send || "Send"}</>
                                                         )}
                                                     </Button>
                                                 </div>
@@ -476,10 +476,10 @@ const Messages = () => {
                                         <Mail className="w-10 h-10 text-primary" />
                                     </div>
                                     <h2 className="text-3xl font-black text-olive-dark font-display uppercase tracking-tight">
-                                        {content.admin.messages.selectMessage}
+                                        {content?.admin?.messages?.selectMessage || "Select Message"}
                                     </h2>
                                     <p className="text-olive/40 text-[10px] font-black uppercase tracking-[0.2em] mt-3">
-                                        {content.admin.messages.clickMessage}
+                                        {content?.admin?.messages?.clickMessage}
                                     </p>
                                 </motion.div>
                             </div>

@@ -32,134 +32,134 @@ const AdminHelp = () => {
     const sections: Section[] = [
         {
             icon: Globe,
-            title: content.admin.help.sections.content.title,
-            description: content.admin.help.sections.content.description,
+            title: content?.admin?.help?.sections?.content?.title || "Content Management",
+            description: content?.admin?.help?.sections?.content?.description || "Manage your website content",
             image: "/admin-guide/content-management.png",
             items: [
-                { label: content.admin.help.sections.content.items.hero.label, description: content.admin.help.sections.content.items.hero.desc },
-                { label: content.admin.help.sections.content.items.mission.label, description: content.admin.help.sections.content.items.mission.desc },
-                { label: content.admin.help.sections.content.items.ingredients.label, description: content.admin.help.sections.content.items.ingredients.desc },
-                { label: content.admin.help.sections.content.items.concept.label, description: content.admin.help.sections.content.items.concept.desc },
-                { label: content.admin.help.sections.content.items.cta.label, description: content.admin.help.sections.content.items.cta.desc },
-                { label: content.admin.help.sections.content.items.contact.label, description: content.admin.help.sections.content.items.contact.desc },
-                { label: content.admin.help.sections.content.items.flavors.label, description: content.admin.help.sections.content.items.flavors.desc },
-                { label: content.admin.help.sections.content.items.footer.label, description: content.admin.help.sections.content.items.footer.desc }
+                { label: content?.admin?.help?.sections?.content?.items?.hero?.label || "Hero Section", description: content?.admin?.help?.sections?.content?.items?.hero?.desc || "Manage top banner" },
+                { label: content?.admin?.help?.sections?.content?.items?.mission?.label || "Mission", description: content?.admin?.help?.sections?.content?.items?.mission?.desc || "Manage mission text" },
+                { label: content?.admin?.help?.sections?.content?.items?.ingredients?.label || "Ingredients", description: content?.admin?.help?.sections?.content?.items?.ingredients?.desc || "Manage ingredients" },
+                { label: content?.admin?.help?.sections?.content?.items?.concept?.label || "Concept", description: content?.admin?.help?.sections?.content?.items?.concept?.desc || "Manage concept section" },
+                { label: content?.admin?.help?.sections?.content?.items?.cta?.label || "CTA", description: content?.admin?.help?.sections?.content?.items?.cta?.desc || "Manage call to action" },
+                { label: content?.admin?.help?.sections?.content?.items?.contact?.label || "Contact", description: content?.admin?.help?.sections?.content?.items?.contact?.desc || "Manage contact details" },
+                { label: content?.admin?.help?.sections?.content?.items?.flavors?.label || "Flavors", description: content?.admin?.help?.sections?.content?.items?.flavors?.desc || "Manage flavors" },
+                { label: content?.admin?.help?.sections?.content?.items?.footer?.label || "Footer", description: content?.admin?.help?.sections?.content?.items?.footer?.desc || "Manage footer content" }
             ]
         },
         {
             icon: Type,
-            title: content.admin.help.sections.typography.title,
-            description: content.admin.help.sections.typography.description,
+            title: content?.admin?.help?.sections?.typography?.title || "Typography",
+            description: content?.admin?.help?.sections?.typography?.description || "Manage fonts and text styles",
             items: [
-                { label: content.admin.help.sections.typography.items.font.label, description: content.admin.help.sections.typography.items.font.desc },
-                { label: content.admin.help.sections.typography.items.size.label, description: content.admin.help.sections.typography.items.size.desc },
-                { label: content.admin.help.sections.typography.items.styles.label, description: content.admin.help.sections.typography.items.styles.desc },
-                { label: content.admin.help.sections.typography.items.reset.label, description: content.admin.help.sections.typography.items.reset.desc },
-                { label: content.admin.help.sections.typography.items.live.label, description: content.admin.help.sections.typography.items.live.desc }
+                { label: content?.admin?.help?.sections?.typography?.items?.font?.label || "Fonts", description: content?.admin?.help?.sections?.typography?.items?.font?.desc || "Select typography" },
+                { label: content?.admin?.help?.sections?.typography?.items?.size?.label || "Sizes", description: content?.admin?.help?.sections?.typography?.items?.size?.desc || "Adjust font sizes" },
+                { label: content?.admin?.help?.sections?.typography?.items?.styles?.label || "Styles", description: content?.admin?.help?.sections?.typography?.items?.styles?.desc || "Text aesthetics" },
+                { label: content?.admin?.help?.sections?.typography?.items?.reset?.label || "Reset", description: content?.admin?.help?.sections?.typography?.items?.reset?.desc || "Restore defaults" },
+                { label: content?.admin?.help?.sections?.typography?.items?.live?.label || "Live", description: content?.admin?.help?.sections?.typography?.items?.live?.desc || "Real-time updates" }
             ]
         },
         {
             icon: ToggleLeft,
-            title: content.admin.help.sections.visibility.title,
-            description: content.admin.help.sections.visibility.description,
+            title: content?.admin?.help?.sections?.visibility?.title || "Visibility",
+            description: content?.admin?.help?.sections?.visibility?.description || "Toggle website sections",
             items: [
-                { label: content.admin.help.sections.visibility.items.active.label, description: content.admin.help.sections.visibility.items.active.desc },
-                { label: content.admin.help.sections.visibility.items.inactive.label, description: content.admin.help.sections.visibility.items.inactive.desc },
-                { label: content.admin.help.sections.visibility.items.location.label, description: content.admin.help.sections.visibility.items.location.desc }
+                { label: content?.admin?.help?.sections?.visibility?.items?.active?.label || "Active", description: content?.admin?.help?.sections?.visibility?.items?.active?.desc || "Section is visible" },
+                { label: content?.admin?.help?.sections?.visibility?.items?.inactive?.label || "Inactive", description: content?.admin?.help?.sections?.visibility?.items?.inactive?.desc || "Section is hidden" },
+                { label: content?.admin?.help?.sections?.visibility?.items?.location?.label || "Location", description: content?.admin?.help?.sections?.visibility?.items?.location?.desc || "Find on site" }
             ]
         },
         {
             icon: ShoppingCart,
-            title: content.admin.help.sections.orders.title,
-            description: content.admin.help.sections.orders.description,
+            title: content?.admin?.help?.sections?.orders?.title || "Orders",
+            description: content?.admin?.help?.sections?.orders?.description || "Process customer orders",
             image: "/admin-guide/orders.png",
             items: [
-                { label: content.admin.help.sections.orders.items.filtering.label, description: content.admin.help.sections.orders.items.filtering.desc },
-                { label: content.admin.help.sections.orders.items.detail.label, description: content.admin.help.sections.orders.items.detail.desc },
-                { label: content.admin.help.sections.orders.items.copy.label, description: content.admin.help.sections.orders.items.copy.desc },
-                { label: content.admin.help.sections.orders.items.status.label, description: content.admin.help.sections.orders.items.status.desc },
-                { label: content.admin.help.sections.orders.items.packeta.label, description: content.admin.help.sections.orders.items.packeta.desc },
-                { label: content.admin.help.sections.orders.items.notifications.label, description: content.admin.help.sections.orders.items.notifications.desc }
+                { label: content?.admin?.help?.sections?.orders?.items?.filtering?.label || "Filtering", description: content?.admin?.help?.sections?.orders?.items?.filtering?.desc || "Filter list" },
+                { label: content?.admin?.help?.sections?.orders?.items?.detail?.label || "Order Details", description: content?.admin?.help?.sections?.orders?.items?.detail?.desc || "Full order info" },
+                { label: content?.admin?.help?.sections?.orders?.items?.copy?.label || "Copy Info", description: content?.admin?.help?.sections?.orders?.items?.copy?.desc || "Quick duplicate" },
+                { label: content?.admin?.help?.sections?.orders?.items?.status?.label || "Status Flow", description: content?.admin?.help?.sections?.orders?.items?.status?.desc || "Update progress" },
+                { label: content?.admin?.help?.sections?.orders?.items?.packeta?.label || "Packeta", description: content?.admin?.help?.sections?.orders?.items?.packeta?.desc || "Shipping integration" },
+                { label: content?.admin?.help?.sections?.orders?.items?.notifications?.label || "Notifications", description: content?.admin?.help?.sections?.orders?.items?.notifications?.desc || "Email alerts" }
             ]
         },
         {
             icon: BarChart,
-            title: content.admin.help.sections.pricing.title,
-            description: content.admin.help.sections.pricing.description,
+            title: content?.admin?.help?.sections?.pricing?.title || "Pricing & Stats",
+            description: content?.admin?.help?.sections?.pricing?.description || "Financial overview",
             items: [
-                { label: content.admin.help.sections.pricing.items.global.label, description: content.admin.help.sections.pricing.items.global.desc },
-                { label: content.admin.help.sections.pricing.items.stats.label, description: content.admin.help.sections.pricing.items.stats.desc },
-                { label: content.admin.help.sections.pricing.items.analysis.label, description: content.admin.help.sections.pricing.items.analysis.desc }
+                { label: content?.admin?.help?.sections?.pricing?.items?.global?.label || "Global Pricing", description: content?.admin?.help?.sections?.pricing?.items?.global?.desc || "Base prices" },
+                { label: content?.admin?.help?.sections?.pricing?.items?.stats?.label || "Statistics", description: content?.admin?.help?.sections?.pricing?.items?.stats?.desc || "Sales charts" },
+                { label: content?.admin?.help?.sections?.pricing?.items?.analysis?.label || "Analysis", description: content?.admin?.help?.sections?.pricing?.items?.analysis?.desc || "Insights" }
             ]
         },
         {
             icon: Gift,
-            title: content.admin.help.sections.promos.title,
-            description: content.admin.help.sections.promos.description,
+            title: content?.admin?.help?.sections?.promos?.title || "Promo Codes",
+            description: content?.admin?.help?.sections?.promos?.description || "Discounts & Campaigns",
             items: [
-                { label: content.admin.help.sections.promos.items.creation.label, description: content.admin.help.sections.promos.items.creation.desc },
-                { label: content.admin.help.sections.promos.items.popup.label, description: content.admin.help.sections.promos.items.popup.desc },
-                { label: content.admin.help.sections.promos.items.rules.label, description: content.admin.help.sections.promos.items.rules.desc }
+                { label: content?.admin?.help?.sections?.promos?.items?.creation?.label || "Creation", description: content?.admin?.help?.sections?.promos?.items?.creation?.desc || "New codes" },
+                { label: content?.admin?.help?.sections?.promos?.items?.popup?.label || "Popups", description: content?.admin?.help?.sections?.promos?.items?.popup?.desc || "Front-end visibility" },
+                { label: content?.admin?.help?.sections?.promos?.items?.rules?.label || "Rules", description: content?.admin?.help?.sections?.promos?.items?.rules?.desc || "Usage limits" }
             ]
         },
         {
             icon: Package,
-            title: content.admin.help.sections.inventory.title,
-            description: content.admin.help.sections.inventory.description,
+            title: content?.admin?.help?.sections?.inventory?.title || "Inventory",
+            description: content?.admin?.help?.sections?.inventory?.description || "Product stock levels",
             image: "/admin-guide/inventory.png",
             items: [
-                { label: content.admin.help.sections.inventory.items.add.label, description: content.admin.help.sections.inventory.items.add.desc },
-                { label: content.admin.help.sections.inventory.items.minimum.label, description: content.admin.help.sections.inventory.items.minimum.desc }
+                { label: content?.admin?.help?.sections?.inventory?.items?.add?.label || "Stock Entry", description: content?.admin?.help?.sections?.inventory?.items?.add?.desc || "Update quantities" },
+                { label: content?.admin?.help?.sections?.inventory?.items?.minimum?.label || "Alerts", description: content?.admin?.help?.sections?.inventory?.items?.minimum?.desc || "Low stock warning" }
             ]
         },
         {
             icon: Factory,
-            title: content.admin.help.sections.manufacture.title,
-            description: content.admin.help.sections.manufacture.description,
+            title: content?.admin?.help?.sections?.manufacture?.title || "Manufacture",
+            description: content?.admin?.help?.sections?.manufacture?.description || "Production inventory",
             image: "/admin-guide/manufacture.png",
             items: [
-                { label: content.admin.help.sections.manufacture.items.alert.label, description: content.admin.help.sections.manufacture.items.alert.desc },
-                { label: content.admin.help.sections.manufacture.items.edit.label, description: content.admin.help.sections.manufacture.items.edit.desc },
-                { label: content.admin.help.sections.manufacture.items.notifications.label, description: content.admin.help.sections.manufacture.items.notifications.desc }
+                { label: content?.admin?.help?.sections?.manufacture?.items?.alert?.label || "Ingredients Alert", description: content?.admin?.help?.sections?.manufacture?.items?.alert?.desc || "Raw materials" },
+                { label: content?.admin?.help?.sections?.manufacture?.items?.edit?.label || "Recipes", description: content?.admin?.help?.sections?.manufacture?.items?.edit?.desc || "Modify requirements" },
+                { label: content?.admin?.help?.sections?.manufacture?.items?.notifications?.label || "Auto-supply", description: content?.admin?.help?.sections?.manufacture?.items?.notifications?.desc || "Restock workflow" }
             ]
         },
         {
             icon: Save,
-            title: content.admin.help.sections.saving.title,
-            description: content.admin.help.sections.saving.description,
+            title: content?.admin?.help?.sections?.saving?.title || "Saving & Sync",
+            description: content?.admin?.help?.sections?.saving?.description || "Keep data safe",
             items: [
-                { label: content.admin.help.sections.saving.items.button.label, description: content.admin.help.sections.saving.items.button.desc },
-                { label: content.admin.help.sections.saving.items.loading.label, description: content.admin.help.sections.saving.items.loading.desc },
-                { label: content.admin.help.sections.saving.items.reset.label, description: content.admin.help.sections.saving.items.reset.desc }
+                { label: content?.admin?.help?.sections?.saving?.items?.button?.label || "Saving", description: content?.admin?.help?.sections?.saving?.items?.button?.desc || "Apply changes" },
+                { label: content?.admin?.help?.sections?.saving?.items?.loading?.label || "Synchronization", description: content?.admin?.help?.sections?.saving?.items?.loading?.desc || "Real-time sync" },
+                { label: content?.admin?.help?.sections?.saving?.items?.reset?.label || "Safe Reset", description: content?.admin?.help?.sections?.saving?.items?.reset?.desc || "Rollback support" }
             ]
         },
         {
             icon: ShieldCheck,
-            title: content.admin.help.sections.security.title,
-            description: content.admin.help.sections.security.description,
+            title: content?.admin?.help?.sections?.security?.title || "Security",
+            description: content?.admin?.help?.sections?.security?.description || "Access & Protection",
             items: [
-                { label: content.admin.help.sections.security.items.magic.label, description: content.admin.help.sections.security.items.magic.desc },
-                { label: content.admin.help.sections.security.items.detection.label, description: content.admin.help.sections.security.items.detection.desc },
-                { label: content.admin.help.sections.security.items.supabase.label, description: content.admin.help.sections.security.items.supabase.desc }
+                { label: content?.admin?.help?.sections?.security?.items?.magic?.label || "Magic Link", description: content?.admin?.help?.sections?.security?.items?.magic?.desc || "Secure login" },
+                { label: content?.admin?.help?.sections?.security?.items?.detection?.label || "Fraud Detection", description: content?.admin?.help?.sections?.security?.items?.detection?.desc || "Pattern analysis" },
+                { label: content?.admin?.help?.sections?.security?.items?.supabase?.label || "Database", description: content?.admin?.help?.sections?.security?.items?.supabase?.desc || "Infra security" }
             ]
         },
         {
             icon: Palette,
-            title: content.admin.help.sections.design.title,
-            description: content.admin.help.sections.design.description,
+            title: content?.admin?.help?.sections?.design?.title || "Design System",
+            description: content?.admin?.help?.sections?.design?.description || "Visual consistency",
             items: [
-                { label: content.admin.help.sections.design.items.palette.label, description: content.admin.help.sections.design.items.palette.desc },
-                { label: content.admin.help.sections.design.items.charts.label, description: content.admin.help.sections.design.items.charts.desc },
-                { label: content.admin.help.sections.design.items.readability.label, description: content.admin.help.sections.design.items.readability.desc }
+                { label: content?.admin?.help?.sections?.design?.items?.palette?.label || "Colors", description: content?.admin?.help?.sections?.design?.items?.palette?.desc || "Brand palette" },
+                { label: content?.admin?.help?.sections?.design?.items?.charts?.label || "Visualization", description: content?.admin?.help?.sections?.design?.items?.charts?.desc || "Data design" },
+                { label: content?.admin?.help?.sections?.design?.items?.readability?.label || "UX Flow", description: content?.admin?.help?.sections?.design?.items?.readability?.desc || "User journey" }
             ]
         },
         {
             icon: Mail,
-            title: content.admin.help.sections.marketing.title,
-            description: content.admin.help.sections.marketing.description,
+            title: content?.admin?.help?.sections?.marketing?.title || "Marketing Tools",
+            description: content?.admin?.help?.sections?.marketing?.description || "Customer interaction",
             items: [
-                { label: content.admin.help.sections.marketing.items.campaigns.label, description: content.admin.help.sections.marketing.items.campaigns.desc },
-                { label: content.admin.help.sections.marketing.items.progress.label, description: content.admin.help.sections.marketing.items.progress.desc }
+                { label: content?.admin?.help?.sections?.marketing?.items?.campaigns?.label || "Email Campaigns", description: content?.admin?.help?.sections?.marketing?.items?.campaigns?.desc || "Outreach tools" },
+                { label: content?.admin?.help?.sections?.marketing?.items?.progress?.label || "Tracking", description: content?.admin?.help?.sections?.marketing?.items?.progress?.desc || "Engagement stats" }
             ]
         }
     ];
@@ -168,8 +168,8 @@ const AdminHelp = () => {
         <div className="space-y-12 pb-24">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content.admin.help.title}</h1>
-                    <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">{content.admin.help.description}</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content?.admin?.help?.title || "Guide"}</h1>
+                    <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">{content?.admin?.help?.description}</p>
                 </div>
             </div>
 
@@ -234,16 +234,16 @@ const AdminHelp = () => {
                         <AlertTriangle className="w-5 h-5 sm:w-7 sm:h-7 text-primary" />
                     </div>
                     <div>
-                        <h3 className="text-xl sm:text-2xl font-black font-display uppercase italic tracking-tight">{content.admin.help.quickTips}</h3>
-                        <p className="text-[10px] sm:text-xs text-white/40 font-bold uppercase tracking-[0.2em]">{content.admin.help.quickTipsDesc}</p>
+                        <h3 className="text-xl sm:text-2xl font-black font-display uppercase italic tracking-tight">{content?.admin?.help?.quickTips || "Quick Tips"}</h3>
+                        <p className="text-[10px] sm:text-xs text-white/40 font-bold uppercase tracking-[0.2em]">{content?.admin?.help?.quickTipsDesc}</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative z-10">
                     {[
-                        { icon: BarChart, title: content.admin.help.tips.stats.title, desc: content.admin.help.tips.stats.desc },
-                        { icon: Zap, title: content.admin.help.tips.fonts.title, desc: content.admin.help.tips.fonts.desc },
-                        { icon: ShieldCheck, title: content.admin.help.tips.security.title, desc: content.admin.help.tips.security.desc }
+                        { icon: BarChart, title: content?.admin?.help?.tips?.stats?.title || "Monitoring", desc: content?.admin?.help?.tips?.stats?.desc },
+                        { icon: Zap, title: content?.admin?.help?.tips?.fonts?.title || "Appearance", desc: content?.admin?.help?.tips?.fonts?.desc },
+                        { icon: ShieldCheck, title: content?.admin?.help?.tips?.security?.title || "Safety", desc: content?.admin?.help?.tips?.security?.desc }
                     ].map((tip, idx) => (
                         <div key={idx} className="p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] bg-white/5 border border-white/10 hover:bg-white/10 transition-all group">
                             <tip.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary mb-4 group-hover:scale-110 transition-transform" />

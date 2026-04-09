@@ -22,7 +22,7 @@ const ManufactureInventory = () => {
     if (loading) return <div className="p-8 flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-lime/20 border-t-lime rounded-full animate-spin" />
-            <p className="text-olive-dark font-black uppercase text-xs tracking-widest">{content.admin.inventory.manufacture.loading}</p>
+            <p className="text-olive-dark font-black uppercase text-xs tracking-widest">{content?.admin?.inventory?.manufacture?.loading || "Loading..."}</p>
         </div>
     </div>;
 
@@ -36,11 +36,11 @@ const ManufactureInventory = () => {
                         <Beaker className="w-8 h-8 sm:w-10 sm:h-10 text-white relative z-10" />
                     </div>
                     <div className="space-y-1 sm:space-y-2">
-                        <h1 className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content.admin.inventory.manufacture.title}</h1>
+                        <h1 className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.inventory?.manufacture?.title || "Staff Inventory"}</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                             <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
-                                {content.admin.inventory.manufacture.subtitle}
+                                {content?.admin?.inventory?.manufacture?.subtitle}
                             </p>
                         </div>
                     </div>
@@ -50,7 +50,7 @@ const ManufactureInventory = () => {
                     className="h-14 sm:h-16 px-8 sm:px-10 bg-olive-dark hover:bg-black text-white gap-4 font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.05] active:scale-95 group w-full sm:w-auto"
                 >
                     <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
-                    {content.admin.inventory.manufacture.newMaterial}
+                    {content?.admin?.inventory?.manufacture?.newMaterial || "New Material"}
                 </Button>
             </div>
 
@@ -62,8 +62,8 @@ const ManufactureInventory = () => {
                             <Beaker className="w-10 h-10 text-olive-dark/20" />
                         </div>
                         <div className="space-y-2">
-                            <p className="text-2xl font-black text-olive-dark font-display uppercase italic">{content.admin.inventory.manufacture.emptyTitle}</p>
-                            <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest">{content.admin.inventory.manufacture.emptyDesc}</p>
+                            <p className="text-2xl font-black text-olive-dark font-display uppercase italic">{content?.admin?.inventory?.manufacture?.emptyTitle || "No materials"}</p>
+                            <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest">{content?.admin?.inventory?.manufacture?.emptyDesc}</p>
                         </div>
                     </div>
                 ) : (
@@ -73,10 +73,10 @@ const ManufactureInventory = () => {
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b border-olive/10 bg-olive-dark">
-                                        <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content.admin.inventory.manufacture.table.id}</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content.admin.inventory.manufacture.table.status}</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content.admin.inventory.manufacture.table.limits}</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content.promoCodes.listSection.table.actions}</th>
+                                        <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.admin?.inventory?.manufacture?.table?.id || "ID"}</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.admin?.inventory?.manufacture?.table?.status || "Status"}</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.admin?.inventory?.manufacture?.table?.limits || "Limits"}</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-olive/5">
@@ -108,19 +108,19 @@ const ManufactureInventory = () => {
                                                             {m.quantity} <span className="text-sm font-black uppercase text-brand-muted opacity-40">{m.unit}</span>
                                                         </div>
                                                         <Badge variant="outline" className={`border-none px-0 text-[10px] font-black uppercase tracking-widest ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-white-dark'}`}>
-                                                            {isCritical ? content.admin.inventory.manufacture.status.critical : isWarning ? content.admin.inventory.manufacture.status.warning : content.admin.inventory.manufacture.status.ok}
+                                                            {isCritical ? content?.admin?.inventory?.manufacture?.status?.critical : isWarning ? content?.admin?.inventory?.manufacture?.status?.warning : content?.admin?.inventory?.manufacture?.status?.ok}
                                                         </Badge>
                                                     </div>
                                                 </td>
                                                 <td className="px-10 py-8 text-right">
                                                     <div className="flex flex-col items-end gap-1.5">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-[9px] font-black uppercase tracking-widest text-brand-muted">{content.admin.inventory.manufacture.limitLabel}</span>
+                                                            <span className="text-[9px] font-black uppercase tracking-widest text-brand-muted">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"}</span>
                                                             <span className="text-xs font-black text-olive-dark">{m.min_quantity} {m.unit}</span>
                                                         </div>
                                                         {m.warning_quantity > 0 && (
                                                             <div className="flex items-center gap-2">
-                                                                 <span className="text-[9px] font-black uppercase tracking-widest text-brand-muted">{content.admin.inventory.manufacture.warnAtLabel}</span>
+                                                                 <span className="text-[9px] font-black uppercase tracking-widest text-brand-muted">{content?.admin?.inventory?.manufacture?.warnAtLabel || "Warn"}</span>
                                                                 <span className="text-xs font-black text-orange-500">{m.warning_quantity} {m.unit}</span>
                                                             </div>
                                                         )}
@@ -174,7 +174,7 @@ const ManufactureInventory = () => {
                                                 </div>
                                                 <div>
                                                     <p className="font-display font-black text-xl text-olive-dark uppercase italic leading-tight">{m.name}</p>
-                                                    <p className="text-[10px] text-brand-muted font-black text-center">{content.admin.inventory.manufacture.limitLabel} {m.min_quantity} {m.unit}</p>
+                                                    <p className="text-[10px] text-brand-muted font-black text-center">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"} {m.min_quantity} {m.unit}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
@@ -182,7 +182,7 @@ const ManufactureInventory = () => {
                                                     {m.quantity} <span className="text-[10px] uppercase opacity-40">{m.unit}</span>
                                                 </p>
                                                 <p className={`text-[8px] font-black uppercase tracking-widest mt-1 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-white-dark'}`}>
-                                                    {isCritical ? content.admin.inventory.manufacture.status.critical : isWarning ? content.admin.inventory.manufacture.status.warning : content.admin.inventory.manufacture.status.ok}
+                                                    {isCritical ? content?.admin?.inventory?.manufacture?.status?.critical : isWarning ? content?.admin?.inventory?.manufacture?.status?.warning : content?.admin?.inventory?.manufacture?.status?.ok}
                                                 </p>
                                             </div>
                                         </div>
@@ -192,7 +192,7 @@ const ManufactureInventory = () => {
                                                 className="flex-1 h-14 rounded-2xl border-olive/10 font-black uppercase text-[10px] tracking-widest text-olive-dark"
                                                 onClick={() => setRestockId(m.id)}
                                             >
-                                                {content.admin.inventory.manufacture.changeStatus}
+                                                {content?.admin?.inventory?.manufacture?.changeStatus || "Update Status"}
                                             </Button>
                                             <Button
                                                 variant="outline"

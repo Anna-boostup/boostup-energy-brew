@@ -149,6 +149,7 @@ interface OrderTableProps {
 }
 
 const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange, setSelectedOrders, onSort, sortConfig }: OrderTableProps) => {
+    const { content } = useContent();
     const { toast } = useToast();
     return (
     <>
@@ -176,7 +177,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             onClick={() => onSort('id')}
                         >
                             <div className="flex items-center gap-2">
-                                {content.admin.orders.table.id} {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-white" />}
+                                {content?.admin?.orders?.table?.id} {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
                         <TableHead
@@ -184,16 +185,16 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             onClick={() => onSort('date')}
                         >
                             <div className="flex items-center justify-center gap-2">
-                                {content.admin.orders.table.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
+                                {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8">{content.admin.orders.table.customer}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right w-[15%]">{content.admin.orders.table.items}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right">{content.admin.orders.table.amount}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content.admin.orders.table.payment}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content.admin.orders.table.method}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content.admin.orders.table.status}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right pr-8">{content.admin.orders.table.actions}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8">{content?.admin?.orders?.table?.customer}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right w-[15%]">{content?.admin?.orders?.table?.items}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right">{content?.admin?.orders?.table?.amount}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content?.admin?.orders?.table?.payment}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content?.admin?.orders?.table?.method}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content?.admin?.orders?.table?.status}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right pr-8">{content?.admin?.orders?.table?.actions}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
