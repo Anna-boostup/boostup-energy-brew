@@ -44,6 +44,12 @@ jobs:
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           echo "::set-output name=url::$DEPLOYMENT_URL"
 
+      - name: Wait for Deployment Ready
+        run: |
+          echo "Waiting for $DEPLOYMENT_URL to be ready..."
+          # Allow up to 120s for the deployment to handle the first request
+          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Still waiting..."; sleep 5; done'
+
       - name: Install Dependencies
         run: npm install
 
@@ -87,7 +93,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -103,6 +109,11 @@ jobs:
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+
+      - name: Wait for Deployment Ready
+        run: |
+          echo "Waiting for $DEPLOYMENT_URL to be ready..."
+          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Still waiting..."; sleep 5; done'
 
       - name: Install Dependencies
         run: npm install
@@ -130,7 +141,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -146,6 +157,11 @@ jobs:
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+
+      - name: Wait for Deployment Ready
+        run: |
+          echo "Waiting for $DEPLOYMENT_URL to be ready..."
+          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Still waiting..."; sleep 5; done'
 
       - name: Install Dependencies
         run: npm install

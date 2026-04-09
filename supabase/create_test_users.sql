@@ -17,8 +17,8 @@ BEGIN
     END IF;
 
     -- Update Admin Profile
-    INSERT INTO public.profiles (id, email, full_name, role, account_type, created_at)
-    VALUES (admin_id, 'admin-test@drinkboostup.cz', 'Test Admin', 'admin', 'personal', NOW())
+    INSERT INTO public.profiles (id, email, full_name, role, account_type)
+    VALUES (admin_id, 'admin-test@drinkboostup.cz', 'Test Admin', 'admin', 'personal')
     ON CONFLICT (id) DO UPDATE SET role = 'admin', account_type = 'personal';
 
 
@@ -32,15 +32,14 @@ BEGIN
     END IF;
 
     -- Update Company Profile with B2B details
-    INSERT INTO public.profiles (id, email, full_name, role, account_type, address, created_at)
+    INSERT INTO public.profiles (id, email, full_name, role, account_type, address)
     VALUES (
         company_id, 
         'company-test@drinkboostup.cz', 
         'Test Company', 
         'user', 
         'company', 
-        '{"billing": {"ico": "12345678", "dic": "CZ12345678", "companyName": "Test Business s.r.o.", "isCompany": true}}'::jsonb,
-        NOW()
+        '{"billing": {"ico": "12345678", "dic": "CZ12345678", "companyName": "Test Business s.r.o.", "isCompany": true}}'::jsonb
     )
     ON CONFLICT (id) DO UPDATE SET role = 'user', account_type = 'company';
 
@@ -55,8 +54,8 @@ BEGIN
     END IF;
 
     -- Update Basic Profile
-    INSERT INTO public.profiles (id, email, full_name, role, account_type, created_at)
-    VALUES (basic_id, 'basic-test@drinkboostup.cz', 'Test Basic', 'user', 'personal', NOW())
+    INSERT INTO public.profiles (id, email, full_name, role, account_type)
+    VALUES (basic_id, 'basic-test@drinkboostup.cz', 'Test Basic', 'user', 'personal')
     ON CONFLICT (id) DO UPDATE SET role = 'user', account_type = 'personal';
 
 END $$;

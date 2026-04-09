@@ -377,13 +377,19 @@ const EmailManagement = () => {
                     fetchSubscribers();
                 }
             }}>
-                <TabsList className="bg-olive-dark/20 p-1 rounded-2xl mb-8 flex-wrap justify-start">
-                    <TabsTrigger value="templates" className="rounded-xl px-8 py-3 data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase text-[10px] tracking-widest transition-all">
-                        <Mail className="w-4 h-4 mr-2" />
+                <TabsList className="bg-white/40 backdrop-blur-md border border-white/40 p-1.5 h-auto rounded-[1.5rem] mb-12 flex-wrap justify-start shadow-xl shadow-olive-dark/5">
+                    <TabsTrigger 
+                        value="templates" 
+                        className="rounded-[1.1rem] px-8 py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group"
+                    >
+                        <Mail className="w-4 h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
                         {content?.admin?.emailManager?.tabs?.settings || "Settings"}
                     </TabsTrigger>
-                    <TabsTrigger value="campaigns" className="rounded-xl px-8 py-3 data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase text-[10px] tracking-widest transition-all">
-                        <Megaphone className="w-4 h-4 mr-2" />
+                    <TabsTrigger 
+                        value="campaigns" 
+                        className="rounded-[1.1rem] px-8 py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group"
+                    >
+                        <Megaphone className="w-4 h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
                         {content?.admin?.emailManager?.campaign?.title || "Campaign"}
                     </TabsTrigger>
                 </TabsList>
