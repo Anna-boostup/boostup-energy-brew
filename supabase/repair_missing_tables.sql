@@ -13,9 +13,11 @@ CREATE TABLE IF NOT EXISTS public.promo_codes (
 ALTER TABLE public.promo_codes ENABLE ROW LEVEL SECURITY;
 
 -- Policies for promo_codes
+DROP POLICY IF EXISTS "Public read promo codes" ON public.promo_codes;
 CREATE POLICY "Public read promo codes" ON public.promo_codes 
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Admins manage promo codes" ON public.promo_codes;
 CREATE POLICY "Admins manage promo codes" ON public.promo_codes 
     FOR ALL USING (
         EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
@@ -39,9 +41,11 @@ CREATE TABLE IF NOT EXISTS public.messages (
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
 -- Policies for messages
+DROP POLICY IF EXISTS "Anon can insert messages" ON public.messages;
 CREATE POLICY "Anon can insert messages" ON public.messages 
     FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Admins manage messages" ON public.messages;
 CREATE POLICY "Admins manage messages" ON public.messages 
     FOR ALL USING (
         EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
@@ -58,9 +62,11 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscriptions (
 ALTER TABLE public.newsletter_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Policies for newsletter_subscriptions
+DROP POLICY IF EXISTS "Anon can subscribe" ON public.newsletter_subscriptions;
 CREATE POLICY "Anon can subscribe" ON public.newsletter_subscriptions 
     FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Admins manage newsletter" ON public.newsletter_subscriptions;
 CREATE POLICY "Admins manage newsletter" ON public.newsletter_subscriptions 
     FOR ALL USING (
         EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
@@ -77,6 +83,7 @@ CREATE TABLE IF NOT EXISTS public.email_templates (
 ALTER TABLE public.email_templates ENABLE ROW LEVEL SECURITY;
 
 -- Policies for email_templates
+DROP POLICY IF EXISTS "Admins manage templates" ON public.email_templates;
 CREATE POLICY "Admins manage templates" ON public.email_templates 
     FOR ALL USING (
         EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')

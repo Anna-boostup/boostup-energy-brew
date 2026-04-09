@@ -118,7 +118,7 @@ const PromoCodes = () => {
         }
     };
 
-    const { contentCZ, contentEN, refreshContent } = useContent();
+    const { content, contentCZ, contentEN, refreshContent } = useContent();
     const [popupSaving, setPopupSaving] = useState(false);
     
     const handleTogglePopup = async (visible: boolean) => {
