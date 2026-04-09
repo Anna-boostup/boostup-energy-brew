@@ -28,13 +28,18 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-lucide': ['lucide-react'],
-          'vendor-framer': ['framer-motion'],
-          'vendor-charts': ['recharts'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-tanstack': ['@tanstack/react-query'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor-react';
+            if (id.includes('lucide-react')) return 'vendor-lucide';
+            if (id.includes('framer-motion')) return 'vendor-framer';
+            if (id.includes('recharts')) return 'vendor-charts';
+            if (id.includes('@supabase')) return 'vendor-supabase';
+            if (id.includes('@tanstack')) return 'vendor-tanstack';
+            return 'vendor'; // All other node_modules
+          }
+          if (id.includes('src/pages/admin/')) return 'admin-suite';
+          if (id.includes('src/pages/legal/')) return 'legal-suite';
         },
       },
     },
