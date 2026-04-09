@@ -50,13 +50,13 @@ export default function CompanyProfile() {
 
                 if (addr.billing) {
                     const billing = addr.billing;
-                    setBillingSame(billing.sameAsDelivery !== false);
+                    setBillingSame(billing.isSame !== false);
                     setBillingStreet(billing.street || "");
                     setBillingHouseNumber(billing.houseNumber || "");
                     setBillingCity(billing.city || "");
                     setBillingZip(billing.zip || "");
 
-                    setBillingCompany(billing.companyName || "");
+                    setBillingCompany(billing.company || "");
                     setBillingDIC(billing.dic || "");
                 }
             }
@@ -78,9 +78,9 @@ export default function CompanyProfile() {
                 city: deliveryCity,
                 zip: deliveryZip,
                 billing: {
-                    sameAsDelivery: billingSame,
+                    isSame: billingSame,
                     isCompany: true,
-                    companyName: billingCompany,
+                    company: billingCompany,
                     dic: billingDIC,
                     street: billingSame ? deliveryStreet : billingStreet,
                     houseNumber: billingSame ? deliveryHouseNumber : billingHouseNumber,

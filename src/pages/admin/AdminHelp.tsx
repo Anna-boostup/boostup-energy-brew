@@ -125,6 +125,10 @@ const sections: Section[] = [
                 description: "Kliknutím na objednávku zobrazíš detail – zákazník, produkty, adresa, způsob platby."
             },
             {
+                label: "Kopírování ID",
+                description: "V detailu objednávky nebo v mobilním zobrazení najdete u ID objednávky ikonu 'Copy'. Kliknutím se ID okamžitě zkopíruje do schránky pro snadné vyhledávání."
+            },
+            {
                 label: "Změna stavu",
                 description: "Stav objednávky lze změnit přímo v detailu. Zákazník obdrží automatický email při změně na 'Odeslaná'."
             },
@@ -278,6 +282,48 @@ const sections: Section[] = [
             {
                 label: "Čitelnost a kontrast",
                 description: "U prvků s barevným gradientem (např. výběr příchutě) je automaticky aplikován vysoký kontrast textu (Cream na tmavém podkladu) pro maximální přístupnost."
+            }
+        ]
+    },
+    {
+        icon: Mail,
+        title: "Email Marketing (Kampaně)",
+        description: "Hromadné rozesílání newsletterů a správa šablon. Cesta: Admin → Email CMS",
+        items: [
+            {
+                label: "Marketingové Kampaně",
+                description: "Umožňuje zaslat vybranou šablonu všem odběratelům newsletteru. Systém odesílá zprávy v dávkách, aby zajistil stabilitu a doručitelnost."
+            },
+            {
+                label: "Progress Bar",
+                description: "Během odesílání kampaně vidíte v reálném čase postup. Okno prohlížeče nechejte otevřené, dokud není odesláno 100%."
+            },
+            {
+                label: "Správa šablon",
+                description: "Zde můžete editovat HTML kód všech systémových emailů i marketingových šablon. Změny se projeví okamžitě po uložení."
+            },
+            {
+                label: "Testovací email",
+                description: "Před spuštěním ostré kampaně nebo uložením šablony doporučujeme zaslat 'Testovací email' na vaši adresu pro kontrolu vzhledu."
+            }
+        ]
+    },
+    {
+        icon: Settings2,
+        title: "Můj Profil (Admin)",
+        description: "Správa osobních údajů a fakturačních adres administrátora. Cesta: Admin → Můj Profil",
+        items: [
+            {
+                label: "Doručovací adresa",
+                description: "Zde si nastavte svou výchozí doručovací adresu. Tyto údaje se budou automaticky předvyplňovat při vašich testovacích nákupech."
+            },
+            {
+                label: "Fakturační údaje",
+                description: "Správa fakturační adresy včetně firemních údajů (IČO, DIČ). Můžete zvolit možnost 'Stejná jako doručovací' pro zjednodušení."
+            },
+            {
+                label: "Sjednocení formátu",
+                description: "Adresy jsou nyní rozděleny na 'Ulici' a 'Číslo popisné', což zajišťuje 100% kompatibilitu s českými standardy doručování."
             }
         ]
     }

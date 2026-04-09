@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Copy, ArrowUpDown, Bell, MousePointer2 } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Copy, ArrowUpDown, Bell, MousePointer2, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -797,7 +797,7 @@ const Orders = () => {
                             className="h-24 flex flex-col gap-2 items-center justify-center border-2 hover:border-olive/40 hover:bg-background"
                             onClick={executeSequentialPrint}
                         >
-                            <Layers className="w-8 h-8 text-olive-dark/60" />
+                            <FileText className="w-8 h-8 text-olive-dark/60" />
                             <div className="flex flex-col">
                                 <span className="font-bold text-base">Tisk postupně (po jednom)</span>
                                 <span className="text-xs text-muted-foreground italic">Otevře každý štítek v novém okně</span>

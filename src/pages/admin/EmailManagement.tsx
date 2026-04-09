@@ -9,23 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { 
-    Mail, 
-    Save, 
-    Send, 
-    Loader2, 
-    Info, 
-    Code, 
-    Eye, 
-    Database, 
-    HelpCircle,
-    ChevronRight,
-    Search,
-    RefreshCw,
-    Zap,
-    Key,
     Plus,
     FileCode,
-    RefreshCcw
+    RefreshCcw,
+    Megaphone,
+    Users,
+    CheckCircle,
+    Clock,
+    ArrowRight,
+    AlertCircle
 } from "lucide-react";
 import { EMAIL_DEFAULTS, EMAIL_BASE_LAYOUT } from '@/data/emailDefaults';
 import { useAuth } from "@/context/AuthContext";
@@ -38,6 +30,21 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import { 
+    Megaphone, 
+    Users, 
+    CheckCircle, 
+    Clock, 
+    ArrowRight,
+    AlertCircle
+} from "lucide-react";
 
 interface EmailTemplate {
     id: string;
@@ -76,6 +83,15 @@ const EmailManagement = () => {
     // Local form state
     const [currentSubject, setCurrentSubject] = useState('');
     const [currentContent, setCurrentContent] = useState('');
+
+    // Campaign state
+    const [subscribers, setSubscribers] = useState<{email: string}[]>([]);
+    const [campaignLoading, setCampaignLoading] = useState(false);
+    const [isSending, setIsSending] = useState(false);
+    const [sendProgress, setSendProgress] = useState(0);
+    const [totalToSend, setTotalToSend] = useState(0);
+    const [sentCount, setSentCount] = useState(0);
+    const [selectedCampaignTemplate, setSelectedCampaignTemplate] = useState<string>('');
 
     useEffect(() => {
         fetchTemplates();
@@ -246,6 +262,75 @@ const EmailManagement = () => {
         }
     };
 
+    const fetchSubscribers = async () => {
+        try {
+            setCampaignLoading(true);
+            const { data, error } = await supabase
+                .from('newsletter_subscriptions')
+                .select('email');
+            
+            if (error) throw error;
+            setSubscribers(data || []);
+        } catch (err: any) {
+            console.error('Error fetching subscribers:', err);
+            toast.error("Nepodařilo se načíst odběratele");
+        } finally {
+            setCampaignLoading(false);
+        }
+    };
+
+    const handleSendCampaign = async () => {
+        if (!selectedCampaignTemplate) {
+            toast.error("Vyberte prosím šablonu pro kampaně");
+            return;
+        }
+
+        if (subscribers.length === 0) {
+            toast.error("Nejsou žádní odběratelé");
+            return;
+        }
+
+        const confirmSend = window.confirm(`Opravdu chcete odeslat tuto kampaň ${subscribers.length} lidem?`);
+        if (!confirmSend) return;
+
+        setIsSending(true);
+        setSendProgress(0);
+        setSentCount(0);
+        setTotalToSend(subscribers.length);
+
+        const batchSize = 5;
+        for (let i = 0; i < subscribers.length; i += batchSize) {
+            const batch = subscribers.slice(i, i + batchSize);
+            
+            await Promise.all(batch.map(async (sub) => {
+                try {
+                    await fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: sub.email,
+                            type: selectedCampaignTemplate
+                        })
+                    });
+                    setSentCount(prev => prev + 1);
+                } catch (err) {
+                    console.error(`Failed to send campaign email to ${sub.email}:`, err);
+                }
+            }));
+
+            const progress = Math.round(((i + batch.length) / subscribers.length) * 100);
+            setSendProgress(progress);
+            
+            // Wait slightly between batches to avoid rate limits
+            if (i + batchSize < subscribers.length) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+
+        setIsSending(false);
+        toast.success("Kampaň byla odeslána všem odběratelům!");
+    };
+
     const selectedType = templateTypes.find(t => t.id === selectedTypeId);
     const filteredTypes = templateTypes.filter(t => 
         t.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -277,8 +362,25 @@ const EmailManagement = () => {
 
     return (
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
-            {/* Header */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
+            <Tabs defaultValue="templates" className="w-full" onValueChange={(val) => {
+                if (val === 'campaigns' && subscribers.length === 0) {
+                    fetchSubscribers();
+                }
+            }}>
+                <TabsList className="bg-olive-dark/20 p-1 rounded-2xl mb-8 flex-wrap justify-start">
+                    <TabsTrigger value="templates" className="rounded-xl px-8 py-3 data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase text-[10px] tracking-widest transition-all">
+                        <Mail className="w-4 h-4 mr-2" />
+                        Správa Šablon
+                    </TabsTrigger>
+                    <TabsTrigger value="campaigns" className="rounded-xl px-8 py-3 data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase text-[10px] tracking-widest transition-all">
+                        <Megaphone className="w-4 h-4 mr-2" />
+                        Marketingové Kampaně
+                    </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="templates" className="space-y-12 mt-0">
+                    {/* Header */}
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
                 <div className="space-y-3">
                     <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">EMAIL CMS</h2>
                     <div className="flex items-center gap-3">
@@ -599,6 +701,126 @@ const EmailManagement = () => {
                     </Card>
                 </div>
             </div>
+            </TabsContent>
+
+            <TabsContent value="campaigns" className="mt-0">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    {/* Campaign Controls */}
+                    <div className="lg:col-span-12">
+                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 mb-12">
+                            <div className="space-y-3">
+                                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">MARKETING</h2>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                                    <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">Hromadné rozesílání newsletterů</p>
+                                </div>
+                            </div>
+
+                            <Button 
+                                onClick={handleSendCampaign}
+                                disabled={isSending || !selectedCampaignTemplate || subscribers.length === 0}
+                                className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
+                            >
+                                {isSending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                                Spustit kampaň
+                            </Button>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Audience Info */}
+                            <Card className="border-none shadow-2xl rounded-[2.5rem] bg-olive-dark text-white p-10 overflow-hidden relative">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-lime/10 blur-3xl -translate-y-1/2 translate-x-1/2" />
+                                <div className="space-y-6 relative z-10">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-white/10 rounded-2xl">
+                                            <Users className="w-6 h-6 text-lime" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Cílové publikum</p>
+                                            <h4 className="text-xl font-black uppercase italic">Odběratelé Newsletteru</h4>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="pt-6 border-t border-white/5">
+                                        {campaignLoading ? (
+                                            <Loader2 className="w-8 h-8 animate-spin text-lime" />
+                                        ) : (
+                                            <p className="text-6xl font-black tracking-tighter text-lime">{subscribers.length}</p>
+                                        )}
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mt-2">Aktivních emailů</p>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2 text-[10px] font-bold text-lime/60 italic mt-6">
+                                        <Info className="w-3 h-3" />
+                                        Načteno z newsletter_subscriptions
+                                    </div>
+                                </div>
+                            </Card>
+
+                            {/* Campaign Setup */}
+                            <Card className="lg:col-span-2 border-none shadow-2xl rounded-[2.5rem] bg-white p-10">
+                                <div className="space-y-8">
+                                    <div className="space-y-4">
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/40">Krok 1: Vyberte šablonu</Label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {templateTypes.map((type) => (
+                                                <button
+                                                    key={type.id}
+                                                    onClick={() => setSelectedCampaignTemplate(type.id)}
+                                                    className={`p-6 rounded-2xl border-2 transition-all flex items-center justify-between group ${
+                                                        selectedCampaignTemplate === type.id
+                                                        ? 'border-lime bg-lime/5 text-olive-dark'
+                                                        : 'border-olive/5 bg-background hover:border-olive/20'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={`p-2 rounded-xl transition-colors ${selectedCampaignTemplate === type.id ? 'bg-lime text-olive-dark' : 'bg-olive/5'}`}>
+                                                            {React.createElement(type.icon, { className: "w-4 h-4" })}
+                                                        </div>
+                                                        <span className="text-xs font-black uppercase tracking-widest">{type.label}</span>
+                                                    </div>
+                                                    {selectedCampaignTemplate === type.id && <CheckCircle className="w-5 h-5 text-lime" />}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {isSending && (
+                                        <div className="space-y-4 p-8 bg-background rounded-3xl border border-olive/10 animate-in slide-in-from-bottom-4">
+                                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                                <span className="flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 animate-spin text-lime" />
+                                                    Probíhá odesílání...
+                                                </span>
+                                                <span className="text-lime">{sendProgress}%</span>
+                                            </div>
+                                            <Progress value={sendProgress} className="h-3 bg-olive/5" />
+                                            <p className="text-center text-[10px] font-bold text-olive-dark/40 uppercase tracking-widest">
+                                                Odesláno {sentCount} z {totalToSend} emailů
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {!isSending && selectedCampaignTemplate && (
+                                        <div className="space-y-4">
+                                            <div className="p-6 bg-lime/10 border border-lime/30 rounded-2xl flex items-start gap-4">
+                                                <AlertCircle className="w-6 h-6 text-lime shrink-0 mt-1" />
+                                                <div className="space-y-1">
+                                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-olive-dark">PŘIPRAVENO K ODESLÁNÍ</h5>
+                                                    <p className="text-[11px] font-bold text-olive-dark/60">
+                                                        Po stisknutí tlačítka bude šablona "<strong>{templateTypes.find(t => t.id === selectedCampaignTemplate)?.label}</strong>" odeslána všem {subscribers.length} odběratelům.
+                                                        Tuto akci nelze vzít zpět.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </TabsContent>
         </div>
     );
 };
