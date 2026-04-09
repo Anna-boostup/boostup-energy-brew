@@ -825,7 +825,8 @@ const EmailManagement = () => {
                     </div>
                 </div>
             </TabsContent>
-        </div>
+        </Tabs>
+    </div>
     );
 };
 
