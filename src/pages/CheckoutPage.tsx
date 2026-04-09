@@ -572,6 +572,90 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form Side */}
           <div className="lg:col-span-8 space-y-6">
+            {/* Express Checkout Section */}
+            {isSalesEnabled && cart.length > 0 && (
+              <div className="bg-primary/90 text-primary-foreground rounded-[2.5rem] p-8 sm:p-10 border-4 border-olive-dark/10 shadow-2xl mb-12 relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/5 opacity-20 animate-pulse" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/3" />
+                
+                <div className="relative z-10 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center shadow-2xl shadow-black/20">
+                        <Zap className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl sm:text-4xl font-display font-black uppercase italic tracking-tighter leading-none">Expresní nákup</h2>
+                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] opacity-60 mt-1">Nativní platba / Bez vyplňování</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm font-bold opacity-80 leading-relaxed max-w-xl">
+                    Nejrychlejší cesta k energii. Adresa a kontakt se načtou bezpečně z vašeho telefonu.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                    <div className="w-full sm:w-auto min-w-[280px]">
+                      <Elements stripe={stripePromise}>
+                        <StripeExpressButtons />
+                      </Elements>
+                    </div>
+                    
+                    <div className="h-px sm:h-12 w-full sm:w-px bg-white/10" />
+                    
+                    <div className="flex-1 w-full sm:w-auto">
+                      {!appliedPromoCode ? (
+                        <div className="flex gap-2">
+                          <div className="relative flex-1">
+                            <input
+                              type="text"
+                              value={promoInput}
+                              onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                              placeholder="Máte slevový kód?"
+                              className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3.5 text-sm font-bold placeholder:text-white/40 focus:outline-none focus:border-white/50 tracking-wider transition-colors"
+                            />
+                            <Sparkles className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                          </div>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            disabled={!promoInput || isApplyingPromo}
+                            onClick={async () => {
+                              setIsApplyingPromo(true);
+                              await applyPromoCode(promoInput);
+                              setPromoInput("");
+                              setIsApplyingPromo(false);
+                            }}
+                            className="h-auto px-6 font-black text-[10px] uppercase tracking-widest bg-white text-black hover:bg-white/90 shadow-xl shadow-white/10"
+                          >
+                            {isApplyingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : 'POUŽÍT'}
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between bg-white/10 rounded-xl px-5 py-3.5 border border-white/20 backdrop-blur-md">
+                          <div className="flex items-center gap-3">
+                            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                              <CheckCircle className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            <span className="font-black text-xs tracking-[0.2em]">{appliedPromoCode.code}</span>
+                            <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-md">-{appliedPromoCode.discount}%</span>
+                          </div>
+                          <button 
+                            onClick={removePromoCode}
+                            type="button"
+                            className="text-[10px] font-black uppercase text-white/50 hover:text-white transition-colors underline underline-offset-4"
+                          >
+                            Odebrat
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* 1. Personal Info */}
@@ -954,51 +1038,9 @@ const CheckoutPage = () => {
                   ))}
                 </div>
 
-                {/* Promo Code Input */}
                 <div className="pt-6 border-t border-white/10 mt-6">
-                  {!appliedPromoCode ? (
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <input
-                          type="text"
-                          value={promoInput}
-                          onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
-                          placeholder="Slevový kód"
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm font-bold placeholder:text-white/30 focus:outline-none focus:border-white/40 tracking-wider"
-                        />
-                        <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                      </div>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        disabled={!promoInput || isApplyingPromo}
-                        onClick={async () => {
-                          setIsApplyingPromo(true);
-                          await applyPromoCode(promoInput);
-                          setPromoInput("");
-                          setIsApplyingPromo(false);
-                        }}
-                        className="h-auto px-4 font-black text-[10px] uppercase tracking-widest bg-white text-black hover:bg-white/90"
-                      >
-                        {isApplyingPromo ? <Loader2 className="w-3 h-3 animate-spin" /> : 'POUŽÍT'}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between bg-white/10 rounded-xl px-4 py-3 border border-primary/30">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-primary" />
-                        <span className="font-black text-xs tracking-widest">{appliedPromoCode.code}</span>
-                        <span className="text-[10px] font-bold opacity-60">(-{appliedPromoCode.discount}%)</span>
-                      </div>
-                      <button 
-                        onClick={removePromoCode}
-                        className="text-[10px] font-black uppercase text-white/50 hover:text-white transition-colors"
-                      >
-                        Odebrat
-                      </button>
-                    </div>
-                  )}
-                  {cart.some(item => item.subscriptionInterval) && !appliedPromoCode && (
+                   {/* Promo code moved to Express section */}
+                   {cart.some(item => item.subscriptionInterval) && !appliedPromoCode && (
                     <p className="text-[9px] text-white/40 mt-2 font-bold px-1 italic">
                       Pozn: Slevové kódy nelze kombinovat se slevou na předplatné.
                     </p>
@@ -1078,10 +1120,7 @@ const CheckoutPage = () => {
                     <span className="text-[9px] font-black uppercase tracking-[0.3em]">Encrypted Connection</span>
                   </div>
 
-                  {/* Express Checkout Section */}
-                  <Elements stripe={stripePromise}>
-                    <StripeExpressButtons />
-                  </Elements>
+                  {/* Express Checkout Section moved to top */}
                 </div>
               </div>
             </div>
