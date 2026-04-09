@@ -256,7 +256,9 @@ const AdminProfile = () => {
                                             />
                                             <Label htmlFor="billingSame" className="text-[9px] font-black uppercase tracking-widest cursor-pointer">{content.admin.profile.form.isSame}</Label>
                                         </div>
-                                                {!billingSame && (
+                                    </div>
+
+                                    {!billingSame && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2 sm:col-span-2">
                                                 <Label htmlFor="billingStreet" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content.admin.profile.form.billingStreet}</Label>
@@ -276,8 +278,6 @@ const AdminProfile = () => {
                                             </div>
                                         </div>
                                     )}
-</div>
-                                    )}
 
                                     <div className="flex items-center space-x-2 bg-olive-dark/5 px-4 py-2 rounded-xl w-fit">
                                         <Checkbox
@@ -285,7 +285,10 @@ const AdminProfile = () => {
                                             checked={isCompany}
                                             onCheckedChange={(checked) => setIsCompany(checked as boolean)}
                                         />
-                                        <Label htmlFor="isCompany" className="text-[9px] font-black uppercase tracking-widest cursor-pointer">{content.admin.profile.form.isCompany}</Label                                     {isCompany && (
+                                        <Label htmlFor="isCompany" className="text-[9px] font-black uppercase tracking-widest cursor-pointer">{content.admin.profile.form.isCompany}</Label>
+                                    </div>
+
+                                    {isCompany && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2 sm:col-span-2 font-white-dark">
                                                 <Label htmlFor="billingCompany" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content.admin.profile.form.billingCompany}</Label>
@@ -300,8 +303,6 @@ const AdminProfile = () => {
                                                 <Input id="billingDIC" value={billingDIC} onChange={e => setBillingDIC(e.target.value)} className="h-14 rounded-xl" />
                                             </div>
                                         </div>
-                                    )}
-   </div>
                                     )}
                                 </div>
 
