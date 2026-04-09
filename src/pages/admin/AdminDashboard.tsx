@@ -293,8 +293,7 @@ const AdminDashboard = () => {
                                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-muted leading-none mb-2">{content.admin.dashboard.amountLabel}</span>
                                                 <span className="text-3xl font-black text-olive-dark font-display leading-none">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-sm font-bold text-olive/20 tracking-normal ml-1">{content.bankInfo.currency}</span></span>
                                             </div>
- </div>
-                                            
+
                                             <div className="flex items-center gap-3">
                                                 <Dialog>
                                                     <DialogTrigger asChild>
