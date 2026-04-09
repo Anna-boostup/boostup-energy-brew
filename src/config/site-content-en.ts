@@ -568,8 +568,7 @@ export const SITE_CONTENT_EN = {
         },
         alerts: {
             lowStock: "Low stock warning",
-        }
-    },
+        },
         orders: {
             title: "Order Management",
             description: "Overview and processing of customer orders.",
