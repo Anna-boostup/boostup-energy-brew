@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Copy, ArrowUpDown, Bell, MousePointer2, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useContent } from "@/context/ContentContext";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -27,11 +28,11 @@ import {
     DialogClose,
 } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
-import { FileText } from "lucide-react";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 
 
 const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => {
+    const { content } = useContent();
     const { toast } = useToast();
     return (
         <div className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 mb-6 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
@@ -395,6 +396,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
     );
 };
 
+const Orders = () => {
     const { content } = useContent();
     const { orders, updateOrderStatus } = useInventory();
     const { toast } = useToast();

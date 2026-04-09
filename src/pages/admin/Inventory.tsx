@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useInventory, SKU } from "@/context/InventoryContext";
+import { useContent } from "@/context/ContentContext";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Minus, History, Edit } from "lucide-react";

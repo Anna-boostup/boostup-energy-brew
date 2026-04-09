@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
+import { useContent } from "@/context/ContentContext";
 import { 
     Mail, 
     Search, 
