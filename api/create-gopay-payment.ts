@@ -77,8 +77,6 @@ export default async function handler(req: Request) {
         console.log('[GoPay Token Response]', JSON.stringify(tokenData));
         const accessToken = tokenData.access_token;
 
-        const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
-
         // NOTE: target omitted — the one payment that reached GoPay (ID 3297672027) had no target.
         // With target, sandbox consistently returns go_id: INVALID despite correct GoID.
         const paymentData: any = {
