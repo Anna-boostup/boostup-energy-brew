@@ -815,7 +815,7 @@ export const SITE_CONTENT = {
             sections: {
                 hero: {
                     title: "Hlavní Hero Sekce",
-                    description: "Vizuální středobod vaší webové prezentace",
+                    sectionDesc: "Vizuální středobod vaší webové prezentace",
                     badge: "Badge text (BRZY NA TRHU)",
                     visibility: "Viditelnost oznamovacího banneru",
                     headlinePart1: "Nadpis Část 1",
@@ -864,7 +864,7 @@ export const SITE_CONTENT = {
                 },
                 cta: {
                     title: "CTA Sekce (Odběr)",
-                    description: "Konverzní prvek pro newsletter",
+                    sectionDesc: "Konverzní prvek pro newsletter",
                     badge: "Text štítku (KONTAKT)",
                     visibility: "Viditelnost badge KONTAKT",
                     headline: "Hlavní Nadpis",
@@ -885,7 +885,7 @@ export const SITE_CONTENT = {
                 },
                 flavors: {
                     title: "Správa Příchutí",
-                    description: "Vizuální a textové nastavení variant produktu",
+                    sectionDesc: "Vizuální a textové nastavení variant produktu",
                     sectionTitle: "Katalog Příchutí",
                     sectionDesc: "Správa parametrů a specifikací jednotlivých produktů",
                     code: "Kód",

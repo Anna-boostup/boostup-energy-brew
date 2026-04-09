@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 import { useInventory } from "@/context/InventoryContext";
-import { useContent } from "@/context/LanguageContext";
+import { useContent } from "@/context/ContentContext";
 
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { content } = useContent();

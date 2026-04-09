@@ -381,11 +381,10 @@ export const SITE_CONTENT_EN = {
             paymentLabel: "Payment",
             statusLabel: "Status",
             amountLabel: "AMOUNT",
-            updateError: "Update Error"
         },
         inventory: {
-            title: "INVENTORY",
-            description: "Current bottle counts for shipping.",
+            sectionTitle: "INVENTORY",
+            sectionDesc: "Current bottle counts for shipping.",
             lemon: "🍋 Lemon Blast",
             red: "🍓 Red Rush",
             title: "Warehouse",
@@ -717,7 +716,7 @@ export const SITE_CONTENT_EN = {
             sections: {
                 hero: {
                     title: "Main Hero Section",
-                    description: "The visual centerpiece of your web presentation",
+                    sectionDesc: "The visual centerpiece of your web presentation",
                     badge: "Badge text (COMING SOON)",
                     visibility: "Announcement banner visibility",
                     headlinePart1: "Headline Part 1",
@@ -766,7 +765,7 @@ export const SITE_CONTENT_EN = {
                 },
                 cta: {
                     title: "CTA Section (Subscription)",
-                    description: "Conversion element for newsletter",
+                    sectionDesc: "Conversion element for newsletter",
                     badge: "Badge text (CONTACT)",
                     visibility: "CONTACT badge visibility",
                     headline: "Main Headline",
@@ -787,7 +786,7 @@ export const SITE_CONTENT_EN = {
                 },
                 flavors: {
                     title: "Flavor Management",
-                    description: "Visual and text settings for product variants",
+                    sectionDesc: "Visual and text settings for product variants",
                     sectionTitle: "Flavor Catalog",
                     sectionDesc: "Manage parameters and specifications of individual products",
                     code: "Code",
