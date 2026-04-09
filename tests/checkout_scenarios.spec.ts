@@ -28,8 +28,10 @@ const identities = [
 ];
 
 test.describe('Multi-Identity Checkout Scenarios', () => {
-  for (const identity of identities) {
-    test(`Purchase flow as ${identity.name}`, async ({ page }) => {
+  for const identity of identities) {
+    test(`Purchase flow as ${identity.name}`, async ({ page }, testInfo) => {
+      const workerId = testInfo.workerIndex;
+      
       // 1. Handle Login if not guest
       if (identity.type !== 'guest') {
         await page.goto('/login');
@@ -57,17 +59,17 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         await expect(page.locator('input[name="email"]')).toHaveValue(identity.email);
         
         // --- ADDRESS UPDATE TEST ---
-        // Change address to see if it survives the session
-        const newStreet = `Testovaci ${Math.floor(Math.random() * 1000)}`;
+        // Change address with worker-specific suffix to avoid collision
+        const newStreet = `Testovaci W${workerId} ${Math.floor(Math.random() * 1000)}`;
         await page.fill('input[name="street"]', newStreet);
         await page.fill('input[name="city"]', 'Brno');
         await page.fill('input[name="zip"]', '602 00');
         await page.fill('input[name="houseNumber"]', '123/A');
       } else {
         // Guest: Fill everything
-        await page.fill('input[name="firstName"]', 'Ghost');
+        await page.fill('input[name="firstName"]', `GhostW${workerId}`);
         await page.fill('input[name="lastName"]', 'Rider');
-        await page.fill('input[name="email"]', `guest-${Date.now()}@example.com`);
+        await page.fill('input[name="email"]', `guest-${workerId}-${Date.now()}@example.com`);
         await page.fill('input[name="phone"]', '+420 777123456');
         await page.fill('input[name="street"]', 'Hlavni');
         await page.fill('input[name="houseNumber"]', '1');
