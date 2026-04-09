@@ -261,7 +261,8 @@ const AdminDashboard = () => {
                                                 <span className="text-[10px] sm:text-xs font-bold text-brand-muted mt-1 group-hover:text-olive-dark transition-colors">{order.customer.email}</span>
                                             </div>
                                         </div>
-                                                                            <div className="flex flex-wrap items-center justify-between xl:justify-end gap-x-12 gap-y-6 shrink-0">
+
+                                        <div className="flex flex-wrap items-center justify-between xl:justify-end gap-x-12 gap-y-6 shrink-0">
                                             <div className="flex flex-col items-start xl:items-end gap-3">
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/20">{content.admin.dashboard.paymentLabel}</span>
