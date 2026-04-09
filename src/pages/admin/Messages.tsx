@@ -58,6 +58,7 @@ const Messages = () => {
     const [replyText, setReplyText] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [showDetailOnMobile, setShowDetailOnMobile] = useState(false);
+    const { content } = useContent();
     const { toast } = useToast();
 
     const selectedMessage = messages.find(m => m.id === selectedMessageId);
