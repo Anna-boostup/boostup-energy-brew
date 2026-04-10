@@ -114,6 +114,11 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (!user) return;
 
+    // Immediately pre-fill guaranteed email to prevent UI race conditions
+    if (user.email && !formData.email) {
+      setFormData(prev => ({ ...prev, email: user.email || '' }));
+    }
+
     const fetchProfile = async () => {
       const { data, error } = await supabase
         .from('profiles')
@@ -135,7 +140,7 @@ const CheckoutPage = () => {
           ...prev,
           firstName: firstName,
           lastName: lastName,
-          email: data.email || prev.email,
+          email: data.email || user.email || prev.email,
           phone: delivery.phone || prev.phone,
           street: delivery.street || '',
           houseNumber: delivery.houseNumber || '',
