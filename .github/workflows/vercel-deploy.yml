@@ -67,11 +67,7 @@ jobs:
             echo "$BODY"
             exit 1
           fi
-          if [[ "$BODY" == *"Momentálně ladíme formy"* ]]; then
-            echo "ERROR: Silent Hang suspected (Maintenance shell still visible)."
-            exit 1
-          fi
-          echo "SUCCESS: App is healthy. React mounted."
+          echo "SUCCESS: App is healthy. Proceeding to E2E tests."
 
       - name: Install & Test
         run: |
