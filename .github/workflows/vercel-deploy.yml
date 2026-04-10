@@ -43,6 +43,12 @@ jobs:
       - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
         
+      - name: Diagnostic - Check Env Vars
+        run: |
+          echo "Checking Supabase environment variables..."
+          if [ -z "${{ secrets.VITE_SUPABASE_URL_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_URL_PREVIEW is empty in GitHub Secrets"; fi
+          if [ -z "${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_ANON_KEY_PREVIEW is empty in GitHub Secrets"; fi
+          
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
