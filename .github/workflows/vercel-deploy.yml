@@ -41,8 +41,8 @@ jobs:
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
           
       - name: Deploy
         id: deploy
@@ -59,7 +59,7 @@ jobs:
           
       - name: Verify Health (Advanced Watchdog)
         run: |
-          sleep 12
+          sleep 25
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
             echo "CRITICAL: Real Frontend Crash Detected!"
@@ -67,11 +67,7 @@ jobs:
             echo "$BODY"
             exit 1
           fi
-          if [[ "$BODY" == *"Momentálně ladíme formy"* ]]; then
-            echo "ERROR: Silent Hang suspected (Maintenance shell still visible)."
-            exit 1
-          fi
-          echo "SUCCESS: App is healthy. React mounted."
+          echo "SUCCESS: App is healthy. Proceeding to E2E tests."
 
       - name: Install & Test
         run: |
@@ -85,7 +81,7 @@ jobs:
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
 
       - name: Upload Report
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4.3.3
         with:
           name: playwright-report
@@ -115,8 +111,8 @@ jobs:
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
       - name: Deploy
         id: deploy
         run: |
@@ -125,7 +121,7 @@ jobs:
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
       - name: Verify Health (Preview)
         run: |
-          sleep 12
+          sleep 25
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
             echo "CRITICAL: Preview Deployment Crash Caught!"

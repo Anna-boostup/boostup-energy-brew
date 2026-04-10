@@ -198,14 +198,14 @@ const Login = () => {
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-olive/30 ml-1">Email</Label>
+                            <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-olive/80 ml-1">Email</Label>
                             <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/50 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="email"
                                     type="email"
                                     placeholder="vas@email.cz"
-                                    className="h-14 pl-12 bg-cream/20 border-none rounded-2xl focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
+                                    className="h-14 pl-12 bg-white/60 border border-olive/10 rounded-2xl focus:bg-white focus:ring-2 focus:ring-olive/20 transition-all font-bold placeholder:text-olive/50 text-olive"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -215,23 +215,23 @@ const Login = () => {
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between ml-1">
-                                <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-olive/30">Heslo</Label>
+                                <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-olive/80">Heslo</Label>
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
-                                    className="text-[9px] font-black uppercase tracking-widest text-olive/20 hover:text-olive transition-colors"
+                                    className="text-[10px] font-black uppercase tracking-widest text-olive/60 hover:text-olive transition-colors"
                                     disabled={loading}
                                 >
                                     Zapomenuto?
                                 </button>
                             </div>
                             <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/20 group-focus-within:text-olive transition-colors" />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/50 group-focus-within:text-olive transition-colors" />
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    className="h-14 pl-12 pr-12 bg-cream/20 border-none rounded-2xl focus:ring-2 focus:ring-olive/10 transition-all font-bold placeholder:text-olive/20"
+                                    className="h-14 pl-12 pr-12 bg-white/60 border border-olive/10 rounded-2xl focus:bg-white focus:ring-2 focus:ring-olive/20 transition-all font-bold placeholder:text-olive/50 text-olive"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -239,9 +239,9 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-olive/20 hover:text-olive transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-olive/50 hover:text-olive transition-colors"
                                 >
-                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 </button>
                             </div>
                         </div>

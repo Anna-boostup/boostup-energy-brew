@@ -1,0 +1,31 @@
+name: Promote to Production (Main)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  Promote-to-Main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.7
+        with:
+          fetch-depth: 0
+          
+      - name: Merge Preview into Main
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          
+          # Checkout main and ensure it is up to date
+          git checkout main
+          git pull origin main
+          
+          # Merge the approved preview branch into main
+          git merge origin/preview --no-ff -m "chore: deployed to production via manual trigger"
+          
+          # Push to trigger the Deploy-Production pipeline
+          git push origin main
