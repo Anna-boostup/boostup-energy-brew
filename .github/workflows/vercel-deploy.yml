@@ -32,7 +32,13 @@ jobs:
         run: npm install --global vercel@latest
         
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+        
+      - name: Create .env file for Vite Build
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+          echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" >> .env
         
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
@@ -118,6 +124,12 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         
+      - name: Create .env file for Vite Build
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+          echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" >> .env
+        
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
@@ -132,8 +144,22 @@ jobs:
 
       - name: Wait for Deployment Ready
         run: |
-          echo "Waiting for $DEPLOYMENT_URL to be ready..."
-          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Still waiting..."; sleep 5; done'
+          echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
+          timeout 120s bash -c 'until curl -sI -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          
+      - name: Verify Application Health (Prevent White Screen)
+        run: |
+          echo "Fetching page content from $DEPLOYMENT_URL..."
+          BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          echo "Page Content Preview (First 500 chars):"
+          echo "$BODY" | head -c 500
+          echo ""
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! The React app is not rendering correctly (White Screen)."
+            exit 1
+          fi
+          echo "SUCCESS: App root element found. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
@@ -169,6 +195,12 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         
+      - name: Create .env file for Vite Build
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+          echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" >> .env
+        
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
@@ -183,8 +215,22 @@ jobs:
 
       - name: Wait for Deployment Ready
         run: |
-          echo "Waiting for $DEPLOYMENT_URL to be ready..."
-          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Still waiting..."; sleep 5; done'
+          echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
+          timeout 120s bash -c 'until curl -sI -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          
+      - name: Verify Application Health (Prevent White Screen)
+        run: |
+          echo "Fetching page content from $DEPLOYMENT_URL..."
+          BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          echo "Page Content Preview (First 500 chars):"
+          echo "$BODY" | head -c 500
+          echo ""
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! The React app is not rendering correctly (White Screen)."
+            exit 1
+          fi
+          echo "SUCCESS: App root element found. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
