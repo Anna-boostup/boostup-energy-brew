@@ -89,6 +89,15 @@
     var HEADER_PART2 = ' PROTOKOL';
 
     function injectEmergencyLog(type, message) {
+      // ⚠️ PRODUCTION SILENCE: Do not show the visual red box on the live store domain.
+      // Standard console logging remains active for monitoring.
+      const isProduction = window.location.hostname === 'www.drinkboostup.cz' || window.location.hostname === 'drinkboostup.cz';
+      
+      if (isProduction) {
+        console.error("[" + type + "] Diagnostic (Silent on Prod): " + message);
+        return;
+      }
+
       const root = document.getElementById('root');
       if (root) {
         // Clear maintenance mode if we are injecting a real error
