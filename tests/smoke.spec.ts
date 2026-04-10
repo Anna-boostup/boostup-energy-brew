@@ -2,6 +2,11 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Frontend Smoke Test', () => {
   test('homepage should load with essential content', async ({ page }) => {
+    // Capture console logs for debugging
+    page.on('console', msg => {
+        console.log(`BROWSER [${msg.type()}]: ${msg.text()}`);
+    });
+
     await page.goto('/');
     
     // Check title
