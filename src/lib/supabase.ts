@@ -4,19 +4,15 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 /**
- * A "Universal Chainable Thenable" Proxy.
+ * Enhanced Universal Chainable Thenable Proxy.
  * 
- * 1. Returns itself for any property access (.from, .select, .auth, etc.)
- * 2. Returns itself for any function call (.eq(), .in(), etc.)
- * 3. Acts as a Promise (has .then) that resolves to safe empty data.
- * 
- * This prevents TypeErrors in deep chains like `supabase.from().select().in().then()`
- * and ensures that `await` calls always resolve instead of hanging.
+ * 1. Returns itself for any property/method access.
+ * 2. Provides context-aware mock data based on the method path.
+ * 3. Prevents "Cannot read property 'x' of undefined" during destructuring.
  */
 const createUniversalStub = (path = 'supabase'): any => {
-    // The stub must be a function so it can be called (e.g., .from('table'))
-    const stub: any = (...args: any[]) => {
-        // Specific return for subscription listeners
+    const stub: any = (..._args: any[]) => {
+        // Specific return for sync subscription listeners
         if (path.endsWith('onAuthStateChange')) {
             return { data: { subscription: { unsubscribe: () => {} } }, error: null };
         }
@@ -24,25 +20,28 @@ const createUniversalStub = (path = 'supabase'): any => {
     };
 
     return new Proxy(stub, {
-        get: (target, prop) => {
+        get: (_target, prop) => {
             // Handle Promise resolution (await / .then)
             if (prop === 'then') {
                 return (onFulfilled: any) => {
-                    const mockResult = { 
-                        data: [], 
-                        error: null, 
-                        session: null, 
-                        user: null, 
-                        profile: null,
-                        count: 0
-                    };
+                    let mockResult: any = { data: [], error: null, count: 0 };
+                    
+                    const p = path.toLowerCase();
+                    if (p.includes('getsession') || p.includes('getuser') || p.includes('auth.')) {
+                        // Auth Context expects nested data.session or data.user
+                        mockResult = { data: { session: null, user: null }, error: null };
+                    } else if (p.includes('.single')) {
+                        // single() expects data to be an object or null, not an array
+                        mockResult = { data: null, error: null };
+                    } else if (p.includes('signout')) {
+                        mockResult = { error: null };
+                    }
+
                     return Promise.resolve(onFulfilled ? onFulfilled(mockResult) : mockResult);
                 };
             }
 
-            // Standard property access
             if (typeof prop === 'string') {
-                // Avoid proxying internal JS symbols or common non-query props
                 if (prop === 'toJSON' || prop === 'constructor') return undefined;
                 return createUniversalStub(`${path}.${prop}`);
             }
@@ -52,7 +51,12 @@ const createUniversalStub = (path = 'supabase'): any => {
     });
 };
 
-// Use the real Supabase client if URL and Key are present; otherwise, use the Universal Stub.
-export const supabase = (supabaseUrl && supabaseAnonKey) 
+// Guard against poisoned variables or missing config
+const isConfigValid = supabaseUrl && 
+                     supabaseAnonKey && 
+                     supabaseUrl.startsWith('http') && 
+                     !supabaseUrl.endsWith('"');
+
+export const supabase = isConfigValid 
     ? createClient(supabaseUrl, supabaseAnonKey) 
     : createUniversalStub();

@@ -79,37 +79,44 @@
   </style>
   <!-- Rendered CSS will be handled by Vite standard loading -->
   <script>
-    // Global Error Guard (Capturing Phase) for early detection
-    function showDiagnostics(type, message) {
-      var debug = document.getElementById('debug-info');
-      var log = document.getElementById('error-log');
-      if (debug && log) {
-        debug.style.display = 'block';
-        log.innerText = type + '\n' + message;
+    // 1. Environmental Polyfills (Essential for legacy/production modules)
+    window.global = window;
+    window.process = { env: {} };
+
+    // 2. Indestructible Diagnostic Layer (Direct to DOM)
+    function injectEmergencyLog(type, message) {
+      const root = document.getElementById('root');
+      if (root) {
+        const div = document.createElement('div');
+        div.id = 'emergency-diagnostic';
+        div.style = "margin-top:2rem; background:#fff; border:1px solid #cc0000; padding:1rem; border-radius:8px; text-align:left; font-family:monospace; font-size:12px; color:#cc0000; box-shadow:0 4px 12px rgba(0,0,0,0.1);";
+        div.innerHTML = '<div style="font-weight:bold; border-bottom:1px solid #fee; margin-bottom:0.5rem; padding-bottom:0.5rem; letter-spacing:0.05em;">DIAGNOSTICKÝ PROTOKOL ('+type+')</div>' +
+                        '<pre style="white-space:pre-wrap; margin:0;">' + message + '</pre>';
+        root.appendChild(div);
       }
     }
 
     window.addEventListener('error', function(event) {
       if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
-        showDiagnostics('Resource Load Failure', 'Source: ' + (event.target.src || event.target.href));
+        injectEmergencyLog('Resource Load Failure', 'Source: ' + (event.target.src || event.target.href));
       } else {
-        showDiagnostics('Runtime Error', 'Message: ' + event.message + '\nStack: ' + (event.error ? event.error.stack : 'N/A'));
+        injectEmergencyLog('Runtime Error', event.message + '\n' + (event.error ? event.error.stack : ''));
       }
     }, true);
-    
+
     window.addEventListener('unhandledrejection', function(event) {
-      showDiagnostics('Promise Rejection', 'Reason: ' + event.reason);
+      injectEmergencyLog('Promise Rejection', event.reason);
     });
 
-    // Capture console.error to find "swallowed" crashes in contexts
-    const _origError = console.error;
-    console.error = function() {
-      const msg = Array.from(arguments).join(' ');
-      if (msg.toLowerCase().includes('error') || msg.toLowerCase().includes('fail')) {
-        showDiagnostics('Console Error Caught', msg);
+    // 3. Silent Hang Watchdog (Triggers if React fails to mount in 5s)
+    setTimeout(function() {
+      const root = document.getElementById('root');
+      if (root && root.innerHTML.includes('Momentálně ladíme formy')) {
+        const watchdogMsg = "SILENT HANG DETECTED: Application module loaded but React did not initialize the mount point within 5 seconds.";
+        console.error(watchdogMsg);
+        injectEmergencyLog('Silent Hang Watchdog', watchdogMsg);
       }
-      _origError.apply(console, arguments);
-    };
+    }, 5000);
   </script>
 </head>
 
@@ -122,12 +129,6 @@
         <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; letter-spacing: -0.02em;">Momentálně ladíme formy...</h1>
         <p style="font-size: 1.2rem; line-height: 1.6; opacity: 0.8; margin-bottom: 2.5rem;">Omlouváme se, na BoostUp právě probíhá blesková údržba. Vylepšujeme váš energetický zážitek, abychom se k vám vrátili ještě v lepší kondici.</p>
         <p style="font-weight: bold; color: #4b5d44;">Budeme zpět během několika minut!</p>
-        
-        <!-- Diagnostic Section (Visible ONLY on failure via JS) -->
-        <div id="debug-info" style="display: none; margin-top: 4rem; text-align: left; background: #fff; padding: 1.5rem; border-radius: 12px; font-size: 0.75rem; border: 1px solid rgba(0,0,0,0.1); max-width: 90vw; overflow-x: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-          <div style="font-weight: bold; margin-bottom: 0.5rem; color: #cc0000; border-bottom: 1px solid #fee; padding-bottom: 0.5rem;">DIAGNOSTICKÝ PROTOKOL</div>
-          <pre id="error-log" style="white-space: pre-wrap; word-break: break-all; margin: 0; line-height: 1.4;"></pre>
-        </div>
       </div>
     </div>
   </div>
