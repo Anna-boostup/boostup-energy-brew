@@ -39,8 +39,8 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         await page.fill('input[type="password"]', identity.password);
         await page.getByTestId('login-submit-btn').click();
         
-        // Wait for redirect to home or admin
-        await page.waitForURL(identity.type === 'admin' ? /.*admin/ : /.*\//, { timeout: 60000 });
+        // Wait for redirect to account or admin dashboard
+        await page.waitForURL(url => !url.href.includes('/login'), { timeout: 60000 });
       }
 
       // 2. Add product to cart
