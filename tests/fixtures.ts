@@ -2,6 +2,12 @@ import { test as base } from '@playwright/test';
 
 export const test = base.extend({
   page: async ({ page, baseURL }, use) => {
+    // Suppress global overlays (Cookie Consent & Discount Modal) to prevent pointer-event interception during tests
+    await page.addInitScript(() => {
+      window.localStorage.setItem('cookieConsent', JSON.stringify({ strictlyNecessary: true, analytics: true, marketing: true }));
+      window.localStorage.setItem('boostup_discount_dismissed', 'true');
+    });
+
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
     if (bypassSecret) {
       await page.route('**/*', (route, request) => {
