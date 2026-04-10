@@ -79,24 +79,28 @@
   </style>
   <!-- Rendered CSS will be handled by Vite standard loading -->
   <script>
-    // Global Error Guard for Diagnostics
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
+    // Global Error Guard (Capturing Phase) for early detection
+    window.addEventListener('error', function(event) {
       var debug = document.getElementById('debug-info');
       var log = document.getElementById('error-log');
       if (debug && log) {
         debug.style.display = 'block';
-        log.innerText = 'Frontend Crash Detected\nMessage: ' + msg + '\nFile: ' + url + '\nLine: ' + lineNo + '\nStack: ' + (error ? error.stack : 'N/A');
+        if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
+          log.innerText = 'Frontend Crash Detected (Resource Load Failure)\nSource: ' + (event.target.src || event.target.href);
+        } else {
+          log.innerText = 'Frontend Crash Detected\nMessage: ' + event.message + '\nStack: ' + (event.error ? event.error.stack : 'N/A');
+        }
       }
-      return false;
-    };
-    window.onunhandledrejection = function(event) {
+    }, true);
+    
+    window.addEventListener('unhandledrejection', function(event) {
       var debug = document.getElementById('debug-info');
       var log = document.getElementById('error-log');
       if (debug && log) {
         debug.style.display = 'block';
         log.innerText = 'Frontend Crash Detected (Promise)\nReason: ' + event.reason;
       }
-    };
+    });
   </script>
 </head>
 
