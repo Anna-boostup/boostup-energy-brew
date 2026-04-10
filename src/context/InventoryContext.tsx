@@ -108,6 +108,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // 2. Realtime Subscriptions
     useEffect(() => {
+        if (!supabase) return;
+
         const inventorySubscription = supabase
             .channel('inventory_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload) => {
@@ -160,13 +162,16 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             .subscribe();
 
         return () => {
-            supabase.removeChannel(inventorySubscription);
-            supabase.removeChannel(movementsSubscription);
-            supabase.removeChannel(ordersSubscription);
+            if (supabase) {
+                supabase.removeChannel(inventorySubscription);
+                supabase.removeChannel(movementsSubscription);
+                supabase.removeChannel(ordersSubscription);
+            }
         };
     }, []);
 
     const fetchInventory = async () => {
+        if (!supabase) return;
         const { data, error } = await supabase.from('inventory').select('*');
         if (error) console.error('Error fetching inventory:', error);
         if (data) {
