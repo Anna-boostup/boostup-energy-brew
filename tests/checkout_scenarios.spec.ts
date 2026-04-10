@@ -49,7 +49,12 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
       await addToCartButton.click();
 
-      // 3. Go to checkout
+      // 3. Open the Cart Drawer
+      // The drawer does not automatically open upon adding an item; we must manually click the header cart icon.
+      const headerCartButton = page.locator('button[aria-label="Do košíku"], button[aria-label="Košík"], header button svg.lucide-shopping-bag').first();
+      await headerCartButton.click();
+
+      // 4. Go to checkout
       await page.locator('button:has-text("K pokladně")').click();
       await expect(page).toHaveURL(/.*checkout/);
 

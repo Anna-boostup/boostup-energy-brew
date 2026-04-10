@@ -74,6 +74,12 @@ jobs:
           fi
           echo "SUCCESS: App is healthy. Proceeding to E2E tests."
 
+      - name: Cache Playwright Binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install & Test
         run: |
           npm install
