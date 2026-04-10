@@ -12,6 +12,9 @@ BEGIN
         admin_id := gen_random_uuid();
         INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at)
         VALUES (admin_id, 'admin-test@drinkboostup.cz', crypt('BoostUpAdminTest2026!', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Test Admin","account_type":"personal"}', 'authenticated', 'authenticated', NOW(), NOW());
+        
+        INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+        VALUES (admin_id, admin_id, format('{"sub": "%s", "email": "%s"}', admin_id, 'admin-test@drinkboostup.cz')::jsonb, 'email', admin_id, NOW(), NOW(), NOW());
     ELSE
         SELECT id INTO admin_id FROM auth.users WHERE email = 'admin-test@drinkboostup.cz';
         -- Force update password
@@ -29,6 +32,9 @@ BEGIN
         company_id := gen_random_uuid();
         INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at)
         VALUES (company_id, 'company-test@drinkboostup.cz', crypt('BoostUpCompanyTest2026!', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Test Company","account_type":"company"}', 'authenticated', 'authenticated', NOW(), NOW());
+        
+        INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+        VALUES (company_id, company_id, format('{"sub": "%s", "email": "%s"}', company_id, 'company-test@drinkboostup.cz')::jsonb, 'email', company_id, NOW(), NOW(), NOW());
     ELSE
         SELECT id INTO company_id FROM auth.users WHERE email = 'company-test@drinkboostup.cz';
         -- Force update password in case the account was manually created earlier with a different one
@@ -53,6 +59,9 @@ BEGIN
         basic_id := gen_random_uuid();
         INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, aud, role, created_at, updated_at)
         VALUES (basic_id, 'basic-test@drinkboostup.cz', crypt('BoostUpBasicTest2026!', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Test Basic","account_type":"personal"}', 'authenticated', 'authenticated', NOW(), NOW());
+        
+        INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+        VALUES (basic_id, basic_id, format('{"sub": "%s", "email": "%s"}', basic_id, 'basic-test@drinkboostup.cz')::jsonb, 'email', basic_id, NOW(), NOW(), NOW());
     ELSE
         SELECT id INTO basic_id FROM auth.users WHERE email = 'basic-test@drinkboostup.cz';
     END IF;
