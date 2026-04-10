@@ -157,9 +157,10 @@ jobs:
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
           if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-      - name: Verify Health (Production)
+      - name: Verify Health (Advanced Watchdog)
         run: |
-          sleep 12
+          # Increased sleep to 20s for Solid Bundle propagation
+          sleep 20
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
             echo "CRITICAL: Production Deployment Crash Caught!"

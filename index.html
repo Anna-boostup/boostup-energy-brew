@@ -116,13 +116,28 @@
       injectEmergencyLog('Promise Rejection', event.reason);
     });
 
-    // 3. Mount Watchdog (Internal Diagnostic)
+    // 3. Mount Watchdog (Auto-Recovery)
     setTimeout(function() {
       const root = document.getElementById('root');
       if (root && root.innerHTML.includes('Momentálně ladíme formy')) {
-        console.warn("Watchdog: React has not replaced the maintenance shell yet.");
+        console.error("Watchdog: React mount hang detected.");
+        
+        // Single automatic recovery attempt (forces cache clear)
+        if (!sessionStorage.getItem('boostup_auto_recovery')) {
+          sessionStorage.setItem('boostup_auto_recovery', 'true');
+          console.log("Watchdog: Attemping automatic hard-reload to clear cache...");
+          var url = new URL(window.location.href);
+          url.searchParams.set('reload', Date.now());
+          window.location.href = url.toString();
+        } else {
+          // If already reloaded and still hangs, show the emergency report
+          injectEmergencyLog('Silent Hang Watchdog', 'Aplikace se nepodařila spustit ani po automatickém restartu. Možné příčiny: nekompatibilní vendor bundle (createContext error) nebo chybějící Supabase klíče.');
+        }
+      } else {
+        // Clear recovery flag on successful mount
+        sessionStorage.removeItem('boostup_auto_recovery');
       }
-    }, 8000);
+    }, 10000);
   </script>
 </head>
 

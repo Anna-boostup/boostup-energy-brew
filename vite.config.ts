@@ -30,13 +30,9 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor-react';
-            if (id.includes('lucide-react')) return 'vendor-lucide';
-            if (id.includes('framer-motion')) return 'vendor-framer';
-            if (id.includes('recharts')) return 'vendor-charts';
-            if (id.includes('@supabase')) return 'vendor-supabase';
-            if (id.includes('@tanstack')) return 'vendor-tanstack';
-            return 'vendor'; // All other node_modules
+            // Group all node_modules into a single robust vendor chunk to prevent 
+            // initialization race conditions on custom domains/CDNs.
+            return 'vendor';
           }
           if (id.includes('src/pages/admin/')) return 'admin-suite';
           if (id.includes('src/pages/legal/')) return 'legal-suite';
