@@ -41,8 +41,8 @@ jobs:
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
           
       - name: Deploy
         id: deploy
@@ -111,8 +111,8 @@ jobs:
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
       - name: Deploy
         id: deploy
         run: |
