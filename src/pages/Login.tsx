@@ -247,6 +247,7 @@ const Login = () => {
                         </div>
 
                         <Button 
+                            data-testid="login-submit-btn"
                             type="submit" 
                             className="w-full h-14 bg-olive hover:bg-olive-dark text-cream font-black text-lg rounded-2xl shadow-button transition-all active:scale-[0.98]" 
                             disabled={loading}

@@ -137,7 +137,7 @@ const PricingStatistics = () => {
         <div className="space-y-8 pb-12">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content?.admin?.pricing?.title}</h1>
+                    <h1 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content?.admin?.pricing?.title}</h1>
                     <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">{content?.admin?.pricing?.description}</p>
                 </div>
             </div>

@@ -19,11 +19,11 @@ test.describe('Admin Dashboard Audit', () => {
     
     await emailInput.fill(email);
     await page.fill('input[type="password"]', password);
-    await page.click('button:has-text("PŘIHLÁSIT SE")');
+    await page.getByTestId('login-submit-btn').click();
 
     // 2. Verify Dashboard redirection
     await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
-    await expect(page.locator('h2:has-text("DASHBOARD")')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 20000 });
 
     // 3. Audit all pages listed in AdminLayout
     const adminPages = [
@@ -44,7 +44,7 @@ test.describe('Admin Dashboard Audit', () => {
       
       // Basic check: Page should not show "Error" or "Crashed"
       // We check for the module title (uppercase)
-      const titleLocator = page.locator(`h1, h2`).filter({ hasText: adminPage.title }).first();
+      const titleLocator = page.getByTestId('admin-page-title');
       await expect(titleLocator).toBeVisible({ timeout: 10000 });
       
       // Check for White Screen of Death (body should not be empty)

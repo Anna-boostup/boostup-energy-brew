@@ -597,7 +597,7 @@ const Orders = () => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap">
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{content.admin.orders.title}</h2>
+                <h2 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-bold tracking-tight">{content.admin.orders.title}</h2>
                <div className="flex flex-wrap items-center gap-2">
                     {notificationPermission !== 'granted' && (
                         <Button

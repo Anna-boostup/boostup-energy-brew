@@ -204,7 +204,7 @@ const Messages = () => {
                         <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content?.admin?.messages?.title || "Messages"}</h1>
+                        <h1 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content?.admin?.messages?.title || "Messages"}</h1>
                         <p className="text-[10px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-0.5 sm:mt-1">{content?.admin?.messages?.description}</p>
                     </div>
                     {unreadCount > 0 && (

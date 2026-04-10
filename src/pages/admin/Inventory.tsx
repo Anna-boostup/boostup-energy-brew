@@ -127,7 +127,7 @@ const Inventory = () => {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>
-                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic">{content?.admin?.navigation?.inventory}</h2>
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic">{content?.admin?.navigation?.inventory}</h2>
                     <div className="flex items-center gap-3 mt-2">
                         <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted leading-none">{content?.admin?.inventory?.description}</p>

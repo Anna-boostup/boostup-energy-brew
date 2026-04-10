@@ -813,6 +813,7 @@ const CheckoutPage = () => {
                   ].map((method) => (
                     <button
                       key={method.id}
+                      data-testid={`checkout-shipping-${method.id}`}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, deliveryMethod: method.id }))}
                       className={`relative p-6 rounded-[2rem] border-2 text-center flex flex-col items-center justify-center transition-all group min-h-[140px] ${formData.deliveryMethod === method.id ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
@@ -1006,6 +1007,7 @@ const CheckoutPage = () => {
                 </div>
 
                 <Button
+                  data-testid="checkout-submit-btn"
                   onClick={handleSubmit}
                   disabled={isProcessing || cart.length === 0 || !isSalesEnabled}
                   className={`w-full h-20 rounded-[1.5rem] mt-10 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${

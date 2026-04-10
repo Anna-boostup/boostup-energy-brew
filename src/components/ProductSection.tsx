@@ -131,6 +131,7 @@ const ProductSection = () => {
                   
                   <div className="w-full sm:w-2/3">
                         <Button 
+                          data-testid="add-to-cart-hero-btn"
                           size="lg"
                           onClick={handleAddToCart}
                           disabled={!isValid || isOutOfStock || content?.isSalesEnabled === false}

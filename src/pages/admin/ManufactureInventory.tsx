@@ -36,7 +36,7 @@ const ManufactureInventory = () => {
                         <Beaker className="w-8 h-8 sm:w-10 sm:h-10 text-white relative z-10" />
                     </div>
                     <div className="space-y-1 sm:space-y-2">
-                        <h1 className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.inventory?.manufacture?.title || "Staff Inventory"}</h1>
+                        <h1 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.inventory?.manufacture?.title || "Staff Inventory"}</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                             <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">

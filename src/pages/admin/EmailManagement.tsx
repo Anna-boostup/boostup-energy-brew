@@ -398,7 +398,7 @@ const EmailManagement = () => {
                     {/* Header */}
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
                 <div className="space-y-3">
-                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.title || "Email Management"}</h2>
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.title || "Email Management"}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                         <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[9px] sm:text-[10px] leading-none">{content?.admin?.emailManager?.description}</p>
