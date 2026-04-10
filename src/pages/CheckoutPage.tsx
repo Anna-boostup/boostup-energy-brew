@@ -1078,6 +1078,7 @@ const Box = ({ className }: { className?: string }) => (
 
 const PaymentMethodCard = ({ id, name, sub, active, onClick, icon }: any) => (
   <button
+    data-testid={`checkout-payment-${id}`}
     type="button"
     onClick={onClick}
     className={`relative p-6 rounded-[2rem] border-2 text-center transition-all group h-[140px] flex flex-col items-center justify-center gap-3 ${active ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}

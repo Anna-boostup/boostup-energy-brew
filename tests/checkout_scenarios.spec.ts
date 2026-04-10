@@ -93,7 +93,7 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       await page.getByTestId('checkout-shipping-zasilkovna').click();
       // Packeta Widget is usually an iframe, for smoke test we just ensure payment methods show up
       
-      const gopayButton = page.locator('text=GoPay');
+      const gopayButton = page.getByTestId('checkout-payment-card');
       await gopayButton.click();
 
       // 6. Submit

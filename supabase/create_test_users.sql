@@ -58,4 +58,13 @@ BEGIN
     VALUES (basic_id, 'basic-test@drinkboostup.cz', 'Test Basic', 'user', 'personal')
     ON CONFLICT (id) DO UPDATE SET role = 'user', account_type = 'personal';
 
+    -- 4. E2E INVENTORY SEEDING
+    -- Inject deep stock reserves into all core mock SKU records to ensure the configurator CTA evaluates as 'Enabled'
+    INSERT INTO public.inventory (sku, quantity, is_active)
+    VALUES 
+    ('lemon', 9999, true),
+    ('red', 9999, true),
+    ('silky', 9999, true)
+    ON CONFLICT (sku) DO UPDATE SET quantity = 9999, is_active = true;
+
 END $$;
