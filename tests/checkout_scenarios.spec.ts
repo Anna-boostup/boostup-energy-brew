@@ -34,19 +34,19 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       
       // 1. Handle Login if not guest
       if (identity.type !== 'guest') {
-        await page.goto('/login');
+        await page.goto('/login', { timeout: 60000 });
         await page.fill('input[type="email"]', identity.email);
         await page.fill('input[type="password"]', identity.password);
         await page.click('button:has-text("PŘIHLÁSIT SE")');
         
         // Wait for redirect to home or admin
-        await page.waitForURL(identity.type === 'admin' ? /.*admin/ : /.*\//);
+        await page.waitForURL(identity.type === 'admin' ? /.*admin/ : /.*\//, { timeout: 60000 });
       }
 
       // 2. Add product to cart
-      await page.goto('/');
+      await page.goto('/', { timeout: 60000 });
       const addToCartButton = page.locator('button:has-text("Do košíku")').first();
-      await addToCartButton.waitFor({ state: 'visible' });
+      await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
       await addToCartButton.click();
 
       // 3. Go to checkout

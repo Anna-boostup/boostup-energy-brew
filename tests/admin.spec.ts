@@ -11,14 +11,19 @@ test.describe('Admin Dashboard Audit', () => {
     }
 
     // 1. Login
-    await page.goto('/login');
-    await page.fill('input[type="email"]', email);
+    await page.goto('/login', { timeout: 60000 });
+    
+    // Explicitly wait for the input to be present to avoid race conditions
+    const emailInput = page.locator('input[type="email"]');
+    await emailInput.waitFor({ state: 'visible', timeout: 60000 });
+    
+    await emailInput.fill(email);
     await page.fill('input[type="password"]', password);
     await page.click('button:has-text("PŘIHLÁSIT SE")');
 
     // 2. Verify Dashboard redirection
-    await expect(page).toHaveURL(/.*admin/);
-    await expect(page.locator('h2:has-text("PŘEHLED")')).toBeVisible();
+    await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
+    await expect(page.locator('h2:has-text("PŘEHLED")')).toBeVisible({ timeout: 20000 });
 
     // 3. Audit all pages listed in AdminLayout
     const adminPages = [

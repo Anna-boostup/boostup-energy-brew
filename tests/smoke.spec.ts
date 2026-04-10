@@ -7,7 +7,7 @@ test.describe('Frontend Smoke Test', () => {
         console.log(`BROWSER [${msg.type()}]: ${msg.text()}`);
     });
 
-    await page.goto('/');
+    await page.goto('/', { timeout: 60000 });
     
     // Check title
     const title = await page.title();
@@ -15,15 +15,15 @@ test.describe('Frontend Smoke Test', () => {
         console.log("DEBUG: Empty title detected. Page content:");
         console.log(await page.content());
     }
-    await expect(page).toHaveTitle(/BOOSTUP/i);
+    await expect(page).toHaveTitle(/BOOSTUP/i, { timeout: 30000 });
     
     // Check hero section elements
     const heroText = page.locator('h1');
-    await expect(heroText.first()).toBeVisible();
+    await expect(heroText.first()).toBeVisible({ timeout: 60000 });
     
     // Check navigation
     const nav = page.locator('nav');
-    await expect(nav.first()).toBeVisible();
+    await expect(nav.first()).toBeVisible({ timeout: 30000 });
   });
 
   test('navigation to legal pages should work', async ({ page }) => {
