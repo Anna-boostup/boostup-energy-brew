@@ -63,7 +63,7 @@ jobs:
       - name: Verify Application Health (Prevent White Screen)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
-          BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           echo "Page Content Preview (First 1000 chars):"
           echo "$BODY" | head -c 1000
           echo ""
@@ -77,13 +77,20 @@ jobs:
             echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
             exit 1
           fi
+
+          if [[ "$BODY" == *"<div id=\"root\"></div>"* ]]; then
+            echo "ERROR: Root element is EMPTY! React initialized but failed to render UI."
+            echo "Full Body Dump for verification:"
+            echo "$BODY"
+            exit 1
+          fi
           
           if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
             echo "ERROR: React application crashed! ErrorBoundary detected on the page."
             exit 1
           fi
 
-          echo "SUCCESS: App root element found and no crash detected. Proceeding to tests."
+          echo "SUCCESS: App root element found and contains content. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
@@ -164,7 +171,7 @@ jobs:
       - name: Verify Application Health (Prevent White Screen)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
-          BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           echo "Page Content Preview (First 1000 chars):"
           echo "$BODY" | head -c 1000
           echo ""
@@ -178,13 +185,20 @@ jobs:
             echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
             exit 1
           fi
+
+          if [[ "$BODY" == *"<div id=\"root\"></div>"* ]]; then
+            echo "ERROR: Root element is EMPTY! React initialized but failed to render UI."
+            echo "Full Body Dump for verification:"
+            echo "$BODY"
+            exit 1
+          fi
           
           if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
             echo "ERROR: React application crashed! ErrorBoundary detected on the page."
             exit 1
           fi
 
-          echo "SUCCESS: App root element found and no crash detected. Proceeding to tests."
+          echo "SUCCESS: App root element found and contains content. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
@@ -248,7 +262,7 @@ jobs:
       - name: Verify Application Health (Prevent White Screen)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
-          BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           echo "Page Content Preview (First 1000 chars):"
           echo "$BODY" | head -c 1000
           echo ""
@@ -262,13 +276,20 @@ jobs:
             echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
             exit 1
           fi
+
+          if [[ "$BODY" == *"<div id=\"root\"></div>"* ]]; then
+            echo "ERROR: Root element is EMPTY! React initialized but failed to render UI."
+            echo "Full Body Dump for verification:"
+            echo "$BODY"
+            exit 1
+          fi
           
           if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
             echo "ERROR: React application crashed! ErrorBoundary detected on the page."
             exit 1
           fi
 
-          echo "SUCCESS: App root element found and no crash detected. Proceeding to tests."
+          echo "SUCCESS: App root element found and contains content. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install

@@ -19,7 +19,13 @@ test.describe('Frontend Smoke Test', () => {
     
     // Check hero section elements
     const heroText = page.locator('h1');
-    await expect(heroText.first()).toBeVisible({ timeout: 60000 });
+    try {
+        await expect(heroText.first()).toBeVisible({ timeout: 60000 });
+    } catch (error) {
+        console.error("DIAGNOSTIC: h1 NOT found! Printing page content for debugging:");
+        console.log(await page.content());
+        throw error;
+    }
     
     // Check navigation
     const nav = page.locator('nav');

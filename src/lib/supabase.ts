@@ -36,7 +36,8 @@ const createSafeStub = (path = 'supabase'): any => {
             }
             
             // Default no-op async response for .from().select() etc.
-            return Promise.resolve({ data: null, error: null });
+            // Using [] instead of null to prevent 'cannot read property map of null' errors
+            return Promise.resolve({ data: [], error: null });
         }
     });
     return stub;
