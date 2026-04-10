@@ -63,14 +63,26 @@ jobs:
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          echo "Page Content Preview (First 500 chars):"
-          echo "$BODY" | head -c 500
+          echo "Page Content Preview (First 1000 chars):"
+          echo "$BODY" | head -c 1000
           echo ""
-          if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! The React app is not rendering correctly (White Screen)."
+          
+          if [[ "$BODY" == *"Authentication Required"* ]]; then
+            echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
             exit 1
           fi
-          echo "SUCCESS: App root element found. Proceeding to tests."
+
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+            exit 1
+          fi
+          
+          if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
+            echo "ERROR: React application crashed! ErrorBoundary detected on the page."
+            exit 1
+          fi
+
+          echo "SUCCESS: App root element found and no crash detected. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
@@ -152,14 +164,26 @@ jobs:
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          echo "Page Content Preview (First 500 chars):"
-          echo "$BODY" | head -c 500
+          echo "Page Content Preview (First 1000 chars):"
+          echo "$BODY" | head -c 1000
           echo ""
-          if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! The React app is not rendering correctly (White Screen)."
+          
+          if [[ "$BODY" == *"Authentication Required"* ]]; then
+            echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
             exit 1
           fi
-          echo "SUCCESS: App root element found. Proceeding to tests."
+
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+            exit 1
+          fi
+          
+          if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
+            echo "ERROR: React application crashed! ErrorBoundary detected on the page."
+            exit 1
+          fi
+
+          echo "SUCCESS: App root element found and no crash detected. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
@@ -170,6 +194,7 @@ jobs:
       - name: Run Preview Smoke Test
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
@@ -223,14 +248,26 @@ jobs:
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          echo "Page Content Preview (First 500 chars):"
-          echo "$BODY" | head -c 500
+          echo "Page Content Preview (First 1000 chars):"
+          echo "$BODY" | head -c 1000
           echo ""
-          if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! The React app is not rendering correctly (White Screen)."
+          
+          if [[ "$BODY" == *"Authentication Required"* ]]; then
+            echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
             exit 1
           fi
-          echo "SUCCESS: App root element found. Proceeding to tests."
+
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+            exit 1
+          fi
+          
+          if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
+            echo "ERROR: React application crashed! ErrorBoundary detected on the page."
+            exit 1
+          fi
+
+          echo "SUCCESS: App root element found and no crash detected. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
@@ -241,6 +278,7 @@ jobs:
       - name: Run Production Smoke Test
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}

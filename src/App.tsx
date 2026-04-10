@@ -89,6 +89,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
 import { useDynamicFonts } from './hooks/useDynamicFonts';
 import { Analytics } from "@vercel/analytics/react";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Applies typography CSS variables from the CMS content
 const FontLoader = () => { useDynamicFonts(); return null; };
@@ -96,8 +97,9 @@ const FontLoader = () => { useDynamicFonts(); return null; };
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
@@ -193,7 +195,8 @@ const App = () => (
         </AuthProvider>
       </HelmetProvider>
     </TooltipProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
