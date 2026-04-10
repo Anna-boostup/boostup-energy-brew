@@ -49,8 +49,8 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
           }
         } catch (e) {
           // If navigation hangs, it guarantees Login.tsx aborted. We MUST extract the error toast to see why Supabase rejected it
-          const toastError = await page.locator('.group.toast').innerText({ timeout: 2000 }).catch(() => "No toast visible. Silent network crash?");
-          throw new Error(`CRITICAL LOGIN FAILURE: Supabase backend rejected the connection. Toast message displayed: "${toastError}"`);
+          const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
+          throw new Error(`CRITICAL LOGIN FAILURE: Navigation did not happen. UI Alert displayed: "${toastError}"`);
         }
       }
 
