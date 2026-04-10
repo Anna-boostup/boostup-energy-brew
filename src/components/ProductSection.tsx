@@ -133,20 +133,24 @@ const ProductSection = () => {
                         <Button 
                           size="lg"
                           onClick={handleAddToCart}
-                          disabled={!isValid || isOutOfStock}
+                          disabled={!isValid || isOutOfStock || content?.isSalesEnabled === false}
                           className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
-                            isOutOfStock 
-                              ? "bg-muted grayscale border-border text-muted-foreground opacity-70"
+                            isOutOfStock || content?.isSalesEnabled === false
+                              ? "bg-muted grayscale border-border text-muted-foreground opacity-70 cursor-not-allowed"
                               : "bg-[#3d5a2f] text-[#dfdf57] font-black border-2 border-[#dfdf57]/20 transition-all hover:opacity-90 shadow-xl shadow-black/20"
                           }`}
                         >
                       <div className="relative z-10 flex flex-col items-center">
-                        <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight">
+                        <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight uppercase">
                           <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                          {isOutOfStock ? (content.configurator?.outOfStock || "VYPRODÁNO") : (content.configurator?.cta || "PŘIDAT DO KOŠÍKU")}
+                          {content?.isSalesEnabled === false 
+                            ? (content?.admin?.dashboard?.salesPaused || "PRODEJ POZASTAVEN") 
+                            : isOutOfStock 
+                              ? (content.configurator?.outOfStock || "VYPRODÁNO") 
+                              : (content.configurator?.cta || "PŘIDAT DO KOŠÍKU")}
                         </div>
-                        {!isOutOfStock && (
-                          <div className="flex items-center gap-2 text-[10px] font-bold opacity-90 tracking-widest uppercase">
+                        {!isOutOfStock && content?.isSalesEnabled !== false && (
+                          <div className="flex items-center gap-2 text-[10px] font-bold opacity-90 tracking-widest uppercase mt-1">
                             <span>{content.configurator?.total || "Celkem"} {price} Kč</span>
                             <Sparkles className="w-3 h-3 text-lime" />
                           </div>

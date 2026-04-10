@@ -273,7 +273,22 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                          order.delivery_info?.paymentMethod?.toUpperCase() || content.admin.orders.table.payment}
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-right pr-8">
+                                <TableCell className="text-center">
+                                    <Badge
+                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                            order.status === 'shipped' ? 'bg-olive-dark text-white' :
+                                                order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
+                                                    order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                                                        'bg-lime/20 text-olive-dark'
+                                        }`}
+                                    >
+                                        {order.status === 'shipped' ? content.admin.dashboard.statusShipped :
+                                            order.status === 'processing' ? content.admin.dashboard.statusProcessing :
+                                                order.status === 'cancelled' ? content.admin.dashboard.statusCancelled :
+                                                    content.admin.dashboard.statusReceived}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="text-right pr-8 whitespace-nowrap min-w-max">
                                     <div className="flex justify-end gap-2">
                                         <Dialog>
                                             <DialogTrigger asChild>
