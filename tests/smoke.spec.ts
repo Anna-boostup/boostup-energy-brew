@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Frontend Smoke Test', () => {
   test('homepage should load with essential content', async ({ page }) => {
