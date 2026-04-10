@@ -31,6 +31,7 @@ jobs:
         uses: actions/setup-node@v4.0.3
         with:
           node-version: 22
+          cache: 'npm'
           
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -105,6 +106,7 @@ jobs:
         uses: actions/setup-node@v4.0.3
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
@@ -139,6 +141,7 @@ jobs:
         uses: actions/setup-node@v4.0.3
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
