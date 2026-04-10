@@ -1,48 +1,58 @@
-
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("FATAL: Supabase credentials missing during initialization! Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
-}
-
 /**
- * Safe Supabase Proxy Stub
+ * A "Universal Chainable Thenable" Proxy.
  * 
- * Instead of returning null when environment variables are missing (which causes 
- * 'TypeError: cannot read property X of null'), we return a Proxy that logs 
- * warnings but doesn't crash the application.
+ * 1. Returns itself for any property access (.from, .select, .auth, etc.)
+ * 2. Returns itself for any function call (.eq(), .in(), etc.)
+ * 3. Acts as a Promise (has .then) that resolves to safe empty data.
+ * 
+ * This prevents TypeErrors in deep chains like `supabase.from().select().in().then()`
+ * and ensures that `await` calls always resolve instead of hanging.
  */
-const createSafeStub = (path = 'supabase'): any => {
-    const stub: any = new Proxy(() => {}, {
-        get: (_target, prop) => {
-            if (prop === 'then') return undefined; // Avoid proxying Promises incorrectly
-            return createSafeStub(`${path}.${String(prop)}`);
-        },
-        apply: (_target, _thisArg, _args) => {
-            console.warn(`SupabaseStub: Attempted to call [${path}()]. Client is uninitialized.`);
+const createUniversalStub = (path = 'supabase'): any => {
+    // The stub must be a function so it can be called (e.g., .from('table'))
+    const stub: any = (...args: any[]) => {
+        // Specific return for subscription listeners
+        if (path.endsWith('onAuthStateChange')) {
+            return { data: { subscription: { unsubscribe: () => {} } }, error: null };
+        }
+        return createUniversalStub(`${path}()`);
+    };
+
+    return new Proxy(stub, {
+        get: (target, prop) => {
+            // Handle Promise resolution (await / .then)
+            if (prop === 'then') {
+                return (onFulfilled: any) => {
+                    const mockResult = { 
+                        data: [], 
+                        error: null, 
+                        session: null, 
+                        user: null, 
+                        profile: null,
+                        count: 0
+                    };
+                    return Promise.resolve(onFulfilled ? onFulfilled(mockResult) : mockResult);
+                };
+            }
+
+            // Standard property access
+            if (typeof prop === 'string') {
+                // Avoid proxying internal JS symbols or common non-query props
+                if (prop === 'toJSON' || prop === 'constructor') return undefined;
+                return createUniversalStub(`${path}.${prop}`);
+            }
             
-            // Mock common return patterns to satisfy most callers
-            if (path.includes('auth.onAuthStateChange')) {
-                return { data: { subscription: { unsubscribe: () => {} } } };
-            }
-            if (path.includes('auth.getSession') || path.includes('auth.getUser')) {
-                return Promise.resolve({ data: { session: null, user: null }, error: null });
-            }
-            if (path.includes('.channel')) {
-                return { on: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }), subscribe: () => ({ unsubscribe: () => {} }) };
-            }
-            
-            // Default no-op async response for .from().select() etc.
-            // Using [] instead of null to prevent 'cannot read property map of null' errors
-            return Promise.resolve({ data: [], error: null });
+            return undefined;
         }
     });
-    return stub;
 };
 
+// Use the real Supabase client if URL and Key are present; otherwise, use the Universal Stub.
 export const supabase = (supabaseUrl && supabaseAnonKey) 
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : createSafeStub();
+    ? createClient(supabaseUrl, supabaseAnonKey) 
+    : createUniversalStub();

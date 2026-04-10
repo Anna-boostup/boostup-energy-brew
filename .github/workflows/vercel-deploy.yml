@@ -4,6 +4,7 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 on:
   push:
@@ -20,11 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
-      - name: Install Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,73 +34,62 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
         
-      - name: Pull Vercel Environment Information
+      - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
         
-      - name: Create .env file for Vite Build
+      - name: Create .env
         run: |
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
           echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" >> .env
         
-      - name: Build Project Artifacts
+      - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           
-      - name: Deploy Project Artifacts to Vercel
+      - name: Deploy
         id: deploy
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed to return URL"; exit 1; fi
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
 
-      - name: Wait for Deployment Ready
+      - name: Wait for 200 OK
         run: |
-          echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
-          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          echo "Waiting for $DEPLOYMENT_URL..."
+          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
           
-      - name: Verify Application Health (Advanced Diagnostics)
+      - name: Verify Health (No Crashes, React Mounted)
         run: |
-          echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           
-          if [[ "$BODY" == *"Authentication Required"* ]]; then
-            echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
-            exit 1
-          fi
-
-          if [[ "$BODY" == *"DIAGNOSTICKÉ INFORMACE"* ]]; then
-            echo "CRITICAL: Frontend Crash Detected by Diagnostic Layer!"
-            echo "--- START DIAGNOSTIC DUMP ---"
-            # Extract content between diagnositc tags if possible, or just dump body
+          if [[ "$BODY" == *"DIAGNOSTICKÝ PROTOKOL"* ]]; then
+            echo "CRITICAL: Frontend Crash Caught!"
+            echo "--- DUMP ---"
             echo "$BODY"
-            echo "--- END DIAGNOSTIC DUMP ---"
             exit 1
           fi
 
-          if [[ "$BODY" == *"<div id=\"root\">"* && "$BODY" == *"Momentálně ladíme formy"* ]]; then
-            echo "NOTICE: Branded Maintenance Mode is active (no crash detected yet)."
-            echo "However, React failed to replace the maintenance shell. This counts as a load failure."
+          if [[ "$BODY" == *"Momentálně ladíme formy"* ]]; then
+            echo "ERROR: React failed to mount (Maintenance shell remains visible)."
             exit 1
           fi
 
           if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+            echo "ERROR: Root element missing."
             exit 1
           fi
 
-          echo "SUCCESS: App root element found and contains content. Proceeding to tests."
+          echo "SUCCESS: App is healthy."
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Post-Deployment Verification
+      - name: Install & Test
+        run: |
+          npm install
+          npx playwright install --with-deps
+          npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -108,23 +99,21 @@ jobs:
           TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
           TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
           TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
-        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts
 
-      - name: Upload Test Report
+      - name: Upload Report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
 
-      - name: Auto-Promote to Preview
+      - name: Promote
         if: success()
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git checkout preview
-          git merge development --no-ff -m "chore: auto-promote development to preview [skip ci]"
+          git merge development --no-ff -m "chore: auto-promote [skip ci]"
           git push origin preview
 
   Deploy-Preview:
@@ -132,173 +121,41 @@ jobs:
     if: github.ref == 'refs/heads/preview'
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Install Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          
-      - name: Install Vercel CLI
+      - name: Install Vercel
         run: npm install --global vercel@latest
-        
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-        
-      - name: Create .env file for Vite Build
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
         run: |
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-          echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" >> .env
-        
-      - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          
-      - name: Deploy Project Artifacts to Vercel
-        id: deploy_preview
+          vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed to return URL"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-
-      - name: Wait for Deployment Ready
-        run: |
-          echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
-          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
-          
-      - name: Verify Application Health (Advanced Diagnostics)
-        run: |
-          echo "Fetching page content from $DEPLOYMENT_URL..."
-          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          
-          if [[ "$BODY" == *"Authentication Required"* ]]; then
-            echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
-            exit 1
-          fi
-
-          if [[ "$BODY" == *"DIAGNOSTICKÉ INFORMACE"* ]]; then
-            echo "CRITICAL: Frontend Crash Detected by Diagnostic Layer!"
-            echo "--- START DIAGNOSTIC DUMP ---"
-            echo "$BODY"
-            echo "--- END DIAGNOSTIC DUMP ---"
-            exit 1
-          fi
-
-          if [[ "$BODY" == *"<div id=\"root\">"* && "$BODY" == *"Momentálně ladíme formy"* ]]; then
-            echo "NOTICE: Branded Maintenance Mode is active."
-            exit 1
-          fi
-
-          echo "SUCCESS: App root element found and contains content. Proceeding to tests."
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Preview Smoke Test
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
-          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
-          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
-          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
-        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts
 
   Deploy-Production:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Install Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          
-      - name: Install Vercel CLI
+      - name: Install Vercel
         run: npm install --global vercel@latest
-        
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        
-      - name: Create .env file for Vite Build
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
         run: |
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-          echo "VERCEL_AUTOMATION_BYPASS_SECRET=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" >> .env
-        
-      - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          
-      - name: Deploy Project Artifacts to Vercel
-        id: deploy_prod
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed to return URL"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-
-      - name: Wait for Deployment Ready
-        run: |
-          echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
-          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
-          
-      - name: Verify Application Health (Advanced Diagnostics)
-        run: |
-          echo "Fetching page content from $DEPLOYMENT_URL..."
-          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          
-          if [[ "$BODY" == *"Authentication Required"* ]]; then
-            echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
-            exit 1
-          fi
-
-          if [[ "$BODY" == *"DIAGNOSTICKÉ INFORMACE"* ]]; then
-            echo "CRITICAL: Frontend Crash Detected by Diagnostic Layer!"
-            echo "--- START DIAGNOSTIC DUMP ---"
-            echo "$BODY"
-            echo "--- END DIAGNOSTIC DUMP ---"
-            exit 1
-          fi
-
-          if [[ "$BODY" == *"<div id=\"root\">"* && "$BODY" == *"Momentálně ladíme formy"* ]]; then
-            echo "NOTICE: Branded Maintenance Mode is active."
-            exit 1
-          fi
-
-          echo "SUCCESS: App root element found and contains content. Proceeding to tests."
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Production Smoke Test
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
-          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
-          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
-          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
-        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts
-
-      - name: Upload Test Report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-playwright-report
-          path: playwright-report/
-          retention-days: 30

@@ -80,27 +80,36 @@
   <!-- Rendered CSS will be handled by Vite standard loading -->
   <script>
     // Global Error Guard (Capturing Phase) for early detection
-    window.addEventListener('error', function(event) {
+    function showDiagnostics(type, message) {
       var debug = document.getElementById('debug-info');
       var log = document.getElementById('error-log');
       if (debug && log) {
         debug.style.display = 'block';
-        if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
-          log.innerText = 'Frontend Crash Detected (Resource Load Failure)\nSource: ' + (event.target.src || event.target.href);
-        } else {
-          log.innerText = 'Frontend Crash Detected\nMessage: ' + event.message + '\nStack: ' + (event.error ? event.error.stack : 'N/A');
-        }
+        log.innerText = type + '\n' + message;
+      }
+    }
+
+    window.addEventListener('error', function(event) {
+      if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
+        showDiagnostics('Resource Load Failure', 'Source: ' + (event.target.src || event.target.href));
+      } else {
+        showDiagnostics('Runtime Error', 'Message: ' + event.message + '\nStack: ' + (event.error ? event.error.stack : 'N/A'));
       }
     }, true);
     
     window.addEventListener('unhandledrejection', function(event) {
-      var debug = document.getElementById('debug-info');
-      var log = document.getElementById('error-log');
-      if (debug && log) {
-        debug.style.display = 'block';
-        log.innerText = 'Frontend Crash Detected (Promise)\nReason: ' + event.reason;
-      }
+      showDiagnostics('Promise Rejection', 'Reason: ' + event.reason);
     });
+
+    // Capture console.error to find "swallowed" crashes in contexts
+    const _origError = console.error;
+    console.error = function() {
+      const msg = Array.from(arguments).join(' ');
+      if (msg.toLowerCase().includes('error') || msg.toLowerCase().includes('fail')) {
+        showDiagnostics('Console Error Caught', msg);
+      }
+      _origError.apply(console, arguments);
+    };
   </script>
 </head>
 
@@ -114,9 +123,9 @@
         <p style="font-size: 1.2rem; line-height: 1.6; opacity: 0.8; margin-bottom: 2.5rem;">Omlouváme se, na BoostUp právě probíhá blesková údržba. Vylepšujeme váš energetický zážitek, abychom se k vám vrátili ještě v lepší kondici.</p>
         <p style="font-weight: bold; color: #4b5d44;">Budeme zpět během několika minut!</p>
         
-        <!-- Diagnostic Section (Visible only on failure) -->
+        <!-- Diagnostic Section (Visible ONLY on failure via JS) -->
         <div id="debug-info" style="display: none; margin-top: 4rem; text-align: left; background: #fff; padding: 1.5rem; border-radius: 12px; font-size: 0.75rem; border: 1px solid rgba(0,0,0,0.1); max-width: 90vw; overflow-x: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-          <div style="font-weight: bold; margin-bottom: 0.5rem; color: #cc0000; border-bottom: 1px solid #fee; padding-bottom: 0.5rem;">DIAGNOSTICKÉ INFORMACE</div>
+          <div style="font-weight: bold; margin-bottom: 0.5rem; color: #cc0000; border-bottom: 1px solid #fee; padding-bottom: 0.5rem;">DIAGNOSTICKÝ PROTOKOL</div>
           <pre id="error-log" style="white-space: pre-wrap; word-break: break-all; margin: 0; line-height: 1.4;"></pre>
         </div>
       </div>
