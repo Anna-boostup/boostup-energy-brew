@@ -78,11 +78,46 @@
     .animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
   </style>
   <!-- Rendered CSS will be handled by Vite standard loading -->
-
+  <script>
+    // Global Error Guard for Diagnostics
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      var debug = document.getElementById('debug-info');
+      var log = document.getElementById('error-log');
+      if (debug && log) {
+        debug.style.display = 'block';
+        log.innerText = 'Frontend Crash Detected\nMessage: ' + msg + '\nFile: ' + url + '\nLine: ' + lineNo + '\nStack: ' + (error ? error.stack : 'N/A');
+      }
+      return false;
+    };
+    window.onunhandledrejection = function(event) {
+      var debug = document.getElementById('debug-info');
+      var log = document.getElementById('error-log');
+      if (debug && log) {
+        debug.style.display = 'block';
+        log.innerText = 'Frontend Crash Detected (Promise)\nReason: ' + event.reason;
+      }
+    };
+  </script>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Maintenance Fallback (Branded) -->
+    <div id="maintenance-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #e6e9e0; color: #32432a; font-family: sans-serif; text-align: center; padding: 2rem;">
+      <div style="max-width: 500px; animation: fade-up 0.8s ease-out forwards;">
+        <div style="background: #4b5d44; color: #e6e9e0; padding: 0.5rem 1rem; border-radius: 99px; display: inline-block; font-size: 0.8rem; margin-bottom: 1.5rem; letter-spacing: 0.1em; font-weight: bold;">STAV SYSTÉMU: ÚDRŽBA</div>
+        <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; letter-spacing: -0.02em;">Momentálně ladíme formy...</h1>
+        <p style="font-size: 1.2rem; line-height: 1.6; opacity: 0.8; margin-bottom: 2.5rem;">Omlouváme se, na BoostUp právě probíhá blesková údržba. Vylepšujeme váš energetický zážitek, abychom se k vám vrátili ještě v lepší kondici.</p>
+        <p style="font-weight: bold; color: #4b5d44;">Budeme zpět během několika minut!</p>
+        
+        <!-- Diagnostic Section (Visible only on failure) -->
+        <div id="debug-info" style="display: none; margin-top: 4rem; text-align: left; background: #fff; padding: 1.5rem; border-radius: 12px; font-size: 0.75rem; border: 1px solid rgba(0,0,0,0.1); max-width: 90vw; overflow-x: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+          <div style="font-weight: bold; margin-bottom: 0.5rem; color: #cc0000; border-bottom: 1px solid #fee; padding-bottom: 0.5rem;">DIAGNOSTICKÉ INFORMACE</div>
+          <pre id="error-log" style="white-space: pre-wrap; word-break: break-all; margin: 0; line-height: 1.4;"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

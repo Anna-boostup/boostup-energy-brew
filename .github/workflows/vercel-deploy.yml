@@ -44,49 +44,49 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}"
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}"
           
       - name: Deploy Project Artifacts to Vercel
         id: deploy
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed to return URL"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
 
       - name: Wait for Deployment Ready
         run: |
           echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
-          timeout 120s bash -c 'until curl -sI -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
           
-      - name: Verify Application Health (Prevent White Screen)
+      - name: Verify Application Health (Advanced Diagnostics)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          echo "Page Content Preview (First 1000 chars):"
-          echo "$BODY" | head -c 1000
-          echo ""
           
           if [[ "$BODY" == *"Authentication Required"* ]]; then
             echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
             exit 1
           fi
 
-          if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+          if [[ "$BODY" == *"DIAGNOSTICKÉ INFORMACE"* ]]; then
+            echo "CRITICAL: Frontend Crash Detected by Diagnostic Layer!"
+            echo "--- START DIAGNOSTIC DUMP ---"
+            # Extract content between diagnositc tags if possible, or just dump body
+            echo "$BODY"
+            echo "--- END DIAGNOSTIC DUMP ---"
             exit 1
           fi
 
-          if [[ "$BODY" == *"<div id=\"root\"></div>"* ]]; then
-            echo "ERROR: Root element is EMPTY! React initialized but failed to render UI."
-            echo "Full Body Dump for verification:"
-            echo "$BODY"
+          if [[ "$BODY" == *"<div id=\"root\">"* && "$BODY" == *"Momentálně ladíme formy"* ]]; then
+            echo "NOTICE: Branded Maintenance Mode is active (no crash detected yet)."
+            echo "However, React failed to replace the maintenance shell. This counts as a load failure."
             exit 1
           fi
-          
-          if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
-            echo "ERROR: React application crashed! ErrorBoundary detected on the page."
+
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
             exit 1
           fi
 
@@ -160,41 +160,34 @@ jobs:
         id: deploy_preview
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed to return URL"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
 
       - name: Wait for Deployment Ready
         run: |
           echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
-          timeout 120s bash -c 'until curl -sI -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
           
-      - name: Verify Application Health (Prevent White Screen)
+      - name: Verify Application Health (Advanced Diagnostics)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          echo "Page Content Preview (First 1000 chars):"
-          echo "$BODY" | head -c 1000
-          echo ""
           
           if [[ "$BODY" == *"Authentication Required"* ]]; then
             echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
             exit 1
           fi
 
-          if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+          if [[ "$BODY" == *"DIAGNOSTICKÉ INFORMACE"* ]]; then
+            echo "CRITICAL: Frontend Crash Detected by Diagnostic Layer!"
+            echo "--- START DIAGNOSTIC DUMP ---"
+            echo "$BODY"
+            echo "--- END DIAGNOSTIC DUMP ---"
             exit 1
           fi
 
-          if [[ "$BODY" == *"<div id=\"root\"></div>"* ]]; then
-            echo "ERROR: Root element is EMPTY! React initialized but failed to render UI."
-            echo "Full Body Dump for verification:"
-            echo "$BODY"
-            exit 1
-          fi
-          
-          if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
-            echo "ERROR: React application crashed! ErrorBoundary detected on the page."
+          if [[ "$BODY" == *"<div id=\"root\">"* && "$BODY" == *"Momentálně ladíme formy"* ]]; then
+            echo "NOTICE: Branded Maintenance Mode is active."
             exit 1
           fi
 
@@ -251,41 +244,34 @@ jobs:
         id: deploy_prod
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: vercel deploy failed to return URL"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
 
       - name: Wait for Deployment Ready
         run: |
           echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
-          timeout 120s bash -c 'until curl -sI -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
           
-      - name: Verify Application Health (Prevent White Screen)
+      - name: Verify Application Health (Advanced Diagnostics)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          echo "Page Content Preview (First 1000 chars):"
-          echo "$BODY" | head -c 1000
-          echo ""
           
           if [[ "$BODY" == *"Authentication Required"* ]]; then
             echo "ERROR: Vercel Protection Bypass failed! Check VERCEL_AUTOMATION_BYPASS_SECRET."
             exit 1
           fi
 
-          if [[ "$BODY" != *"id=\"root\""* ]]; then
-            echo "ERROR: Root element <div id=\"root\"> missing! Rendering failure detected."
+          if [[ "$BODY" == *"DIAGNOSTICKÉ INFORMACE"* ]]; then
+            echo "CRITICAL: Frontend Crash Detected by Diagnostic Layer!"
+            echo "--- START DIAGNOSTIC DUMP ---"
+            echo "$BODY"
+            echo "--- END DIAGNOSTIC DUMP ---"
             exit 1
           fi
 
-          if [[ "$BODY" == *"<div id=\"root\"></div>"* ]]; then
-            echo "ERROR: Root element is EMPTY! React initialized but failed to render UI."
-            echo "Full Body Dump for verification:"
-            echo "$BODY"
-            exit 1
-          fi
-          
-          if [[ "$BODY" == *"Aplikace se zhroutila"* ]]; then
-            echo "ERROR: React application crashed! ErrorBoundary detected on the page."
+          if [[ "$BODY" == *"<div id=\"root\">"* && "$BODY" == *"Momentálně ladíme formy"* ]]; then
+            echo "NOTICE: Branded Maintenance Mode is active."
             exit 1
           fi
 
