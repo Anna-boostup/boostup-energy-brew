@@ -5,6 +5,11 @@ test.describe('Frontend Smoke Test', () => {
     await page.goto('/');
     
     // Check title
+    const title = await page.title();
+    if (title === "") {
+        console.log("DEBUG: Empty title detected. Page content:");
+        console.log(await page.content());
+    }
     await expect(page).toHaveTitle(/BOOSTUP/i);
     
     // Check hero section elements

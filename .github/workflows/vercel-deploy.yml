@@ -49,9 +49,22 @@ jobs:
 
       - name: Wait for Deployment Ready
         run: |
-          echo "Waiting for $DEPLOYMENT_URL to be ready..."
-          # Allow up to 120s for the deployment to handle the first request
-          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Still waiting..."; sleep 5; done'
+          echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
+          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          
+      - name: Verify Application Health (Prevent White Screen)
+        run: |
+          echo "Fetching page content from $DEPLOYMENT_URL..."
+          BODY=$(curl -s "$DEPLOYMENT_URL")
+          echo "Page Content Preview (First 500 chars):"
+          echo "$BODY" | head -c 500
+          echo ""
+          if [[ "$BODY" != *"id=\"root\""* ]]; then
+            echo "ERROR: Root element <div id=\"root\"> missing! The React app is not rendering correctly (White Screen)."
+            exit 1
+          fi
+          echo "SUCCESS: App root element found. Proceeding to tests."
 
       - name: Install Dependencies
         run: npm install
