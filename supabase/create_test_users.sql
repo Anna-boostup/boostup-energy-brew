@@ -14,6 +14,8 @@ BEGIN
         VALUES (admin_id, 'admin-test@drinkboostup.cz', crypt('BoostUpAdminTest2026!', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Test Admin","account_type":"personal"}', 'authenticated', 'authenticated', NOW(), NOW());
     ELSE
         SELECT id INTO admin_id FROM auth.users WHERE email = 'admin-test@drinkboostup.cz';
+        -- Force update password
+        UPDATE auth.users SET encrypted_password = crypt('BoostUpAdminTest2026!', gen_salt('bf')), email_confirmed_at = NOW() WHERE id = admin_id;
     END IF;
 
     -- Update Admin Profile
@@ -29,6 +31,8 @@ BEGIN
         VALUES (company_id, 'company-test@drinkboostup.cz', crypt('BoostUpCompanyTest2026!', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}', '{"full_name":"Test Company","account_type":"company"}', 'authenticated', 'authenticated', NOW(), NOW());
     ELSE
         SELECT id INTO company_id FROM auth.users WHERE email = 'company-test@drinkboostup.cz';
+        -- Force update password in case the account was manually created earlier with a different one
+        UPDATE auth.users SET encrypted_password = crypt('BoostUpCompanyTest2026!', gen_salt('bf')), email_confirmed_at = NOW() WHERE id = company_id;
     END IF;
 
     -- Update Company Profile with B2B details
@@ -60,11 +64,11 @@ BEGIN
 
     -- 4. E2E INVENTORY SEEDING
     -- Inject deep stock reserves into all core mock SKU records to ensure the configurator CTA evaluates as 'Enabled'
-    INSERT INTO public.inventory (sku, quantity, is_active)
+    INSERT INTO public.inventory (sku, name, price, quantity, is_active)
     VALUES 
-    ('lemon', 9999, true),
-    ('red', 9999, true),
-    ('silky', 9999, true)
+    ('lemon', 'Lemon', 0, 9999, true),
+    ('red', 'Red', 0, 9999, true),
+    ('silky', 'Silky', 0, 9999, true)
     ON CONFLICT (sku) DO UPDATE SET quantity = 9999, is_active = true;
 
 END $$;

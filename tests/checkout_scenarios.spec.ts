@@ -39,12 +39,18 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         await page.fill('input[type="password"]', identity.password);
         await page.getByTestId('login-submit-btn').click();
         
-        if (identity.type === 'admin') {
-          await expect(page).toHaveURL(/.*admin/, { timeout: 60000 });
-        } else if (identity.type === 'company') {
-          await expect(page).toHaveURL(/.*company-account/, { timeout: 60000 });
-        } else {
-          await expect(page).toHaveURL(/.*account/, { timeout: 60000 });
+        try {
+          if (identity.type === 'admin') {
+            await expect(page).toHaveURL(/.*admin/, { timeout: 15000 });
+          } else if (identity.type === 'company') {
+            await expect(page).toHaveURL(/.*company-account/, { timeout: 15000 });
+          } else {
+            await expect(page).toHaveURL(/.*account/, { timeout: 15000 });
+          }
+        } catch (e) {
+          // If navigation hangs, it guarantees Login.tsx aborted. We MUST extract the error toast to see why Supabase rejected it
+          const toastError = await page.locator('.group.toast').innerText({ timeout: 2000 }).catch(() => "No toast visible. Silent network crash?");
+          throw new Error(`CRITICAL LOGIN FAILURE: Supabase backend rejected the connection. Toast message displayed: "${toastError}"`);
         }
       }
 
