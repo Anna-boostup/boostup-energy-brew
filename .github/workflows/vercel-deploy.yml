@@ -52,12 +52,12 @@ jobs:
         run: |
           echo "Verifying Deployment URL: [$DEPLOYMENT_URL]"
           if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: DEPLOYMENT_URL is empty! Check URL extraction step."; exit 1; fi
-          timeout 120s bash -c 'until curl -sI "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
+          timeout 120s bash -c 'until curl -sI -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do echo "Waiting for 200 OK from $DEPLOYMENT_URL..."; sleep 5; done'
           
       - name: Verify Application Health (Prevent White Screen)
         run: |
           echo "Fetching page content from $DEPLOYMENT_URL..."
-          BODY=$(curl -s "$DEPLOYMENT_URL")
+          BODY=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
           echo "Page Content Preview (First 500 chars):"
           echo "$BODY" | head -c 500
           echo ""
@@ -76,6 +76,7 @@ jobs:
       - name: Run Post-Deployment Verification
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}

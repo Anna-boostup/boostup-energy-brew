@@ -36,6 +36,9 @@ export default defineConfig({
     /* Collect trace for CI debugging or when retrying locally */
     trace: process.env.CI ? 'on' : 'on-first-retry',
     screenshot: 'only-on-failure',
+    extraHTTPHeaders: process.env.VERCEL_AUTOMATION_BYPASS_SECRET ? {
+      'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+    } : undefined,
   },
 
   /* Configure projects for major browsers */
