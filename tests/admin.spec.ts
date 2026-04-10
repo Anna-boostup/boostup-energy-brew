@@ -28,7 +28,7 @@ test.describe('Admin Dashboard Audit', () => {
     // 3. Audit all pages listed in AdminLayout
     const adminPages = [
         { path: '/admin/orders', title: 'Správa objednávek' },
-        { path: '/admin/inventory', title: 'Skladiště' },
+        { path: '/admin/inventory', title: 'Sklad produktů' },
         { path: '/admin/manufacture', title: 'Výroba & Suroviny' },
         { path: '/admin/messages', title: 'Zprávy z webu' },
         { path: '/admin/emails', title: 'E-mail Management' },
