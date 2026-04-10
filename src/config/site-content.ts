@@ -260,13 +260,17 @@ export const SITE_CONTENT = {
     },
 
     bankInfo: {
-        accountNumber: "6654376004",
-        bankCode: "5500",
-        bankName: "Raiffeisenbank",
-        iban: "CZ4755000000006654376004",
-        accountName: "BOOSTUP SUPPLEMENTS S.R.O.",
-        currency: "CZK",
-        qrMessage: "Objednávka"
+        accountName: "BoostUp Energy s.r.o.",
+        accountNumber: "123456789/0100",
+        iban: "CZ12345678901234567890",
+        bic: "KOMB CZ PP",
+        currency: "Kč",
+        address: {
+            street: "Technologická 123",
+            city: "616 00 Brno",
+            country: "Česká republika",
+            ic: "12345678"
+        }
     },
 
     flavors: {
@@ -495,5 +499,939 @@ export const SITE_CONTENT = {
         pack3: 229,
         pack12: 849,
         pack21: 1399
+    },
+
+    // NEW: Centralized Admin strings
+    admin: {
+        terminalLabel: "Admin Terminal",
+        auth: {
+            verifying: "Ověřuji oprávnění...",
+            noPermission: "Nemáte oprávnění pro přístup do administrace.",
+            backToHome: "Zpět na hlavní stránku",
+            logout: "Odhlásit se"
+        },
+        navigation: {
+            dashboard: "Přehled",
+            orders: "Objednávky",
+            inventory: "Sklad produktů",
+            manufacture: "Sklad výroby",
+            messages: "Zprávy",
+            emails: "E-mailové šablony",
+            content: "Obsah webu",
+            pricing: "Ceny a Statistiky",
+            promoCodes: "Slevové kódy",
+            profile: "Můj účet",
+            help: "Nápověda"
+        },
+        dashboard: {
+            title: "DASHBOARD",
+            welcome: "Vítejte zpět, pane správce.",
+            salesStatus: "Stav e-shopu",
+            salesActive: "✓ PRODEJ AKTIVNÍ",
+            salesActiveDesc: "E-shop je nyní plně funkční pro všechny zákazníky.",
+            salesPaused: "⏸ POZASTAVENO",
+            salesPausedDesc: "Prodej byl dočasně pozastaven. Zákazníci nemohou zadávat nové objednávky.",
+            updateError: "Chyba při aktualizaci",
+            revenue: "Celkové tržby",
+            revenueDesc: "Celoživotní hodnota",
+            workflow: "Pracovní tok",
+            newOrders: "Nové / Placené",
+            processing: "Ve výrobě",
+            shipped: "Odesláno",
+            cancelled: "Zrušeno",
+            todayLabel: "DNES",
+            inventory: "INVENTÁŘ",
+            recentOrders: "NEDÁVNÉ OBJEDNÁVKY",
+            recentOrdersDesc: "Posledních 10 transakcí na e-shopu.",
+            viewAll: "Zobrazit vše",
+            noOrders: "Žádné aktivní objednávky",
+            paymentPending: "ČEKÁ",
+            paymentPaid: "ZAPLACENO",
+            statusShipped: "VYŘÍZENO",
+            statusProcessing: "VÝROBA",
+            statusCancelled: "STORNO",
+            statusReceived: "PŘIJATO",
+            unitKs: "ks",
+            multiplier: "×",
+            paymentLabel: "Platba",
+            statusLabel: "Status",
+            amountLabel: "ČÁSTKA"
+        },
+        inventory: {
+            title: "Skladiště",
+            description: "Globální přehled všech fyzických zásob v lahvích a krabicích.",
+            unit: "lahví",
+            addStock: "Doskladnit",
+            removeStock: "Vyskladnit",
+            historyTitle: "Historie pohybů",
+            editDetails: "Upravit produkt",
+            salesStatus: "PRODEJ AKTIVNÍ",
+            manufacture: {
+                title: "Výroba & Suroviny",
+                subtitle: "Sledování stavu ingrediencí a obalových materiálů",
+                loading: "Načítám inventář...",
+                newMaterial: "Nová Surovina",
+                emptyTitle: "Žádné suroviny",
+                emptyDesc: "Zatím nebyly přidány žádné suroviny pro výrobu.",
+                limitLabel: "LIMIT:",
+                warnAtLabel: "VAROVÁNÍ:",
+                changeStatus: "Pohyb zásob",
+                status: {
+                    ok: "STAV OK",
+                    warning: "VAROVÁNÍ",
+                    critical: "KRITICKÝ STAV"
+                },
+                table: {
+                    id: "NÁZEV / ID",
+                    status: "AKTUÁLNÍ STAV",
+                    limits: "NASTAVENÉ LIMITY"
+                },
+                dialogs: {
+                    restock: {
+                        title: "Upravit stav: {name}",
+                        amountLabel: "Množství ({unit})",
+                        amountPlaceholder: "Zadejte množství...",
+                        noteLabel: "Poznámka (volitelné)",
+                        notePlaceholder: "Důvod změny...",
+                        consumeBtn: "Spotřebovat (-)",
+                        restockBtn: "Naskladnit (+)",
+                        success: "Úspěšně uloženo",
+                        successDesc: "Zásoba položky {name} byla upravena.",
+                        error: "Chyba",
+                        errorDesc: "Nepodařilo se aktualizovat stav skladu."
+                    },
+                    history: {
+                        title: "Historie pohybu: {name}",
+                        empty: "Žádné záznamy o pohybu.",
+                        table: {
+                            date: "Datum",
+                            type: "Typ",
+                            change: "Změna",
+                            user: "Uživatel",
+                            note: "Poznámka"
+                        },
+                        types: {
+                            restock: "Naskladnění",
+                            use: "Spotřeba",
+                            correction: "Oprava"
+                        },
+                        systemUser: "Systém"
+                    },
+                    edit: {
+                        titleEdit: "Upravit: {name}",
+                        titleAdd: "Přidat novou surovinu/materiál",
+                        nameLabel: "Název položky",
+                        namePlaceholder: "např. Lahvičky 500ml",
+                        unitLabel: "Měrná jednotka",
+                        unitPlaceholder: "ks, kg, l, atd.",
+                        levelsTitle: "Úrovně upozornění",
+                        warningLabel: "Varovná úroveň (žlutá)",
+                        warningDesc: "Zásoby brzy dojdou — připravte objednávku.",
+                        criticalLabel: "Kritická úroveň (červená)",
+                        criticalDesc: "Zásoby jsou téměř vyčerpány — okamžitě doplňte.",
+                        notificationsLabel: "Zapnout upozornění na nízký stav",
+                        saveBtn: "Uložit změny",
+                        savingBtn: "Ukládám...",
+                        success: "Uloženo",
+                        successDesc: "Surovina/materiál {name} byl uložen.",
+                        error: "Chyba",
+                        errorDesc: "Nepodařilo se uložit položku."
+                    }
+                }
+            }
+        },
+        invoices: {
+            title: "FAKTURA",
+            docNumber: "Číslo dokladu",
+            customer: "Odběratel",
+            issueDate: "Datum vystavení",
+            dueDate: "Datum splatnosti",
+            issuer: "Dodavatel",
+            icLabel: "IČ",
+            labels: {
+                item: "Položka",
+                qty: "Množství",
+                price: "Cena/ks",
+                total: "Celkem",
+                grandTotal: "CELKEM K ÚHRADĚ",
+            },
+            footer: {
+                thanks: "Děkujeme za Vaši objednávku.",
+                contact: "V případě dotazů nás kontaktujte na {email}",
+            },
+            qr: "QR Platba",
+            actions: {
+                save: "Uložit do PDF",
+                print: "Vytisknout",
+                close: "Zavřít fakturu",
+                open: "Faktura"
+            }
+        },
+        orders: {
+            title: "Správa objednávek",
+            description: "Přehled a vyřizování zákaznických objednávek.",
+            table: {
+                id: "ID",
+                date: "DATUM",
+                customer: "ZÁKAZNÍK",
+                items: "POLOŽKY",
+                amount: "ČÁSTKA",
+                payment: "PLATBA",
+                method: "METODA",
+                status: "STATUS",
+                actions: "AKCE"
+            },
+            status: {
+                unpaid: "NEZAPLACENO",
+                paid: "ZAPLACENO",
+                storno: "STORNO",
+                transfer: "PŘEVOD",
+                express: "APPLE/GOOGLE"
+            },
+            cancelDialog: {
+                title: "Stornovat objednávku",
+                question: "Opravdu chcete stornovat tuto objednávku?",
+                warning: "Tato akce je nevratná. Zboží bude vráceno do skladových zásob a objednávka bude označena jako stornovaná.",
+                back: "Zpět",
+                confirmLabel: "Potvrdit storno"
+            },
+            empty: "Žádné objednávky v této kategorii.",
+            copyId: "ID zkopírováno",
+            itemsLabel: "Položky:",
+            totalPriceLabel: "Celková cena",
+            markAsPaid: "Označit jako zaplacené",
+            markAsShipped: "Označit jako vyřízené",
+            viewInvoice: "Zobrazit fakturu",
+            notifToggle: "Zapnout oznámení v prohlížeči",
+            sorting: "Řazení",
+            labelsA4: "Kombinovat na A4",
+            labelsA4Desc: "Šetří papír, skládá štítky vedle sebe",
+            labelsSequential: "Tisk postupně (po jednom)",
+            labelsSequentialDesc: "Otevře každý štítek v novém okně",
+            packetaLabel: "Štítek Packeta",
+            viewDetail: "Detail",
+            notifEnabled: "Oznámení povolena! 🔔",
+            notifEnabledDesc: "Nyní budete upozorněni na každou novou zprávu od zákazníků přímo v prohlížeči.",
+            bulkStatusTitle: "Hromadná změna stavu",
+            bulkCancelTitle: "Hromadné storno",
+            bulkCancelQuestion: "Opravdu chcete stornovat {size} vybraných objednávek? Tuto akci nelze vrátit.",
+            printOptions: "Možnosti hromadného tisku",
+            printOptionsDesc: "Vyberte si formát, jakým chcete vytisknout {size} štítků.",
+            printStarted: "Tisk spuštěn",
+            printStartedDesc: "Štítky se generují v novém okně. Objednávky byly přesunuty do 'Rozpracovaných'.",
+            more: "DALŠÍ",
+            markAsProcessing: "Označit jako rozpracované",
+            bulkPrintErr: "Nelze tisknout hromadně",
+            bulkPrintErrDesc: "Vybrané objednávky nemají číselné ID ani čárový kód zásilky.",
+            printingTitle: "Tisk spuštěn",
+            printingDesc: "Štítky se generují v novém okně. Objednávky byly přesunuty do 'Rozpracovaných'.",
+            syncSuccess: "Synchronizace dokončena",
+            syncSuccessDesc: "Všechny zásilky byly zkontrolovány. Aktualizováno: {count}.",
+            syncError: "Chyba synchronizace",
+            statusChanged: "Stav objednávky změněn",
+            statusChangedDesc: "Objednávka {id} byla označena jako {status}.",
+            bulkStatusChangedDesc: "{count} objednávek bylo označeno jako {status}.",
+            sortBy: "Seřadit podle",
+            sortLatest: "Nejnovější prve",
+            sortOldest: "Nejstarší prve",
+            sortIdAsc: "Čísla obj. (0-9)",
+            sortIdDesc: "Čísla obj. (9-0)",
+            syncNow: "Synchronizovat",
+            tabPending: "Nové / Zaplacené",
+            tabProcessing: "Rozpracované",
+            tabShipped: "Vyřízené",
+            tabCancelled: "Stornované",
+            cancel: "Zrušit",
+            confirmBulkCancel: "Potvrdit hromadné storno",
+            allowNotif: "Povolit oznámení",
+            detail: {
+                title: "Objednávka",
+                closeLabel: "Zavřít detail objednávky",
+                invoice: "Faktura",
+                print: "Tisk",
+                label: "Štítek",
+                createPacket: "Vytvořit zásilku",
+                packetCreated: "Zásilka vytvořena",
+                packetCreatedDesc: "Barcode: {barcode}. Doprava a e-mail budou automaticky odeslány, jakmile balík podáte v Zásilkovně.",
+                packetError: "Chyba při vytváření zásilky",
+                currentStatus: "Aktuální stav",
+                paymentLabel: "Platba",
+                deliveryLabel: "Doprava",
+                paymentPending: "Platba: Čeká",
+                paymentPaid: "Platba: Zaplaceno",
+                shippedStatus: "Doprava: Vyřízena",
+                processingStatus: "Doprava: Rozpracováno",
+                pendingStatus: "Doprava: Čeká k vyřízení",
+                customer: "Odběratel",
+                deliveryTitle: "Doručení",
+                method: "METODA",
+                paymentMethodLabel: "PLATBA",
+                methodZasilkovna: "Zásilkovna",
+                methodCourier: "Kurýr",
+                paymentTransfer: "Bankovní převod",
+                paymentCard: "Kartou online",
+                tracking: "Sledování zásilky",
+                trackLink: "Sledovat balík →",
+                table: {
+                    item: "Položka",
+                    qty: "Množství",
+                    price: "Cena celkem"
+                },
+                subtotal: "Mezisoučet",
+                shipping: "Doprava",
+                free: "Zdarma",
+                totalLabel: "CELKEM",
+                qrTitle: "Platební údaje",
+                account: "Účet",
+                vs: "VS",
+                bank: "Banka",
+                qrInstruction: "Naskenujte QR kód ve své bankovní aplikaci pro okamžitou platbu."
+            }
+        },
+        contentManager: {
+            title: "CONTENT ENGINE",
+            description: "Správa vizuálního a textového obsahu webu",
+            langCZ: "🇨🇿 ČEŠTINA",
+            langEN: "🇬🇧 ENGLISH",
+            preview: "Náhled",
+            reset: "Resetovat",
+            save: "Uložit změny",
+            previewGenerated: "Náhled byl vygenerován",
+            saveSuccess: "Obsah byl úspěšně uložen",
+            resetConfirm: "Opravdu chcete resetovat veškerý obsah na výchozí hodnoty? Tato akce je nevratná.",
+            resetSuccess: "Obsah byl resetován na výchozí hodnoty",
+            loading: "Načítám obsah webu...",
+            tabs: {
+                hero: "Hero (Úvod)",
+                mission: "Mise",
+                ingredients: "Ingredience",
+                concept: "3B Koncept",
+                cta: "CTA (Odběr)",
+                contact: "Kontakt",
+                flavors: "Příchutě",
+                footer: "Patička",
+                settings: "Nastavení"
+            },
+            sections: {
+                hero: {
+                    title: "Hlavní Hero Sekce",
+                    sectionDesc: "Vizuální středobod vaší webové prezentace",
+                    badge: "Badge text (BRZY NA TRHU)",
+                    visibility: "Viditelnost oznamovacího banneru",
+                    headlinePart1: "Nadpis Část 1",
+                    headlineGradient: "Nadpis Zvýrazněný",
+                    headlinePart2: "Nadpis Část 2",
+                    description: "Hlavní popis",
+                    testimonial: "Podnadpis pod tlačítky (Testimonial)",
+                    placeholder: "Zadejte text pod tlačítka...",
+                    ctaPrimary: "Tlačítko Primární",
+                    ctaSecondary: "Tlačítko Sekundární",
+                    cta3b: "Text Koncept 3B"
+                },
+                mission: {
+                    title: "Naše Mise",
+                    description: "Sekce vyprávějící příběh vaší značky",
+                    badge: "Text štítku (O NÁS)",
+                    visibility: "Viditelnost štítku (O NÁS)",
+                    headlinePart1: "Nadpis Část 1",
+                    highlight: "Zvýrazněný text nadpisu",
+                    paragraphs: "Obsahové odstavce příběhu",
+                    paragraphLabel: "Blok příběhu"
+                },
+                ingredients: {
+                    title: "Vědecké Informace",
+                    description: "Detailní rozpis ingrediencí a jejich benefitů",
+                    category: "Název Kategorie",
+                    subtitle: "Vedlejší titulek",
+                    summary: "Shrnutí účinků",
+                    benefits: "Klíčové Výhody (seznam)",
+                    tags: "Specifické Látky (tagy)"
+                },
+                concept: {
+                    title: "3B Koncept",
+                    description: "Hlavní pilíře výkonu a funkčnosti",
+                    headline: "Hlavní Nadpis Sekce",
+                    cta: "Text Tlačítka (CTA)",
+                    intro: "Úvodní Popis Konceptu",
+                    pillars: "Jednotlivé Pilíře (Karty)",
+                    pillarTitlePlaceholder: "Klíčové slovo (Např. BRAIN)",
+                    pillarSubtitle: "Poutavý podnadpis",
+                    pillarStats: "Výkonnostní statistika",
+                    pillarDesc: "Text na kartě (Limitovaný prostor)",
+                    pillarFullDesc: "Hlavní detailní text (Popup okno)",
+                    pillarTip: "TIP: Použijte • pro odrážku",
+                    pillarAddBullet: "+ PŘIDAT ODRÁŽKU"
+                },
+                cta: {
+                    title: "CTA Sekce (Odběr)",
+                    sectionDesc: "Konverzní prvek pro newsletter",
+                    badge: "Text štítku (KONTAKT)",
+                    visibility: "Viditelnost badge KONTAKT",
+                    headline: "Hlavní Nadpis",
+                    description: "Popis výhod odběru",
+                    placeholder: "Zadejte text popisu...",
+                    inputPlaceholder: "Váš e-mail...",
+                    button: "Odebírat nyní"
+                },
+                contact: {
+                    title: "Kontaktní Údaje",
+                    description: "Jak vás zákazníci mohou zastihnout",
+                    badge: "Text štítku (KONTAKT)",
+                    visibility: "Viditelnost badge KONTAKT",
+                    headline: "Hlavní nadpis",
+                    email: "Emailová adresa",
+                    phone: "Telefonní číslo",
+                    address: "Adresa (Sídlo)"
+                },
+                flavors: {
+                    title: "Správa Příchutí",
+                    sectionTitle: "Katalog Příchutí",
+                    sectionDesc: "Správa parametrů a specifikací jednotlivých příchutí a variant produktů",
+                    code: "Kód",
+                    name: "Název příchutě",
+                    tagline: "Slogan (Tagline)",
+                    description: "Krátký popis (pro výběr příchutě)",
+                    descPlaceholder: "Krátký popis příchutě, který se zobrazí zákazníkům...",
+                    specsTitle: "Detailní Specifikace & Nutriční Hodnoty",
+                    tabs: {
+                        nutrition: "Nutrice",
+                        vitamins: "Vitamíny",
+                        active: "Ostatní"
+                    },
+                    table: {
+                        item: "Položka",
+                        per100: "na 100g",
+                        perPortion: "na porci",
+                        rhp: "RHP (%)"
+                    },
+                    micronutrients: "Přehled Mikronutrientů",
+                    activeSubstances: "Ostatní účinné látky",
+                    addRow: "Přidat řádek"
+                },
+                footer: {
+                    title: "Patička Webu",
+                    description: "Základní informace v dolní části stránky",
+                    brand: "Brand popis",
+                    copyright: "Copyright text",
+                    brandLabel: "Krátký popis značky",
+                    copyrightLabel: "Copyright text"
+                },
+                settings: {
+                    title: "Globální Nastavení",
+                    description: "Ovládání globálních funkcí a behaviorálních prvků",
+                    discountPopup: "Slevový Pop-up (Engagement)",
+                    discountPopupDesc: "Zobrazit vyskakovací okno s nabídkou slevy při první návštěvě."
+                }
+            },
+            notices: {
+                saveWarning: {
+                    title: "Nezapomeňte uložit změny!",
+                    description: "Veškeré úpravy v tomto engine se stanou aktivními až po kliknutí na ULOŽIT ZMĚNY v horní části ovládacího panelu."
+                },
+                systemInfo: {
+                    title: "Systémové Info",
+                    description: "Změny se po uložení projeví okamžitě na celém webu. Pokud dojde k neočekávané chybě synchronizace, systém se automaticky přepne do záložního režimu a načte statický obsah."
+                }
+            }
+        },
+        pricing: {
+            title: "Ceny & Statistiky",
+            description: "Analýza prodejů a výkonu e-shopu",
+            card: {
+                title: "Cenotvorba",
+                subtitle: "Globální nastavení cen pro všechna balení.",
+                pack3: "Balení 3 ks",
+                pack12: "Balení 12 ks",
+                pack21: "Balení 21 ks",
+                perUnit: "Kč / kus",
+                save: "Uložit nové ceny",
+                success: "Ceny byly aktualizovány",
+                successDesc: "Nové ceny byly úspěšně propagovány do systému.",
+                errorTitle: "Chyba při ukládání",
+                currency: "Kč"
+            },
+            charts: {
+                revenue: "Obrat (CZK)",
+                orders: "Počet objednávek",
+                units: "Prodáno lahví",
+                lemon: "Lemon Rush",
+                red: "Red Dragon",
+                silky: "Silky Breeze"
+            }
+        },
+        profile: {
+            title: "Můj Profil",
+            description: "Správa osobních údajů a nastavení účtu.",
+            tabs: {
+                info: "Osobní údaje",
+                orders: "Moje objednávky",
+                subscriptions: "Předplatné",
+                security: "Zabezpečení"
+            },
+            form: {
+                personal: "Osobní Údaje",
+                personalDesc: "Informace o vás pro doručení a fakturaci.",
+                fullName: "Celé jméno",
+                phone: "Telefon",
+                address: "Doručovací adresa",
+                street: "Ulice",
+                houseNumber: "Č.p.",
+                city: "Město",
+                zip: "PSČ",
+                billing: "Fakturační údaje",
+                isSame: "Fakturační adresa je stejná jako doručovací",
+                isCompany: "Nakupuji na firmu",
+                company: "Firma",
+                ico: "IČO",
+                dic: "DIČ",
+                billingStreet: "Ulice (Fakturační)",
+                billingHouseNumber: "Číslo popisné (Fakturační)",
+                billingCity: "Město (Fakturační)",
+                billingZip: "PSČ (Fakturační)",
+                billingCompany: "Název firmy",
+                emailNote: "Primární email nelze v administraci měnit.",
+                save: "Uložit profil",
+                success: "Profil uložen",
+                successDesc: "Vaše údaje byly úspěšně aktualizovány.",
+                generalError: "Chyba"
+            },
+            security: {
+                password: "Změna hesla",
+                passwordDesc: "Aktualizujte své přístupové údaje.",
+                current: "Současné heslo",
+                new: "Nové heslo",
+                confirm: "Potvrzení hesla",
+                update: "Aktualizovat heslo",
+                success: "Heslo bylo úspěšně změněno",
+                successDesc: "Vaše heslo bylo úspěšně aktualizováno.",
+                errorTitle: "Chyba při změně hesla",
+                matchNote: "Hesla jsou identická",
+                errors: {
+                    mismatchTitle: "Hesla se neshodují",
+                    mismatchDesc: "Nové heslo a potvrzení musí být stejné.",
+                    tooShortTitle: "Heslo je příliš krátké",
+                    tooShortDesc: "Heslo musí mít alespoň 8 znaků.",
+                    wrongCurrent: "Aktuální heslo je nesprávné."
+                }
+            }
+        },
+        help: {
+            title: "Centrum Nápovědy",
+            quickTips: "Rychlé tipy",
+            quickTipsDesc: "Jak neztrácet čas",
+            tips: {
+                stats: { title: "Statistiky", desc: "Sleduj výkon v reálném čase." },
+                fonts: { title: "Práce s fonty", desc: "Změny se projeví okamžitě po uložení." },
+                security: { title: "Zabezpečení", desc: "Vaše data jsou pod ochranou Auth." }
+            },
+            sections: {
+                content: {
+                    title: "Obsah webu",
+                    description: "Správa textů a vizuálního obsahu na všech sekcích webu. Cesta: Admin → Obsah webu",
+                    items: {
+                        hero: { label: "Hero (Úvod)", desc: "Hlavní nadpisy, popis produktu, tlačítka a testimonial. Obsahuje také přepínač viditelnosti badge BRZY NA TRHU." },
+                        mission: { label: "Mise", desc: "Texty v sekci 'O nás' – badge, nadpisy a odstavce. Badge viditelnost lze zapnout nebo vypnout přepínačem." },
+                        ingredients: { label: "Ingredience", desc: "Název a popis ingrediencií zobrazených na webu." },
+                        concept: { label: "3B Koncept", desc: "Obsah karet – podnadpis, statistiky a krátký popis pro každou kartu." },
+                        cta: { label: "CTA (Odběr)", desc: "Newsletter sekce – badge, nadpisy, popis a texty emailového formuláře." },
+                        contact: { label: "Kontakt", desc: "Email, telefon a adresa zobrazené v kontaktní sekci." },
+                        flavors: { label: "Příchutě", desc: "Názvy, popisy a štítky pro jednotlivé varianty BoostUp." },
+                        footer: { label: "Patička", desc: "Brand popis a copyright text v dolní části webu." }
+                    }
+                },
+                typography: {
+                    title: "Ovládání typografie",
+                    description: "Každé textové pole v sekci Obsah webu má integrovaný stylový toolbar.",
+                    items: {
+                        font: { label: "Font family", desc: "Vyber font z nabídky Google Fonts (Poppins, Inter, Roboto, Montserrat, Playfair Display a další). Poppins je výchozí font celého webu." },
+                        size: { label: "Velikost písma", desc: "Výběr z přednastavených velikostí 10px–72px. Výběr 'Výchozí' odebere přepsání a použije se automatická velikost ze šablony." },
+                        styles: { label: "Tučné (B) / Kurzíva (i)", desc: "Tlačítka fungují jako přepínač – jedním kliknutím zapneš, druhým vypneš. Zvýrazněná tlačítka = aktivní styl." },
+                        reset: { label: "Reset", desc: "Zobrazí se automaticky pokud je styl upraven. Kliknutím se vrátíš na výchozí nastavení (Poppins, výchozí velikost, bez tučného/kurzívy)." },
+                        live: { label: "Jak se styly projevují", desc: "Náhled vidíš přímo v inputu v reálném čase. Na webu se změny projeví po kliknutí na tlačítko 'Uložit změny' v horní části stránky." }
+                    }
+                },
+                visibility: {
+                    title: "Badge viditelnost",
+                    description: "Přepínač Badge viditelnosti se zobrazuje nad příslušnými textovými poli.",
+                    items: {
+                        active: { label: "Zapnutý přepínač = badge viditelný", desc: "Na webu se zobrazí příslušný barevný badge (např. 'NOVINKA', 'BRZY NA TRHU')." },
+                        inactive: { label: "Vypnutý přepínač = badge skrytý", desc: "Badge se na webu nezobrazí, i když je v textovém poli vyplněn text." },
+                        location: { label: "Kde se přepínač nachází", desc: "Hero – badge BRZY NA TRHU, Mise – badge O NÁS, CTA – badge, Kontakt – badge KONTAKT." }
+                    }
+                },
+                orders: {
+                    title: "Objednávky",
+                    description: "Přehled a správa všech zákaznických objednávek. Cesta: Admin → Objednávky",
+                    items: {
+                        filtering: { label: "Filtrování objednávek", desc: "Objednávky lze filtrovat podle stavu (čekající, potvrzená, odeslaná, doručená, zrušená)." },
+                        detail: { label: "Detail objednávky", desc: "Kliknutím na objednávku zobrazíš detail – zákazník, produkty, adresa, způsob platby." },
+                        copy: { label: "Kopírování ID", desc: "Ikona 'Copy' u ID objednávky okamžitě zkopíruje kód do schránky." },
+                        status: { label: "Změna stavu", desc: "Zákazník obdrží automatický email při změně stavu na 'Odeslaná'." },
+                        packeta: { label: "Packeta štítky", desc: "Generování a tisk štítků pro zásilkovnu přímo z detailu." },
+                        notifications: { label: "Oznámení v prohlížeči", desc: "Zapni upozornění pro zvukové a vizuální hlášení nových objednávek." }
+                    }
+                },
+                pricing: {
+                    title: "Ceny a Statistiky",
+                    description: "Globální správa cen a přehled výkonu e-shopu. Cesta: Admin → Ceny a Statistiky",
+                    items: {
+                        global: { label: "Globální ceny balení", desc: "Nastavení cen pro balení 3, 12 a 21 ks platné pro celý web." },
+                        stats: { label: "Statistiky prodejů", desc: "Grafy objednávek a prodaných jednotek za posledních 30 dní." },
+                        analysis: { label: "Analýza příchutí", desc: "Sledování oblíbenosti příchutí včetně rozpočítaných MIX balení." }
+                    }
+                },
+                promos: {
+                    title: "Slevové kódy",
+                    description: "Správa slevových kupónů a uvítacího pop-upu. Cesta: Admin → Slevové kódy",
+                    codeLabel: "Unikátní kód (např. BOOST20)",
+                    discountLabel: "Výše slevy v %",
+                    syncing: "Synchronizace s databází...",
+                    items: {
+                        creation: { label: "Tvorba kódů", desc: "Vytváření neomezeného množství kódů s procentuální slevou." },
+                        popup: { label: "Uvítací pop-up", desc: "Automatická nabídka slevy pro nové návštěvníky webu." },
+                        rules: { label: "Pravidla slev", desc: "Slevové kódy se nesčítají se slevou na předplatné." }
+                    }
+                },
+                inventory: {
+                    title: "Sklad produktů",
+                    description: "Správa skladových zásob hotových výrobků. Cesta: Admin → Sklad produktů",
+                    items: {
+                        add: { label: "Přidání zásoby", desc: "Klikni na produkt a zadej přidávané množství." },
+                        minimum: { label: "Minimální zásoby", desc: "Upozornění při poklesu pod nastavenou hranici." }
+                    }
+                },
+                manufacture: {
+                    title: "Sklad výroby",
+                    description: "Správa surovin a výrobních materiálů. Cesta: Admin → Sklad výroby",
+                    items: {
+                        alert: { label: "Upozornění (červená tečka)", desc: "Signalizuje surovinu pod minimální nebo varovnou zásobou." },
+                        edit: { label: "Úprava zásob", desc: "Ruční úprava množství surovin v detailu." },
+                        notifications: { label: "Notifikace", desc: "Možnost zapnout/vypnout upozornění pro každou surovinu." }
+                    }
+                },
+                saving: {
+                    title: "Ukládání změn",
+                    description: "Důležité informace o ukládání konfigurace.",
+                    items: {
+                        button: { label: "Tlačítko 'Uložit změny'", desc: "Bez kliknutí na toto tlačítko se žádné změny na webu neprojeví." },
+                        loading: { label: "Automatické načítání", desc: "Obnovení stránky vrátí stav na poslední uložená data." },
+                        reset: { label: "Tlačítko 'Resetovat'", desc: "Vrátí všechny neuložené změny na výchozí stav." }
+                    }
+                },
+                security: {
+                    title: "Autentizace a Bezpečí",
+                    description: "Informace o přihlašování a zabezpečení.",
+                    items: {
+                        magic: { label: "Magic Link", desc: "Automatické přihlašovací odkazy odesílané na e-mail." },
+                        detection: { label: "Detekce domény", desc: "Automatické rozpoznání testovacího a produkčního prostředí." },
+                        supabase: { label: "Whitelist (Důležité!)", desc: "Nutnost povolit domény v Supabase Dashboardu pro správné přesměrování." }
+                    }
+                },
+                design: {
+                    title: "Design a Branding",
+                    description: "Vizuální standardy a čitelnost rozhraní.",
+                    items: {
+                        palette: { label: "Barevná paleta", desc: "Oficiální barvy BoostUp: Olive, Lime a Terracotta." },
+                        charts: { label: "Barvy grafů", desc: "Barevné kódování odpovídá jednotlivým příchutím produktu." },
+                        readability: { label: "Čitelnost", desc: "Automaticky aplikovaný vysoký kontrast pro maximální přístupnost." }
+                    }
+                },
+                marketing: {
+                    title: "Email Marketing (Kampaně)",
+                    description: "Hromadné rozesílání newsletterů. Cesta: Admin → Email CMS",
+                    items: {
+                        campaigns: { label: "Marketingové Kampaně", desc: "Rozesílání vybrané šablony všem odběratelům v dávkách." },
+                        progress: { label: "Progress Bar", desc: "Sledování průběhu odesílání v reálném čase." }
+                    }
+                },
+                newsletter: {
+                    title: "Newsletter & Opt-out",
+                    description: "Správa odběratelů a odhlášení",
+                    items: {
+                        subscribers: { label: "Odběratelé", desc: "Správa databáze aktivních kontaktů a stavu přihlášení." },
+                        campaigns: { label: "Tvorba kampaní", desc: "Hromadné rozesílání s automatickou personalizací odkazů." },
+                        unsub: { label: "Odhlášení (GDPR)", desc: "Automatický systém odhlášení přes personalizovaný odkaz v patičce e-mailu." },
+                        safety: { label: "Bezpečnost", desc: "Ochrana proti duplicitnímu odeslání a filtrace pouze aktivních kontaktů." }
+                    }
+                }
+            }
+        },
+        messages: {
+            title: "Zprávy z webu",
+            description: "Komunikace se zákazníky z kontaktního formuláře",
+            selectMessage: "Vyberte zprávu",
+            clickMessage: "Klikněte na konverzaci v levém panelu",
+            empty: "Žádné zprávy",
+            allResolved: "Všechny zprávy vyřízeny",
+            search: "Hledat ve zprávách...",
+            status: {
+                unread: "Nové",
+                read: "Přečteno",
+                replied: "Odpovězeno"
+            },
+            actions: {
+                reply: "Odpovědět",
+                markRead: "Označit jako přečtené",
+                delete: "Smazat",
+                send: "Odeslat odpověď",
+                cancel: "Zrušit",
+                saving: "Odesílám..."
+            },
+            success: {
+                replied: "Odpověď odeslána",
+                read: "Zpráva označena jako přečtená",
+                deleted: "Zpráva byla smazána"
+            }
+        },
+        emailManager: {
+            title: "E-mail Management",
+            description: "Nastavení systémových notifikací a SMTP serveru.",
+            tabs: {
+                settings: "Nastavení",
+                templates: "Šablony",
+                logs: "Historie odesílání"
+            },
+            form: {
+                provider: "Poskytovatel",
+                host: "SMTP Host",
+                port: "Port",
+                user: "Uživatelské jméno",
+                pass: "Heslo",
+                fromName: "Jméno odesílatele",
+                fromEmail: "E-mail odesílatele",
+                save: "Uložit nastavení",
+                test: "Odeslat testovací e-mail"
+            },
+            templates: {
+                order_confirmation: "Potvrzení objednávky",
+                shipping: "Odeslání zásilky",
+                contact_auto_reply: "Automatická odpověď kontaktu",
+                registration: "Uvítání nového uživatele",
+                reset_password: "Reset hesla",
+                magic_link: "Rychlé přihlášení",
+                contact_inquiry: "Nová zpráva (pro admina)",
+                newsletter_signup: "Přihlášení newsletteru"
+            },
+            campaign: {
+                title: "Emailové Kampaně",
+                description: "Hromadné rozesílání newsletterů odběratelům.",
+                target: "Cílová skupina",
+                subscribers: "Odběratelé newsletteru",
+                selectTemplate: "Vyberte šablonu pro kampaň",
+                start: "Spustit kampaň",
+                sending: "Odesílám kampaň...",
+                completed: "Kampaň dokončena",
+                stats: "Statistiky doručení",
+                startDesc: "Po stisknutí tlačítka bude šablona odeslána všem odběratelům.",
+                confirm: "Opravdu chcete odeslat tuto kampaň {count} lidem?",
+                success: "Kampaň byla odeslána všem odběratelům!",
+                noSubscribers: "Nejsou žádní odběratelé",
+                activeEmails: "Aktivních emailů",
+                sourceNote: "Načteno z newsletter_subscriptions",
+                progressStatus: "Odesláno {sentCount} z {totalToSend} emailů"
+            },
+            dialogs: {
+                createTitle: "Vytvořit nový e-mail",
+                createDesc: "Definujte ID šablony pro systémové použití.",
+                idLabel: "Unikátní ID (např. leto_akce)",
+                idPlaceholder: "bez mezer a diakritiky",
+                createBtn: "Vytvořit šablonu",
+                htmlTitle: "Základní HTML struktura",
+                htmlDesc: "Pouze pro čtení – tato část je fixní pro všechny e-maily."
+            },
+            editor: {
+                subject: "Předmět e-mailu",
+                content: "Obsah e-mailu (HTML)",
+                styleLabel: "Styl: BoostUp Premium Layout",
+                placeholders: "Dostupné proměnné",
+                activeEmailsLabel: "Aktivních emailů",
+                preview: "Náhled",
+                howItWorks: "Jak to funguje?",
+                howItWorksDesc: "Texty, které vložíte do databáze, přepíší výchozí nastavení v kódu. Pokud chcete obnovit původní text, stačí smazat obsah a uložit.",
+                status: "Status Engine",
+                default: "VÝCHOZÍ",
+                structure: "Struktura šablony",
+                structureDesc: "Vkládá se do fixního rámu s logem.",
+                placeholder: "Zadejte text...",
+                subjectPlaceholder: "Zadejte předmět emailu...",
+                contentPlaceholder: "Zadejte HTML kód šablony...",
+                viewHtml: "Zobrazit HTML",
+                previewFull: "Náhled celého e-mailu",
+                copyBase: "Zkopírovat základ",
+                copySuccess: "Základní HTML kód byl zkopírován.",
+                tagsTitle: "Dostupné Značky (Placeholders)",
+                tagsNote: "Kliknutím na značku ji vložíte do editoru. Tyto značky budou při odesílání automaticky nahrazeny reálnými údaji.",
+                previewCtaTitle: "Chcete vidět jak to vypadá?",
+                previewCtaDesc: "Odešlete si testovací email s těmito změnami",
+                customBadge: "VLASTNÍ",
+                searchPlaceholder: "Hledat šablonu...",
+                newSubject: "Nový e-mail",
+                newContent: "<p>Tady začněte psát svůj e-mail...</p>"
+            },
+            success: {
+                saved: "Šablona byla uložena",
+                defaultLoaded: "Načten výchozí systémový kód.",
+                created: "Nová šablona byla vytvořena",
+                testSent: "Testovací email byl odeslán na {email}",
+                campaignSent: "Kampaň byla odeslána všem odběratelům!"
+            },
+            errors: {
+                load: "Nepodařilo se načíst šablony",
+                save: "Nepodařilo se uložit šablonu",
+                create: "Chyba při vytváření šablony",
+                delete: "Chyba při mazání šablony",
+                test: "Chyba při odesílání testovacího emailu",
+                subscribers: "Nepodařilo se načíst odběratele",
+                idRequired: "ID šablony je povinné",
+                idExists: "Šablona s tímto ID již existuje",
+                fieldsRequired: "Předmět i obsah musí být vyplněny",
+                defaultMissing: "Pro tuto šablonu neexistuje výchozí systémový kód."
+            },
+            testData: {
+                customerName: "Test Testovič",
+                orderNumber: "TEST-12345",
+                message: "Toto je testovací zpráva pro náhled šablony.",
+                itemName1: "BoostUp Lemon Blast",
+                itemName2: "BoostUp Mixed Pack"
+            }
+        }
+    },
+
+    checkout: {
+        title: "Pokladna",
+        titleLine1: "DOKONČENÍ",
+        titleLine2: "NÁKUPU",
+        subTitle: "Zabezpečená pokladna / Doručení do 48 hodin",
+        backToCart: "Zpět k výběru balení",
+        cartTitle: "Můj košík",
+        summaryTitle: "Shrnutí",
+        steps: {
+          stepCount: "Krok 3 ze 3",
+          confirmation: "Potvrzení objednávky"
+        },
+        personalInfo: {
+            title: "Doprava a kontakt",
+            description: "Zadejte své doručovací údaje",
+            mode_personal: "Osobní",
+            mode_company: "Firemní",
+            firstName: "Jméno",
+            lastName: "Příjmení",
+            email: "Emailová adresa",
+            phone: "Telefonní číslo",
+            companyLabel: "Nakupuji na firmu",
+            companyName: "Název firmy",
+            ico: "IČO",
+            dic: "DIČ"
+        },
+        address: {
+            title: "Fakturační údaje",
+            street: "Ulice",
+            houseNumber: "Č. popisné",
+            city: "Město",
+            zip: "PSČ",
+            billingSame: "Fakturační údaje jsou stejné"
+        },
+        delivery: {
+            title: "Způsob dopravy",
+            method_personal: "Osobní vyzvednutí (Brno)",
+            method_zasilkovna: "Zásilkovna",
+            pickupPoint: "Výdejní místo",
+            changePoint: "Změnit výdejní místo",
+            free: "ZDARMA"
+        },
+        payment: {
+            title: "Způsob platby",
+            method_card: "Platební karta",
+            method_card_sub: "Online platba",
+            method_bank: "Bankovní převod",
+            method_bank_sub: "Traduční proforma",
+            method_apple: "Apple Pay",
+            method_apple_sub: "Rychlá platba",
+            method_google: "Google Pay",
+            method_google_sub: "Rychlá platba",
+            method_stripe_express: "Expresní platba (Apple/Google Pay)"
+        },
+        express: {
+            title: "Expresní nákup",
+            subtitle: "Nativní platba / Bez vyplňování",
+            description: "Nejrychlejší cesta k energii. Adresa a kontakt se načtou bezpečně z vašeho telefonu.",
+            promoPlaceholder: "Máte slevový kód?",
+            promoApply: "POUŽÍT",
+            promoNote: "Pozn: Slevové kódy nelze kombinovat se slevou na předplatné.",
+            divider: "Rychlá platba",
+            secureNote: "Zabezpečeno přes Stripe"
+        },
+        summary: {
+            issueDate: "Datum vystavení",
+            dueDate: "Datum splatnosti",
+            issuer: "Dodavatel",
+            icLabel: "IČ",
+            subtotal: "Mezisoučet",
+            discount: "Sleva celkem",
+            shipping: "Doprava",
+            totalLabel: "CELKEM",
+            totalWithVat: "včetně DPH",
+            submitButton: "Závazně objednat",
+            submitButtonSub: "SSL Zabezpečená platba",
+            processing: "Zpracovávám...",
+            salesDisabled: "Prodej pozastaven",
+            salesDisabledSub: "DOČASNĚ NEDOSTUPNÉ",
+            salesDisabledAlert: "Prodej je dočasně pozastaven",
+            salesDisabledDesc: "Momentálně nepřijímáme nové objednávky. Zkuste to prosím později.",
+            legalConsent: "Odesláním objednávky souhlasíte s",
+            terms: "obchodními podmínkami",
+            privacy: "zásadami soukromí"
+        }
+    },
+
+    promoCodes: {
+        title: "SLEVOVÉ KÓDY",
+        description: "Správa slevových kupónů a věrnostních kódů.",
+        createButton: "Vytvořit kód",
+        formTitle: "Vytvořit kód",
+        formDesc: "Definujte procentuální slevu a kód voucheru.",
+        codePlaceholder: "NAPŘ. BOOST10",
+        codeLabel: "Unikátní kód (např. BOOST20)",
+        discountLabel: "Výše slevy v %",
+        discountNote: "Sleva se nesčítá se slevou na předplatné (15%). Systém automaticky vybere výhodnější variantu.",
+        syncing: "Synchronizace s databází...",
+        statusActive: "AKTIVNÍ",
+        statusPaused: "PAUZA",
+        deleteConfirm: "Opravdu chcete tento slevový kód smazat?",
+        notifications: {
+            loadError: "Nepodařilo se načíst slevové kódy",
+            createSuccess: "Slevový kód byl úspěšně vytvořen",
+            createError: "Nepodařilo se vytvořit kód",
+            activated: "Kód byl aktivován",
+            deactivated: "Kód byl deaktivován",
+            toggleError: "Chyba při změně stavu kódu",
+            deleteSuccess: "Kód byl smazán",
+            deleteError: "Chyba při mazání kódu",
+            popupOn: "Pop-up byl zapnut",
+            popupOff: "Pop-up byl vypnut",
+            popupError: "Chyba při změně pop-upu",
+            popupCodeChanged: "Kód pop-upu změněn na {code}",
+            popupCodeError: "Chyba při změně kódu"
+        },
+        popupSection: {
+            title: "DÁRKOVALNÁ BRÁNA (POP-UP)",
+            description: "Správa vyskakovacího okna se slevou pro nové návštěvníky.",
+            toggleLabel: "Zobrazení pop-upu",
+            toggleDesc: "Zapne/vypne automatické zobrazení slevy po načtení stránky.",
+            codeLabel: "ZOBRAZENÝ KÓD",
+            helpText: "Tento kód se zobrazí zákazníkům v pop-upu. Ujistěte se, že kód je vytvořen i v tabulce níže."
+        },
+        listSection: {
+            title: "AKTIVNÍ KUPÓNY",
+            empty: "Žádné slevové kódy",
+            emptyDesc: "Zatím jste nevytvořili žádné slevové kódy. Začněte kliknutím na tlačítko 'Vytvořit kód'.",
+            table: {
+                code: "KÓD",
+                discount: "SLEVA",
+                status: "STAV",
+                created: "VYTVOŘENO",
+                actions: "AKCE"
+            }
+        }
     }
 };

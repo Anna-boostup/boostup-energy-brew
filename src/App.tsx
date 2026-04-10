@@ -16,6 +16,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Logout = lazy(() => import("./pages/Logout"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 
 // Account pages
 const AccountLayout = lazy(() => import("./pages/account/AccountLayout"));
@@ -88,6 +89,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
 import { useDynamicFonts } from './hooks/useDynamicFonts';
 import { Analytics } from "@vercel/analytics/react";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Applies typography CSS variables from the CMS content
 const FontLoader = () => { useDynamicFonts(); return null; };
@@ -95,8 +97,9 @@ const FontLoader = () => { useDynamicFonts(); return null; };
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
@@ -176,6 +179,7 @@ const App = () => (
                           <Route path="/doprava-a-platba" element={<ShippingAndPayment />} />
                           <Route path="/reklamace" element={<Returns />} />
                           <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
+                          <Route path="/unsubscribe" element={<Unsubscribe />} />
 
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
@@ -191,7 +195,8 @@ const App = () => (
         </AuthProvider>
       </HelmetProvider>
     </TooltipProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

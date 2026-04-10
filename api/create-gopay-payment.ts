@@ -47,6 +47,20 @@ export default async function handler(req: Request) {
         const body = await req.json();
         const { orderNumber, total, customerEmail, customerName, items } = body;
         
+        const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
+
+        // TEST MODE BYPASS
+        if (process.env.IS_TEST_MODE === 'true') {
+            console.log(`[GoPay] TEST MODE ACTIVE. Bypassing gateway for order ${orderNumber}`);
+            return new Response(JSON.stringify({ 
+                gw_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay&status=paid_test`,
+                paymentId: `TEST_${orderNumber}` 
+            }), {
+                status: 200,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+        }
+
         console.log('[ENV Check]', { goId: process.env.GOPAY_GO_ID });
         console.log('[GoPay Debug]', { customerName, customerEmail });
 
@@ -62,8 +76,6 @@ export default async function handler(req: Request) {
         const tokenData = await getAccessToken(clientId!, clientSecret!, baseUrl);
         console.log('[GoPay Token Response]', JSON.stringify(tokenData));
         const accessToken = tokenData.access_token;
-
-        const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
 
         // NOTE: target omitted — the one payment that reached GoPay (ID 3297672027) had no target.
         // With target, sandbox consistently returns go_id: INVALID despite correct GoID.

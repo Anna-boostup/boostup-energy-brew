@@ -85,6 +85,12 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const fetchContent = async () => {
         try {
             setLoading(true);
+
+            if (!supabase) {
+                console.warn('ContentContext: Supabase client not initialized. Falling back to static content.');
+                return;
+            }
+
             const { data, error } = await supabase
                 .from('site_content')
                 .select('id, content')

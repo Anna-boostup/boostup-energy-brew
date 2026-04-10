@@ -29,6 +29,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!supabase) {
+            console.error("AuthContext: Supabase client is not initialized. Skipping auth checks.");
+            setLoading(false);
+            return;
+        }
+
         // 1. Check active session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -38,6 +44,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } else {
                 setLoading(false);
             }
+        }).catch(err => {
+            console.error("AuthContext: Error getting session:", err);
+            setLoading(false);
         });
 
         // 2. Listen for auth changes

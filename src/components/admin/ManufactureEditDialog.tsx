@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useContent } from "@/context/ContentContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
+    const { content } = useContent();
     const { addMaterial, updateMaterial } = useManufacture();
     const { toast } = useToast();
     const [name, setName] = useState("");
@@ -59,14 +61,14 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
             }
 
             toast({
-                title: "Uloženo",
-                description: `Surovina/materiál ${name} byl uložen.`,
+                title: content?.admin?.inventory?.manufacture?.dialogs?.edit?.success,
+                description: content?.admin?.inventory?.manufacture?.dialogs?.edit?.successDesc?.replace('{name}', name),
             });
             onClose();
         } catch (error) {
             toast({
-                title: "Chyba",
-                description: "Nepodařilo se uložit položku.",
+                title: content?.admin?.inventory?.manufacture?.dialogs?.edit?.error,
+                description: content?.admin?.inventory?.manufacture?.dialogs?.edit?.errorDesc,
                 variant: "destructive",
             });
         } finally {
@@ -74,38 +76,41 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
         }
     };
 
+    if (!content) return null;
+    const t = content?.admin?.inventory?.manufacture?.dialogs?.edit || {};
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{material ? `Upravit: ${material.name}` : "Přidat novou surovinu/materiál"}</DialogTitle>
+                    <DialogTitle>{material ? t.titleEdit.replace('{name}', material.name) : t.titleAdd}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Název položky</Label>
+                        <Label htmlFor="name">{t.nameLabel}</Label>
                         <Input
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="např. Lahvičky 500ml"
+                            placeholder={t.namePlaceholder}
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="unit">Měrná jednotka</Label>
+                        <Label htmlFor="unit">{t.unitLabel}</Label>
                         <Input
                             id="unit"
                             value={unit}
                             onChange={(e) => setUnit(e.target.value)}
-                            placeholder="ks, kg, l, atd."
+                            placeholder={t.unitPlaceholder}
                         />
                     </div>
 
                     <div className="border rounded-lg p-3 space-y-3 bg-background">
-                        <p className="text-xs font-semibold text-olive/50 uppercase tracking-wide">Úrovně upozornění</p>
+                        <p className="text-xs font-semibold text-olive/50 uppercase tracking-wide">{t.levelsTitle}</p>
                         <div className="grid gap-1.5">
                             <Label htmlFor="warning" className="flex items-center gap-1.5 text-amber-600">
                                 <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
-                                Varovná úroveň (žlutá)
+                                {t.warningLabel}
                             </Label>
                             <Input
                                 id="warning"
@@ -114,12 +119,12 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                                 value={warningQuantity}
                                 onChange={(e) => setWarningQuantity(e.target.value)}
                             />
-                            <p className="text-xs text-olive/40">Zásoby brzy dojdou — připravte objednávku.</p>
+                            <p className="text-xs text-olive/40">{t.warningDesc}</p>
                         </div>
                         <div className="grid gap-1.5">
                             <Label htmlFor="min" className="flex items-center gap-1.5 text-red-600">
                                 <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
-                                Kritická úroveň (červená)
+                                {t.criticalLabel}
                             </Label>
                             <Input
                                 id="min"
@@ -128,7 +133,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                                 value={minQuantity}
                                 onChange={(e) => setMinQuantity(e.target.value)}
                             />
-                            <p className="text-xs text-olive/40">Zásoby jsou téměř vyčerpány — okamžitě doplňte.</p>
+                            <p className="text-xs text-olive/40">{t.criticalDesc}</p>
                         </div>
                     </div>
 
@@ -142,16 +147,16 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                             htmlFor="notifications"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                            Zapnout upozornění na nízký stav
+                            {t.notificationsLabel}
                         </Label>
                     </div>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose} disabled={loading}>
-                        Zrušit
+                        {content?.admin?.orders?.cancel || "Cancel"}
                     </Button>
                     <Button onClick={handleSave} disabled={loading || !name || !unit}>
-                        {loading ? "Ukládám..." : "Uložit změny"}
+                        {loading ? t?.savingBtn : t?.saveBtn}
                     </Button>
                 </DialogFooter>
             </DialogContent>

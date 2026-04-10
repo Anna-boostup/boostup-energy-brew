@@ -4,9 +4,11 @@ import { motion } from 'framer-motion';
 import { CheckCircle, ArrowRight, Home, ShoppingBag, CreditCard, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PaymentInstructions from '@/components/PaymentInstructions';
+import { useCart } from '@/context/CartContext';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
+    const { clearCart } = useCart();
     const [searchParams] = useSearchParams();
     const stripeStatus = searchParams.get('redirect_status');
     const urlStatus = searchParams.get('status');
@@ -19,6 +21,9 @@ const PaymentSuccess = () => {
     const amount = searchParams.get('amount') || '0';
 
     useEffect(() => {
+        // Clear cart as a safety measure upon landing on success page
+        clearCart();
+
         const timer = setInterval(() => {
             setCountdown((prev) => {
                 if (prev <= 1) {

@@ -130,6 +130,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const applyPromoCode = async (code: string) => {
         try {
+            if (!supabase) {
+                console.error('CartContext: Supabase client not initialized. Cannot apply promo code.');
+                return false;
+            }
+
             const { data, error } = await supabase
                 .from('promo_codes')
                 .select('*')
