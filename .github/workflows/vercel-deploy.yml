@@ -38,11 +38,6 @@ jobs:
       - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
         
-      - name: Create .env
-        run: |
-          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-        
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
@@ -62,25 +57,20 @@ jobs:
           echo "Waiting for $DEPLOYMENT_URL..."
           timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
           
-      - name: Verify Health (No False Positives)
+      - name: Verify Health (Advanced Watchdog)
         run: |
-          # Wait for hydration/watchdogs
           sleep 12
           BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          
-          # We look for combined strings that only exist if injected by JS/Mount Guard
           if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
             echo "CRITICAL: Real Frontend Crash Detected!"
             echo "--- START ERROR DUMP ---"
             echo "$BODY"
             exit 1
           fi
-
           if [[ "$BODY" == *"Momentálně ladíme formy"* ]]; then
             echo "ERROR: Silent Hang suspected (Maintenance shell still visible)."
             exit 1
           fi
-
           echo "SUCCESS: App is healthy. React mounted."
 
       - name: Install & Test
@@ -115,29 +105,65 @@ jobs:
     if: github.ref == 'refs/heads/preview'
     steps:
       - uses: actions/checkout@v4.1.7
-      - name: Setup Node
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4.0.3
         with:
           node-version: 22
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - run: |
-          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-          vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - name: Deploy
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+      - name: Verify Health (Preview)
+        run: |
+          sleep 12
+          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
+            echo "CRITICAL: Preview Deployment Crash Caught!"
+            echo "$BODY"
+            exit 1
+          fi
+          echo "SUCCESS: Preview App is healthy."
 
   Deploy-Production:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4.1.7
-      - name: Setup Node
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4.0.3
         with:
           node-version: 22
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: |
-          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
-          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - name: Deploy
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+      - name: Verify Health (Production)
+        run: |
+          sleep 12
+          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
+          if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
+            echo "CRITICAL: Production Deployment Crash Caught!"
+            echo "$BODY"
+            exit 1
+          fi
+          echo "SUCCESS: Production App is healthy."
