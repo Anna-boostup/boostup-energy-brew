@@ -4,8 +4,6 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-  NODE_OPTIONS: "--no-deprecation"
 
 on:
   push:
@@ -13,36 +11,69 @@ on:
       - main
       - development
       - preview
+  workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  Manual-Promote-to-Main:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Global Git Config
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+      - name: Merge Preview to Main
+        run: |
+          git fetch origin main preview
+          git checkout main
+          git merge origin/preview --no-ff -m "chore: manual promote to production"
+          git push origin main
   Test-and-Promote:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
       - name: Setup Node.js 22
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
           
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install --global vercel@latest
         
       - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
         
+      - name: Diagnostic - Check Env Vars
+        run: |
+          echo "Checking Supabase environment variables..."
+          if [ -z "${{ secrets.VITE_SUPABASE_URL_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_URL_PREVIEW is empty in GitHub Secrets"; fi
+          if [ -z "${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_ANON_KEY_PREVIEW is empty in GitHub Secrets"; fi
+          
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           
       - name: Deploy
         id: deploy
@@ -69,11 +100,19 @@ jobs:
           fi
           echo "SUCCESS: App is healthy. Proceeding to E2E tests."
 
-      - name: Install & Test
-        run: |
-          npm install
-          npx playwright install --with-deps
-          npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts
+      - name: Cache Playwright Binaries
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      - name: Run E2E Tests
+        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -82,7 +121,7 @@ jobs:
 
       - name: Upload Report
         if: always()
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
@@ -93,18 +132,23 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git checkout preview
-          git merge development --no-ff -m "chore: auto-promote [skip ci]"
+          git merge development --no-ff -m "chore: auto-promote to preview"
           git push origin preview
 
   Deploy-Preview:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/preview'
+    needs: [Test-and-Promote]
+    if: |
+      always() && 
+      (github.ref == 'refs/heads/preview' || 
+       (github.ref == 'refs/heads/development' && needs.Test-and-Promote.result == 'success'))
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
       - name: Setup Node.js 22
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
@@ -113,6 +157,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Deploy
         id: deploy
         run: |
@@ -134,11 +180,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
       - name: Setup Node.js 22
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
@@ -147,6 +194,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Deploy
         id: deploy
         run: |

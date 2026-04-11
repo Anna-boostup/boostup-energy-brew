@@ -73,7 +73,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(spdData)}`;
 
     return (
-        <DialogContent className="max-w-4xl max-h-[95vh] p-0 overflow-hidden [&>button]:hidden">
+        <DialogContent className="max-w-4xl h-[95vh] md:h-auto md:max-h-[90vh] p-0 overflow-hidden flex flex-col [&>button]:hidden">
             {/* Custom Sticky Header Toolbar */}
             <div className="flex items-center justify-between p-5 border-b bg-white sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-4">
@@ -130,7 +130,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                 </div>
             </div>
 
-            <div className="overflow-y-auto p-6 space-y-6" id="printable-area">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-premium" id="printable-area">
                 {/* Status Badges Row */}
                 <div className="flex justify-between items-center border-b pb-4">
                     <div className="space-y-1">

@@ -137,7 +137,7 @@ const AdminProfile = () => {
                         <Shield className="w-8 h-8 sm:w-12 sm:h-12 text-white relative z-10" />
                     </div>
                     <div className="space-y-1 sm:space-y-3">
-                        <h1 className="text-3xl sm:text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.profile?.title || "My Profile"}</h1>
+                        <h1 data-testid="admin-page-title" className="text-3xl sm:text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.profile?.title || "My Profile"}</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                             <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">

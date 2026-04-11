@@ -37,20 +37,36 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         await page.goto('/login', { timeout: 60000 });
         await page.fill('input[type="email"]', identity.email);
         await page.fill('input[type="password"]', identity.password);
-        await page.click('button:has-text("PŘIHLÁSIT SE")');
+        await page.getByTestId('login-submit-btn').click();
         
-        // Wait for redirect to home or admin
-        await page.waitForURL(identity.type === 'admin' ? /.*admin/ : /.*\//, { timeout: 60000 });
+        try {
+          if (identity.type === 'admin') {
+            await expect(page).toHaveURL(/.*admin/, { timeout: 15000 });
+          } else if (identity.type === 'company') {
+            await expect(page).toHaveURL(/.*company-account/, { timeout: 15000 });
+          } else {
+            await expect(page).toHaveURL(/.*account/, { timeout: 15000 });
+          }
+        } catch (e) {
+          const currentUrl = page.url();
+          const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
+          throw new Error(`CRITICAL LOGIN FAILURE at ${currentUrl}: Navigation did not happen. UI Alert displayed: "${toastError}"`);
+        }
       }
 
       // 2. Add product to cart
       await page.goto('/', { timeout: 60000 });
-      const addToCartButton = page.locator('button:has-text("Do košíku")').first();
+      const addToCartButton = page.getByTestId('add-to-cart-hero-btn');
       await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
       await addToCartButton.click();
 
-      // 3. Go to checkout
-      await page.locator('button:has-text("K pokladně")').click();
+      // 3. Open the Cart Drawer
+      // The drawer does not automatically open upon adding an item; we must manually click the header cart icon.
+      const headerCartButton = page.getByTestId('header-cart-btn').first();
+      await headerCartButton.click();
+
+      // 4. Go to checkout
+      await page.getByTestId('cart-drawer-checkout-btn').click();
       await expect(page).toHaveURL(/.*checkout/);
 
       // 4. Identity-specific checks on Checkout Page
@@ -85,14 +101,14 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       }
 
       // 5. Delivery & Payment
-      await page.click('text=Výdejní místo Zásilkovna');
+      await page.getByTestId('checkout-shipping-zasilkovna').click();
       // Packeta Widget is usually an iframe, for smoke test we just ensure payment methods show up
       
-      const gopayButton = page.locator('text=GoPay');
+      const gopayButton = page.getByTestId('checkout-payment-card');
       await gopayButton.click();
 
       // 6. Submit
-      const submitButton = page.locator('button:has-text("Objednat a zaplatit")');
+      const submitButton = page.getByTestId('checkout-submit-btn');
       await expect(submitButton).toBeEnabled();
       
       // We don't actually submit to avoid creating junk orders unless it's a dry run

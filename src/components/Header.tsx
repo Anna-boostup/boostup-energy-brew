@@ -8,6 +8,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
+import { useLocation } from "react-router-dom";
 
 // Sub-components
 import Logo from "./header/Logo";
@@ -32,6 +33,12 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const { user, profile } = useAuth();
   const { content: SITE_CONTENT } = useContent();
   const [unreadCount, setUnreadCount] = useState(0);
+  const location = useLocation();
+
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
 
   // Fetch unread messages count if admin
   useEffect(() => {
@@ -79,7 +86,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300 ${
       isMenuOpen 
-        ? 'bg-background border-border h-screen overflow-y-auto' 
+        ? 'bg-background border-border h-[100dvh] overflow-y-auto' 
         : 'bg-background/95 backdrop-blur-sm border-border/50'
     }`}>
       <div className="container mx-auto px-4 py-4">

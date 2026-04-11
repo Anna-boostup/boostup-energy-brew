@@ -114,6 +114,11 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (!user) return;
 
+    // Immediately pre-fill guaranteed email to prevent UI race conditions
+    if (user.email && !formData.email) {
+      setFormData(prev => ({ ...prev, email: user.email || '' }));
+    }
+
     const fetchProfile = async () => {
       const { data, error } = await supabase
         .from('profiles')
@@ -135,7 +140,7 @@ const CheckoutPage = () => {
           ...prev,
           firstName: firstName,
           lastName: lastName,
-          email: data.email || prev.email,
+          email: data.email || user.email || prev.email,
           phone: delivery.phone || prev.phone,
           street: delivery.street || '',
           houseNumber: delivery.houseNumber || '',
@@ -611,7 +616,7 @@ const CheckoutPage = () => {
                   {formData.isCompany && (
                     <motion.div 
                       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                      className="md:col-span-2 grid md:grid-cols-3 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
+                      className="md:col-span-2 grid md:grid-cols-4 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
                     >
                       <div className="md:col-span-2 space-y-2">
                         <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.companyName} *</label>
@@ -631,6 +636,16 @@ const CheckoutPage = () => {
                           onChange={handleChange}
                           placeholder="12345678"
                           className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.ico ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm'}`}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.dic}</label>
+                        <input
+                          name="dic"
+                          value={formData.dic}
+                          onChange={handleChange}
+                          placeholder="CZ12345678"
+                          className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold shadow-sm"
                         />
                       </div>
                     </motion.div>
@@ -813,6 +828,7 @@ const CheckoutPage = () => {
                   ].map((method) => (
                     <button
                       key={method.id}
+                      data-testid={`checkout-shipping-${method.id}`}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, deliveryMethod: method.id }))}
                       className={`relative p-6 rounded-[2rem] border-2 text-center flex flex-col items-center justify-center transition-all group min-h-[140px] ${formData.deliveryMethod === method.id ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
@@ -1006,6 +1022,7 @@ const CheckoutPage = () => {
                 </div>
 
                 <Button
+                  data-testid="checkout-submit-btn"
                   onClick={handleSubmit}
                   disabled={isProcessing || cart.length === 0 || !isSalesEnabled}
                   className={`w-full h-20 rounded-[1.5rem] mt-10 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
@@ -1076,6 +1093,7 @@ const Box = ({ className }: { className?: string }) => (
 
 const PaymentMethodCard = ({ id, name, sub, active, onClick, icon }: any) => (
   <button
+    data-testid={`checkout-payment-${id}`}
     type="button"
     onClick={onClick}
     className={`relative p-6 rounded-[2rem] border-2 text-center transition-all group h-[140px] flex flex-col items-center justify-center gap-3 ${active ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}

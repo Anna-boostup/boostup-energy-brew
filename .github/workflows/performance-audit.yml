@@ -1,0 +1,30 @@
+name: Performance Audit (Lighthouse)
+
+on:
+  deployment_status:
+  workflow_run:
+    workflows: ["Vercel Deploy"]
+    types:
+      - completed
+  schedule:
+    - cron: '0 0 * * 1' # Každé pondělí o půlnoci
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Audit Production URL
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://drinkboostup.cz/
+            https://drinkboostup.cz/checkout
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          # Hranice, pod které nesmíme klesnout (budeme postupně zpřísňovat)
+          budgetPath: ./lighthouse-budget.json
+ stone

@@ -19,24 +19,24 @@ test.describe('Admin Dashboard Audit', () => {
     
     await emailInput.fill(email);
     await page.fill('input[type="password"]', password);
-    await page.click('button:has-text("PŘIHLÁSIT SE")');
+    await page.getByTestId('login-submit-btn').click();
 
     // 2. Verify Dashboard redirection
     await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
-    await expect(page.locator('h2:has-text("PŘEHLED")')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 20000 });
 
     // 3. Audit all pages listed in AdminLayout
     const adminPages = [
-        { path: '/admin/orders', title: 'OBJEDNÁVKY' },
-        { path: '/admin/inventory', title: 'SKLAD PRODUKTŮ' },
-        { path: '/admin/manufacture', title: 'SKLAD VÝROBY' },
-        { path: '/admin/messages', title: 'ZPRÁVY' },
-        { path: '/admin/emails', title: 'E-MAILOVÉ ŠABLONY' },
-        { path: '/admin/content', title: 'OBSAH WEBU' },
-        { path: '/admin/pricing', title: 'CENY A STATISTIKY' },
+        { path: '/admin/orders', title: 'Správa objednávek' },
+        { path: '/admin/inventory', title: 'Sklad produktů' },
+        { path: '/admin/manufacture', title: 'Výroba & Suroviny' },
+        { path: '/admin/messages', title: 'Zprávy z webu' },
+        { path: '/admin/emails', title: 'E-mail Management' },
+        { path: '/admin/content', title: 'CONTENT ENGINE' },
+        { path: '/admin/pricing', title: 'Ceny & Statistiky' },
         { path: '/admin/promo-codes', title: 'SLEVOVÉ KÓDY' },
-        { path: '/admin/profile', title: 'MŮJ ÚČET' },
-        { path: '/admin/help', title: 'NÁPOVĚDA' },
+        { path: '/admin/profile', title: 'Můj Profil' },
+        { path: '/admin/help', title: 'Centrum Nápovědy' },
     ];
 
     for (const adminPage of adminPages) {
@@ -44,7 +44,7 @@ test.describe('Admin Dashboard Audit', () => {
       
       // Basic check: Page should not show "Error" or "Crashed"
       // We check for the module title (uppercase)
-      const titleLocator = page.locator(`h1, h2`).filter({ hasText: adminPage.title }).first();
+      const titleLocator = page.getByTestId('admin-page-title');
       await expect(titleLocator).toBeVisible({ timeout: 10000 });
       
       // Check for White Screen of Death (body should not be empty)

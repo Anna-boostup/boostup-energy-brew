@@ -5,6 +5,7 @@ import { CheckCircle, ArrowRight, Home, ShoppingBag, CreditCard, Clock } from 'l
 import { Button } from '@/components/ui/button';
 import PaymentInstructions from '@/components/PaymentInstructions';
 import { useCart } from '@/context/CartContext';
+import { track } from '@vercel/analytics';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
@@ -24,6 +25,33 @@ const PaymentSuccess = () => {
         // Clear cart as a safety measure upon landing on success page
         clearCart();
 
+        // --- TRACKING START ---
+        if (!isPending) {
+            const hasBeenTracked = sessionStorage.getItem(`tracked_${orderNumber}`);
+            if (!hasBeenTracked) {
+                const numericAmount = parseFloat(amount.replace(/[^0-9.]/g, '')) || 0;
+
+                // Vercel Analytics
+                track('purchase', {
+                    order_id: orderNumber,
+                    value: numericAmount,
+                    currency: 'CZK'
+                });
+
+                // Google Analytics 4
+                if (typeof window !== 'undefined' && (window as any).gtag) {
+                    (window as any).gtag('event', 'purchase', {
+                        transaction_id: orderNumber,
+                        value: numericAmount,
+                        currency: 'CZK',
+                        items: [] 
+                    });
+                }
+                sessionStorage.setItem(`tracked_${orderNumber}`, 'true');
+            }
+        }
+        // --- TRACKING END ---
+
         const timer = setInterval(() => {
             setCountdown((prev) => {
                 if (prev <= 1) {
@@ -35,7 +63,7 @@ const PaymentSuccess = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [navigate]);
+    }, [navigate, orderNumber, amount, isPending]);
 
     return (
         <main className="min-h-screen bg-secondary/30 flex items-center justify-center p-4">

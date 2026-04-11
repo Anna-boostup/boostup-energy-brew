@@ -48,7 +48,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto p-0 gap-0 border-none bg-zinc-100">
+            <DialogContent className="max-w-4xl h-[95vh] md:h-auto md:max-h-[95vh] p-0 gap-0 border-none bg-zinc-100 overflow-hidden flex flex-col">
                 {/* Fixed Toolbar */}
                 <div className="sticky top-0 z-10 bg-white border-b border-zinc-200 p-4 flex justify-between items-center no-print">
                     <div className="flex gap-2">
@@ -62,7 +62,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                 </div>
 
                 {/* Invoice Body */}
-                <div className="p-8 sm:p-12 print:p-0">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-12 print:p-0 scrollbar-premium">
                     <div ref={invoiceRef} className="bg-white shadow-2xl mx-auto p-12 sm:p-16 min-h-[1100px] w-full max-w-[800px] print:shadow-none print:p-0">
                         {/* Header */}
                         <div className="flex justify-between items-start mb-16">

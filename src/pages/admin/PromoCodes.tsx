@@ -157,7 +157,7 @@ const PromoCodes = () => {
         <div className="space-y-10 pb-20 animate-in fade-in duration-700">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
                 <div>
-                    <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-olive-dark font-display uppercase italic">{content?.promoCodes?.title || "Promo Codes"}</h2>
+                    <h2 data-testid="admin-page-title" className="text-2xl sm:text-4xl font-black tracking-tight text-olive-dark font-display uppercase italic">{content?.promoCodes?.title || "Promo Codes"}</h2>
                     <p className="text-brand-muted font-bold text-[10px] sm:text-sm uppercase tracking-widest mt-0.5 sm:mt-1">{content?.promoCodes?.description}</p>
                 </div>
 

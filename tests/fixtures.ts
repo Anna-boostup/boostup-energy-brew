@@ -4,7 +4,7 @@ export const test = base.extend({
   page: async ({ page, baseURL }, use) => {
     // Suppress global overlays (Cookie Consent & Discount Modal) to prevent pointer-event interception during tests
     await page.addInitScript(() => {
-      window.localStorage.setItem('cookieConsent', JSON.stringify({ strictlyNecessary: true, analytics: true, marketing: true }));
+      window.localStorage.setItem('boostup_cookie_consent', JSON.stringify({ necessary: true, analytics: true, marketing: true, preferences: true }));
       window.localStorage.setItem('boostup_discount_dismissed', 'true');
     });
 

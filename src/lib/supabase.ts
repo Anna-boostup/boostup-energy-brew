@@ -23,15 +23,26 @@ const createUniversalStub = (path = 'supabase'): any => {
         get: (_target, prop) => {
             // Handle Promise resolution (await / .then)
             if (prop === 'then') {
-                return (onFulfilled: any) => {
-                    let mockResult: any = { data: [], error: null, count: 0 };
-                    
+                return (onFulfilled: any, onRejected: any) => {
                     const p = path.toLowerCase();
+                    const isConfigBroken = !isConfigValid && !isLocal;
+                    
+                    if (isConfigBroken && (p.includes('auth.') || p.includes('from(') || p.includes('getsession'))) {
+                        const errorResult = { 
+                            data: null, 
+                            error: { 
+                                message: `CRITICAL CONFIG ERROR: Supabase environment variables are missing or invalid (URL: ${supabaseUrl ? 'POISONED' : 'EMPTY'}). Check GitHub Secrets vs Vercel Env!` 
+                            } 
+                        };
+                        return Promise.reject(errorResult.error).catch(onRejected || (() => {
+                            throw errorResult.error;
+                        }));
+                    }
+
+                    let mockResult: any = { data: [], error: null, count: 0 };
                     if (p.includes('getsession') || p.includes('getuser') || p.includes('auth.')) {
-                        // Auth Context expects nested data.session or data.user
                         mockResult = { data: { session: null, user: null }, error: null };
                     } else if (p.includes('.single')) {
-                        // single() expects data to be an object or null, not an array
                         mockResult = { data: null, error: null };
                     } else if (p.includes('signout')) {
                         mockResult = { error: null };
@@ -52,10 +63,24 @@ const createUniversalStub = (path = 'supabase'): any => {
 };
 
 // Guard against poisoned variables or missing config
-const isConfigValid = supabaseUrl && 
-                     supabaseAnonKey && 
-                     supabaseUrl.startsWith('http') && 
-                     !supabaseUrl.endsWith('"');
+const isConfigValid = !!(supabaseUrl && 
+                      supabaseAnonKey && 
+                      supabaseUrl.startsWith('http') && 
+                      !supabaseUrl.endsWith('"'));
+
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+if (!isConfigValid) {
+    console.warn("--- SUPABASE CONFIGURATION WARNING ---");
+    console.warn("VITE_SUPABASE_URL:", supabaseUrl ? "Present (Starts with http: " + supabaseUrl.startsWith('http') + ")" : "MISSING");
+    console.warn("VITE_SUPABASE_ANON_KEY:", supabaseAnonKey ? "Present" : "MISSING");
+    console.warn("Fallback to createUniversalStub() is active.");
+    
+    // In production or preview environments, we want to know definitively if config is broken
+    if (!isLocal) {
+        console.error("CRITICAL: Supabase configuration is invalid in a non-local environment!");
+    }
+}
 
 export const supabase = isConfigValid 
     ? createClient(supabaseUrl, supabaseAnonKey) 
