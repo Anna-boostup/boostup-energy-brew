@@ -2,6 +2,8 @@ name: Promote to Production (Main)
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 20 11 4 *' # Dnes (11. dubna 2026) ve 22:00 CEST (20:00 UTC)
 
 permissions:
   contents: write
@@ -11,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           

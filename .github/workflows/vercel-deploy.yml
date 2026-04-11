@@ -4,8 +4,6 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-  NODE_OPTIONS: "--no-deprecation"
 
 on:
   push:
@@ -27,7 +25,7 @@ jobs:
     if: github.ref == 'refs/heads/development'
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
@@ -99,7 +97,7 @@ jobs:
 
       - name: Upload Report
         if: always()
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
@@ -110,16 +108,16 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git checkout preview
-          git merge development --no-ff -m "chore: auto-promote [skip ci]"
+          git merge development --no-ff -m "chore: auto-promote to preview"
           git push origin preview
 
   Deploy-Preview:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/preview'
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
       - name: Setup Node.js 22
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
@@ -152,9 +150,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
       - name: Setup Node.js 22
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
