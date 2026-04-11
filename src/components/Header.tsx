@@ -8,6 +8,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
+import { useLocation } from "react-router-dom";
 
 // Sub-components
 import Logo from "./header/Logo";
@@ -32,6 +33,12 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const { user, profile } = useAuth();
   const { content: SITE_CONTENT } = useContent();
   const [unreadCount, setUnreadCount] = useState(0);
+  const location = useLocation();
+
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
 
   // Fetch unread messages count if admin
   useEffect(() => {

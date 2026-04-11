@@ -154,7 +154,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
     return (
     <>
         {/* Desktop View */}
-        <div className="hidden md:block overflow-hidden rounded-[2.5rem] border border-olive/5 bg-white/50 backdrop-blur-sm">
+        <div className="hidden md:block overflow-x-auto rounded-[2.5rem] border border-olive/5 bg-white/50 backdrop-blur-sm shadow-sm">
             <Table>
                 <TableHeader className="bg-white/40 border-b border-olive/5">
                     <TableRow className="hover:bg-transparent border-none">
@@ -173,7 +173,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             />
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 cursor-pointer hover:text-white transition-colors"
+                            className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 cursor-pointer hover:text-white transition-colors"
                             onClick={() => onSort('id')}
                         >
                             <div className="flex items-center gap-2">
@@ -181,20 +181,20 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             </div>
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 cursor-pointer hover:text-white transition-colors text-center"
+                            className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 cursor-pointer hover:text-white transition-colors text-center"
                             onClick={() => onSort('date')}
                         >
                             <div className="flex items-center justify-center gap-2">
                                 {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8">{content?.admin?.orders?.table?.customer}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right w-[15%]">{content?.admin?.orders?.table?.items}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right">{content?.admin?.orders?.table?.amount}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content?.admin?.orders?.table?.payment}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content?.admin?.orders?.table?.method}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-center">{content?.admin?.orders?.table?.status}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.3em] py-8 text-right pr-8">{content?.admin?.orders?.table?.actions}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4">{content?.admin?.orders?.table?.customer}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right w-[15%]">{content?.admin?.orders?.table?.items}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right">{content?.admin?.orders?.table?.amount}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.payment}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.method}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.status}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -288,7 +288,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                     content.admin.dashboard.statusReceived}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="text-right pr-8 whitespace-nowrap min-w-max">
+                                <TableCell className="text-right pr-4 whitespace-nowrap min-w-max">
                                     <div className="flex justify-end gap-2">
                                         <Dialog>
                                             <DialogTrigger asChild>
