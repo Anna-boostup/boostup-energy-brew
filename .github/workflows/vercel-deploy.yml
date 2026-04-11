@@ -88,7 +88,7 @@ jobs:
         run: |
           npm install
           npx playwright install --with-deps
-          npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts
+          npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -113,7 +113,11 @@ jobs:
 
   Deploy-Preview:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/preview'
+    needs: [Test-and-Promote]
+    if: |
+      always() && 
+      (github.ref == 'refs/heads/preview' || 
+       (github.ref == 'refs/heads/development' && needs.Test-and-Promote.result == 'success'))
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js 22
