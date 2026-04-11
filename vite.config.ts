@@ -28,13 +28,14 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-lucide': ['lucide-react'],
-          'vendor-framer': ['framer-motion'],
-          'vendor-charts': ['recharts'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-tanstack': ['@tanstack/react-query'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            // Group all node_modules into a single robust vendor chunk to prevent 
+            // initialization race conditions on custom domains/CDNs.
+            return 'vendor';
+          }
+          if (id.includes('src/pages/admin/')) return 'admin-suite';
+          if (id.includes('src/pages/legal/')) return 'legal-suite';
         },
       },
     },

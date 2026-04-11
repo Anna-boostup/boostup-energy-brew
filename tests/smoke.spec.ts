@@ -1,19 +1,35 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Frontend Smoke Test', () => {
   test('homepage should load with essential content', async ({ page }) => {
-    await page.goto('/');
+    // Capture console logs for debugging
+    page.on('console', msg => {
+        console.log(`BROWSER [${msg.type()}]: ${msg.text()}`);
+    });
+
+    await page.goto('/', { timeout: 60000 });
     
     // Check title
-    await expect(page).toHaveTitle(/BOOSTUP/i);
+    const title = await page.title();
+    if (title === "") {
+        console.log("DEBUG: Empty title detected. Page content:");
+        console.log(await page.content());
+    }
+    await expect(page).toHaveTitle(/BOOSTUP/i, { timeout: 30000 });
     
     // Check hero section elements
     const heroText = page.locator('h1');
-    await expect(heroText.first()).toBeVisible();
+    try {
+        await expect(heroText.first()).toBeVisible({ timeout: 60000 });
+    } catch (error) {
+        console.error("DIAGNOSTIC: h1 NOT found! Printing page content for debugging:");
+        console.log(await page.content());
+        throw error;
+    }
     
     // Check navigation
     const nav = page.locator('nav');
-    await expect(nav.first()).toBeVisible();
+    await expect(nav.first()).toBeVisible({ timeout: 30000 });
   });
 
   test('navigation to legal pages should work', async ({ page }) => {

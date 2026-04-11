@@ -273,7 +273,22 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                          order.delivery_info?.paymentMethod?.toUpperCase() || content.admin.orders.table.payment}
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-right pr-8">
+                                <TableCell className="text-center">
+                                    <Badge
+                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                            order.status === 'shipped' ? 'bg-olive-dark text-white' :
+                                                order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
+                                                    order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                                                        'bg-lime/20 text-olive-dark'
+                                        }`}
+                                    >
+                                        {order.status === 'shipped' ? content.admin.dashboard.statusShipped :
+                                            order.status === 'processing' ? content.admin.dashboard.statusProcessing :
+                                                order.status === 'cancelled' ? content.admin.dashboard.statusCancelled :
+                                                    content.admin.dashboard.statusReceived}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="text-right pr-8 whitespace-nowrap min-w-max">
                                     <div className="flex justify-end gap-2">
                                         <Dialog>
                                             <DialogTrigger asChild>
@@ -582,7 +597,7 @@ const Orders = () => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap">
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{content.admin.orders.title}</h2>
+                <h2 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-bold tracking-tight">{content.admin.orders.title}</h2>
                <div className="flex flex-wrap items-center gap-2">
                     {notificationPermission !== 'granted' && (
                         <Button

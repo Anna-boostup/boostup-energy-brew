@@ -81,7 +81,7 @@ const AdminDashboard = () => {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-1000">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
                 <div>
-                    <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.title}</h2>
+                    <h2 data-testid="admin-page-title" className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.title}</h2>
                     <div className="flex items-center gap-3 mt-2">
                         <div className="flex -space-x-1">
                             <div className="w-2 h-2 rounded-full bg-lime" />

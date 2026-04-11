@@ -45,6 +45,17 @@ export default async function handler(req: Request) {
         }
 
         const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
+
+        // TEST MODE BYPASS
+        if (process.env.IS_TEST_MODE === 'true') {
+            console.log(`[Stripe] TEST MODE ACTIVE. Bypassing gateway for order ${orderNumber}`);
+            return new Response(JSON.stringify({ 
+                url: `${origin}/payment/success?session_id=TEST_SESSION_${orderNumber}&orderNumber=${orderNumber}&amount=${total}&status=paid_test`
+            }), {
+                status: 200,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+        }
         
         // Check if there is a subscription item
         const isSubscription = items.some((item: any) => item.subscriptionInterval);

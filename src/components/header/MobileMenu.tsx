@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { User, Package, CreditCard, ShoppingCart, Instagram, Facebook, Linkedin } from "lucide-react";
+import { User, Package, CreditCard, ShoppingCart, Instagram, Facebook, Linkedin, LogOut } from "lucide-react";
 import { startTransition } from "react";
 
 interface MobileMenuProps {
@@ -115,10 +115,27 @@ const MobileMenu = ({
         </button>
       </nav>
 
-      <div className="flex gap-4">
-        <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 bg-secondary rounded-full"><Instagram className="w-5 h-5" /></a>
-        <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 bg-secondary rounded-full"><Facebook className="w-5 h-5" /></a>
-        <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2 bg-secondary rounded-full"><Linkedin className="w-5 h-5" /></a>
+      <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/50">
+        <div className="flex gap-4">
+          <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 bg-secondary rounded-full transform hover:scale-110 transition-transform"><Instagram className="w-5 h-5" /></a>
+          <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 bg-secondary rounded-full transform hover:scale-110 transition-transform"><Facebook className="w-5 h-5" /></a>
+          <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2 bg-secondary rounded-full transform hover:scale-110 transition-transform"><Linkedin className="w-5 h-5" /></a>
+        </div>
+        
+        {user && (
+          <button
+            onClick={async () => {
+              const { supabase } = await import("@/lib/supabase");
+              await supabase.auth.signOut();
+              setIsMenuOpen(false);
+              window.location.href = "/logout";
+            }}
+            className="flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 px-4 py-2 bg-red-50 rounded-full"
+          >
+            <LogOut className="w-4 h-4" />
+            Odhlásit se
+          </button>
+        )}
       </div>
     </div>
   );

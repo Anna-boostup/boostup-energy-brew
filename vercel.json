@@ -51,7 +51,7 @@
   "crons": [
     {
       "path": "/api/sync-packeta-status",
-      "schedule": "0 16 * * *"
+      "schedule": "0 */2 * * *"
     }
   ]
 }

@@ -12,11 +12,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!apiPassword) return res.status(500).json({ error: 'Missing Packeta password' });
 
     try {
-        // 1. Get orders waiting for shipment (status = processing and have packetId)
+        // 1. Get orders waiting for shipment or delivery (status = processing or shipped and have packetId)
         const { data: orders, error: dbError } = await supabase
             .from('orders')
             .select('*')
-            .eq('status', 'processing')
+            .in('status', ['processing', 'shipped'])
             .not('packeta_packet_id', 'is', null);
 
         if (dbError) throw dbError;
@@ -45,36 +45,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 const text = await packetaRes.text();
 
                 // Packeta API returns a list of status changes
-                // We care if it has been received at a pickup point
+                const isDeliveredOrReady = text.includes('<statusId>7</statusId>') || text.includes('<statusId>5</statusId>');
                 const hasBeenReceived = text.includes('<statusId>2</statusId>') ||
                     text.includes('<statusId>3</statusId>') ||
-                    text.includes('<statusId>4</statusId>');
+                    text.includes('<statusId>4</statusId>') ||
+                    text.includes('<statusId>6</statusId>');
 
-                if (hasBeenReceived) {
+                let targetStatus = null;
+
+                if (isDeliveredOrReady && order.status !== 'completed') {
+                    // Mark as completed when delivered or ready for pickup
+                    targetStatus = 'completed';
+                } else if (hasBeenReceived && order.status === 'processing') {
+                    // Make as shipped if accepted at branch
+                    targetStatus = 'shipped';
+                }
+
+                if (targetStatus) {
                     // 3. Update status in Supabase
                     const { error: updateError } = await supabase
                         .from('orders')
-                        .update({ status: 'shipped' })
+                        .update({ status: targetStatus })
                         .eq('id', order.id);
 
                     if (updateError) throw updateError;
 
-                    // 4. Send shipping email via our own endpoint
-                    await fetch(`${baseUrl}/api/send-email`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            to: order.customer_email,
-                            customerName: order.delivery_info?.firstName || order.customer_name,
-                            orderNumber: order.id,
-                            items: order.items,
-                            total: order.total,
-                            type: 'shipping',
-                            trackingNumber: order.packeta_barcode
-                        })
-                    }).catch(err => console.error(`Email send failed for order ${order.id}:`, err));
+                    if (targetStatus === 'shipped') {
+                        // 4. Send shipping email via our own endpoint
+                        await fetch(`${baseUrl}/api/send-email`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: order.customer_email,
+                                customerName: order.delivery_info?.firstName || order.customer_name,
+                                orderNumber: order.id,
+                                items: order.items,
+                                total: order.total,
+                                type: 'shipping',
+                                trackingNumber: order.packeta_barcode
+                            })
+                        }).catch(err => console.error(`Email send failed for order ${order.id}:`, err));
+                    }
 
-                    results.push({ orderId: order.id, status: 'updated_and_notified' });
+                    results.push({ orderId: order.id, status: 'updated_and_notified', newStatus: targetStatus });
                 } else {
                     results.push({ orderId: order.id, status: 'still_waiting' });
                 }

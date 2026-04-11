@@ -21,7 +21,11 @@ export default function middleware(request: Request) {
     const productionDomain = process.env.PRODUCTION_DOMAIN;
 
     // 2. Bypass Logic
+    const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+    const bypassHeader = request.headers.get('x-vercel-protection-bypass');
+
     if (
+        (bypassSecret && bypassHeader === bypassSecret) ||
         !authUser ||
         !authPass ||
         (productionDomain && (hostname === productionDomain || hostname === `www.${productionDomain}`)) ||

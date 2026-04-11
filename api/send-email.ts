@@ -135,9 +135,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 try {
                     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
                         type: 'signup',
-                        email: to,
+                        email: to as string,
                         options: { redirectTo: `${BASE_URL}/login` }
-                    });
+                    } as any);
                     if (linkError) {
                         console.error('Supabase generateLink error (signup):', linkError);
                         throw linkError;

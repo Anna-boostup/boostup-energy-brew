@@ -76,6 +76,10 @@ export const ManufactureProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }, [loading, materials, toast]);
 
     const fetchMaterials = async () => {
+        if (!supabase) {
+            setLoading(false);
+            return;
+        }
         const { data, error } = await supabase
             .from('manufacture_inventory')
             .select('*')

@@ -1,0 +1,1 @@
+DO $$\nBEGIN\n    DELETE FROM public.profiles WHERE email IN ('admin-test@drinkboostup.cz', 'company-test@drinkboostup.cz', 'basic-test@drinkboostup.cz');\n    DELETE FROM auth.users WHERE email IN ('admin-test@drinkboostup.cz', 'company-test@drinkboostup.cz', 'basic-test@drinkboostup.cz');\nEND $$;

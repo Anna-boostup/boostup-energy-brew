@@ -786,9 +786,8 @@ export const SITE_CONTENT_EN = {
                 },
                 flavors: {
                     title: "Flavor Management",
-                    sectionDesc: "Visual and text settings for product variants",
                     sectionTitle: "Flavor Catalog",
-                    sectionDesc: "Manage parameters and specifications of individual products",
+                    sectionDesc: "Manage parameters and specifications of individual flavor variants and product details",
                     code: "Code",
                     name: "Flavor Name",
                     tagline: "Slogan (Tagline)",
@@ -1057,6 +1056,16 @@ export const SITE_CONTENT_EN = {
                     items: {
                         campaigns: { label: "Marketing Campaigns", desc: "Send selected templates to all subscribers in batches." },
                         progress: { label: "Progress Bar", desc: "Monitor campaign progress in real-time." }
+                    }
+                },
+                newsletter: {
+                    title: "Newsletter & Opt-out",
+                    description: "Subscriber management and unsubscribe flow",
+                    items: {
+                        subscribers: { label: "Subscribers", desc: "Manage the database of active contacts and subscription status." },
+                        campaigns: { label: "Campaign Creation", desc: "Bulk mailing with automated link personalization." },
+                        unsub: { label: "Unsubscribe (GDPR)", desc: "Automated opt-out system via personalized links in the footer." },
+                        safety: { label: "Safety", desc: "Protection against duplicate sending and filtering of inactive contacts." }
                     }
                 }
             }

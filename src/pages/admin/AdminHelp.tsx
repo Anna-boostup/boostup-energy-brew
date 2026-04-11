@@ -9,7 +9,7 @@ import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
     AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette,
-    Database, Send, Info, Key
+    Database, Send, Info, Key, Newspaper
 } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 
@@ -161,6 +161,17 @@ const AdminHelp = () => {
                 { label: content?.admin?.help?.sections?.marketing?.items?.campaigns?.label || "Email Campaigns", description: content?.admin?.help?.sections?.marketing?.items?.campaigns?.desc || "Outreach tools" },
                 { label: content?.admin?.help?.sections?.marketing?.items?.progress?.label || "Tracking", description: content?.admin?.help?.sections?.marketing?.items?.progress?.desc || "Engagement stats" }
             ]
+        },
+        {
+            icon: Newspaper,
+            title: content?.admin?.help?.sections?.newsletter?.title || "Newsletter & Opt-out",
+            description: content?.admin?.help?.sections?.newsletter?.description || "Subscriber management",
+            items: [
+                { label: content?.admin?.help?.sections?.newsletter?.items?.subscribers?.label || "Subscribers", description: content?.admin?.help?.sections?.newsletter?.items?.subscribers?.desc || "Database of active contacts" },
+                { label: content?.admin?.help?.sections?.newsletter?.items?.campaigns?.label || "Campaign Creation", description: content?.admin?.help?.sections?.newsletter?.items?.campaigns?.desc || "Mass mailing automation" },
+                { label: content?.admin?.help?.sections?.newsletter?.items?.unsub?.label || "Unsubscribe (GDPR)", description: content?.admin?.help?.sections?.newsletter?.items?.unsub?.desc || "Automated opt-out system" },
+                { label: content?.admin?.help?.sections?.newsletter?.items?.safety?.label || "Safety", description: content?.admin?.help?.sections?.newsletter?.items?.safety?.desc || "Protection against duplicate sending" }
+            ]
         }
     ];
 
@@ -168,7 +179,7 @@ const AdminHelp = () => {
         <div className="space-y-12 pb-24">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content?.admin?.help?.title || "Guide"}</h1>
+                    <h1 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content?.admin?.help?.title || "Guide"}</h1>
                     <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">{content?.admin?.help?.description}</p>
                 </div>
             </div>

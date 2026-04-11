@@ -885,9 +885,8 @@ export const SITE_CONTENT = {
                 },
                 flavors: {
                     title: "Správa Příchutí",
-                    sectionDesc: "Vizuální a textové nastavení variant produktu",
                     sectionTitle: "Katalog Příchutí",
-                    sectionDesc: "Správa parametrů a specifikací jednotlivých produktů",
+                    sectionDesc: "Správa parametrů a specifikací jednotlivých příchutí a variant produktů",
                     code: "Kód",
                     name: "Název příchutě",
                     tagline: "Slogan (Tagline)",
@@ -1143,6 +1142,16 @@ export const SITE_CONTENT = {
                     items: {
                         campaigns: { label: "Marketingové Kampaně", desc: "Rozesílání vybrané šablony všem odběratelům v dávkách." },
                         progress: { label: "Progress Bar", desc: "Sledování průběhu odesílání v reálném čase." }
+                    }
+                },
+                newsletter: {
+                    title: "Newsletter & Opt-out",
+                    description: "Správa odběratelů a odhlášení",
+                    items: {
+                        subscribers: { label: "Odběratelé", desc: "Správa databáze aktivních kontaktů a stavu přihlášení." },
+                        campaigns: { label: "Tvorba kampaní", desc: "Hromadné rozesílání s automatickou personalizací odkazů." },
+                        unsub: { label: "Odhlášení (GDPR)", desc: "Automatický systém odhlášení přes personalizovaný odkaz v patičce e-mailu." },
+                        safety: { label: "Bezpečnost", desc: "Ochrana proti duplicitnímu odeslání a filtrace pouze aktivních kontaktů." }
                     }
                 }
             }
