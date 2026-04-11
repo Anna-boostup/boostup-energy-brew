@@ -804,6 +804,7 @@ const Orders = () => {
                             <span>{content.admin.orders.labelsSequential}</span>
                         </Button>
                     </div>
+                </div>
             )}
 
             <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
