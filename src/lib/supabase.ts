@@ -27,11 +27,21 @@ const createUniversalStub = (path = 'supabase'): any => {
                     let mockResult: any = { data: [], error: null, count: 0 };
                     
                     const p = path.toLowerCase();
-                    if (p.includes('getsession') || p.includes('getuser') || p.includes('auth.')) {
-                        // Auth Context expects nested data.session or data.user
-                        mockResult = { data: { session: null, user: null }, error: null };
+                    const isConfigBroken = !isConfigValid && !isLocal;
+                    
+                    if (p.includes('getsession') || p.includes('getuser') || p.includes('auth.sign')) {
+                        // If config is broken, return a loud error that triggers UI toasts
+                        if (isConfigBroken) {
+                            mockResult = { 
+                                data: { session: null, user: null }, 
+                                error: { 
+                                    message: `CRITICAL: Supabase connection failed. VITE_SUPABASE_URL is ${supabaseUrl ? 'invalid' : 'empty'}. Check GitHub Secrets!` 
+                                } 
+                            };
+                        } else {
+                            mockResult = { data: { session: null, user: null }, error: null };
+                        }
                     } else if (p.includes('.single')) {
-                        // single() expects data to be an object or null, not an array
                         mockResult = { data: null, error: null };
                     } else if (p.includes('signout')) {
                         mockResult = { error: null };
