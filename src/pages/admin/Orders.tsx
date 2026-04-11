@@ -410,7 +410,18 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
         </div>
     </>
     );
-};
+
+const Orders = () => {
+    const { content } = useContent();
+    const { toast } = useToast();
+    const { orders, updateOrderStatus } = useInventory();
+    const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
+    const [printIds, setPrintIds] = useState<string[]>([]);
+    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
+        typeof window !== 'undefined' ? Notification.permission : 'default'
+    );
 
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
