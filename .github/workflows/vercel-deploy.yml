@@ -11,7 +11,6 @@ on:
       - main
       - development
       - preview
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -21,23 +20,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Manual-Promote-to-Main:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Global Git Config
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-      - name: Merge Preview to Main
-        run: |
-          git fetch origin main preview
-          git checkout main
-          git merge origin/preview --no-ff -m "chore: manual promote to production"
-          git push origin main
   Test-and-Promote:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
