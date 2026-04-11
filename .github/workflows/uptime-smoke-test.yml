@@ -32,14 +32,23 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Production Smoke Tests
-        run: npx playwright test tests/smoke.spec.ts tests/mobile.spec.ts
+        run: npx playwright test tests/smoke.spec.ts tests/mobile.spec.ts tests/admin.spec.ts tests/admin-mobile.spec.ts
         env:
           PLAYWRIGHT_TEST_BASE_URL: https://drinkboostup.cz/
+          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          # Production doesn't need admin credentials for smoke tests
+
+      - name: Better Stack Heartbeat
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            curl -s https://uptime.betterstack.com/api/v1/heartbeat/${{ secrets.BETTERSTACK_HEARTBEAT_TOKEN }}
+          fi
           
-      - name: Notify on Failure
+      - name: Notify on Failure (Slack)
         if: failure()
         run: |
-          echo "PRODUCTION WATCHDOG FAILED!"
-          # Here we could add Slack/Telegram notification in the future
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"🚨 *PRODUCTION WATCHDOG FAILED!* \nWeb: https://drinkboostup.cz/ \nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}

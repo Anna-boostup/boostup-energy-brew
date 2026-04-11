@@ -59,7 +59,20 @@ test.describe('Mobile UI & Checkout Audit', () => {
         await page.fill('input[name="email"]', 'mobile-test@drinkboostup.cz');
         await page.fill('input[name="phone"]', '+420 600111222');
 
-        // Scroll check: Ensure the submit button is reachable and not clipped
+        // 5. Company Details (DIČ verification)
+        const companyBtn = page.getByRole('button', { name: /firemní/i });
+        if (await companyBtn.isVisible()) {
+            await companyBtn.click();
+            await page.fill('input[name="companyName"]', 'BoostUp Mobile Testing s.r.o.');
+            await page.fill('input[name="ico"]', '12345678');
+            await page.fill('input[name="dic"]', 'CZ12345678');
+            
+            // Verify DIČ is visible and filled
+            await expect(page.locator('input[name="dic"]')).toBeVisible();
+            await expect(page.locator('input[name="dic"]')).toHaveValue('CZ12345678');
+        }
+
+        // 6. Scroll check: Ensure the submit button is reachable and not clipped
         const submitBtn = page.getByTestId('checkout-submit-btn');
         await submitBtn.scrollIntoViewIfNeeded();
         await expect(submitBtn).toBeVisible();
