@@ -26,6 +26,12 @@ export default defineConfig(({ mode }) => ({
       project: "boostup",
       authToken: process.env.SENTRY_AUTH_TOKEN,
     }),
+    {
+      name: 'html-transform',
+      transformIndexHtml(html) {
+        return html.replace(/%VITE_GA_ID%/g, process.env.VITE_GA_ID || '');
+      },
+    },
   ].filter(Boolean),
   resolve: {
     alias: {
