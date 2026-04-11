@@ -23,24 +23,25 @@ const createUniversalStub = (path = 'supabase'): any => {
         get: (_target, prop) => {
             // Handle Promise resolution (await / .then)
             if (prop === 'then') {
-                return (onFulfilled: any) => {
-                    let mockResult: any = { data: [], error: null, count: 0 };
-                    
+                return (onFulfilled: any, onRejected: any) => {
                     const p = path.toLowerCase();
                     const isConfigBroken = !isConfigValid && !isLocal;
                     
-                    if (p.includes('getsession') || p.includes('getuser') || p.includes('auth.sign')) {
-                        // If config is broken, return a loud error that triggers UI toasts
-                        if (isConfigBroken) {
-                            mockResult = { 
-                                data: { session: null, user: null }, 
-                                error: { 
-                                    message: `CRITICAL: Supabase connection failed. VITE_SUPABASE_URL is ${supabaseUrl ? 'invalid' : 'empty'}. Check GitHub Secrets!` 
-                                } 
-                            };
-                        } else {
-                            mockResult = { data: { session: null, user: null }, error: null };
-                        }
+                    if (isConfigBroken && (p.includes('auth.') || p.includes('from(') || p.includes('getsession'))) {
+                        const errorResult = { 
+                            data: null, 
+                            error: { 
+                                message: `CRITICAL CONFIG ERROR: Supabase environment variables are missing or invalid (URL: ${supabaseUrl ? 'POISONED' : 'EMPTY'}). Check GitHub Secrets vs Vercel Env!` 
+                            } 
+                        };
+                        return Promise.reject(errorResult.error).catch(onRejected || (() => {
+                            throw errorResult.error;
+                        }));
+                    }
+
+                    let mockResult: any = { data: [], error: null, count: 0 };
+                    if (p.includes('getsession') || p.includes('getuser') || p.includes('auth.')) {
+                        mockResult = { data: { session: null, user: null }, error: null };
                     } else if (p.includes('.single')) {
                         mockResult = { data: null, error: null };
                     } else if (p.includes('signout')) {

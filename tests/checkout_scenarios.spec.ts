@@ -48,9 +48,9 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
             await expect(page).toHaveURL(/.*account/, { timeout: 15000 });
           }
         } catch (e) {
-          // If navigation hangs, it guarantees Login.tsx aborted. We MUST extract the error toast to see why Supabase rejected it
+          const currentUrl = page.url();
           const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
-          throw new Error(`CRITICAL LOGIN FAILURE: Navigation did not happen. UI Alert displayed: "${toastError}"`);
+          throw new Error(`CRITICAL LOGIN FAILURE at ${currentUrl}: Navigation did not happen. UI Alert displayed: "${toastError}"`);
         }
       }
 
