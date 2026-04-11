@@ -616,7 +616,7 @@ const CheckoutPage = () => {
                   {formData.isCompany && (
                     <motion.div 
                       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                      className="md:col-span-2 grid md:grid-cols-3 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
+                      className="md:col-span-2 grid md:grid-cols-4 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
                     >
                       <div className="md:col-span-2 space-y-2">
                         <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.companyName} *</label>
@@ -636,6 +636,16 @@ const CheckoutPage = () => {
                           onChange={handleChange}
                           placeholder="12345678"
                           className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.ico ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm'}`}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.dic}</label>
+                        <input
+                          name="dic"
+                          value={formData.dic}
+                          onChange={handleChange}
+                          placeholder="CZ12345678"
+                          className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold shadow-sm"
                         />
                       </div>
                     </motion.div>
