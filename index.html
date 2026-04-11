@@ -147,6 +147,19 @@
       }
     }, 10000);
   </script>
+
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_ID%"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '%VITE_GA_ID%', {
+      send_page_view: true,
+      cookie_domain: 'auto',
+      anonymize_ip: true
+    });
+  </script>
 </head>
 
 <body>
