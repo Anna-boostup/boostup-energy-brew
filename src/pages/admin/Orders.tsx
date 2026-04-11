@@ -414,13 +414,12 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
 };
 
 const Orders = () => {
-    const { orders, isSyncing, handleSyncPacketa, handleStatusChange, handleBulkStatusChange } = useInventory();
+    const { orders, isSyncing, setIsSyncing, updateOrderStatus } = useInventory();
     const { content } = useContent();
     const { toast } = useToast();
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
     const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
-    const [isBulkCancelDialogOpen, setIsBulkCancelDialogOpen] = useState(false);
     const [printIds, setPrintIds] = useState<string[]>([]);
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
