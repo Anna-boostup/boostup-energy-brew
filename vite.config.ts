@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
     }),
     // Sentry plugin must be after other plugins
     sentryVitePlugin({
-      org: "anna-boostup",
+      org: "zdenek-dias",
       project: "boostup",
       authToken: process.env.SENTRY_AUTH_TOKEN,
     }),
