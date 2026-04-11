@@ -158,7 +158,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
             <Table>
                 <TableHeader className="bg-white/40 border-b border-olive/5">
                     <TableRow className="hover:bg-transparent border-none">
-                        <TableHead className="w-16 pl-8">
+                        <TableHead className="w-10 pl-4">
                             <Checkbox
                                 checked={data.length > 0 && data.every(o => selectedOrders.has(o.id))}
                                 onCheckedChange={(checked) => {
@@ -173,7 +173,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             />
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 cursor-pointer hover:text-white transition-colors"
+                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors w-32"
                             onClick={() => onSort('id')}
                         >
                             <div className="flex items-center gap-2">
@@ -181,20 +181,20 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             </div>
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 cursor-pointer hover:text-white transition-colors text-center"
+                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors text-center w-28"
                             onClick={() => onSort('date')}
                         >
                             <div className="flex items-center justify-center gap-2">
                                 {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4">{content?.admin?.orders?.table?.customer}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right w-[15%]">{content?.admin?.orders?.table?.items}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right">{content?.admin?.orders?.table?.amount}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.payment}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.method}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.status}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 min-w-[140px]">{content?.admin?.orders?.table?.customer}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-[12%]">{content?.admin?.orders?.table?.items}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-24">{content?.admin?.orders?.table?.amount}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.payment}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.method}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-28">{content?.admin?.orders?.table?.status}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -207,56 +207,56 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                     ) : (
                         data.map((order) => (
                             <TableRow key={order.id} className={`transition-all duration-300 hover:bg-white border-b border-olive/5 group ${selectedOrders.has(order.id) ? "bg-lime/5" : ""}`}>
-                                <TableCell className="pl-8">
+                                <TableCell className="pl-4">
                                     <Checkbox
                                         checked={selectedOrders.has(order.id)}
                                         onCheckedChange={() => toggleOrderSelection(order.id)}
                                         className="rounded-lg border-olive/20 data-[state=checked]:bg-lime data-[state=checked]:border-lime data-[state=checked]:text-olive-dark"
                                     />
                                 </TableCell>
-                                <TableCell className="py-6">
-                                    <div className="flex items-center gap-3">
-                                        <span className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
+                                <TableCell className="py-3">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="font-mono font-black text-[9px] text-white bg-olive-dark px-2 py-1 rounded-lg">#{order.id.slice(0, 8)}</span>
                                         <Button 
                                             variant="ghost" 
                                             size="icon" 
-                                            className="h-8 w-8 opacity-40 group-hover:opacity-100 transition-all text-olive/80 hover:text-black hover:bg-olive/10" 
+                                            className="h-7 w-7 opacity-40 group-hover:opacity-100 transition-all text-olive/80 hover:text-black hover:bg-olive/10" 
                                             onClick={() => {
                                                 navigator.clipboard.writeText(order.id);
                                                 toast({ title: content.admin.orders.copyId, duration: 1000 });
                                             }}
                                         >
-                                            <Copy className="h-4 w-4" />
+                                            <Copy className="h-3.5 w-3.5" />
                                         </Button>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-center">
-                                    <span className="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] bg-olive/5 px-3 py-1.5 rounded-xl">
+                                <TableCell className="text-center px-1">
+                                    <span className="text-[9px] font-black text-brand-muted uppercase tracking-wider bg-olive/5 px-2 py-1 rounded-lg">
                                         {new Date(order.date).toLocaleDateString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}
                                     </span>
                                 </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col min-w-0">
-                                        <span className="font-black text-olive-dark text-sm uppercase tracking-tight group-hover:text-white transition-colors">{order.customer.name}</span>
-                                        <span className="text-[10px] text-brand-muted font-bold tracking-wider truncate max-w-[180px]">{order.customer.email}</span>
+                                <TableCell className="px-2">
+                                    <div className="flex flex-col min-w-0 max-w-[140px]">
+                                        <span className="font-black text-olive-dark text-[11px] uppercase tracking-tight truncate">{order.customer.name}</span>
+                                        <span className="text-[9px] text-brand-muted font-bold tracking-tight truncate">{order.customer.email}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex flex-col gap-1 items-end">
+                                <TableCell className="text-right px-1">
+                                    <div className="flex flex-col gap-0.5 items-end">
                                         {order.items.slice(0, 1).map((item, idx) => (
-                                            <div key={idx} className="text-[9px] font-black uppercase text-brand-muted bg-white border border-olive/5 px-3 py-1 rounded-xl shadow-sm">
+                                            <div key={idx} className="text-[8px] font-black uppercase text-brand-muted bg-white border border-olive/5 px-2 py-0.5 rounded-lg shadow-sm">
                                                 {item.quantity}x {item.name.split(' ')[0]}
                                             </div>
                                         ))}
-                                        {order.items.length > 1 && <span className="text-[8px] text-white font-black uppercase tracking-[0.2em] mt-1">+ {order.items.length - 1} {content.admin.orders.more}</span>}
+                                        {order.items.length > 1 && <span className="text-[7px] text-olive/30 font-black uppercase tracking-widest">+ {order.items.length - 1} {content.admin.orders.more}</span>}
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right">
-                                    <span className="font-display font-black text-lg text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[10px] text-olive/20 tracking-normal">{content.bankInfo.currency}</span></span>
+                                <TableCell className="text-right px-2">
+                                    <span className="font-display font-black text-sm text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[8px] text-olive/20 tracking-normal">{content.bankInfo.currency}</span></span>
                                 </TableCell>
-                                <TableCell className="text-center">
+                                <TableCell className="text-center px-1">
                                     <Badge 
-                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                        className={`text-[8px] font-black uppercase tracking-widest px-2 h-5 rounded-md border-none shadow-sm ${
                                             order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
                                             order.status === 'pending' ? 'bg-red-500/10 text-red-600' : 
                                             'bg-lime text-olive-dark'
@@ -266,26 +266,26 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                          order.status === 'pending' ? content.admin.orders.status.unpaid : content.admin.orders.status.paid}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="text-center">
-                                    <span className="text-[10px] font-black text-olive/60 uppercase tracking-widest">
-                                        {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer :
-                                         order.delivery_info?.paymentMethod === 'stripe_express' ? content.admin.orders.status.express :
-                                         order.delivery_info?.paymentMethod?.toUpperCase() || content.admin.orders.table.payment}
+                                <TableCell className="text-center px-1">
+                                    <span className="text-[9px] font-black text-olive/40 uppercase tracking-widest">
+                                        {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer.slice(0, 4) :
+                                         order.delivery_info?.paymentMethod === 'stripe_express' ? 'STRP' :
+                                         order.delivery_info?.paymentMethod?.toUpperCase().slice(0, 4) || 'CARD'}
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-center">
+                                <TableCell className="text-center px-1">
                                     <Badge
-                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                        className={`text-[8px] font-black uppercase tracking-widest px-2 h-5 rounded-md border-none shadow-sm ${
                                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
                                                 order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
                                                     order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
                                                         'bg-lime/20 text-olive-dark'
                                         }`}
                                     >
-                                        {order.status === 'shipped' ? content.admin.dashboard.statusShipped :
-                                            order.status === 'processing' ? content.admin.dashboard.statusProcessing :
-                                                order.status === 'cancelled' ? content.admin.dashboard.statusCancelled :
-                                                    content.admin.dashboard.statusReceived}
+                                        {order.status === 'shipped' ? 'ODOSL.' :
+                                            order.status === 'processing' ? 'SPRAC.' :
+                                                order.status === 'cancelled' ? 'STORNO' :
+                                                    'PRIJ.'}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right pr-4 whitespace-nowrap min-w-max">
@@ -412,22 +412,25 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
     );
 };
 
-const Orders = () => {
-    const { content } = useContent();
-    const { orders, updateOrderStatus } = useInventory();
-    const { toast } = useToast();
-    const [isSyncing, setIsSyncing] = useState(false);
-    const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
-    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
-    const [printIds, setPrintIds] = useState<string[]>([]);
-    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
-        typeof window !== 'undefined' ? Notification.permission : 'default'
-    );
-
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
         direction: 'desc'
     });
+
+    // Auto-sync payments on mount
+    useEffect(() => {
+        const syncPayments = async () => {
+            try {
+                await fetch('/api/sync-payments');
+                // We don't necessarily need to toast here to avoid being too noisy on every mount,
+                // but the DB will be updated and Realtime will refresh the list.
+                console.log('[Auto-Sync] Payments sync triggered.');
+            } catch (e) {
+                console.error('[Auto-Sync] Failed:', e);
+            }
+        };
+        syncPayments();
+    }, []);
 
     const requestNotificationPermission = async () => {
         if (typeof window === 'undefined') return;

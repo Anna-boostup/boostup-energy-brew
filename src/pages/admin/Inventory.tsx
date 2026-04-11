@@ -140,11 +140,11 @@ const Inventory = () => {
                 <Table>
                     <TableHeader className="bg-white/40 border-b border-olive/5">
                         <TableRow className="hover:bg-transparent border-none">
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 px-6">{content?.admin?.inventory?.title}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-right w-[140px]">{content?.admin?.dashboard?.revenueDesc}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 pl-8">{content?.admin?.inventory?.unit}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-center w-[120px]">{content?.admin?.dashboard?.salesStatus}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-right px-6">{content?.promoCodes?.listSection?.table?.actions}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 px-4">{content?.admin?.inventory?.title}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-[100px]">{content?.admin?.dashboard?.revenueDesc}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 pl-4">{content?.admin?.inventory?.unit}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-[100px]">{content?.admin?.dashboard?.salesStatus}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right px-4">{content?.promoCodes?.listSection?.table?.actions}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

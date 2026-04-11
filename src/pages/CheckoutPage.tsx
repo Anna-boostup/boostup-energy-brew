@@ -488,7 +488,16 @@ const CheckoutPage = () => {
         });
 
         const gopayData = await gopayRes.json();
-        if (gopayRes.ok && gopayData.gw_url) {
+        if (gopayRes.ok && gopayData.gw_url && gopayData.id) {
+          // Store GoPay payment ID in the order metadata for sync
+          const { supabase } = await import('@/lib/supabase');
+          await supabase.from('orders').update({
+            delivery_info: {
+              ...newOrder.delivery_info,
+              gopayPaymentId: gopayData.id
+            }
+          }).eq('id', newOrder.id);
+          
           clearCart();
           window.location.href = gopayData.gw_url;
           return;

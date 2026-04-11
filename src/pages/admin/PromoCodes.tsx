@@ -308,11 +308,11 @@ const PromoCodes = () => {
                             <Table>
                                 <TableHeader className="bg-cream/50border-b border-olive/8">
                                     <TableRow className="hover:bg-transparent">
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">{content?.promoCodes?.listSection?.table?.code || "Code"}</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content?.promoCodes?.listSection?.table?.discount || "Discount"}</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content?.promoCodes?.listSection?.table?.status || "Status"}</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content?.promoCodes?.listSection?.table?.created || "Created"}</TableHead>
-                                        <TableHead className="text-right font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 px-6">{content?.promoCodes?.listSection?.table?.code || "Code"}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3">{content?.promoCodes?.listSection?.table?.discount || "Discount"}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3">{content?.promoCodes?.listSection?.table?.status || "Status"}</TableHead>
+                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3">{content?.promoCodes?.listSection?.table?.created || "Created"}</TableHead>
+                                        <TableHead className="text-right font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 px-6">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

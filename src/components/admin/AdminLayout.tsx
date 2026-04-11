@@ -22,6 +22,7 @@ const AdminLayout = () => {
     if (!content) return null;
     // Fetch unread messages count
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     useEffect(() => {
         if (!user || profile?.role !== 'admin') return;
 
@@ -274,8 +275,8 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-80 p-4 md:p-12 pt-24 md:pt-12 min-h-screen">
-                <div className="max-w-7xl mx-auto">
+            <main className="flex-1 md:ml-80 p-4 md:p-6 pt-24 md:pt-6 min-h-screen">
+                <div className="max-w-full mx-auto">
                     <AdminErrorBoundary>
                         <Outlet />
                     </AdminErrorBoundary>
