@@ -20,9 +20,8 @@ const AdminLayout = () => {
     const { materials } = useManufacture();
     const { content } = useContent();
     if (!content) return null;
-    const [unreadCount, setUnreadCount] = useState(0);
-
     // Fetch unread messages count
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     useEffect(() => {
         if (!user || profile?.role !== 'admin') return;
 
@@ -103,7 +102,7 @@ const AdminLayout = () => {
                 <Link to="/" className="font-display font-black text-xl tracking-tighter hover:opacity-80 transition-opacity">
                     BOOST<span className="text-white">UP</span>
                 </Link>
-                <Sheet>
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark -mr-2">
                             <Menu className="w-6 h-6" />
@@ -140,6 +139,7 @@ const AdminLayout = () => {
                                                 <button
                                                     onClick={() => {
                                                         navigate(item.path);
+                                                        setIsMobileMenuOpen(false);
                                                     }}
                                                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
                                                         ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"

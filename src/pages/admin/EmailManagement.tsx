@@ -275,8 +275,7 @@ const EmailManagement = () => {
             setCampaignLoading(true);
             const { data, error } = await supabase
                 .from('newsletter_subscriptions')
-                .select('id, email')
-                .eq('is_active', true);
+                .select('id, email');
             
             if (error) throw error;
             setSubscribers(data || []);
