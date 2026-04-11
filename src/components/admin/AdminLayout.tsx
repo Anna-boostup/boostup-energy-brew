@@ -109,72 +109,73 @@ const AdminLayout = () => {
                             <Menu className="w-6 h-6" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-[85vw] max-w-[300px] rounded-r-[2.5rem]">
-                        <div className="p-8 border-b border-white/5">
+                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-[85vw] max-w-[300px] rounded-r-[2.5rem] flex flex-col h-full">
+                        <div className="p-8 border-b border-white/5 shrink-0">
                             <Link to="/" className="flex items-center">
                                 <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-white">UP</span></span>
                             </Link>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
                         </div>
-                        <ul className="p-4 space-y-2" role="list">
-                            {navItems.map((item) => {
-                                const Icon = item.icon;
-                                const isActive = location.pathname === item.path;
-                                return (
-                                    <li key={item.path}>
-                                        {item.isExternal ? (
-                                            <a
-                                                href={item.path}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-olive/20 hover:bg-olive-dark hover:text-white"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <Icon className="w-5 h-5" />
-                                                    {item.label}
-                                                </div>
-                                                <ExternalLink className="w-4 h-4 opacity-50" />
-                                            </a>
-                                        ) : (
-                                            <button
-                                                onClick={() => {
-                                                    navigate(item.path);
-                                                }}
-                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
-                                                    ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
-                                                    : "text-white/60 hover:bg-white/5 hover:text-white"
-                                                    } `}
-                                                aria-current={isActive ? "page" : undefined}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <Icon className="w-5 h-5" />
-                                                    {item.label}
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
-                                                            {unreadCount}
-                                                        </Badge>
-                                                    )}
-                                                    {item.hasAlert && (
-                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label={content.admin.alerts.lowStock} />
-                                                    )}
-                                                </div>
-                                            </button>
-                                        )}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                        <div className="absolute bottom-0 w-full p-4 border-t border-olive-dark">
-                            
+                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                            <ul className="space-y-2" role="list">
+                                {navItems.map((item) => {
+                                    const Icon = item.icon;
+                                    const isActive = location.pathname === item.path;
+                                    return (
+                                        <li key={item.path}>
+                                            {item.isExternal ? (
+                                                <a
+                                                    href={item.path}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-olive/20 hover:bg-olive-dark hover:text-white"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <Icon className="w-5 h-5" />
+                                                        {item.label}
+                                                    </div>
+                                                    <ExternalLink className="w-4 h-4 opacity-50" />
+                                                </a>
+                                            ) : (
+                                                <button
+                                                    onClick={() => {
+                                                        navigate(item.path);
+                                                    }}
+                                                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
+                                                        ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
+                                                        : "text-white/60 hover:bg-white/5 hover:text-white"
+                                                        } `}
+                                                    aria-current={isActive ? "page" : undefined}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <Icon className="w-5 h-5" />
+                                                        {item.label}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                            <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
+                                                                {unreadCount}
+                                                            </Badge>
+                                                        )}
+                                                        {item.hasAlert && (
+                                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label={content.admin.alerts.lowStock} />
+                                                        )}
+                                                    </div>
+                                                </button>
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                        <div className="p-4 border-t border-white/5 shrink-0 bg-olive-dark/50">
                             <Button
                                 variant="ghost"
-                                className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-xl"
                                 onClick={handleLogout}
                             >
                                 <LogOut className="w-4 h-4 mr-2" />
-                                {content.admin.auth.logout}
+                                {content?.admin?.auth?.logout || "Logout"}
                             </Button>
                         </div>
                     </SheetContent>
