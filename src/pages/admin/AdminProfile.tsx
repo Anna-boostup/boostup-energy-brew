@@ -130,17 +130,17 @@ const AdminProfile = () => {
     return (
         <div className="space-y-16 pb-32 animate-in fade-in duration-1000">
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
-                <div className="flex items-start gap-4 sm:gap-8">
-                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-[1.8rem] sm:rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-10">
+                <div className="flex items-center gap-4 sm:gap-8">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[2.5rem] bg-olive-dark flex items-center justify-center shrink-0 shadow-2xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-lime/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                         <Shield className="w-8 h-8 sm:w-12 sm:h-12 text-white relative z-10" />
                     </div>
                     <div className="space-y-1 sm:space-y-3">
                         <h1 data-testid="admin-page-title" className="text-3xl sm:text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.profile?.title || "My Profile"}</h1>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
+                            <p className="text-brand-muted font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] text-[8px] sm:text-[10px]">
                                 {content?.admin?.profile?.description}
                             </p>
                         </div>
@@ -168,17 +168,17 @@ const AdminProfile = () => {
 
                 <TabsContent value="profile" className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-0">
                     {/* Profile Info Card */}
-                    <div className="glass-card rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
-                        <div className="bg-olive-dark p-6 sm:p-10 space-y-2">
+                    <div className="glass-card rounded-[2.2rem] sm:rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
+                        <div className="bg-olive-dark p-5 sm:p-10 space-y-1 sm:space-y-2">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-lime/10 rounded-xl">
+                                <div className="p-1.5 sm:p-2 bg-lime/10 rounded-xl">
                                     <Fingerprint className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
-                                <h3 className="text-xl sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">{content?.admin?.profile?.form?.personal || "Personal"}</h3>
+                                <h3 className="text-lg sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">{content?.admin?.profile?.form?.personal || "Personal"}</h3>
                             </div>
-                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px] sm:text-[10px]">{content?.admin?.profile?.form?.personalDesc}</p>
+                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[10px]">{content?.admin?.profile?.form?.personalDesc}</p>
                         </div>
-                        <div className="p-6 sm:p-10 flex-1">
+                        <div className="p-5 sm:p-10 flex-1">
                             <form onSubmit={handleSaveProfile} className="space-y-8">
                                 <div className="space-y-3">
                                     <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Email</Label>
@@ -187,9 +187,9 @@ const AdminProfile = () => {
                                             id="email"
                                             value={user?.email || ""}
                                             disabled
-                                            className="h-16 pl-14 rounded-2xl border-none bg-olive-dark/5 text-olive-dark/60 font-medium cursor-not-allowed italic"
+                                            className="h-14 sm:h-16 pl-12 sm:pl-14 rounded-2xl border-none bg-olive-dark/5 text-olive-dark/60 font-medium cursor-not-allowed italic"
                                         />
-                                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20" />
+                                        <Mail className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-olive-dark/20" />
                                     </div>
                                     <p className="text-[9px] text-brand-muted font-bold uppercase tracking-widest pl-1">{content?.admin?.profile?.form?.emailNote}</p>
                                 </div>
@@ -202,9 +202,9 @@ const AdminProfile = () => {
                                             value={phone}
                                             onChange={(e) => setPhone(e.target.value)}
                                             placeholder="+420..."
-                                            className="h-16 pl-14 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-lg text-olive-dark"
+                                            className="h-14 sm:h-16 pl-12 sm:pl-14 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-base sm:text-lg text-olive-dark"
                                         />
-                                        <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20 group-focus-within/input:text-white transition-colors" />
+                                        <Phone className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-olive-dark/20 group-focus-within/input:text-white transition-colors" />
                                     </div>
                                 </div>
 
@@ -319,17 +319,17 @@ const AdminProfile = () => {
                     </div>
 
                     {/* Password Change Card */}
-                    <div className="glass-card rounded-[2.5rem] sm:rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
-                        <div className="bg-olive-dark p-6 sm:p-10 space-y-2">
+                    <div className="glass-card rounded-[2.2rem] sm:rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl h-full flex flex-col">
+                        <div className="bg-olive-dark p-5 sm:p-10 space-y-1 sm:space-y-2">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-lime/10 rounded-xl">
+                                <div className="p-1.5 sm:p-2 bg-lime/10 rounded-xl">
                                     <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
-                                <h3 className="text-xl sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">{content?.admin?.profile?.security?.password || "Password"}</h3>
+                                <h3 className="text-lg sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">{content?.admin?.profile?.security?.password || "Password"}</h3>
                             </div>
-                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px] sm:text-[10px]">{content?.admin?.profile?.security?.passwordDesc}</p>
+                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[10px]">{content?.admin?.profile?.security?.passwordDesc}</p>
                         </div>
-                        <div className="p-6 sm:p-10 flex-1">
+                        <div className="p-5 sm:p-10 flex-1">
                             <form onSubmit={handleChangePassword} className="space-y-8">
                                 <div className="space-y-3">
                                     <Label htmlFor="currentPassword" title={content?.admin?.profile?.security?.current} className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">{content?.admin?.profile?.security?.current || "Current Password"}</Label>
@@ -339,7 +339,7 @@ const AdminProfile = () => {
                                         value={currentPassword}
                                         onChange={(e) => setCurrentPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
+                                        className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                 </div>
@@ -351,7 +351,7 @@ const AdminProfile = () => {
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder={content?.admin?.profile?.security?.errors?.tooShortDesc || "••••••••"}
-                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
+                                        className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                 </div>
@@ -363,7 +363,7 @@ const AdminProfile = () => {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         placeholder={content?.admin?.profile?.security?.confirm || "••••••••"}
-                                        className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
+                                        className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all"
                                         required
                                     />
                                     {newPassword && confirmPassword && (

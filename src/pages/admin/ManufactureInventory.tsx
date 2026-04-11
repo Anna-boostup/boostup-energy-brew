@@ -172,9 +172,9 @@ const ManufactureInventory = () => {
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-white'}`}>
                                                     <Beaker className="w-5 h-5" />
                                                 </div>
-                                                <div>
-                                                    <p className="font-display font-black text-xl text-olive-dark uppercase italic leading-tight">{m.name}</p>
-                                                    <p className="text-[10px] text-brand-muted font-black text-center">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"} {m.min_quantity} {m.unit}</p>
+                                                <div className="flex flex-col min-w-0">
+                                                    <p className="font-display font-black text-lg text-olive-dark uppercase italic leading-tight truncate">{m.name}</p>
+                                                    <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"} {m.min_quantity} {m.unit}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
@@ -186,29 +186,30 @@ const ManufactureInventory = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2.5">
                                             <Button
                                                 variant="outline"
-                                                className="flex-1 h-14 rounded-2xl border-olive/10 font-black uppercase text-[10px] tracking-widest text-olive-dark"
+                                                className="flex-1 h-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-lime hover:border-lime transition-all"
                                                 onClick={() => setRestockId(m.id)}
+                                                title={content?.admin?.inventory?.manufacture?.changeStatus || "Update Status"}
                                             >
-                                                {content?.admin?.inventory?.manufacture?.changeStatus || "Update Status"}
+                                                <Plus className="h-5 w-5" />
                                             </Button>
                                             <Button
                                                 variant="outline"
-                                                size="sm"
-                                                className="h-14 w-14 rounded-2xl border-olive/10"
+                                                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
                                                 onClick={() => setEditId(m.id)}
+                                                title="Edit"
                                             >
-                                                <Edit className="h-4 w-4" />
+                                                <Edit className="h-5 w-5" />
                                             </Button>
                                             <Button
                                                 variant="outline"
-                                                size="sm"
-                                                className="h-14 w-14 rounded-2xl border-olive/10"
+                                                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
                                                 onClick={() => setHistoryId(m.id)}
+                                                title="History"
                                             >
-                                                <History className="h-4 w-4" />
+                                                <History className="h-5 w-5" />
                                             </Button>
                                         </div>
                                     </div>

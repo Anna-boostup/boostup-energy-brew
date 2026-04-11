@@ -35,7 +35,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
     const { content } = useContent();
     const { toast } = useToast();
     return (
-        <div className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 mb-6 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
+        <div className="glass-card rounded-[2.2rem] p-5 sm:p-8 space-y-5 mb-6 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
@@ -106,30 +106,31 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
 
             <div className="flex justify-between items-center pt-4 border-t border-background">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-olive/40">{content.admin.orders.totalPriceLabel}</span>
-                    <span className="font-display font-black text-xl text-olive-dark">{order.total} {content.bankInfo.currency}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-olive/40">{content.admin.orders.totalPriceLabel}</span>
+                    <span className="font-display font-black text-lg text-olive-dark">{order.total} {content.bankInfo.currency}</span>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" className="rounded-xl h-12 px-6 border-olive/10 hover:bg-olive-dark hover:text-white font-black uppercase text-[10px] tracking-widest">{content.admin.orders.viewDetail}</Button>
+                            <Button size="icon" variant="outline" className="rounded-xl h-11 w-11 border-olive/10 hover:bg-olive-dark hover:text-white transition-all">
+                                <Eye className="w-5 h-5" />
+                            </Button>
                         </DialogTrigger>
                         <OrderDetailDialog order={order} />
                     </Dialog>
                     {order.status === 'pending' && (
-                        <Button size="sm" onClick={() => onStatusChange(order.id, 'paid')} className="bg-lime text-olive-dark hover:bg-lime/80 rounded-xl h-12 px-4 shadow-lg shadow-lime/20" aria-label={content.admin.orders.markAsPaid}>
+                        <Button size="icon" onClick={() => onStatusChange(order.id, 'paid')} className="bg-lime text-olive-dark hover:bg-lime/80 rounded-xl h-11 w-11 shadow-lg shadow-lime/20" aria-label={content.admin.orders.markAsPaid}>
                             <CheckCircle className="w-5 h-5" />
                         </Button>
                     )}
                     {(order.status === 'paid' || order.status === 'processing') && (
-                        <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-12 px-6 font-black uppercase text-[10px] tracking-widest" aria-label={content.admin.orders.markAsShipped}>
-                            <Truck className="w-4 h-4 mr-2" />
-                            <span>{content.admin.dashboard.statusShipped}</span>
+                        <Button size="icon" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-11 w-11" aria-label={content.admin.orders.markAsShipped}>
+                            <Truck className="w-5 h-5" />
                         </Button>
                     )}
                     <InvoiceModal order={order}>
-                        <Button size="sm" variant="ghost" className="h-10 w-10 p-0 text-olive/40 hover:text-olive-dark hover:bg-background rounded-xl" aria-label={content.admin.orders.viewInvoice}>
-                            <FileText className="h-5 w-5" />
+                        <Button size="icon" variant="ghost" className="h-11 w-11 p-0 text-olive/40 hover:text-olive-dark hover:bg-background rounded-xl" aria-label={content.admin.orders.viewInvoice}>
+                            <FileText className="h-5 h-5" />
                         </Button>
                     </InvoiceModal>
                 </div>
@@ -655,12 +656,12 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
             </div>
 
             <Tabs defaultValue="pending" className="w-full">
-                <div className="overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8">
-                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-olive-dark/5 p-2 rounded-[2rem] h-auto border border-olive/5">
-                        <TabsTrigger value="pending" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
-                        <TabsTrigger value="processing" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
-                        <TabsTrigger value="shipped" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
-                        <TabsTrigger value="cancelled" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
+                <div className="overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-6 sm:mb-8">
+                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-olive-dark/5 p-1.5 sm:p-2 rounded-[1.8rem] sm:rounded-[2rem] h-auto border border-olive/5">
+                        <TabsTrigger value="pending" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
+                        <TabsTrigger value="processing" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
+                        <TabsTrigger value="shipped" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
+                        <TabsTrigger value="cancelled" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
                     </TabsList>
                 </div>
 
