@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useInventory, Order } from "@/context/InventoryContext";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -413,6 +413,15 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
     );
 };
 
+const Orders = () => {
+    const { orders, isSyncing, handleSyncPacketa, handleStatusChange, handleBulkStatusChange } = useInventory();
+    const { content } = useContent();
+    const { toast } = useToast();
+    const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
+    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+    const [isBulkCancelDialogOpen, setIsBulkCancelDialogOpen] = useState(false);
+    const [printIds, setPrintIds] = useState<string[]>([]);
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
         direction: 'desc'
