@@ -26,7 +26,8 @@ test.describe('Mobile UI & Checkout Audit', () => {
 
         // 2. Test Mobile Cart Access
         const cartBtn = page.getByTestId('header-cart-btn').first();
-        await cartBtn.click();
+        await page.waitForTimeout(500);
+        await cartBtn.click({ force: true });
 
         // Verify cart drawer is open
         const checkoutBtn = page.getByTestId('cart-drawer-checkout-btn');

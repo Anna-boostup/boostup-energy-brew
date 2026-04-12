@@ -414,13 +414,16 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
 };
 
 const Orders = () => {
-    const { orders, isSyncing, setIsSyncing, updateOrderStatus } = useInventory();
     const { content } = useContent();
     const { toast } = useToast();
+    const { orders, updateOrderStatus } = useInventory();
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
-    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
-    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
     const [printIds, setPrintIds] = useState<string[]>([]);
+    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
+        typeof window !== 'undefined' ? Notification.permission : 'default'
+    );
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
         direction: 'desc'
@@ -723,8 +726,8 @@ const Orders = () => {
             </Tabs>
 
             {selectedOrders.size > 0 && (
-                <div className="fixed bottom-4 sm:bottom-10 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 glass-dark rounded-[2rem] sm:rounded-[3rem] px-6 sm:px-12 py-4 sm:py-6 flex flex-col md:flex-row items-center gap-6 sm:gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-white/10">
-                    <div className="flex items-center gap-6 pr-0 md:pr-12 border-b md:border-b-0 md:border-r border-white/10 pb-4 md:pb-0 w-full md:w-auto justify-between md:justify-start">
+                <div className="fixed bottom-4 sm:bottom-10 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 glass-dark rounded-[2rem] sm:rounded-[3rem] px-6 sm:px-12 py-4 sm:py-6 flex flex-col md:flex-row items-center gap-6 sm:gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 shadow-2xl border-white border-opacity-10">
+                    <div className="flex items-center gap-6 pr-0 md:pr-12 border-b md:border-b-0 md:border-r border-white border-opacity-10 pb-4 md:pb-0 w-full md:w-auto justify-between md:justify-start">
                         <div className="flex flex-col">
                             <div className="text-[9px] sm:text-[10px] text-white font-black uppercase tracking-[0.2em] mb-1">{content.admin.inventory.selected}</div>
                             <div className="text-2xl sm:text-3xl font-black text-white leading-none font-display">{selectedOrders.size} <span className="text-[10px] sm:text-xs font-bold text-white/30 uppercase tracking-widest ml-1">{content.admin.inventory.unit}</span></div>
@@ -738,7 +741,7 @@ const Orders = () => {
                         </Button>
                     </div>
 
-                        <div className="flex gap-3 p-2 bg-white/5 rounded-[2.5rem] border border-white/5">
+                        <div className="flex gap-3 p-2 bg-white bg-opacity-5 rounded-[2.5rem] border border-white border-opacity-5">
                             <Button
                                 size="sm"
                                 variant="ghost"

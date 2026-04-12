@@ -69,7 +69,7 @@ const AdminDashboard = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-white" />
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
                 <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
             </div>
         );
