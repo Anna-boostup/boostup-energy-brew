@@ -61,7 +61,7 @@ import { useContent } from '@/context/ContentContext';
 const CheckoutPage = () => {
   const { content } = useContent();
   const isSalesEnabled = content.isSalesEnabled !== false;
-  const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode } = useCart();
+  const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode, clearCart } = useCart();
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
   const { user } = useAuth();
