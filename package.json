@@ -104,5 +104,10 @@
     "playwright": "^1.49.1",
     "dotenv": "^16.4.7",
     "@sentry/vite-plugin": "^2.22.6"
+  },
+  "overrides": {
+    "undici": "^6.21.1",
+    "path-to-regexp": "^6.3.0",
+    "smol-toml": "^1.6.1"
   }
 }
