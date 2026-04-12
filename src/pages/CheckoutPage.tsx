@@ -171,7 +171,7 @@ const CheckoutPage = () => {
 
     // 0. Field Validation
     const requiredFields: (keyof typeof formData)[] = [
-      'firstName', 'lastName', 'email', 'phone', 'houseNumber', 'city', 'zip'
+      'firstName', 'lastName', 'email', 'phone', 'street', 'houseNumber', 'city', 'zip'
     ];
 
     const fieldLabels: Record<string, string> = {
@@ -182,6 +182,7 @@ const CheckoutPage = () => {
       houseNumber: 'Číslo popisné',
       city: 'Město',
       zip: 'PSČ',
+      street: 'Ulice',
       paymentMethod: 'Způsob platby'
     };
 
@@ -240,7 +241,7 @@ const CheckoutPage = () => {
     if (Object.keys(newErrors).length > 0) {
       toast({
         title: "Chybějící údaje",
-        description: `Prosím opravte chyby ve formuláři.`,
+        description: `Prosím vyplňte: ${missingFields.join(', ')}`,
         variant: "destructive"
       });
       return;
@@ -720,7 +721,7 @@ const CheckoutPage = () => {
                         value={formData.street}
                         onChange={handleChange}
                         placeholder="Vodní"
-                        className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold shadow-sm"
+                        className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.street ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm hover:border-border/80'}`}
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
