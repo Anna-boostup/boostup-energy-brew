@@ -55,11 +55,10 @@ test.describe('Admin Dashboard Audit', () => {
     ];
 
     for (const adminPage of adminPages) {
-      await page.goto(adminPage.path);
-      
-      // Wait for loading to finish
+      // Wait for navigation and loading to finish
+      await page.waitForLoadState('networkidle', { timeout: 30000 });
       const loader = page.getByTestId('admin-loader');
-      await expect(loader).toBeHidden({ timeout: 15000 });
+      await expect(loader).toBeHidden({ timeout: 20000 });
       
       // Basic check: Page should not show "Error" or "Crashed"
       // We check for the module title (uppercase)

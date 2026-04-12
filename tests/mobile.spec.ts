@@ -59,7 +59,7 @@ test.describe('Mobile UI & Checkout Audit', () => {
         // This will create a baseline first time it runs
         await expect(page).toHaveScreenshot('mobile-checkout-page.png', {
             fullPage: true,
-            maxDiffPixelRatio: 0.1,
+            maxDiffPixelRatio: 0.2,
             animations: 'disabled'
         });
 

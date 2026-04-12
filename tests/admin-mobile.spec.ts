@@ -45,7 +45,7 @@ test.describe('Admin Mobile UI Audit', () => {
         await menuTrigger.click();
 
         // Verify that the navigation list is now visible inside the Sheet
-        const navList = page.locator('ul[role="list"]');
+        const navList = page.locator('ul[role="list"]').filter({ visible: true });
         await expect(navList.first()).toBeVisible({ timeout: 10000 });
 
         // 4. Verify specific mobile UI changes (Icons instead of Text)
