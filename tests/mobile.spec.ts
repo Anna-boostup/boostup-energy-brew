@@ -31,6 +31,7 @@ test.describe('Mobile UI & Checkout Audit', () => {
 
         // Verify cart drawer is open
         const checkoutBtn = page.getByTestId('cart-drawer-checkout-btn');
+        await checkoutBtn.waitFor({ state: 'visible', timeout: 15000 });
         await expect(checkoutBtn).toBeVisible();
     });
 
