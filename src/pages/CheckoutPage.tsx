@@ -326,9 +326,11 @@ const CheckoutPage = () => {
       const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`;
 
       // 2. Decrement Stock
-      Object.entries(requiredStock).forEach(([flavor, amount]) => {
-        if (amount > 0) decrementStock(flavor, amount);
-      });
+      for (const [flavor, amount] of Object.entries(requiredStock)) {
+        if (amount > 0) {
+          await decrementStock(flavor, amount);
+        }
+      }
 
       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
       const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
