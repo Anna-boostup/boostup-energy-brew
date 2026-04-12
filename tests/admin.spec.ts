@@ -20,6 +20,19 @@ test.describe('Admin Dashboard Audit', () => {
     await emailInput.fill(email);
     await page.fill('input[type="password"]', password);
     await page.getByTestId('login-submit-btn').click();
+    
+    // Diagnostic: Check for error messages if the URL doesn't change
+    try {
+        await expect(page).toHaveURL(/.*admin/, { timeout: 10000 });
+    } catch (e) {
+        const errorText = await page.innerText('body');
+        if (errorText.includes('Nesprávné heslo') || errorText.includes('Uživatel nenalezen')) {
+            console.error('CRITICAL: Login failed with authentication error in CI');
+            throw new Error(`Authentication failed during test: ${errorText.substring(0, 100)}`);
+        }
+        // Re-throw if it's just a slow redirect
+        throw e;
+    }
 
     // 2. Verify Dashboard redirection
     await expect(page).toHaveURL(/.*admin/, { timeout: 45000 });

@@ -49,6 +49,4 @@ jobs:
       - name: Notify on Failure (Slack)
         if: failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"🚨 *PRODUCTION WATCHDOG FAILED!* \nWeb: https://drinkboostup.cz/ \nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *PRODUCTION WATCHDOG FAILED!* \nWeb: https://drinkboostup.cz/ \nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
