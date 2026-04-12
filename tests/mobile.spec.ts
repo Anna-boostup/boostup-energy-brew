@@ -16,17 +16,17 @@ test.describe('Mobile UI & Checkout Audit', () => {
         const closeBtn = page.locator('button[aria-label="Zavřít menu"]');
         await expect(closeBtn).toBeVisible();
         
-        // Check for a known link in the menu
-        const shopLink = page.locator('nav a').filter({ hasText: /produkty/i }).first();
+        // Check for a known link in the menu - be specific to visible ones to avoid hidden desktop nav
+        const shopLink = page.locator('nav a').filter({ hasText: /produkty/i, visible: true }).first();
         await expect(shopLink).toBeVisible();
 
         // Close menu
         await closeBtn.click();
         await expect(menuBtn).toBeVisible();
 
-        // 2. Test Mobile Cart Access
-        const cartBtn = page.getByTestId('header-cart-btn').first();
-        await page.waitForTimeout(500);
+        // 2. Test Mobile Cart Access - specifically target the visible one
+        const cartBtn = page.getByTestId('header-cart-btn').filter({ visible: true }).first();
+        await page.waitForTimeout(1000); // Wait for header stabilization
         await cartBtn.click({ force: true });
 
         // Verify cart drawer is open
@@ -40,9 +40,10 @@ test.describe('Mobile UI & Checkout Audit', () => {
         const heroBuyBtn = page.getByTestId('add-to-cart-hero-btn');
         await heroBuyBtn.click();
 
-        // 2. Go to checkout
-        const cartBtn = page.getByTestId('header-cart-btn').first();
-        await cartBtn.click();
+        // 2. Go to checkout - target visible cart button
+        const cartBtn = page.getByTestId('header-cart-btn').filter({ visible: true }).first();
+        await page.waitForTimeout(1000);
+        await cartBtn.click({ force: true });
         await page.getByTestId('cart-drawer-checkout-btn').click();
         
         await expect(page).toHaveURL(/.*checkout/);
