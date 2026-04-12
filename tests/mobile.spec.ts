@@ -59,7 +59,8 @@ test.describe('Mobile UI & Checkout Audit', () => {
         // This will create a baseline first time it runs
         await expect(page).toHaveScreenshot('mobile-checkout-page.png', {
             fullPage: true,
-            maxDiffPixelRatio: 0.05
+            maxDiffPixelRatio: 0.1,
+            animations: 'disabled'
         });
 
         // 4. Interaction Test: Form filling

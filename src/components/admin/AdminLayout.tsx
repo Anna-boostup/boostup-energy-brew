@@ -105,7 +105,7 @@ const AdminLayout = () => {
                 </Link>
                 <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark -mr-2">
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark -mr-2" data-testid="admin-mobile-menu-trigger">
                             <Menu className="w-6 h-6" />
                         </Button>
                     </SheetTrigger>

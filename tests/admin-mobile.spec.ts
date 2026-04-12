@@ -38,11 +38,15 @@ test.describe('Admin Mobile UI Audit', () => {
         // 3. Verify Dashboard title to ensure full load
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 15000 });
 
-        // 3. Test Sidebar/Mobile Menu (if applicable)
-        // Check if we can see the module navigation on mobile
-        // Usually it's a bottom bar or a hamburger
-        const mobileNav = page.locator('nav').first();
-        await expect(mobileNav).toBeVisible();
+        // 3. Test Sidebar/Mobile Menu
+        // On the new responsive layout, we have a hamburger menu trigger
+        const menuTrigger = page.getByTestId('admin-mobile-menu-trigger');
+        await expect(menuTrigger).toBeVisible({ timeout: 10000 });
+        await menuTrigger.click();
+
+        // Verify that the navigation list is now visible inside the Sheet
+        const navList = page.locator('ul[role="list"]');
+        await expect(navList.first()).toBeVisible({ timeout: 10000 });
 
         // 4. Verify specific mobile UI changes (Icons instead of Text)
         await page.goto('/admin/orders');

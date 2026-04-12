@@ -44,7 +44,7 @@ test.describe('Admin Dashboard Audit', () => {
     const adminPages = [
         { path: '/admin/orders', title: 'Správa objednávek' },
         { path: '/admin/inventory', title: 'Sklad produktů' },
-        { path: '/admin/manufacture', title: 'Výroba & Suroviny' },
+        { path: '/admin/manufacture', title: 'Suroviny & Materiály' },
         { path: '/admin/messages', title: 'Zprávy z webu' },
         { path: '/admin/emails', title: 'E-mail Management' },
         { path: '/admin/content', title: 'CONTENT ENGINE' },
