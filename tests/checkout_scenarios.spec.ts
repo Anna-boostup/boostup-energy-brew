@@ -35,7 +35,12 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       // 1. Handle Login if not guest
       if (identity.type !== 'guest') {
         await page.goto('/login', { timeout: 60000 });
-        await page.fill('input[type="email"]', identity.email);
+        
+        // Wait for input to be present to avoid race conditions on slow loads
+        const emailInput = page.locator('input[type="email"]');
+        await emailInput.waitFor({ state: 'visible', timeout: 30000 });
+        
+        await emailInput.fill(identity.email);
         await page.fill('input[type="password"]', identity.password);
         await page.getByTestId('login-submit-btn').click();
         
