@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StripePaymentModal } from '@/components/stripe/StripePaymentModal';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-// Stripe element removed for development deploy
+import StripeExpressButtons from '@/components/stripe/StripeExpressButtons';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -586,7 +586,10 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form Side */}
           <div className="lg:col-span-8 space-y-6">
-            {/* Express Checkout Section removed for development deploy */}
+            {/* Express Checkout Section */}
+            <Elements stripe={stripePromise}>
+              <StripeExpressButtons />
+            </Elements>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               
