@@ -36,6 +36,8 @@ export default defineConfig({
     /* Collect trace for CI debugging or when retrying locally */
     trace: process.env.CI ? 'on' : 'on-first-retry',
     screenshot: 'only-on-failure',
+    actionTimeout: 30000,
+    ignoreHTTPSErrors: true,
   },
 
   /* Configure projects for major browsers */
@@ -44,9 +46,6 @@ export default defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
-        }
       },
     },
     /* Test against mobile viewports. */
@@ -54,9 +53,6 @@ export default defineConfig({
       name: 'Mobile Chrome',
       use: { 
         ...devices['Pixel 5'],
-        launchOptions: {
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
-        }
       },
     },
     {

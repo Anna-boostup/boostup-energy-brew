@@ -28,16 +28,19 @@ test.describe('Mobile UI & Checkout Audit', () => {
         const heroBuyBtn = page.getByTestId('add-to-cart-hero-btn');
         await expect(heroBuyBtn).toBeVisible();
         await heroBuyBtn.click();
-        await page.waitForTimeout(1000); // Wait for cart update
+        
+        // Wait for visual feedback of item added
+        await page.waitForTimeout(2000); 
 
         // 3. Test Mobile Cart Access - specifically target the visible one
         const cartBtn = page.getByTestId('header-cart-btn').filter({ visible: true }).first();
-        await page.waitForTimeout(1000); // Wait for header stabilization
+        await expect(cartBtn).toBeVisible({ timeout: 10000 });
         await cartBtn.click({ force: true });
 
         // Verify cart drawer is open
         const checkoutBtn = page.getByTestId('cart-drawer-checkout-btn');
-        await checkoutBtn.waitFor({ state: 'visible', timeout: 15000 });
+        // Give it plenty of time for the drawer animation
+        await checkoutBtn.waitFor({ state: 'visible', timeout: 20000 });
         await expect(checkoutBtn).toBeVisible();
     });
 

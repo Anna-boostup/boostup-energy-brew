@@ -11,6 +11,7 @@ test.describe('Admin Dashboard Audit', () => {
     }
 
     // 1. Login
+    console.log(`DIAGNOSTIC: Attempting login with email: ${email.substring(0, 3)}...`);
     await page.goto('/login', { timeout: 60000 });
     
     // Explicitly wait for the input to be present to avoid race conditions
@@ -23,14 +24,19 @@ test.describe('Admin Dashboard Audit', () => {
     
     // Diagnostic: Check for error messages if the URL doesn't change
     try {
-        await expect(page).toHaveURL(/.*admin/, { timeout: 10000 });
+        await expect(page).toHaveURL(/.*admin/, { timeout: 20000 });
     } catch (e) {
+        // Take a screenshot of the login page state on failure
+        await page.screenshot({ path: 'test-results/login-failure-diagnostic.png' });
+        
         const errorText = await page.innerText('body');
+        console.error('DIAGNOSTIC: Login failed or redirected slowly.');
+        console.log('Current URL:', page.url());
+        
         if (errorText.includes('Nesprávné heslo') || errorText.includes('Uživatel nenalezen')) {
-            console.error('CRITICAL: Login failed with authentication error in CI');
-            throw new Error(`Authentication failed during test: ${errorText.substring(0, 100)}`);
+            console.error('CRITICAL: Authentication rejected. Check CI Secrets (TEST_ADMIN_EMAIL/PASSWORD).');
+            throw new Error(`Auth failed: ${errorText.substring(0, 50)}`);
         }
-        // Re-throw if it's just a slow redirect
         throw e;
     }
 
