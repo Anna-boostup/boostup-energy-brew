@@ -27,9 +27,15 @@ test.describe('Frontend Smoke Test', () => {
         throw error;
     }
     
-    // Check navigation
-    const nav = page.locator('nav');
-    await expect(nav.first()).toBeVisible({ timeout: 30000 });
+    // Check navigation (Responsive check)
+    const nav = page.locator('nav').first();
+    const mobileMenuBtn = page.locator('button[aria-label*="menu" i]').first();
+    
+    // On mobile, 'nav' might be hidden (desktop-only classes), so we check for either nav or mobile toggle
+    const isNavVisible = await nav.isVisible();
+    const isMobileToggleVisible = await mobileMenuBtn.isVisible();
+    
+    expect(isNavVisible || isMobileToggleVisible).toBe(true);
   });
 
   test('navigation to legal pages should work', async ({ page }) => {

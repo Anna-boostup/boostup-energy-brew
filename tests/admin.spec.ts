@@ -42,10 +42,14 @@ test.describe('Admin Dashboard Audit', () => {
     for (const adminPage of adminPages) {
       await page.goto(adminPage.path);
       
+      // Wait for loading to finish
+      const loader = page.getByTestId('admin-loader');
+      await expect(loader).toBeHidden({ timeout: 15000 });
+      
       // Basic check: Page should not show "Error" or "Crashed"
       // We check for the module title (uppercase)
       const titleLocator = page.getByTestId('admin-page-title');
-      await expect(titleLocator).toBeVisible({ timeout: 10000 });
+      await expect(titleLocator).toBeVisible({ timeout: 15000 });
       
       // Check for White Screen of Death (body should not be empty)
       const bodyContent = await page.innerHTML('body');

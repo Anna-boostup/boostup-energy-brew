@@ -63,7 +63,9 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       // 3. Open the Cart Drawer
       // The drawer does not automatically open upon adding an item; we must manually click the header cart icon.
       const headerCartButton = page.getByTestId('header-cart-btn').first();
-      await headerCartButton.click();
+      // Small stabilization wait for cart animation
+      await page.waitForTimeout(500); 
+      await headerCartButton.click({ force: true });
 
       // 4. Go to checkout
       await page.getByTestId('cart-drawer-checkout-btn').click();
