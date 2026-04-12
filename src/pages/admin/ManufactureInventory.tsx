@@ -161,55 +161,66 @@ const ManufactureInventory = () => {
                         </div>
 
                         {/* Mobile View Card Grid */}
-                        <div className="md:hidden divide-y divide-olive/5">
+                        <div className="md:hidden space-y-6">
                             {materials.map((m) => {
                                 const isCritical = m.quantity <= m.min_quantity;
                                 const isWarning = !isCritical && m.warning_quantity > 0 && m.quantity <= m.warning_quantity;
                                 return (
-                                    <div key={m.id} className="p-6 sm:p-8 space-y-6">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-white'}`}>
-                                                    <Beaker className="w-5 h-5" />
+                                    <div key={m.id} className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 border-none shadow-xl animate-in fade-in slide-in-from-bottom-6">
+                                        <div className="flex justify-between items-start gap-4">
+                                            <div className="flex items-center gap-4 min-w-0">
+                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${isCritical ? 'bg-red-50 text-red-600' : 'bg-olive-dark text-white'}`}>
+                                                    <Beaker className="w-6 h-6" />
                                                 </div>
                                                 <div className="flex flex-col min-w-0">
-                                                    <p className="font-display font-black text-lg text-olive-dark uppercase italic leading-tight truncate">{m.name}</p>
-                                                    <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"} {m.min_quantity} {m.unit}</p>
+                                                    <p className="font-display font-black text-xl text-olive-dark uppercase italic leading-tight truncate">{m.name}</p>
+                                                    <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest mt-1">ID {m.id.split('-')[0]}</p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className={`text-2xl font-black font-display italic leading-none ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark'}`}>
-                                                    {m.quantity} <span className="text-[10px] uppercase opacity-40">{m.unit}</span>
+                                            <div className="text-right shrink-0">
+                                                <p className={`text-3xl font-black font-display italic leading-none ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark'}`}>
+                                                    {m.quantity} <span className="text-[11px] uppercase opacity-40">{m.unit}</span>
                                                 </p>
-                                                <p className={`text-[8px] font-black uppercase tracking-widest mt-1 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-white-dark'}`}>
+                                                <Badge variant="outline" className={`border-none px-0 text-[9px] font-black uppercase tracking-widest mt-1.5 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive/40'}`}>
                                                     {isCritical ? content?.admin?.inventory?.manufacture?.status?.critical : isWarning ? content?.admin?.inventory?.manufacture?.status?.warning : content?.admin?.inventory?.manufacture?.status?.ok}
-                                                </p>
+                                                </Badge>
                                             </div>
                                         </div>
-                                        <div className="flex gap-2.5">
+
+                                        <div className="p-5 rounded-[2rem] bg-olive-dark/5 border border-olive/5 grid grid-cols-2 gap-4">
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] font-black text-olive/30 uppercase tracking-[0.2em] mb-1">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"}</span>
+                                                <span className="text-xs font-black text-olive-dark">{m.min_quantity} {m.unit}</span>
+                                            </div>
+                                            {m.warning_quantity > 0 && (
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] font-black text-olive/30 uppercase tracking-[0.2em] mb-1">{content?.admin?.inventory?.warnAtLabel || "Warn"}</span>
+                                                    <span className="text-xs font-black text-orange-500">{m.warning_quantity} {m.unit}</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex gap-2.5 pt-6 border-t border-olive/5">
                                             <Button
                                                 variant="outline"
-                                                className="flex-1 h-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-lime hover:border-lime transition-all"
-                                                onClick={() => setRestockId(m.id)}
-                                                title={content?.admin?.inventory?.manufacture?.changeStatus || "Update Status"}
+                                                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all shrink-0"
+                                                onClick={() => setHistoryId(m.id)}
                                             >
-                                                <Plus className="h-5 w-5" />
+                                                <History className="h-5 w-5" />
                                             </Button>
                                             <Button
                                                 variant="outline"
-                                                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
+                                                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all shrink-0"
                                                 onClick={() => setEditId(m.id)}
-                                                title="Edit"
                                             >
                                                 <Edit className="h-5 w-5" />
                                             </Button>
                                             <Button
-                                                variant="outline"
-                                                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
-                                                onClick={() => setHistoryId(m.id)}
-                                                title="History"
+                                                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 rounded-2xl font-black flex-1 shadow-xl shadow-lime/20 transition-all text-xs uppercase tracking-widest"
+                                                onClick={() => setRestockId(m.id)}
                                             >
-                                                <History className="h-5 w-5" />
+                                                <Plus className="h-5 w-5 mr-2" />
+                                                {content?.admin?.inventory?.restock}
                                             </Button>
                                         </div>
                                     </div>

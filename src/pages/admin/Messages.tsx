@@ -198,32 +198,32 @@ const Messages = () => {
     return (
         <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-64px)] overflow-hidden bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/60 shadow-2xl animate-in fade-in duration-700">
             {/* Header Content */}
-            <div className="p-8 md:p-10 border-b border-background flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/60">
+            <div className="p-6 sm:p-10 border-b border-background flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/60">
                 <div className="flex items-center gap-4 sm:gap-5">
                     <div className="p-3 sm:p-4 bg-olive-dark rounded-[1.2rem] sm:rounded-[1.5rem] shadow-lg shadow-olive-dark/10">
-                        <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                        <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                     <div>
-                        <h1 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight">{content?.admin?.messages?.title || "Messages"}</h1>
-                        <p className="text-[10px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-0.5 sm:mt-1">{content?.admin?.messages?.description}</p>
+                        <h1 data-testid="admin-page-title" className="text-xl sm:text-3xl font-black text-olive-dark font-display uppercase tracking-tight leading-none">{content?.admin?.messages?.title || "Messages"}</h1>
+                        <p className="text-[9px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em] mt-1.5">{content?.admin?.messages?.description}</p>
                     </div>
                     {unreadCount > 0 && (
-                        <Badge className="bg-primary text-olive-dark font-black ml-4 px-4 py-1.5 rounded-xl text-[10px] tracking-widest border-none">
-                            {unreadCount} {(content?.admin?.messages?.status?.unread || "UNREAD").toUpperCase()}
+                        <Badge className="bg-lime text-olive-dark font-black ml-4 px-3 sm:px-4 py-1.5 rounded-xl text-[9px] sm:text-[10px] tracking-widest border-none shadow-lg shadow-lime/20">
+                            {unreadCount}
                         </Badge>
                     )}
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="relative w-full md:w-72 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/40 transition-colors group-focus-within:text-primary" />
+                    <div className="relative flex-1 md:w-72 group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive/40 transition-colors group-focus-within:text-olive-dark" />
                         <Input 
                             placeholder={content?.admin?.messages?.search || "Search..."} 
-                            className="h-12 pl-11 bg-white/80 border-none rounded-2xl shadow-sm focus-visible:ring-primary focus-visible:ring-offset-0 text-sm font-bold"
+                            className="h-12 sm:h-14 pl-11 bg-white/80 border-none rounded-2xl shadow-sm focus-visible:ring-olive-dark/20 focus-visible:ring-offset-0 text-sm font-bold placeholder:text-olive/30"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-12 w-12 rounded-2xl bg-white/80 border-none shadow-sm hover:bg-white transition-all active:scale-95">
+                    <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-white/80 border-none shadow-sm hover:bg-white transition-all active:scale-95 shrink-0">
                         <RefreshCcw className={`w-5 h-5 text-olive/40 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
                 </div>

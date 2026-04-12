@@ -79,6 +79,26 @@ const PricingStatistics = () => {
         }
     };
 
+    const ActionBar = () => (
+        <div className="fixed bottom-6 left-4 right-4 z-50 sm:hidden">
+            <div className="bg-olive-dark/95 backdrop-blur-xl rounded-3xl p-3 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                    <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-lime">
+                        <TrendingUp className="h-5 w-5" />
+                    </div>
+                </div>
+                <Button 
+                    onClick={handleSavePrices} 
+                    disabled={isSaving}
+                    className="flex-1 h-12 rounded-2xl bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] tracking-[0.2em] shadow-xl active:scale-[0.97] transition-all gap-2"
+                >
+                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    {content?.admin?.pricing?.card?.saveTitle || "Save Prices"}
+                </Button>
+            </div>
+        </div>
+    );
+
     // --- Statistics Data Processing ---
     const statsData = useMemo(() => {
         const last30Days = Array.from({ length: 30 }, (_, i) => {
@@ -134,24 +154,35 @@ const PricingStatistics = () => {
     }, [orders, content]);
 
     return (
-        <div className="space-y-8 pb-12">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap">
-                <div>
-                    <h1 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-black text-olive-dark uppercase italic tracking-tight font-display">{content?.admin?.pricing?.title}</h1>
-                    <p className="text-brand-muted font-bold uppercase tracking-widest text-[10px] mt-1">{content?.admin?.pricing?.description}</p>
+        <div className="space-y-8 sm:space-y-12 pb-32 animate-in fade-in duration-1000">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
+                <div className="space-y-3 flex-1 min-w-[280px]">
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.pricing?.title || "Pricing & Stats"}</h2>
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.pricing?.description}</p>
+                    </div>
+                </div>
+                
+                <div className="hidden sm:block">
+                    <Button onClick={handleSavePrices} disabled={isSaving} className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3">
+                        {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                        {content?.admin?.pricing?.card?.saveTitle || "Save Prices"}
+                    </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Pricing Card */}
-                <Card className="lg:col-span-1 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
-                    <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-8 px-6 sm:px-10">
-                        <div className="flex items-center gap-3 mb-2">
-                             <CardTitle className="text-lg sm:text-xl text-white font-black">{content?.admin?.pricing?.card?.title}</CardTitle>
-                        </div>
-                        <CardDescription className="text-white/60 text-[10px] sm:text-xs font-bold font-display uppercase tracking-widest">{content?.admin?.pricing?.card?.subtitle}</CardDescription>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
+                {/* Pricing Form */}
+                <Card className="border-none shadow-2xl rounded-[2.5rem] bg-white shadow-olive/10 overflow-hidden group">
+                    <CardHeader className="bg-olive-dark p-8 sm:p-10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-lime/10 blur-[60px] -translate-y-1/2 translate-x-1/2" />
+                        <CardTitle className="text-white text-xl font-black uppercase italic tracking-tight flex items-center gap-3 relative z-10">
+                            <TrendingUp className="h-5 w-5 text-lime" />
+                            {content?.admin?.pricing?.card?.title}
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6 sm:pt-8 sm:px-10 space-y-8">
+                    <CardContent className="p-8 sm:p-10 space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <div className="flex justify-between items-end px-1">
@@ -204,15 +235,6 @@ const PricingStatistics = () => {
                                     </div>
                             </div>
                         </div>
-
-                        <Button 
-                            className="w-full h-16 bg-primary hover:bg-lime-dark text-olive-dark font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 gap-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                            onClick={handleSavePrices}
-                            disabled={isSaving}
-                        >
-                            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                            {content?.admin?.pricing?.card?.save}
-                        </Button>
                     </CardContent>
                 </Card>
 
@@ -233,10 +255,10 @@ const PricingStatistics = () => {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} 
+                                    tick={{ fontSize: 9, fontWeight: 900, fill: '#94a3b8' }} 
                                     axisLine={false}
                                     tickLine={false}
-                                    interval={3}
+                                    interval={window?.innerWidth < 640 ? 6 : 2}
                                     dy={10}
                                 />
                                 <YAxis 
@@ -288,10 +310,10 @@ const PricingStatistics = () => {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} 
+                                    tick={{ fontSize: 9, fontWeight: 900, fill: '#94a3b8' }} 
                                     axisLine={false}
                                     tickLine={false}
-                                    interval={2}
+                                    interval={window?.innerWidth < 640 ? 6 : 2}
                                     dy={10}
                                 />
                                 <YAxis 
@@ -323,6 +345,7 @@ const PricingStatistics = () => {
                     </CardContent>
                 </Card>
             </div>
+            <ActionBar />
         </div>
     );
 };

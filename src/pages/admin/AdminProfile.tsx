@@ -91,6 +91,31 @@ const AdminProfile = () => {
         }
     };
 
+    const ActionBar = () => {
+        const activeTab = document.querySelector('[data-state="active"][role="tab"]')?.getAttribute('value');
+        if (activeTab !== 'profile') return null;
+
+        return (
+            <div className="fixed bottom-6 left-4 right-4 z-50 sm:hidden">
+                <div className="bg-olive-dark/95 backdrop-blur-xl rounded-3xl p-3 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-lime">
+                            <User className="h-5 w-5" />
+                        </div>
+                    </div>
+                    <Button 
+                        onClick={handleSaveProfile} 
+                        disabled={isSavingProfile}
+                        className="flex-1 h-12 rounded-2xl bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] tracking-[0.2em] shadow-xl active:scale-[0.97] transition-all gap-2"
+                    >
+                        {isSavingProfile ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                        {content?.admin?.profile?.form?.save || "Save Profile"}
+                    </Button>
+                </div>
+            </div>
+        );
+    };
+
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -220,20 +245,20 @@ const AdminProfile = () => {
                                     
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-2 sm:col-span-2">
-                                            <Label htmlFor="deliveryStreet" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.street}</Label>
-                                            <Input id="deliveryStreet" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} className="h-14 rounded-xl" />
+                                            <Label htmlFor="deliveryStreet" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.street}</Label>
+                                            <Input id="deliveryStreet" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="deliveryHouseNumber" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.houseNumber}</Label>
-                                            <Input id="deliveryHouseNumber" value={deliveryHouseNumber} onChange={e => setDeliveryHouseNumber(e.target.value)} className="h-14 rounded-xl" />
+                                            <Label htmlFor="deliveryHouseNumber" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.houseNumber}</Label>
+                                            <Input id="deliveryHouseNumber" value={deliveryHouseNumber} onChange={e => setDeliveryHouseNumber(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="deliveryCity" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.city}</Label>
-                                            <Input id="deliveryCity" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} className="h-14 rounded-xl" />
+                                            <Label htmlFor="deliveryCity" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.city}</Label>
+                                            <Input id="deliveryCity" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                         <div className="space-y-2 sm:col-span-2">
-                                            <Label htmlFor="deliveryZip" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.zip}</Label>
-                                            <Input id="deliveryZip" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} className="h-14 rounded-xl" />
+                                            <Label htmlFor="deliveryZip" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.zip}</Label>
+                                            <Input id="deliveryZip" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                     </div>
                                 </div>
@@ -261,20 +286,20 @@ const AdminProfile = () => {
                                     {!billingSame && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2 sm:col-span-2">
-                                                <Label htmlFor="billingStreet" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.billingStreet}</Label>
-                                                <Input id="billingStreet" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingStreet" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingStreet}</Label>
+                                                <Input id="billingStreet" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2 text-white-dark">
-                                                <Label htmlFor="billingHouseNumber" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.billingHouseNumber}</Label>
-                                                <Input id="billingHouseNumber" value={billingHouseNumber} onChange={e => setBillingHouseNumber(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingHouseNumber" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingHouseNumber}</Label>
+                                                <Input id="billingHouseNumber" value={billingHouseNumber} onChange={e => setBillingHouseNumber(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="billingCity" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.billingCity}</Label>
-                                                <Input id="billingCity" value={billingCity} onChange={e => setBillingCity(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingCity" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingCity}</Label>
+                                                <Input id="billingCity" value={billingCity} onChange={e => setBillingCity(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2 sm:col-span-2">
-                                                <Label htmlFor="billingZip" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.billingZip}</Label>
-                                                <Input id="billingZip" value={billingZip} onChange={e => setBillingZip(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingZip" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingZip}</Label>
+                                                <Input id="billingZip" value={billingZip} onChange={e => setBillingZip(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                         </div>
                                     )}
@@ -291,16 +316,16 @@ const AdminProfile = () => {
                                     {isCompany && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2 sm:col-span-2 font-white-dark">
-                                                <Label htmlFor="billingCompany" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.billingCompany}</Label>
-                                                <Input id="billingCompany" value={billingCompany} onChange={e => setBillingCompany(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingCompany" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingCompany}</Label>
+                                                <Input id="billingCompany" value={billingCompany} onChange={e => setBillingCompany(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="billingICO" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.ico}</Label>
-                                                <Input id="billingICO" value={billingICO} onChange={e => setBillingICO(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingICO" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.ico}</Label>
+                                                <Input id="billingICO" value={billingICO} onChange={e => setBillingICO(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2 text-white-dark">
-                                                <Label htmlFor="billingDIC" className="text-[9px] font-black uppercase tracking-widest text-olive-dark/40 ml-1">{content?.admin?.profile?.form?.dic}</Label>
-                                                <Input id="billingDIC" value={billingDIC} onChange={e => setBillingDIC(e.target.value)} className="h-14 rounded-xl" />
+                                                <Label htmlFor="billingDIC" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.dic}</Label>
+                                                <Input id="billingDIC" value={billingDIC} onChange={e => setBillingDIC(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                         </div>
                                     )}
@@ -404,6 +429,7 @@ const AdminProfile = () => {
                     </div>
                 </TabsContent>
             </Tabs>
+            <ActionBar />
         </div>
     );
 };
