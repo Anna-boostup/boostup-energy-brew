@@ -25,6 +25,10 @@ export default defineConfig(({ mode }) => ({
       org: "zdenek-dias",
       project: "boostup",
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        assets: ["./dist/**"],
+        filesToDeleteAfterUpload: ["./dist/**/*.map"],
+      },
     }),
     {
       name: 'html-transform',
@@ -39,6 +43,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: (id) => {

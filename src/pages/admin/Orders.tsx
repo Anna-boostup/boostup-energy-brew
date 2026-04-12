@@ -174,10 +174,10 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             />
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors w-32"
+                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors text-center w-24"
                             onClick={() => onSort('id')}
                         >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center gap-2">
                                 {content?.admin?.orders?.table?.id} {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
@@ -189,13 +189,13 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 min-w-[140px]">{content?.admin?.orders?.table?.customer}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-[12%]">{content?.admin?.orders?.table?.items}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-24">{content?.admin?.orders?.table?.amount}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center">{content?.admin?.orders?.table?.customer}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.items}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.amount}</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.payment}</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.method}</TableHead>
                         <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-28">{content?.admin?.orders?.table?.status}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -237,13 +237,13 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                     </span>
                                 </TableCell>
                                 <TableCell className="px-2">
-                                    <div className="flex flex-col min-w-0 max-w-[140px]">
+                                    <div className="flex flex-col min-w-0">
                                         <span className="font-black text-olive-dark text-[11px] uppercase tracking-tight truncate">{order.customer.name}</span>
                                         <span className="text-[9px] text-brand-muted font-bold tracking-tight truncate">{order.customer.email}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right px-1">
-                                    <div className="flex flex-col gap-0.5 items-end">
+                                <TableCell className="text-center px-1">
+                                    <div className="flex flex-col gap-0.5 items-center">
                                         {order.items.slice(0, 1).map((item, idx) => (
                                             <div key={idx} className="text-[8px] font-black uppercase text-brand-muted bg-white border border-olive/5 px-2 py-0.5 rounded-lg shadow-sm">
                                                 {item.quantity}x {item.name.split(' ')[0]}
@@ -252,7 +252,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                         {order.items.length > 1 && <span className="text-[7px] text-olive/30 font-black uppercase tracking-widest">+ {order.items.length - 1} {content.admin.orders.more}</span>}
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right px-2">
+                                <TableCell className="text-center px-2">
                                     <span className="font-display font-black text-sm text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[8px] text-olive/20 tracking-normal">{content.bankInfo.currency}</span></span>
                                 </TableCell>
                                 <TableCell className="text-center px-1">
@@ -283,10 +283,10 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                         'bg-lime/20 text-olive-dark'
                                         }`}
                                     >
-                                        {order.status === 'shipped' ? 'ODOSL.' :
-                                            order.status === 'processing' ? 'SPRAC.' :
-                                                order.status === 'cancelled' ? 'STORNO' :
-                                                    'PRIJ.'}
+                                        {order.status === 'shipped' ? content.admin.dashboard.statusShipped :
+                                            order.status === 'processing' ? content.admin.dashboard.statusProcessing :
+                                                order.status === 'cancelled' ? content.admin.dashboard.statusCancelled :
+                                                    content.admin.dashboard.statusReceived}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right pr-4 whitespace-nowrap min-w-max">

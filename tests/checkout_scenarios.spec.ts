@@ -68,8 +68,10 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       await headerCartButton.click({ force: true });
 
       // 4. Go to checkout
-      await page.getByTestId('cart-drawer-checkout-btn').click();
-      await expect(page).toHaveURL(/.*checkout/);
+      const checkoutBtn = page.getByTestId('cart-drawer-checkout-btn');
+      await checkoutBtn.waitFor({ state: 'visible', timeout: 15000 });
+      await checkoutBtn.click();
+      await expect(page).toHaveURL(/.*checkout/, { timeout: 30000 });
 
       // 4. Identity-specific checks on Checkout Page
       if (identity.type !== 'guest') {

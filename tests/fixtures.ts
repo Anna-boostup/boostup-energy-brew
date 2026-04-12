@@ -6,6 +6,18 @@ export const test = base.extend({
     await page.addInitScript(() => {
       window.localStorage.setItem('boostup_cookie_consent', JSON.stringify({ necessary: true, analytics: true, marketing: true, preferences: true }));
       window.localStorage.setItem('boostup_discount_dismissed', 'true');
+      
+      // Inject CSS to disable animations and transitions for test stability
+      const style = document.createElement('style');
+      style.innerHTML = `
+        * {
+          transition: none !important;
+          animation: none !important;
+          transition-duration: 0s !important;
+          animation-duration: 0s !important;
+        }
+      `;
+      document.head.appendChild(style);
     });
 
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;

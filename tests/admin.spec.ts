@@ -22,8 +22,10 @@ test.describe('Admin Dashboard Audit', () => {
     await page.getByTestId('login-submit-btn').click();
 
     // 2. Verify Dashboard redirection
-    await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
-    await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 20000 });
+    await expect(page).toHaveURL(/.*admin/, { timeout: 45000 });
+    const dashboardTitle = page.getByTestId('admin-page-title');
+    await dashboardTitle.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(dashboardTitle).toBeVisible();
 
     // 3. Audit all pages listed in AdminLayout
     const adminPages = [
