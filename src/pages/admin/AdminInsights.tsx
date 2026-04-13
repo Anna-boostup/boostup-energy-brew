@@ -75,7 +75,7 @@ const AdminInsights = () => {
         const funnelData = [
             { name: "Návštěvy", value: uniqueVisitors, fill: "#3d5a2f" },
             { name: "Pokladna", value: checkoutSteps, fill: "#61a044" },
-            { name: "Nákup", value: actualPurchases, fill: "#C4F135" }
+            { name: "Nákup", value: actualPurchases, fill: "#dfdf57" }
         ];
 
         return { chartData, totalVisits, totalOrders, avgConversion, funnelData };
@@ -84,7 +84,7 @@ const AdminInsights = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-olive-dark" />
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
                 <p className="text-brand-muted font-black uppercase tracking-[0.4em] animate-pulse">Načítám Insights...</p>
             </div>
         );
@@ -108,7 +108,7 @@ const AdminInsights = () => {
                             <div className="w-1.5 h-1.5 rounded-full bg-lime/40" />
                         </div>
                     </div>
-                    <h2 className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
+                    <h2 data-testid="admin-page-title" className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
                         Insights <span className="text-brand-muted opacity-30">Center</span>
                     </h2>
                 </div>
@@ -174,8 +174,8 @@ const AdminInsights = () => {
                             <AreaChart data={processedStats.chartData}>
                                 <defs>
                                     <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#C4F135" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#C4F135" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#dfdf57" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#dfdf57" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />

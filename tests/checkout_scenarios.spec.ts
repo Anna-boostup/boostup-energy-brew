@@ -59,14 +59,23 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         }
         
         // 🧪 Stabilization: Wait for everything to settle before going back to Home
-        await page.waitForLoadState('load', { timeout: 15000 }).catch(() => console.log('Load state timeout - moving on anyway'));
-        // Extra padding for internal redirects to finish
-        await page.waitForTimeout(2000);
+        // Redirects can be slow, so we wait for the final URL to stabilize
+        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => console.log('Network idle timeout - proceeding anyway'));
+        await page.waitForTimeout(1000); 
       }
 
       // 2. Add product to cart
-      // Use domcontentloaded first to be faster, but follow with load check
-      await page.goto('/', { waitUntil: 'load', timeout: 60000 });
+      // Use domcontentloaded then follow with load check to be resilient to interruptions
+      try {
+        await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+      } catch (e: any) {
+        if (e.message.includes('interrupted')) {
+          console.log('Navigation interrupted by internal redirect, retrying...');
+          await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+        } else {
+          throw e;
+        }
+      }
       const addToCartButton = page.getByTestId('add-to-cart-hero-btn');
       await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
       await addToCartButton.click();
