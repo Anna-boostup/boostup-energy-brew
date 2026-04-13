@@ -337,7 +337,7 @@ const PricingStatistics = () => {
                                     iconSize={8}
                                     wrapperStyle={{ paddingTop: '40px', fontWeight: '900', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
                                 />
-                                <Bar dataKey="lemon" name={content?.admin?.pricing?.stats?.flavors?.lemon} stackId="a" fill="#d4f45d" radius={[0, 0, 0, 0]} />
+                                <Bar dataKey="lemon" name={content?.admin?.pricing?.stats?.flavors?.lemon} stackId="a" fill="#dfdf57" radius={[0, 0, 0, 0]} />
                                 <Bar dataKey="red" name={content?.admin?.pricing?.stats?.flavors?.red} stackId="a" fill="#aa263e" radius={[0, 0, 0, 0]} />
                                 <Bar dataKey="silky" name={content?.admin?.pricing?.stats?.flavors?.silky} stackId="a" fill="#1b2e1b" radius={[10, 10, 0, 0]} />
                             </BarChart>
