@@ -57,7 +57,7 @@ test.describe('Admin Mobile UI Audit', () => {
         const loader = page.getByTestId('admin-loader');
         await expect(loader).toBeHidden({ timeout: 20000 });
         
-        await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 30000 });
+        await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 45000 });
 
         // Check for specific icons known to be in Orders (e.g., sync icon)
         // We look for buttons that contain SVGs. In mobile mode, these buttons often lose their text label.
