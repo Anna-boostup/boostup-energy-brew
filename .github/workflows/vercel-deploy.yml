@@ -41,7 +41,7 @@ jobs:
           npm install --global vercel@latest
         
       - name: Pull Vercel Env
-        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
         
       - name: Diagnostic - Check Env Vars
         run: |
@@ -50,7 +50,7 @@ jobs:
           if [ -z "${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_ANON_KEY_PREVIEW is empty in GitHub Secrets"; fi
           
       - name: Build
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
@@ -60,7 +60,7 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }} | tail -n 1)
           if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
@@ -140,9 +140,9 @@ jobs:
           cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
       - name: Build
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
@@ -151,11 +151,11 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }} | tail -n 1)
           if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
       - name: Set Alias
-        run: vercel alias set ${{ env.DEPLOYMENT_URL }} preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel alias set ${{ env.DEPLOYMENT_URL }} preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
       - name: Verify Health (Preview)
         run: |
           sleep 25
