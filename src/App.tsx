@@ -39,6 +39,7 @@ const PromoCodes = lazy(() => import("./pages/admin/PromoCodes"));
 const Messages = lazy(() => import("./pages/admin/Messages"));
 const EmailManagement = lazy(() => import("./pages/admin/EmailManagement"));
 const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
+const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
 
 // Legal pages
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -88,11 +89,15 @@ import { CookieBanner } from "./components/CookieBanner";
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
 import { useDynamicFonts } from './hooks/useDynamicFonts';
+import { useAnalytics } from './hooks/useAnalytics';
 import { Analytics } from "@vercel/analytics/react";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 // Applies typography CSS variables from the CMS content
 const FontLoader = () => { useDynamicFonts(); return null; };
+
+// Tracks page views for internal insights
+const AnalyticsTracker = () => { useAnalytics(); return null; };
 
 const queryClient = new QueryClient();
 
@@ -113,6 +118,7 @@ const App = () => (
                     <Sonner />
                     <Analytics />
                     <BrowserRouter>
+                      <AnalyticsTracker />
                       <ScrollToTop />
                       <CookieBanner />
                       <Suspense fallback={<div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>}>
@@ -166,6 +172,7 @@ const App = () => (
                             <Route path="content" element={<ContentManagement />} />
                             <Route path="pricing" element={<PricingStatistics />} />
                             <Route path="promo-codes" element={<PromoCodes />} />
+                            <Route path="insights" element={<AdminInsights />} />
                             <Route path="messages" element={<Messages />} />
                             <Route path="emails" element={<EmailManagement />} />
                             <Route path="profile" element={<AdminProfile />} />

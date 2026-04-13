@@ -92,6 +92,7 @@ const AdminLayout = () => {
         { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
         { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
         { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
+        { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
         { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },
         { icon: HelpCircle, label: content?.admin?.navigation?.help, path: "/admin/help" },
     ];
