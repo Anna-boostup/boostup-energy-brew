@@ -27,4 +27,3 @@ jobs:
           temporaryPublicStorage: true
           # Hranice, pod které nesmíme klesnout (budeme postupně zpřísňovat)
           budgetPath: ./lighthouse-budget.json
- stone
