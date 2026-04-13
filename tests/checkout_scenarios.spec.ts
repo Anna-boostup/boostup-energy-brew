@@ -35,7 +35,12 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       // 1. Handle Login if not guest
       if (identity.type !== 'guest') {
         await page.goto('/login', { timeout: 60000 });
-        await page.fill('input[type="email"]', identity.email);
+        
+        // Wait for input to be present to avoid race conditions on slow loads
+        const emailInput = page.locator('input[type="email"]');
+        await emailInput.waitFor({ state: 'visible', timeout: 30000 });
+        
+        await emailInput.fill(identity.email);
         await page.fill('input[type="password"]', identity.password);
         await page.getByTestId('login-submit-btn').click();
         
@@ -52,6 +57,9 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
           const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
           throw new Error(`CRITICAL LOGIN FAILURE at ${currentUrl}: Navigation did not happen. UI Alert displayed: "${toastError}"`);
         }
+        
+        // 🧪 Stabilization: Wait for everything to settle before going back to Home
+        await page.waitForLoadState('load', { timeout: 15000 }).catch(() => console.log('Load state timeout - moving on anyway'));
       }
 
       // 2. Add product to cart

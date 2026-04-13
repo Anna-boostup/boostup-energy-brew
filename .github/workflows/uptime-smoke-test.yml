@@ -1,8 +1,8 @@
 name: Production Watchdog (Uptime Smoke Test)
 
 on:
-  schedule:
-    - cron: '0 * * * *' # Every hour
+#  schedule:
+#    - cron: '0 * * * *' # Every hour
   workflow_dispatch: # Allows manual trigger
 
 jobs:
@@ -26,10 +26,15 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright System Dependencies
+        run: npx playwright install-deps
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: npx playwright install
 
       - name: Run Production Smoke Tests
         run: npx playwright test tests/smoke.spec.ts tests/mobile.spec.ts tests/admin.spec.ts tests/admin-mobile.spec.ts
@@ -49,6 +54,4 @@ jobs:
       - name: Notify on Failure (Slack)
         if: failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"🚨 *PRODUCTION WATCHDOG FAILED!* \nWeb: https://drinkboostup.cz/ \nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *PRODUCTION WATCHDOG FAILED!* \nWeb: https://drinkboostup.cz/ \nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -35,7 +35,9 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
     const { content } = useContent();
     const { toast } = useToast();
     return (
-        <div className="glass-card rounded-[2.2rem] p-5 sm:p-8 space-y-5 mb-6 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
+        <div className="bg-white/40 backdrop-blur-xl rounded-[2.8rem] p-6 sm:p-10 space-y-7 mb-8 border border-white/20 shadow-2xl shadow-olive/5 transition-all duration-700 hover:shadow-olive/10 hover:-translate-y-1 relative overflow-hidden group animate-in fade-in slide-in-from-bottom-10">
+            {/* Glossy glass reflection element */}
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
@@ -422,12 +424,23 @@ const Orders = () => {
     const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
-        typeof window !== 'undefined' ? Notification.permission : 'default'
+        typeof window !== 'undefined' && typeof Notification !== 'undefined' 
+            ? Notification.permission 
+            : 'default'
     );
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
         direction: 'desc'
     });
+
+    if (!content || !orders) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
+                <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
+            </div>
+        );
+    }
 
     // Auto-sync payments on mount
     useEffect(() => {
@@ -445,7 +458,7 @@ const Orders = () => {
     }, []);
 
     const requestNotificationPermission = async () => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined' || typeof Notification === 'undefined') return;
         
         try {
             const permission = await Notification.requestPermission();
@@ -611,8 +624,20 @@ const Orders = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap">
-                <h2 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-bold tracking-tight">{content.admin.orders.title}</h2>
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 flex-wrap">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse shadow-[0_0_12px_rgba(163,230,53,0.8)]" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 italic">Admin Terminal v2.0</span>
+                    </div>
+                    <h2 
+                        data-testid="admin-page-title" 
+                        className="text-4xl sm:text-5xl font-black tracking-tighter text-olive-dark italic font-display bg-gradient-to-r from-olive-dark to-olive/60 bg-clip-text text-transparent pb-1"
+                    >
+                        {content.admin.orders.title || "Objednávky"}
+                    </h2>
+                    <div className="h-1.5 w-24 bg-gradient-to-r from-lime to-transparent rounded-full" />
+                </div>
                <div className="flex flex-wrap items-center gap-2">
                     {notificationPermission !== 'granted' && (
                         <Button
@@ -665,16 +690,16 @@ const Orders = () => {
                     </Button>
                 </div>
             </div>
-
             <Tabs defaultValue="pending" className="w-full">
-                <div className="overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-6 sm:mb-8">
-                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-olive-dark/5 p-1.5 sm:p-2 rounded-[1.8rem] sm:rounded-[2rem] h-auto border border-olive/5">
-                        <TabsTrigger value="pending" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
-                        <TabsTrigger value="processing" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
-                        <TabsTrigger value="shipped" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
-                        <TabsTrigger value="cancelled" className="px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-[1.4rem] sm:rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
+                <div className="overflow-x-auto pb-6 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8 sm:mb-12">
+                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-white/40 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
+                        <TabsTrigger value="pending" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
+                        <TabsTrigger value="processing" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
+                        <TabsTrigger value="shipped" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
+                        <TabsTrigger value="cancelled" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
                     </TabsList>
                 </div>
+
 
                 <TabsContent value="pending" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
                     <OrderTable

@@ -26,6 +26,20 @@ class ErrorBoundary extends Component<Props, State> {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
     this.setState({ error, errorInfo });
     
+    // Auto-recover from stale chunk errors after deployment
+    const isChunkError = 
+        error.message?.includes('text/html') ||
+        error.message?.includes('Failed to fetch dynamically imported module') ||
+        error.message?.includes('Importing a module script failed') ||
+        error.name === 'ChunkLoadError';
+
+    if (isChunkError && !sessionStorage.getItem('chunk_reload_attempted')) {
+        console.warn('Stale chunk detected, attempting auto-reload...');
+        sessionStorage.setItem('chunk_reload_attempted', '1');
+        window.location.reload();
+        return;
+    }
+
     // Automatically report to Sentry
     Sentry.captureException(error, { extra: { ...errorInfo } });
   }

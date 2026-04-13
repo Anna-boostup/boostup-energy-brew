@@ -27,7 +27,8 @@ export class AdminErrorBoundary extends React.Component<Props, State> {
         const isChunkError = 
             error.message?.includes('text/html') ||
             error.message?.includes('Failed to fetch dynamically imported module') ||
-            error.message?.includes('Importing a module script failed');
+            error.message?.includes('Importing a module script failed') ||
+            error.name === 'ChunkLoadError';
 
         if (isChunkError && !sessionStorage.getItem('chunk_reload_attempted')) {
             sessionStorage.setItem('chunk_reload_attempted', '1');
@@ -38,7 +39,7 @@ export class AdminErrorBoundary extends React.Component<Props, State> {
     render() {
         if (this.state.hasError) {
             return (
-                <div className="flex items-center justify-center min-h-[60vh]">
+                <div data-testid="admin-error-fallback" className="flex items-center justify-center min-h-[60vh]">
                     <div className="text-center space-y-8 max-w-lg mx-auto p-12 bg-white rounded-[3rem] border border-olive/10 shadow-xl">
                         <div className="w-20 h-20 bg-terracotta/10 rounded-[2rem] flex items-center justify-center mx-auto">
                             <AlertTriangle className="w-10 h-10 text-terracotta" />
