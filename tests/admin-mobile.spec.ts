@@ -1,5 +1,5 @@
 import { test, expect } from './fixtures';
-// CI_DIAGNOSTIC_MARKER: V2_LATEST_FIX (Line 22 check)
+// CI_DIAGNOSTIC_MARKER: V10_SPEED_FIX (Triggering CI)
 
 test.describe('Admin Mobile UI Audit', () => {
     test.use({ viewport: { width: 390, height: 844 } }); // iPhone 12/13/14 viewport
