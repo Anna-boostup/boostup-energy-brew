@@ -91,12 +91,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      - name: Install Playwright System Dependencies
-        run: npx playwright install-deps
-
-      - name: Install Playwright Browsers
+      - name: Install Playwright Browsers & Deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
+        run: npx playwright install --with-deps chromium webkit
+      
+      - name: Install System Deps (Fallback)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
 
       - name: Run E2E Tests
         run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
