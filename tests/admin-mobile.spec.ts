@@ -59,9 +59,19 @@ test.describe('Admin Mobile UI Audit', () => {
         
         // 🧪 EMERGENCY DIAGNOSTIC
         console.log('DIAGNOSTIC - CURRENT URL:', page.url());
+        
+        // Check IF we crashed instead of waiting 45s blindly
+        const errorBoundary = page.getByTestId('admin-error-fallback');
+        const isCrashed = await errorBoundary.isVisible();
+        if (isCrashed) {
+            const errorText = await errorBoundary.innerText();
+            throw new Error(`CRITICAL UI CRASH DETECTED: ${errorText}`);
+        }
+
         await page.screenshot({ path: 'test-results/safari-debug-pre-title.png', fullPage: true });
         
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 45000 });
+        
 
         // Check for specific icons known to be in Orders (e.g., sync icon)
         // We look for buttons that contain SVGs. In mobile mode, these buttons often lose their text label.
