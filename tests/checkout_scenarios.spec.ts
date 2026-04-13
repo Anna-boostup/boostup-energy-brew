@@ -60,10 +60,13 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         
         // 🧪 Stabilization: Wait for everything to settle before going back to Home
         await page.waitForLoadState('load', { timeout: 15000 }).catch(() => console.log('Load state timeout - moving on anyway'));
+        // Extra padding for internal redirects to finish
+        await page.waitForTimeout(2000);
       }
 
       // 2. Add product to cart
-      await page.goto('/', { timeout: 60000 });
+      // Use domcontentloaded first to be faster, but follow with load check
+      await page.goto('/', { waitUntil: 'load', timeout: 60000 });
       const addToCartButton = page.getByTestId('add-to-cart-hero-btn');
       await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
       await addToCartButton.click();
