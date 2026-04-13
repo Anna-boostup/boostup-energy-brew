@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -10,6 +10,8 @@ import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
 import { supabase } from "@/lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import { useContent } from "@/context/ContentContext";
+import { useInventory } from "@/context/InventoryContext";
+import { format, subDays } from "date-fns";
 
 
 const AdminLayout = () => {
@@ -21,30 +23,51 @@ const AdminLayout = () => {
     const { content } = useContent();
     if (!content) return null;
     // Fetch unread messages count
+    const { orders = [] } = useInventory() || { orders: [] };
+
+    // Fetch analytics and unread messages count
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [stats, setStats] = useState({ visits: 0, orders: 0, conversion: 0 });
+
     useEffect(() => {
         if (!user || profile?.role !== 'admin') return;
 
-        const fetchUnreadCount = async () => {
+        const fetchData = async () => {
             try {
-                const { count, error } = await supabase
+                // 1. Fetch Unread Messages
+                const { count: msgCount } = await supabase
                     .from('messages')
                     .select('*', { count: 'exact', head: true })
                     .eq('is_read', false);
+                setUnreadCount(msgCount || 0);
+
+                // 2. Fetch 30-day Analytics
+                const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+                const { data: events, error: analyticError } = await supabase
+                    .from("analytics_events")
+                    .select("id")
+                    .eq("event_type", "view")
+                    .gte("created_at", thirtyDaysAgo);
                 
-                if (error) throw error;
-                setUnreadCount(count || 0);
+                if (analyticError) throw analyticError;
+
+                const visits = events?.length || 0;
+                const recentOrders = orders.filter(o => o.status !== 'cancelled' && o.date && new Date(o.date) >= new Date(thirtyDaysAgo)).length;
+                const conversion = visits > 0 ? (recentOrders / visits) * 100 : 0;
+
+                setStats({ visits, orders: recentOrders, conversion });
+
             } catch (err) {
-                console.error('Error fetching unread count:', err);
+                console.error('Error fetching admin layout data:', err);
             }
         };
 
-        fetchUnreadCount();
-        const interval = setInterval(fetchUnreadCount, 60000); // Check every minute
+        fetchData();
+        const interval = setInterval(fetchData, 60000); // Check every minute
 
         return () => clearInterval(interval);
-    }, [user, profile]);
+    }, [user, profile, orders.length]);
 
     if (loading) {
         return <div className="p-8">{content?.admin?.auth?.verifying || "Verifying..."}</div>;
@@ -92,6 +115,7 @@ const AdminLayout = () => {
         { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
         { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
         { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
+        { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
         { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },
         { icon: HelpCircle, label: content?.admin?.navigation?.help, path: "/admin/help" },
     ];
@@ -253,6 +277,33 @@ const AdminLayout = () => {
                             );
                         })}
                     </ul>
+                </div>
+
+                {/* Sidebar Stats Mini-Panel */}
+                <div className="mx-6 mb-4 p-5 rounded-[2rem] bg-white/5 border border-white/5 backdrop-blur-md">
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 italic">Live Insights (30d)</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Návštěvy</p>
+                            <p className="text-sm font-black text-white leading-none">{stats.visits.toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Konverze</p>
+                            <p className="text-sm font-black text-lime leading-none">{stats.conversion.toFixed(1)}%</p>
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                        <div>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Orders</p>
+                            <p className="text-sm font-black text-white leading-none">{stats.orders}</p>
+                        </div>
+                        <Link to="/admin/insights" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-lime hover:bg-white/10 transition-all">
+                            <ChevronRight className="w-4 h-4" />
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="p-6 border-t border-white/5 space-y-3">
