@@ -128,6 +128,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
 
         // Tracking: Google Analytics 4
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'add_to_cart', {
+                items: [{
+                    item_id: item.id,
+                    item_name: item.name,
+                    price: item.price,
+                    quantity: 1
+                }]
             });
         }
 
