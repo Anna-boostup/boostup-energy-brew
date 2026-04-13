@@ -27,7 +27,8 @@ export class AdminErrorBoundary extends React.Component<Props, State> {
         const isChunkError = 
             error.message?.includes('text/html') ||
             error.message?.includes('Failed to fetch dynamically imported module') ||
-            error.message?.includes('Importing a module script failed');
+            error.message?.includes('Importing a module script failed') ||
+            error.name === 'ChunkLoadError';
 
         if (isChunkError && !sessionStorage.getItem('chunk_reload_attempted')) {
             sessionStorage.setItem('chunk_reload_attempted', '1');
