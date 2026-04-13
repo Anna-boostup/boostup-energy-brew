@@ -57,6 +57,9 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
           const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
           throw new Error(`CRITICAL LOGIN FAILURE at ${currentUrl}: Navigation did not happen. UI Alert displayed: "${toastError}"`);
         }
+        
+        // 🧪 Stabilization: Wait for everything to settle before going back to Home
+        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => console.log('Networkidle timeout - moving on anyway'));
       }
 
       // 2. Add product to cart

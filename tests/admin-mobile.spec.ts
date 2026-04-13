@@ -68,7 +68,7 @@ test.describe('Admin Mobile UI Audit', () => {
             throw new Error(`CRITICAL UI CRASH DETECTED: ${errorText}`);
         }
 
-        await page.screenshot({ path: 'test-results/safari-debug-pre-title.png', fullPage: true });
+        await page.screenshot({ path: 'test-results/safari-debug-pre-title.png' });
         
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 45000 });
         
