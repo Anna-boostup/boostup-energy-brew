@@ -28,7 +28,7 @@ const CartButton = ({ cartCount, setIsCartOpen, mobile = false }: CartButtonProp
         data-testid="header-cart-btn"
         variant="ghost"
         size="icon"
-        className="relative rounded-full"
+        className="relative rounded-full flex-shrink-0 min-w-[40px] min-h-[40px]"
         onClick={handleClick}
       >
         <ShoppingCart className="w-6 h-6" />

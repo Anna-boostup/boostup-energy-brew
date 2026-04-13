@@ -75,7 +75,9 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@sentry/react": "^8.41.0",
+    "@sentry/node": "^8.41.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -100,6 +102,12 @@
     "vite": "^5.4.19",
     "@playwright/test": "^1.49.1",
     "playwright": "^1.49.1",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "@sentry/vite-plugin": "^2.22.6"
+  },
+  "overrides": {
+    "undici": "^6.21.1",
+    "path-to-regexp": "^6.3.0",
+    "smol-toml": "^1.6.1"
   }
 }

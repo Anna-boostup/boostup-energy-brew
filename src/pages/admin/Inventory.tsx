@@ -45,19 +45,19 @@ const PackBreakdown = ({ bottles, content }: { bottles: number, content: any }) 
 );
 
 const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, content, updateProduct }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void, content: any, updateProduct: (sku: string, data: any) => Promise<void> }) => (
-    <div className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 sm:space-y-8 mb-6 border-none animate-in fade-in slide-in-from-bottom-6">
-        <div className="flex justify-between items-start">
-            <div>
-                <div className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-3 shadow-xl shadow-olive-dark/10">#{sku}</div>
-                <div className="flex flex-col">
-                    <span className="font-black text-2xl text-olive-dark leading-tight uppercase tracking-tight">
+    <div className="glass-card rounded-[2.2rem] p-5 sm:p-8 space-y-5 sm:space-y-8 mb-6 border-none animate-in fade-in slide-in-from-bottom-6 min-w-0">
+        <div className="flex justify-between items-start gap-4">
+            <div className="min-w-0 flex-1">
+                <div className="font-mono font-black text-[10px] text-white bg-olive-dark px-2.5 py-1 rounded-lg w-fit mb-2 shadow-xl shadow-olive-dark/10">#{sku}</div>
+                <div className="flex flex-col min-w-0">
+                    <span className="font-black text-lg text-olive-dark leading-tight uppercase tracking-tight truncate">
                         {product?.name || getFlavorLabel(sku, content)}
                     </span>
                     <span className="text-[10px] text-olive/40 font-black uppercase tracking-widest mt-1">{content?.admin?.dashboard?.salesStatus}</span>
                 </div>
             </div>
-            <div className={`text-right ${qty < 10 ? "text-terracotta font-black" : "text-olive-dark"}`}>
-                <div className="text-4xl font-black font-display leading-none">{qty}</div>
+            <div className={`text-right shrink-0 ${qty < 10 ? "text-terracotta font-black" : "text-olive-dark"}`}>
+                <div className="text-3xl font-black font-display leading-none">{qty}</div>
                 <div className="text-[10px] font-black uppercase tracking-widest opacity-30 mt-1">{content?.admin?.inventory?.unit}</div>
             </div>
         </div>
@@ -78,32 +78,29 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, 
             <PackBreakdown bottles={qty} content={content} />
         </div>
 
-        <div className="flex gap-3 pt-6 border-t border-olive/5">
+        <div className="flex gap-2.5 pt-5 border-t border-olive/5">
             <Button
                 variant="outline"
+                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all shrink-0"
                 onClick={onHistory}
-                className="h-14 rounded-2xl border-olive/10 hover:bg-olive-dark hover:text-white font-black uppercase text-[10px] tracking-widest flex-1 transition-all"
-                aria-label={`${content?.admin?.inventory?.historyTitle} - ${sku}`}
+                aria-label={content?.admin?.inventory?.historyTitle}
             >
-                <History className="h-4 w-4 mr-2" />
-                {content?.admin?.inventory?.historyTitle}
+                <History className="h-5 w-5" />
             </Button>
             <Button
                 variant="outline"
-                className="h-14 rounded-2xl border-olive/10 hover:bg-white text-olive-dark/40 hover:text-olive-dark font-black uppercase text-[10px] tracking-widest flex-1 transition-all"
+                className="h-14 w-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all shrink-0"
                 onClick={onEdit}
-                aria-label={`${content?.admin?.inventory?.editDetails} - ${sku}`}
+                aria-label={content?.admin?.inventory?.editDetails}
             >
-                <Edit className="h-4 w-4 mr-2" />
-                {content?.admin?.inventory?.editDetails}
+                <Edit className="h-5 w-5" />
             </Button>
             <Button
-                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest flex-1 shadow-xl shadow-lime/20 transition-all"
+                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 rounded-2xl font-black flex-1 shadow-xl shadow-lime/20 transition-all"
                 onClick={onRestock}
-                aria-label={`${content?.admin?.inventory?.addStock} - ${sku}`}
+                aria-label={content?.admin?.inventory?.addStock}
             >
-                <Plus className="h-4 w-4 mr-2" />
-                {content?.admin?.inventory?.addStock}
+                <Plus className="h-6 w-6" />
             </Button>
         </div>
     </div>
@@ -140,11 +137,11 @@ const Inventory = () => {
                 <Table>
                     <TableHeader className="bg-white/40 border-b border-olive/5">
                         <TableRow className="hover:bg-transparent border-none">
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 px-6">{content?.admin?.inventory?.title}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-right w-[140px]">{content?.admin?.dashboard?.revenueDesc}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 pl-8">{content?.admin?.inventory?.unit}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-center w-[120px]">{content?.admin?.dashboard?.salesStatus}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-[0.4em] py-4 text-right px-6">{content?.promoCodes?.listSection?.table?.actions}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 px-4">{content?.admin?.inventory?.title}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-[100px]">{content?.admin?.dashboard?.revenueDesc}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 pl-4">{content?.admin?.inventory?.unit}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-[100px]">{content?.admin?.dashboard?.salesStatus}</TableHead>
+                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right px-4">{content?.promoCodes?.listSection?.table?.actions}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

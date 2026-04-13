@@ -59,7 +59,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             const newCount = count || 0;
             
             // Trigger notification if count increased
-            if (newCount > unreadCount && typeof window !== 'undefined' && Notification.permission === 'granted') {
+            if (newCount > unreadCount && typeof window !== 'undefined' && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
                 new Notification('Nová zpráva! 📧', {
                     body: `Máte ${newCount} nepřečtených zpráv od zákazníků.`,
                     icon: '/favicon.png'

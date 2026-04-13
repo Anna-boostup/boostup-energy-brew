@@ -8,6 +8,8 @@ export const test = base.extend({
       window.localStorage.setItem('boostup_discount_dismissed', 'true');
     });
 
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
     if (bypassSecret) {
       await page.route('**/*', (route, request) => {

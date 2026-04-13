@@ -154,11 +154,14 @@ const PromoCodes = () => {
     };
 
     return (
-        <div className="space-y-10 pb-20 animate-in fade-in duration-700">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
-                <div>
-                    <h2 data-testid="admin-page-title" className="text-2xl sm:text-4xl font-black tracking-tight text-olive-dark font-display uppercase italic">{content?.promoCodes?.title || "Promo Codes"}</h2>
-                    <p className="text-brand-muted font-bold text-[10px] sm:text-sm uppercase tracking-widest mt-0.5 sm:mt-1">{content?.promoCodes?.description}</p>
+        <div className="space-y-8 sm:space-y-12 pb-20 animate-in fade-in duration-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 sm:gap-10 flex-wrap">
+                <div className="space-y-2 sm:space-y-3">
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.promoCodes?.title || "Promo Codes"}</h2>
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.promoCodes?.description}</p>
+                    </div>
                 </div>
 
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
@@ -219,19 +222,19 @@ const PromoCodes = () => {
                 </Dialog>
             </div>
 
-            <Card className="mb-10 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
-                <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-10 px-6 sm:px-12">
+            <Card className="mb-10 border-none shadow-2xl rounded-[2.5rem] bg-white shadow-olive/10 overflow-hidden animate-in fade-in slide-in-from-left-4 duration-500">
+                <CardHeader className="bg-olive-dark border-b border-olive/10 p-8 sm:p-10">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-primary/20 rounded-xl">
                             <Gift className="w-6 h-6 text-primary" />
                         </div>
                         <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">{content?.promoCodes?.popupSection?.title || "Promotion Popup"}</CardTitle>
                     </div>
-                    <CardDescription className="text-white/40 font-bold text-[10px] sm:text-sm uppercase tracking-widest leading-relaxed">
+                    <CardDescription className="text-white/40 font-bold text-[10px] sm:text-xs uppercase tracking-widest leading-relaxed">
                         {content?.promoCodes?.popupSection?.description}
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="p-6 sm:py-12 sm:px-12 space-y-8 sm:space-y-10 group">
+                <CardContent className="p-8 sm:p-10 space-y-8 sm:space-y-10 group">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 p-6 sm:p-8 bg-white/40 rounded-[2rem] sm:rounded-[2.5rem] border border-white/60 shadow-inner group">
                         <div className={`p-4 rounded-2xl sm:rounded-3xl transition-all duration-500 ${contentCZ?.hero?.showDiscountPopup ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-background'}`}>
                             {contentCZ?.hero?.showDiscountPopup ? <Eye className="h-6 w-6 sm:h-8 sm:w-8 text-olive-dark" /> : <EyeOff className="h-6 w-6 sm:h-8 sm:w-8 text-olive-dark" />}
@@ -288,13 +291,13 @@ const PromoCodes = () => {
                 </CardContent>
             </Card>
 
-            <Card className="border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[3rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <CardHeader className="bg-white/40 border-b border-olive/8 py-6 sm:py-10 px-6 sm:px-12 flex flex-row items-center justify-between">
+            <Card className="border-none shadow-2xl rounded-[2.5rem] bg-white shadow-olive/10 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <CardHeader className="bg-olive-dark p-8 sm:p-10 flex flex-row items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="p-2 bg-olive-dark rounded-xl">
-                            <Sparkles className="w-5 h-5 text-primary" />
+                        <div className="p-2 bg-white/10 rounded-xl">
+                            <Sparkles className="w-5 h-5 text-lime" />
                         </div>
-                        <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase tracking-tight italic">{content?.promoCodes?.listSection?.title || "Code List"}</CardTitle>
+                        <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase tracking-tight italic">{content?.promoCodes?.listSection?.title || "Code List"}</CardTitle>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -304,63 +307,104 @@ const PromoCodes = () => {
                             <p className="text-olive-dark font-black uppercase text-xs tracking-widest">{content?.promoCodes?.syncing || "Syncing..."}</p>
                         </div>
                     ) : codes.length > 0 ? (
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader className="bg-cream/50border-b border-olive/8">
-                                    <TableRow className="hover:bg-transparent">
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">{content?.promoCodes?.listSection?.table?.code || "Code"}</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content?.promoCodes?.listSection?.table?.discount || "Discount"}</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content?.promoCodes?.listSection?.table?.status || "Status"}</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[10px] tracking-widest py-6">{content?.promoCodes?.listSection?.table?.created || "Created"}</TableHead>
-                                        <TableHead className="text-right font-black text-olive-dark uppercase text-[10px] tracking-widest py-6 px-12">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {codes.map((code) => (
-                                        <TableRow key={code.id} className="hover:bg-white/40 transition-colors border-b border-olive/8 group">
-                                            <TableCell className="py-8 px-12">
-                                                <div className="font-mono font-black text-2xl text-olive-dark tracking-[0.2em] uppercase">
-                                                    {code.code}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-primary/10 text-primary-dark font-black text-xl font-display shadow-sm">
-                                                    -{code.discount_percent}%
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-4">
-                                                    <Switch
-                                                        checked={code.is_active}
-                                                        onCheckedChange={() => toggleCodeStatus(code.id, code.is_active)}
-                                                        className="data-[state=checked]:bg-primary h-7 w-12"
-                                                    />
-                                                    <div className="flex flex-col">
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${code.is_active ? 'text-primary' : 'text-olive-dark'}`}>
-                                                            {code.is_active ? (content?.promoCodes?.statusActive || "Active") : (content?.promoCodes?.statusPaused || "Paused")}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <span className="text-[11px] font-black uppercase tracking-tighter text-olive-dark">
-                                                    {new Date(code.created_at).toLocaleDateString(content?.lang || 'en', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="text-right px-12">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-12 w-12 rounded-2xl text-olive-dark hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
-                                                    onClick={() => deleteCode(code.id)}
-                                                >
-                                                    <Trash2 className="h-5 w-5" />
-                                                </Button>
-                                            </TableCell>
+                        <div className="w-full">
+                            {/* Desktop View */}
+                            <div className="hidden lg:block overflow-x-auto">
+                                <Table>
+                                    <TableHeader className="bg-cream/50 border-b border-olive/8">
+                                        <TableRow className="hover:bg-transparent">
+                                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">{content?.promoCodes?.listSection?.table?.code || "Code"}</TableHead>
+                                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">{content?.promoCodes?.listSection?.table?.discount || "Discount"}</TableHead>
+                                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">{content?.promoCodes?.listSection?.table?.status || "Status"}</TableHead>
+                                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">{content?.promoCodes?.listSection?.table?.created || "Created"}</TableHead>
+                                            <TableHead className="text-right font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {codes.map((code) => (
+                                            <TableRow key={code.id} className="hover:bg-white/40 transition-colors border-b border-olive/8 group">
+                                                <TableCell className="py-8 px-10">
+                                                    <div className="font-mono font-black text-2xl text-olive-dark tracking-[0.2em] uppercase">
+                                                        {code.code}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-lime/10 text-olive-dark font-black text-xl font-display shadow-sm">
+                                                        -{code.discount_percent}%
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-4">
+                                                        <Switch
+                                                            checked={code.is_active}
+                                                            onCheckedChange={() => toggleCodeStatus(code.id, code.is_active)}
+                                                            className="data-[state=checked]:bg-lime h-7 w-12"
+                                                        />
+                                                        <div className="flex flex-col">
+                                                            <span className={`text-[10px] font-black uppercase tracking-widest ${code.is_active ? 'text-lime-dark' : 'text-olive-dark/40'}`}>
+                                                                {code.is_active ? (content?.promoCodes?.statusActive || "Active") : (content?.promoCodes?.statusPaused || "Paused")}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span className="text-[11px] font-black uppercase tracking-tighter text-olive-dark/60">
+                                                        {new Date(code.created_at).toLocaleDateString(content?.lang || 'en', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="text-right px-10">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-12 w-12 rounded-2xl text-olive-dark hover:text-red-500 hover:bg-red-50 transition-all sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-4 sm:group-hover:translate-x-0"
+                                                        onClick={() => deleteCode(code.id)}
+                                                    >
+                                                        <Trash2 className="h-5 w-5" />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+
+                            {/* Mobile View */}
+                            <div className="lg:hidden p-6 space-y-4">
+                                {codes.map((code) => (
+                                    <div key={code.id} className="p-6 bg-white/40 border border-olive/5 rounded-3xl space-y-6">
+                                        <div className="flex items-center justify-between">
+                                            <div className="font-mono font-black text-xl text-olive-dark tracking-widest uppercase italic">
+                                                {code.code}
+                                            </div>
+                                            <div className="px-3 py-1.5 rounded-xl bg-lime text-olive-dark font-black text-xs font-display">
+                                                -{code.discount_percent}%
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-between pt-4 border-t border-olive/5">
+                                            <div className="flex items-center gap-3">
+                                                <Switch
+                                                    checked={code.is_active}
+                                                    onCheckedChange={() => toggleCodeStatus(code.id, code.is_active)}
+                                                    className="data-[state=checked]:bg-lime"
+                                                />
+                                                <span className={`text-[10px] font-black uppercase tracking-widest ${code.is_active ? 'text-lime-dark border-b border-lime' : 'text-olive-dark/40'}`}>
+                                                    {code.is_active ? (content?.promoCodes?.statusActive || "Active") : (content?.promoCodes?.statusPaused || "Paused")}
+                                                </span>
+                                            </div>
+                                            
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-10 w-10 rounded-xl text-red-500 bg-red-50"
+                                                onClick={() => deleteCode(code.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center py-32 px-10 gap-6 text-center">

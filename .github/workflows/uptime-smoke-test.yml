@@ -1,0 +1,57 @@
+name: Production Watchdog (Uptime Smoke Test)
+
+on:
+#  schedule:
+#    - cron: '0 * * * *' # Every hour
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  Watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Cache Playwright Binaries
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright System Dependencies
+        run: npx playwright install-deps
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Run Production Smoke Tests
+        run: npx playwright test tests/smoke.spec.ts tests/mobile.spec.ts tests/admin.spec.ts tests/admin-mobile.spec.ts
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: https://drinkboostup.cz/
+          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      - name: Better Stack Heartbeat
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            curl -s https://uptime.betterstack.com/api/v1/heartbeat/${{ secrets.BETTERSTACK_HEARTBEAT_TOKEN }}
+          fi
+          
+      - name: Notify on Failure (Slack)
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *PRODUCTION WATCHDOG FAILED!* \nWeb: https://drinkboostup.cz/ \nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}

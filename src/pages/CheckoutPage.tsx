@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StripePaymentModal } from '@/components/stripe/StripePaymentModal';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-// Stripe element removed for development deploy
+import StripeExpressButtons from '@/components/stripe/StripeExpressButtons';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -61,7 +61,7 @@ import { useContent } from '@/context/ContentContext';
 const CheckoutPage = () => {
   const { content } = useContent();
   const isSalesEnabled = content.isSalesEnabled !== false;
-  const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode } = useCart();
+  const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode, clearCart } = useCart();
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
   const { user } = useAuth();
@@ -171,7 +171,7 @@ const CheckoutPage = () => {
 
     // 0. Field Validation
     const requiredFields: (keyof typeof formData)[] = [
-      'firstName', 'lastName', 'email', 'phone', 'houseNumber', 'city', 'zip'
+      'firstName', 'lastName', 'email', 'phone', 'street', 'houseNumber', 'city', 'zip'
     ];
 
     const fieldLabels: Record<string, string> = {
@@ -182,6 +182,7 @@ const CheckoutPage = () => {
       houseNumber: 'Číslo popisné',
       city: 'Město',
       zip: 'PSČ',
+      street: 'Ulice',
       paymentMethod: 'Způsob platby'
     };
 
@@ -240,7 +241,7 @@ const CheckoutPage = () => {
     if (Object.keys(newErrors).length > 0) {
       toast({
         title: "Chybějící údaje",
-        description: `Prosím opravte chyby ve formuláři.`,
+        description: `Prosím vyplňte: ${missingFields.join(', ')}`,
         variant: "destructive"
       });
       return;
@@ -326,9 +327,11 @@ const CheckoutPage = () => {
       const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`;
 
       // 2. Decrement Stock
-      Object.entries(requiredStock).forEach(([flavor, amount]) => {
-        if (amount > 0) decrementStock(flavor, amount);
-      });
+      for (const [flavor, amount] of Object.entries(requiredStock)) {
+        if (amount > 0) {
+          await decrementStock(flavor, amount);
+        }
+      }
 
       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
       const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
@@ -488,7 +491,16 @@ const CheckoutPage = () => {
         });
 
         const gopayData = await gopayRes.json();
-        if (gopayRes.ok && gopayData.gw_url) {
+        if (gopayRes.ok && gopayData.gw_url && gopayData.id) {
+          // Store GoPay payment ID in the order metadata for sync
+          const { supabase } = await import('@/lib/supabase');
+          await supabase.from('orders').update({
+            delivery_info: {
+              ...newOrder.delivery_info,
+              gopayPaymentId: gopayData.id
+            }
+          }).eq('id', newOrder.id);
+          
           clearCart();
           window.location.href = gopayData.gw_url;
           return;
@@ -577,7 +589,10 @@ const CheckoutPage = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form Side */}
           <div className="lg:col-span-8 space-y-6">
-            {/* Express Checkout Section removed for development deploy */}
+            {/* Express Checkout Section */}
+            <Elements stripe={stripePromise}>
+              <StripeExpressButtons />
+            </Elements>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               
@@ -706,7 +721,7 @@ const CheckoutPage = () => {
                         value={formData.street}
                         onChange={handleChange}
                         placeholder="Vodní"
-                        className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold shadow-sm"
+                        className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.street ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm hover:border-border/80'}`}
                       />
                     </div>
                     <div className="col-span-2 space-y-2">

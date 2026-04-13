@@ -69,7 +69,7 @@ const AdminDashboard = () => {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-white" />
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
                 <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
             </div>
         );
@@ -132,15 +132,15 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="glass-dark rounded-[3rem] p-4 relative overflow-hidden group border-white/5">
+            <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <Card className="glass-dark rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group border-white/5">
                     <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
                         <DollarSign className="w-48 h-48 text-white" />
                     </div>
-                    <CardHeader className="pb-0 relative z-10">
+                    <CardHeader className="p-0 relative z-10">
                         <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">{content?.admin?.dashboard?.revenue}</CardTitle>
                     </CardHeader>
-                    <CardContent className="relative z-10 pt-4">
+                    <CardContent className="relative z-10 pt-4 p-0">
                         <div className="text-3xl sm:text-5xl font-black text-white font-display tracking-tighter mb-1">
                             {(totalRevenue || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-white text-lg sm:text-2xl ml-1">{content?.bankInfo?.currency}</span>
                         </div>
@@ -151,15 +151,15 @@ const AdminDashboard = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-1 md:col-span-3 rounded-[3rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
-                    <CardHeader className="pb-4 pt-8 px-10">
+                <Card className="col-span-1 md:col-span-3 rounded-[2.5rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                    <CardHeader className="pb-4 pt-6 sm:pt-10 px-6 sm:px-10">
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-olive-dark" />
                             <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted">{content?.admin?.dashboard?.workflow}</CardTitle>
                         </div>
                     </CardHeader>
-                    <CardContent className="px-10 pb-8">
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+                    <CardContent className="px-6 sm:px-10 pb-6 sm:pb-10">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
                             <div className="relative group/stat">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">{content?.admin?.dashboard?.newOrders}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
@@ -185,30 +185,30 @@ const AdminDashboard = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-1 md:col-span-4 rounded-[3rem] glass-card border-none overflow-hidden shadow-2xl">
+                <Card className="col-span-1 md:col-span-4 rounded-[2.5rem] glass-card border-none overflow-hidden shadow-2xl">
                     <CardContent className="p-0">
-                        <div className="grid grid-cols-1 md:grid-cols-4">
-                            <div className="p-10 border-r border-olive/5 bg-olive-dark text-white flex flex-col justify-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+                            <div className="p-6 sm:p-10 border-b sm:border-b-0 sm:border-r border-olive/5 bg-olive-dark text-white flex flex-col justify-center">
                                 <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-white flex items-center gap-3 mb-4">
                                     <Package className="w-4 h-4" /> {content?.admin?.dashboard?.inventory}
                                 </Label>
                                 <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-widest">{content?.admin?.inventory?.description}</p>
                             </div>
-                            <div className="p-10 flex flex-col justify-center border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
+                            <div className="p-6 sm:p-10 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">{content?.admin?.inventory?.lemon}</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
                                 </div>
                             </div>
-                            <div className="p-10 flex flex-col justify-center border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
+                            <div className="p-6 sm:p-10 flex flex-col justify-center border-b md:border-b-0 md:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3 text-red-700">{content?.admin?.inventory?.red}</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['red'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
                                 </div>
                             </div>
-                            <div className="p-10 flex flex-col justify-center hover:bg-olive-dark/5 transition-all group">
+                            <div className="p-6 sm:p-10 flex flex-col justify-center hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">{content?.admin?.inventory?.silky}</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['silky'] || 0}</span>
@@ -221,13 +221,13 @@ const AdminDashboard = () => {
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-7 overflow-hidden rounded-[4rem] glass-card border-none shadow-2xl">
-                    <CardHeader className="bg-white/40 backdrop-blur-md py-10 px-12 flex flex-row items-center justify-between border-b border-olive/5">
+                <Card className="col-span-7 overflow-hidden rounded-[2.5rem] sm:rounded-[4rem] glass-card border-none shadow-2xl">
+                    <CardHeader className="bg-white/40 backdrop-blur-md py-6 sm:py-10 px-6 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-olive/5 gap-6">
                         <div>
-                            <CardTitle className="text-2xl font-black text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.recentOrders}</CardTitle>
+                            <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.recentOrders}</CardTitle>
                             <CardDescription className="text-[10px] font-black text-brand-muted mt-2 uppercase tracking-[0.2em]">{content?.admin?.dashboard?.recentOrdersDesc}</CardDescription>
                         </div>
-                        <Button variant="outline" className="rounded-2xl font-black text-[10px] uppercase tracking-widest border-olive/10 h-14 px-8 hover:bg-olive-dark hover:text-white transition-all duration-300 shadow-xl shadow-olive/5" onClick={() => window.location.hash = '/admin/orders'}>
+                        <Button variant="outline" className="rounded-2xl font-black text-[10px] uppercase tracking-widest border-olive/10 h-12 sm:h-14 px-6 sm:px-8 hover:bg-olive-dark hover:text-white transition-all duration-300 shadow-xl shadow-olive/5 w-full sm:w-auto" onClick={() => window.location.hash = '/admin/orders'}>
                             {content?.admin?.dashboard?.viewAll}
                         </Button>
                     </CardHeader>

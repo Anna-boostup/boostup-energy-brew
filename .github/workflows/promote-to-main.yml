@@ -2,8 +2,6 @@ name: Promote to Production (Main)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 20 11 4 *' # Dnes (11. dubna 2026) ve 22:00 CEST (20:00 UTC)
 
 permissions:
   contents: write
@@ -22,9 +20,12 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           
+          # Ensure branches are available
+          git fetch origin main preview
+          
           # Checkout main and ensure it is up to date
           git checkout main
-          git pull origin main
+          git reset --hard origin/main
           
           # Merge the approved preview branch into main
           git merge origin/preview --no-ff -m "chore: deployed to production via manual trigger"

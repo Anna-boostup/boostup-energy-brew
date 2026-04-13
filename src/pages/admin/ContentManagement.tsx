@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker, BarChart, Mail, MapPin, Layout, Settings2, Zap, Plus } from 'lucide-react';
+import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker, BarChart, Mail, MapPin, Layout, Settings2, Zap, Plus, Target, Megaphone, Sparkles } from 'lucide-react';
 import { AVAILABLE_FONTS, FONT_WEIGHTS } from '@/hooks/useDynamicFonts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -131,10 +131,44 @@ const ContentManagement = () => {
         );
     }
 
+    const ActionBar = () => (
+        <div className="fixed bottom-6 left-4 right-4 z-50 sm:hidden">
+            <div className="bg-olive-dark/95 backdrop-blur-xl rounded-3xl p-3 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={handlePreview} 
+                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-white/70 active:bg-lime active:text-olive-dark transition-all"
+                    >
+                        <Eye className="h-5 w-5" />
+                    </Button>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={handleReset} 
+                        disabled={isResetting || isSaving}
+                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-red-400/70 active:bg-red-500 active:text-white transition-all"
+                    >
+                        {isResetting ? <Loader2 className="h-5 w-5 animate-spin" /> : <RotateCcw className="h-5 w-5" />}
+                    </Button>
+                </div>
+                <Button 
+                    onClick={handleSave} 
+                    disabled={isSaving || isResetting}
+                    className="flex-1 h-12 rounded-2xl bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] tracking-[0.2em] shadow-xl active:scale-[0.97] transition-all gap-2"
+                >
+                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    {content?.admin?.contentManager?.save || "Save"}
+                </Button>
+            </div>
+        </div>
+    );
+
     return (
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
-                <div className="space-y-3">
+                <div className="space-y-3 flex-1 min-w-[280px]">
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.contentManager?.title || "Content Management"}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
@@ -166,7 +200,7 @@ const ContentManagement = () => {
                         </Button>
                     </div>
 
-                    <div className="flex flex-wrap gap-3 sm:gap-4 ml-auto w-full lg:w-auto">
+                    <div className="hidden sm:flex flex-wrap gap-3 sm:gap-4 ml-auto w-full lg:w-auto">
                         <Button variant="outline" onClick={handlePreview} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white hover:border-olive transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
                             <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
                             {content?.admin?.contentManager?.preview || "Preview"}
@@ -184,15 +218,26 @@ const ContentManagement = () => {
             </div>
 
             <Tabs defaultValue="hero" className="w-full space-y-12">
-                <div className="p-3 glass-card rounded-[3rem] w-full shadow-2xl border-none">
-                    <TabsList className="bg-transparent h-auto p-1 gap-2 flex flex-wrap justify-center border-none">
-                        {['hero', 'mission', 'ingredients', 'concept', 'cta', 'contact', 'flavors', 'footer', 'settings'].map((tab) => (
+                <div className="p-2 sm:p-3 glass-card rounded-2xl sm:rounded-[3rem] w-full shadow-2xl border-none overflow-hidden">
+                    <TabsList className="bg-transparent h-auto p-1 gap-1 sm:gap-2 flex sm:flex-wrap justify-start sm:justify-center border-none overflow-x-auto no-scrollbar scroll-smooth">
+                        {[
+                            { id: 'hero', icon: Zap },
+                            { id: 'mission', icon: Target },
+                            { id: 'ingredients', icon: Beaker },
+                            { id: 'concept', icon: BarChart },
+                            { id: 'cta', icon: Megaphone },
+                            { id: 'contact', icon: MapPin },
+                            { id: 'flavors', icon: Sparkles },
+                            { id: 'footer', icon: Layout },
+                            { id: 'settings', icon: Settings2 }
+                        ].map((tab) => (
                             <TabsTrigger 
-                                key={tab}
-                                value={tab} 
-                                className="px-8 py-5 rounded-[2rem] font-black uppercase text-[10px] tracking-[0.2em] text-olive/40 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none"
+                                key={tab.id}
+                                value={tab.id} 
+                                className="px-4 sm:px-8 py-3 sm:py-5 rounded-xl sm:rounded-[2rem] font-black uppercase text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-olive/40 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none shrink-0 flex items-center gap-2"
                             >
-                                {content?.admin?.contentManager?.tabs?.[tab as keyof typeof content.admin.contentManager.tabs] || tab.toUpperCase()}
+                                <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                <span className="hidden xs:inline">{content?.admin?.contentManager?.tabs?.[tab.id as keyof typeof content.admin.contentManager.tabs] || tab.id.toUpperCase()}</span>
                             </TabsTrigger>
                         ))}
                     </TabsList>
@@ -214,7 +259,7 @@ const ContentManagement = () => {
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
-                            <div className="bg-olive-dark/5 p-10 rounded-[2.5rem] border border-olive/5">
+                            <div className="bg-olive-dark/5 p-6 sm:p-10 rounded-[2.5rem] border border-olive/5">
                                 <BadgeToggle badgeKey="hero.announcement" label={content?.admin?.contentManager?.sections?.hero?.visibility || "Visibility"} />
                             </div>
                             <StyledTextField
@@ -377,7 +422,7 @@ const ContentManagement = () => {
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             {Object.entries(localContent.ingredientDetails || {}).map(([key, details]: [string, any]) => (
-                                <div key={key} className="space-y-8 p-10 rounded-[2.5rem] bg-white border border-background shadow-sm relative group overflow-hidden">
+                                <div key={key} className="space-y-8 p-6 sm:p-10 rounded-[2.5rem] bg-white border border-background shadow-sm relative group overflow-hidden">
                                     <div className={`absolute top-0 right-0 w-32 h-32 opacity-5 translate-x-12 -translate-y-12 rounded-full transition-transform duration-700 group-hover:scale-150 ${
                                         key === 'stimulants' ? 'bg-primary' :
                                         key === 'electrolytes' ? 'bg-[#dfdf57]' :
@@ -515,7 +560,7 @@ const ContentManagement = () => {
                                     <h3 className="text-xl font-black font-display uppercase italic tracking-tight text-olive-dark">{content?.admin?.contentManager?.sections?.concept?.pillars || "Pillars"}</h3>
                                 </div>
                                 {localContent.concept3b.concepts.map((concept: any, i: number) => (
-                                    <div key={concept.id} className="p-10 rounded-[2.5rem] bg-background border border-background space-y-10 group relative transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-olive/10/50">
+                                    <div key={concept.id} className="p-6 sm:p-10 rounded-[2.5rem] bg-background border border-background space-y-10 group relative transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-olive/10/50">
                                         <div className="absolute top-8 right-10">
                                             <span className="text-8xl font-black text-olive-dark/5 select-none">{i + 1}</span>
                                         </div>
@@ -628,7 +673,7 @@ const ContentManagement = () => {
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
-                            <div className="bg-background p-8 rounded-[2rem] border border-background">
+                            <div className="bg-background p-6 sm:p-8 rounded-[2rem] border border-background">
                                 <BadgeToggle badgeKey="cta.badge" label={content?.admin?.contentManager?.sections?.cta?.visibility || "Visibility"} />
                             </div>
                             <StyledTextField
@@ -744,7 +789,7 @@ const ContentManagement = () => {
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             {Object.entries(localContent.flavors || {}).map(([key, flavor]: [string, any]) => (
-                                <div key={key} className="p-10 rounded-[2.5rem] bg-white border border-background shadow-sm space-y-10">
+                                <div key={key} className="p-6 sm:p-10 rounded-[2.5rem] bg-white border border-background shadow-sm space-y-10">
                                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                                         <div className="flex items-center gap-6">
                                             <div className="w-16 h-16 rounded-2xl bg-olive-dark flex items-center justify-center text-white text-2xl font-black shadow-xl">
@@ -994,7 +1039,7 @@ const ContentManagement = () => {
                     </div>
                 </TabsContent>
             </Tabs>
-
+            <ActionBar />
             <div className="p-10 bg-olive-dark rounded-[3rem] border border-olive/10 shadow-2xl flex flex-col md:flex-row gap-10 items-center text-center md:text-left group transition-all duration-700 hover:scale-[1.01]">
                 <div className="p-6 bg-lime/10 rounded-3xl border border-lime/20 shrink-0 animate-pulse group-hover:bg-lime/20 transition-all">
                     <AlertTriangle className="h-10 w-10 text-white" />

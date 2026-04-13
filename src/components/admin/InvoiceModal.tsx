@@ -48,22 +48,31 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="max-w-4xl h-[95vh] md:h-auto md:max-h-[95vh] p-0 gap-0 border-none bg-zinc-100 overflow-hidden flex flex-col">
+            <DialogContent className="max-w-4xl h-[95vh] md:h-auto md:max-h-[92vh] p-0 gap-0 border-none bg-zinc-100 overflow-hidden flex flex-col rounded-t-[2.5rem] md:rounded-[3rem]">
                 {/* Fixed Toolbar */}
-                <div className="sticky top-0 z-10 bg-white border-b border-zinc-200 p-4 flex justify-between items-center no-print">
-                    <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
+                <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-zinc-200 p-4 sm:p-6 flex justify-between items-center no-print shadow-sm">
+                    <div className="flex gap-3 w-full sm:w-auto">
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handlePrint} 
+                            className="flex-1 sm:flex-initial h-12 sm:h-10 rounded-xl sm:rounded-lg gap-2 font-black uppercase text-[10px] tracking-widest border-zinc-200 hover:bg-zinc-50"
+                        >
                             <Printer className="w-4 h-4" /> {t.actions.print}
                         </Button>
-                        <Button variant="outline" size="sm" className="gap-2">
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex-1 sm:flex-initial h-12 sm:h-10 rounded-xl sm:rounded-lg gap-2 font-black uppercase text-[10px] tracking-widest border-zinc-200 hover:bg-zinc-50"
+                        >
                             <Download className="w-4 h-4" /> {t.actions.save}
                         </Button>
                     </div>
                 </div>
 
                 {/* Invoice Body */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-12 print:p-0 scrollbar-premium">
-                    <div ref={invoiceRef} className="bg-white shadow-2xl mx-auto p-12 sm:p-16 min-h-[1100px] w-full max-w-[800px] print:shadow-none print:p-0">
+                <div className="flex-1 overflow-y-auto p-2 sm:p-12 print:p-0 scrollbar-premium bg-zinc-100">
+                    <div ref={invoiceRef} className="bg-white shadow-2xl mx-auto p-8 sm:p-16 min-h-[1100px] w-full max-w-[800px] print:shadow-none print:p-0 origin-top transform scale-[0.9] sm:scale-100 mb-8 rounded-[2rem] sm:rounded-none">
                         {/* Header */}
                         <div className="flex justify-between items-start mb-16">
                             <div>

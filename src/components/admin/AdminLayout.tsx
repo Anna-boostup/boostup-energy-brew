@@ -20,9 +20,9 @@ const AdminLayout = () => {
     const { materials } = useManufacture();
     const { content } = useContent();
     if (!content) return null;
-    const [unreadCount, setUnreadCount] = useState(0);
-
     // Fetch unread messages count
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     useEffect(() => {
         if (!user || profile?.role !== 'admin') return;
 
@@ -99,22 +99,29 @@ const AdminLayout = () => {
     return (
         <div className="min-h-screen bg-admin-canvas flex font-sans">
             {/* Mobile Header */}
-            <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark text-white p-4 flex items-center justify-between z-50 shadow-lg px-4">
-                <Link to="/" className="font-display font-black text-xl tracking-tighter hover:opacity-80 transition-opacity">
+            <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark/90 backdrop-blur-xl text-white p-5 flex items-center justify-between z-50 border-b border-white/5 shadow-2xl">
+                <Link to="/" className="font-display font-black text-2xl tracking-tighter hover:scale-105 transition-all duration-500 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
                     BOOST<span className="text-white">UP</span>
                 </Link>
-                <Sheet>
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-olive-dark -mr-2">
-                            <Menu className="w-6 h-6" />
+                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 -mr-2 rounded-2xl h-11 w-11 transition-all active:scale-90" data-testid="admin-mobile-menu-trigger">
+                            <div className="flex flex-col gap-1.5 items-end pr-1">
+                                <div className="w-6 h-0.5 bg-white rounded-full" />
+                                <div className="w-4 h-0.5 bg-lime rounded-full" />
+                                <div className="w-5 h-0.5 bg-white/60 rounded-full" />
+                            </div>
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-[85vw] max-w-[300px] rounded-r-[2.5rem] flex flex-col h-full">
-                        <div className="p-8 border-b border-white/5 shrink-0">
+                    <SheetContent side="left" className="p-0 sidebar-premium border-r-lime/10 text-white w-[88vw] max-w-[320px] rounded-r-[3.5rem] flex flex-col h-full border-none shadow-[25px_0_50px_-12px_rgba(0,0,0,0.5)]">
+                        <div className="p-10 border-b border-white/5 shrink-0 bg-gradient-to-b from-black/20 to-transparent">
                             <Link to="/" className="flex items-center">
-                                <span className="font-display font-black text-2xl tracking-tighter">BOOST<span className="text-white">UP</span></span>
+                                <span className="font-display font-black text-3xl tracking-tighter italic">BOOST<span className="text-white">UP</span></span>
                             </Link>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mt-2">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
+                            <div className="flex items-center gap-2 mt-3">
+                                <div className="w-2 h-2 rounded-full bg-lime animate-pulse shadow-[0_0_10px_rgba(163,230,53,0.8)]" />
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 italic">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
+                            </div>
                         </div>
                         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                             <ul className="space-y-2" role="list">
@@ -140,6 +147,7 @@ const AdminLayout = () => {
                                                 <button
                                                     onClick={() => {
                                                         navigate(item.path);
+                                                        setIsMobileMenuOpen(false);
                                                     }}
                                                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
                                                         ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
@@ -274,8 +282,8 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-80 p-4 md:p-12 pt-24 md:pt-12 min-h-screen">
-                <div className="max-w-7xl mx-auto">
+            <main className="flex-1 md:ml-80 p-4 md:p-6 pt-24 md:pt-6 min-h-screen">
+                <div className="max-w-full mx-auto">
                     <AdminErrorBoundary>
                         <Outlet />
                     </AdminErrorBoundary>

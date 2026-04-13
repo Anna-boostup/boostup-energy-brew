@@ -54,6 +54,7 @@ export default async function handler(req: Request) {
             console.log(`[GoPay] TEST MODE ACTIVE. Bypassing gateway for order ${orderNumber}`);
             return new Response(JSON.stringify({ 
                 gw_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay&status=paid_test`,
+                id: `TEST_${orderNumber}`,
                 paymentId: `TEST_${orderNumber}` 
             }), {
                 status: 200,
@@ -141,6 +142,7 @@ export default async function handler(req: Request) {
 
         return new Response(JSON.stringify({ 
             gw_url: data.gw_url,
+            id: data.id,
             paymentId: data.id 
         }), {
             status: 200,

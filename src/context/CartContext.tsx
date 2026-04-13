@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useMemo, useCallback, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { track } from '@vercel/analytics';
 
 export interface CartItem {
     id: string;
@@ -114,6 +115,30 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const addToCart = useCallback((item: CartItem) => {
         dispatch({ type: 'ADD_TO_CART', payload: item });
+        
+        // Tracking: Vercel Analytics
+        track('add_to_cart', {
+            id: item.id,
+            name: item.name,
+            flavor: item.flavor || 'mix',
+            pack: item.pack || 1,
+            price: item.price
+        });
+
+        // Tracking: Google Analytics 4
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'add_to_cart', {
+                currency: 'CZK',
+                value: item.price * item.quantity,
+                items: [{
+                    item_id: item.id,
+                    item_name: item.name,
+                    item_variant: item.flavor || 'mix',
+                    price: item.price,
+                    quantity: item.quantity
+                }]
+            });
+        }
     }, []);
 
     const removeFromCart = useCallback((id: string) => {

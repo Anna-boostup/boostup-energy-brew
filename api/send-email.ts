@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import * as Sentry from '@sentry/node';
 import fs from 'fs';
 import path from 'path';
 
@@ -18,6 +19,15 @@ const COLORS = {
 const ADMIN_EMAIL = 'objednavky@drinkboostup.cz';
 const INFO_EMAIL = 'info@drinkboostup.cz';
 const BILLING_EMAIL = 'fakturace@drinkboostup.cz';
+
+// Initialize Sentry for Backend
+if (process.env.VITE_SENTRY_DSN) {
+    Sentry.init({
+        dsn: process.env.VITE_SENTRY_DSN,
+        environment: process.env.NODE_ENV || 'production',
+        tracesSampleRate: 1.0,
+    });
+}
 
 // Hardened BASE_URL detection
 const getBaseUrl = (req: VercelRequest) => {
@@ -517,6 +527,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json({ success: true, id: data?.id });
     } catch (err) {
         console.error('Email send error:', err);
+        if (process.env.VITE_SENTRY_DSN) {
+            Sentry.captureException(err);
+            await Sentry.flush(2000);
+        }
         return res.status(500).json({ error: 'Failed to send email' });
     }
 }

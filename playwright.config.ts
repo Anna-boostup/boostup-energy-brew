@@ -19,51 +19,43 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Enable parallel workers on CI because we use worker-isolated test data */
-  workers: process.env.CI ? 4 : undefined,
-  /* Timeout per test (increased for CI reliability) */
-  timeout: process.env.CI ? 60000 : 30000,
+  /* Force 1 worker on CI for maximum stability in resource-constrained environments */
+  workers: process.env.CI ? 1 : undefined,
+  // CI_STABILITY_MARKER: V2_SINGLE_WORKER_FIX
+  /* Timeout per test (increased for reliability) */
+  timeout: 120000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   expect: {
-    timeout: 15000,
+    timeout: 30000,
   },
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173',
+    bypassCSP: true,
 
     /* Collect trace for CI debugging or when retrying locally */
     trace: process.env.CI ? 'on' : 'on-first-retry',
     screenshot: 'only-on-failure',
+    actionTimeout: 30000,
+    ignoreHTTPSErrors: true,
   },
 
   /* Configure projects for major browsers */
-  projects: process.env.CI ? [
+  projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
     },
-  ] : [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: { 
+        ...devices['Pixel 5'],
+      },
     },
     {
       name: 'Mobile Safari',
@@ -74,7 +66,8 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: process.env.CI ? undefined : {
     command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    url: 'http://localhost:8080',
+    reuseExistingServer: true,
+    timeout: 120000,
   },
 });

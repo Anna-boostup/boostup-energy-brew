@@ -30,13 +30,15 @@ jobs:
           fetch-depth: 0
       
       - name: Setup Node.js 22
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
           
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install --global vercel@latest
         
       - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
@@ -52,6 +54,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           
       - name: Deploy
         id: deploy
@@ -79,16 +83,23 @@ jobs:
           echo "SUCCESS: App is healthy. Proceeding to E2E tests."
 
       - name: Cache Playwright Binaries
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
-      - name: Install & Test
-        run: |
-          npm install
-          npx playwright install --with-deps
-          npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts
+      - name: Install Playwright System Dependencies
+        run: npx playwright install-deps
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Run E2E Tests
+        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -107,13 +118,18 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
+          git restore .
           git checkout preview
           git merge development --no-ff -m "chore: auto-promote to preview"
           git push origin preview
 
   Deploy-Preview:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/preview'
+    needs: [Test-and-Promote]
+    if: |
+      always() && 
+      (github.ref == 'refs/heads/preview' || 
+       (github.ref == 'refs/heads/development' && needs.Test-and-Promote.result == 'success'))
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js 22
@@ -129,6 +145,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Deploy
         id: deploy
         run: |
@@ -164,6 +182,9 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Deploy
         id: deploy
         run: |

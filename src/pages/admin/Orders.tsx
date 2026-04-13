@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useInventory, Order } from "@/context/InventoryContext";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +35,9 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
     const { content } = useContent();
     const { toast } = useToast();
     return (
-        <div className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 mb-6 border-none shadow-xl transition-all duration-500 hover:scale-[1.01] overflow-hidden animate-in fade-in slide-in-from-bottom-6">
+        <div className="bg-white/40 backdrop-blur-xl rounded-[2.8rem] p-6 sm:p-10 space-y-7 mb-8 border border-white/20 shadow-2xl shadow-olive/5 transition-all duration-700 hover:shadow-olive/10 hover:-translate-y-1 relative overflow-hidden group animate-in fade-in slide-in-from-bottom-10">
+            {/* Glossy glass reflection element */}
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
@@ -106,30 +108,31 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
 
             <div className="flex justify-between items-center pt-4 border-t border-background">
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-olive/40">{content.admin.orders.totalPriceLabel}</span>
-                    <span className="font-display font-black text-xl text-olive-dark">{order.total} {content.bankInfo.currency}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-olive/40">{content.admin.orders.totalPriceLabel}</span>
+                    <span className="font-display font-black text-lg text-olive-dark">{order.total} {content.bankInfo.currency}</span>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" className="rounded-xl h-12 px-6 border-olive/10 hover:bg-olive-dark hover:text-white font-black uppercase text-[10px] tracking-widest">{content.admin.orders.viewDetail}</Button>
+                            <Button size="icon" variant="outline" className="rounded-xl h-11 w-11 border-olive/10 hover:bg-olive-dark hover:text-white transition-all">
+                                <Eye className="w-5 h-5" />
+                            </Button>
                         </DialogTrigger>
                         <OrderDetailDialog order={order} />
                     </Dialog>
                     {order.status === 'pending' && (
-                        <Button size="sm" onClick={() => onStatusChange(order.id, 'paid')} className="bg-lime text-olive-dark hover:bg-lime/80 rounded-xl h-12 px-4 shadow-lg shadow-lime/20" aria-label={content.admin.orders.markAsPaid}>
+                        <Button size="icon" onClick={() => onStatusChange(order.id, 'paid')} className="bg-lime text-olive-dark hover:bg-lime/80 rounded-xl h-11 w-11 shadow-lg shadow-lime/20" aria-label={content.admin.orders.markAsPaid}>
                             <CheckCircle className="w-5 h-5" />
                         </Button>
                     )}
                     {(order.status === 'paid' || order.status === 'processing') && (
-                        <Button size="sm" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-12 px-6 font-black uppercase text-[10px] tracking-widest" aria-label={content.admin.orders.markAsShipped}>
-                            <Truck className="w-4 h-4 mr-2" />
-                            <span>{content.admin.dashboard.statusShipped}</span>
+                        <Button size="icon" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-11 w-11" aria-label={content.admin.orders.markAsShipped}>
+                            <Truck className="w-5 h-5" />
                         </Button>
                     )}
                     <InvoiceModal order={order}>
-                        <Button size="sm" variant="ghost" className="h-10 w-10 p-0 text-olive/40 hover:text-olive-dark hover:bg-background rounded-xl" aria-label={content.admin.orders.viewInvoice}>
-                            <FileText className="h-5 w-5" />
+                        <Button size="icon" variant="ghost" className="h-11 w-11 p-0 text-olive/40 hover:text-olive-dark hover:bg-background rounded-xl" aria-label={content.admin.orders.viewInvoice}>
+                            <FileText className="h-5 h-5" />
                         </Button>
                     </InvoiceModal>
                 </div>
@@ -158,7 +161,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
             <Table>
                 <TableHeader className="bg-white/40 border-b border-olive/5">
                     <TableRow className="hover:bg-transparent border-none">
-                        <TableHead className="w-16 pl-8">
+                        <TableHead className="w-10 pl-4">
                             <Checkbox
                                 checked={data.length > 0 && data.every(o => selectedOrders.has(o.id))}
                                 onCheckedChange={(checked) => {
@@ -173,28 +176,28 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             />
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 cursor-pointer hover:text-white transition-colors"
+                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors text-center w-24"
                             onClick={() => onSort('id')}
                         >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center gap-2">
                                 {content?.admin?.orders?.table?.id} {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 cursor-pointer hover:text-white transition-colors text-center"
+                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors text-center w-28"
                             onClick={() => onSort('date')}
                         >
                             <div className="flex items-center justify-center gap-2">
                                 {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4">{content?.admin?.orders?.table?.customer}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right w-[15%]">{content?.admin?.orders?.table?.items}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right">{content?.admin?.orders?.table?.amount}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.payment}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.method}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-center">{content?.admin?.orders?.table?.status}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[10px] tracking-widest py-4 text-right pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center">{content?.admin?.orders?.table?.customer}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.items}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.amount}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.payment}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.method}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-28">{content?.admin?.orders?.table?.status}</TableHead>
+                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -207,56 +210,56 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                     ) : (
                         data.map((order) => (
                             <TableRow key={order.id} className={`transition-all duration-300 hover:bg-white border-b border-olive/5 group ${selectedOrders.has(order.id) ? "bg-lime/5" : ""}`}>
-                                <TableCell className="pl-8">
+                                <TableCell className="pl-4">
                                     <Checkbox
                                         checked={selectedOrders.has(order.id)}
                                         onCheckedChange={() => toggleOrderSelection(order.id)}
                                         className="rounded-lg border-olive/20 data-[state=checked]:bg-lime data-[state=checked]:border-lime data-[state=checked]:text-olive-dark"
                                     />
                                 </TableCell>
-                                <TableCell className="py-6">
-                                    <div className="flex items-center gap-3">
-                                        <span className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
+                                <TableCell className="py-3">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="font-mono font-black text-[9px] text-white bg-olive-dark px-2 py-1 rounded-lg">#{order.id.slice(0, 8)}</span>
                                         <Button 
                                             variant="ghost" 
                                             size="icon" 
-                                            className="h-8 w-8 opacity-40 group-hover:opacity-100 transition-all text-olive/80 hover:text-black hover:bg-olive/10" 
+                                            className="h-7 w-7 opacity-40 group-hover:opacity-100 transition-all text-olive/80 hover:text-black hover:bg-olive/10" 
                                             onClick={() => {
                                                 navigator.clipboard.writeText(order.id);
                                                 toast({ title: content.admin.orders.copyId, duration: 1000 });
                                             }}
                                         >
-                                            <Copy className="h-4 w-4" />
+                                            <Copy className="h-3.5 w-3.5" />
                                         </Button>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-center">
-                                    <span className="text-[10px] font-black text-brand-muted uppercase tracking-[0.2em] bg-olive/5 px-3 py-1.5 rounded-xl">
+                                <TableCell className="text-center px-1">
+                                    <span className="text-[9px] font-black text-brand-muted uppercase tracking-wider bg-olive/5 px-2 py-1 rounded-lg">
                                         {new Date(order.date).toLocaleDateString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}
                                     </span>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="px-2">
                                     <div className="flex flex-col min-w-0">
-                                        <span className="font-black text-olive-dark text-sm uppercase tracking-tight group-hover:text-white transition-colors">{order.customer.name}</span>
-                                        <span className="text-[10px] text-brand-muted font-bold tracking-wider truncate max-w-[180px]">{order.customer.email}</span>
+                                        <span className="font-black text-olive-dark text-[11px] uppercase tracking-tight truncate">{order.customer.name}</span>
+                                        <span className="text-[9px] text-brand-muted font-bold tracking-tight truncate">{order.customer.email}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex flex-col gap-1 items-end">
+                                <TableCell className="text-center px-1">
+                                    <div className="flex flex-col gap-0.5 items-center">
                                         {order.items.slice(0, 1).map((item, idx) => (
-                                            <div key={idx} className="text-[9px] font-black uppercase text-brand-muted bg-white border border-olive/5 px-3 py-1 rounded-xl shadow-sm">
+                                            <div key={idx} className="text-[8px] font-black uppercase text-brand-muted bg-white border border-olive/5 px-2 py-0.5 rounded-lg shadow-sm">
                                                 {item.quantity}x {item.name.split(' ')[0]}
                                             </div>
                                         ))}
-                                        {order.items.length > 1 && <span className="text-[8px] text-white font-black uppercase tracking-[0.2em] mt-1">+ {order.items.length - 1} {content.admin.orders.more}</span>}
+                                        {order.items.length > 1 && <span className="text-[7px] text-olive/30 font-black uppercase tracking-widest">+ {order.items.length - 1} {content.admin.orders.more}</span>}
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right">
-                                    <span className="font-display font-black text-lg text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[10px] text-olive/20 tracking-normal">{content.bankInfo.currency}</span></span>
+                                <TableCell className="text-center px-2">
+                                    <span className="font-display font-black text-sm text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[8px] text-olive/20 tracking-normal">{content.bankInfo.currency}</span></span>
                                 </TableCell>
-                                <TableCell className="text-center">
+                                <TableCell className="text-center px-1">
                                     <Badge 
-                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                        className={`text-[8px] font-black uppercase tracking-widest px-2 h-5 rounded-md border-none shadow-sm ${
                                             order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
                                             order.status === 'pending' ? 'bg-red-500/10 text-red-600' : 
                                             'bg-lime text-olive-dark'
@@ -266,16 +269,16 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                          order.status === 'pending' ? content.admin.orders.status.unpaid : content.admin.orders.status.paid}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="text-center">
-                                    <span className="text-[10px] font-black text-olive/60 uppercase tracking-widest">
-                                        {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer :
-                                         order.delivery_info?.paymentMethod === 'stripe_express' ? content.admin.orders.status.express :
-                                         order.delivery_info?.paymentMethod?.toUpperCase() || content.admin.orders.table.payment}
+                                <TableCell className="text-center px-1">
+                                    <span className="text-[9px] font-black text-olive/40 uppercase tracking-widest">
+                                        {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer.slice(0, 4) :
+                                         order.delivery_info?.paymentMethod === 'stripe_express' ? 'STRP' :
+                                         order.delivery_info?.paymentMethod?.toUpperCase().slice(0, 4) || 'CARD'}
                                     </span>
                                 </TableCell>
-                                <TableCell className="text-center">
+                                <TableCell className="text-center px-1">
                                     <Badge
-                                        className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                                        className={`text-[8px] font-black uppercase tracking-widest px-2 h-5 rounded-md border-none shadow-sm ${
                                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
                                                 order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
                                                     order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
@@ -414,23 +417,48 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
 
 const Orders = () => {
     const { content } = useContent();
-    const { orders, updateOrderStatus } = useInventory();
     const { toast } = useToast();
-    const [isSyncing, setIsSyncing] = useState(false);
+    const { orders, updateOrderStatus } = useInventory();
     const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
-    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
     const [printIds, setPrintIds] = useState<string[]>([]);
+    const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
-        typeof window !== 'undefined' ? Notification.permission : 'default'
+        typeof window !== 'undefined' && typeof Notification !== 'undefined' 
+            ? Notification.permission 
+            : 'default'
     );
-
     const [sortConfig, setSortConfig] = useState<{ key: 'id' | 'date'; direction: 'asc' | 'desc' }>({
         key: 'date',
         direction: 'desc'
     });
 
+    if (!content || !orders) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
+                <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
+            </div>
+        );
+    }
+
+    // Auto-sync payments on mount
+    useEffect(() => {
+        const syncPayments = async () => {
+            try {
+                await fetch('/api/sync-payments');
+                // We don't necessarily need to toast here to avoid being too noisy on every mount,
+                // but the DB will be updated and Realtime will refresh the list.
+                console.log('[Auto-Sync] Payments sync triggered.');
+            } catch (e) {
+                console.error('[Auto-Sync] Failed:', e);
+            }
+        };
+        syncPayments();
+    }, []);
+
     const requestNotificationPermission = async () => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined' || typeof Notification === 'undefined') return;
         
         try {
             const permission = await Notification.requestPermission();
@@ -596,8 +624,20 @@ const Orders = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap">
-                <h2 data-testid="admin-page-title" className="text-2xl sm:text-3xl font-bold tracking-tight">{content.admin.orders.title}</h2>
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 flex-wrap">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse shadow-[0_0_12px_rgba(163,230,53,0.8)]" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 italic">Admin Terminal v2.0</span>
+                    </div>
+                    <h2 
+                        data-testid="admin-page-title" 
+                        className="text-4xl sm:text-5xl font-black tracking-tighter text-olive-dark italic font-display bg-gradient-to-r from-olive-dark to-olive/60 bg-clip-text text-transparent pb-1"
+                    >
+                        {content.admin.orders.title || "Objednávky"}
+                    </h2>
+                    <div className="h-1.5 w-24 bg-gradient-to-r from-lime to-transparent rounded-full" />
+                </div>
                <div className="flex flex-wrap items-center gap-2">
                     {notificationPermission !== 'granted' && (
                         <Button
@@ -650,16 +690,16 @@ const Orders = () => {
                     </Button>
                 </div>
             </div>
-
             <Tabs defaultValue="pending" className="w-full">
-                <div className="overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8">
-                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-olive-dark/5 p-2 rounded-[2rem] h-auto border border-olive/5">
-                        <TabsTrigger value="pending" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
-                        <TabsTrigger value="processing" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
-                        <TabsTrigger value="shipped" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
-                        <TabsTrigger value="cancelled" className="px-8 py-3.5 rounded-[1.5rem] data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
+                <div className="overflow-x-auto pb-6 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8 sm:mb-12">
+                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-white/40 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
+                        <TabsTrigger value="pending" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
+                        <TabsTrigger value="processing" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
+                        <TabsTrigger value="shipped" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
+                        <TabsTrigger value="cancelled" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
                     </TabsList>
                 </div>
+
 
                 <TabsContent value="pending" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
                     <OrderTable
@@ -711,8 +751,8 @@ const Orders = () => {
             </Tabs>
 
             {selectedOrders.size > 0 && (
-                <div className="fixed bottom-4 sm:bottom-10 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 glass-dark rounded-[2rem] sm:rounded-[3rem] px-6 sm:px-12 py-4 sm:py-6 flex flex-col md:flex-row items-center gap-6 sm:gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-white/10">
-                    <div className="flex items-center gap-6 pr-0 md:pr-12 border-b md:border-b-0 md:border-r border-white/10 pb-4 md:pb-0 w-full md:w-auto justify-between md:justify-start">
+                <div className="fixed bottom-4 sm:bottom-10 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 glass-dark rounded-[2rem] sm:rounded-[3rem] px-6 sm:px-12 py-4 sm:py-6 flex flex-col md:flex-row items-center gap-6 sm:gap-12 animate-in fade-in slide-in-from-bottom-10 z-50 shadow-2xl border-white border-opacity-10">
+                    <div className="flex items-center gap-6 pr-0 md:pr-12 border-b md:border-b-0 md:border-r border-white border-opacity-10 pb-4 md:pb-0 w-full md:w-auto justify-between md:justify-start">
                         <div className="flex flex-col">
                             <div className="text-[9px] sm:text-[10px] text-white font-black uppercase tracking-[0.2em] mb-1">{content.admin.inventory.selected}</div>
                             <div className="text-2xl sm:text-3xl font-black text-white leading-none font-display">{selectedOrders.size} <span className="text-[10px] sm:text-xs font-bold text-white/30 uppercase tracking-widest ml-1">{content.admin.inventory.unit}</span></div>
@@ -726,7 +766,7 @@ const Orders = () => {
                         </Button>
                     </div>
 
-                        <div className="flex gap-3 p-2 bg-white/5 rounded-[2.5rem] border border-white/5">
+                        <div className="flex gap-3 p-2 bg-white bg-opacity-5 rounded-[2.5rem] border border-white border-opacity-5">
                             <Button
                                 size="sm"
                                 variant="ghost"

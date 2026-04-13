@@ -1,13 +1,27 @@
 import { createRoot } from "react-dom/client";
+import * as Sentry from "@sentry/react";
 import App from "./App.tsx";
 import "./index.css";
 
+// Initialize Sentry before anything else
+if (import.meta.env.VITE_SENTRY_DSN) {
+    Sentry.init({
+        dsn: import.meta.env.VITE_SENTRY_DSN,
+        integrations: [
+            Sentry.browserTracingIntegration(),
+            Sentry.replayIntegration(),
+        ],
+        // Performance Monitoring
+        tracesSampleRate: 1.0, 
+        // Session Replay
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+        environment: import.meta.env.MODE,
+    });
+}
+
 /**
  * Ultra-Robust Entry Point
- * 
- * We wrap the entire React mount process in a try/catch to ensure that 
- * ANY failure during initialization (missing polyfills, broken context, etc.)
- * is immediately written to the DOM. This makes silent failures visible to CI.
  */
 try {
     console.log("BoostUp: Initializing application mount...");
@@ -18,10 +32,19 @@ try {
     }
 
     const root = createRoot(rootElement);
-    root.render(<App />);
+    
+    // Wrap the app in Sentry's ErrorBoundary for advanced tracking
+    root.render(
+        <Sentry.ErrorBoundary fallback={<p>Vyskytla se chyba. Tým BoostUp byl informován.</p>} showDialog>
+            <App />
+        </Sentry.ErrorBoundary>
+    );
 
 } catch (error: any) {
     console.error("CRITICAL MOUNT FAILURE:", error);
+    
+    // Report mount failure to Sentry explicitly
+    Sentry.captureException(error);
     
     const root = document.getElementById("root");
     if (root) {
@@ -33,9 +56,9 @@ try {
                     <pre style="white-space:pre-wrap; margin:0; font-size:13px;">${error.name}: ${error.message}\n\n${error.stack || "Zásobník chyb není k dispozici."}</pre>
                 </div>
                 <p style="font-size:12px; color:#666; margin-top:1.5rem;">
-                    Možné příčiny: Chybějící proměnné prostředí (VITE_SUPABASE_URL), nefunkční moduly nebo nekompatibilní verze Node.js.
+                    Tato chyba byla automaticky odeslána vývojářům. Možné příčiny: Chybějící proměnné prostředí (VITE_SUPABASE_URL), nefunkční moduly nebo nekompatibilní verze Node.js.
                 </p>
-                <button onclick="window.location.reload()" style="margin-top:1rem; background:#cc0000; color:#white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:bold;">Zkusit znovu načíst</button>
+                <button onclick="window.location.reload()" style="margin-top:1rem; background:#cc0000; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; font-weight:bold;">Zkusit znovu načíst</button>
             </div>
         `;
     }

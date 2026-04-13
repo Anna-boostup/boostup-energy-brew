@@ -142,6 +142,41 @@ const EmailManagement = () => {
         }
     };
 
+    const ActionBar = () => (
+        <div className="fixed bottom-6 left-4 right-4 z-50 sm:hidden">
+            <div className="bg-olive-dark/95 backdrop-blur-xl rounded-3xl p-3 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={handleSendTest} 
+                        disabled={sendingTest || saving} 
+                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-white/70 active:bg-lime active:text-olive-dark transition-all"
+                    >
+                        <Send className="h-5 w-5" />
+                    </Button>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={handleResetToDefault} 
+                        disabled={saving || sendingTest}
+                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-red-400/70 active:bg-red-500 active:text-white transition-all"
+                    >
+                        <RefreshCcw className="h-5 w-5" />
+                    </Button>
+                </div>
+                <Button 
+                    onClick={handleSave} 
+                    disabled={saving || sendingTest}
+                    className="flex-1 h-12 rounded-2xl bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] tracking-[0.2em] shadow-xl active:scale-[0.97] transition-all gap-2"
+                >
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    {content?.admin?.emailManager?.form?.save || "Save"}
+                </Button>
+            </div>
+        </div>
+    );
+
     useEffect(() => {
         const existing = templates.find(t => t.id === selectedTypeId);
         if (existing) {
@@ -275,8 +310,7 @@ const EmailManagement = () => {
             setCampaignLoading(true);
             const { data, error } = await supabase
                 .from('newsletter_subscriptions')
-                .select('id, email')
-                .eq('is_active', true);
+                .select('id, email');
             
             if (error) throw error;
             setSubscribers(data || []);
@@ -377,67 +411,78 @@ const EmailManagement = () => {
                     fetchSubscribers();
                 }
             }}>
-                <TabsList className="bg-white/40 backdrop-blur-md border border-white/40 p-1.5 h-auto rounded-[1.5rem] mb-12 flex-wrap justify-start shadow-xl shadow-olive-dark/5">
+                <TabsList className="bg-white/40 backdrop-blur-md border border-white/40 p-1 sm:p-1.5 h-auto rounded-2xl sm:rounded-[1.5rem] mb-6 sm:mb-12 flex sm:flex-wrap justify-start sm:justify-center shadow-xl shadow-olive-dark/5 overflow-x-auto no-scrollbar scroll-smooth">
                     <TabsTrigger 
                         value="templates" 
-                        className="rounded-[1.1rem] px-8 py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group"
+                        className="rounded-xl sm:rounded-[1.1rem] px-4 sm:px-8 py-2.5 sm:py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group shrink-0"
                     >
-                        <Mail className="w-4 h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
+                        <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
                         {content?.admin?.emailManager?.tabs?.settings || "Settings"}
                     </TabsTrigger>
                     <TabsTrigger 
                         value="campaigns" 
-                        className="rounded-[1.1rem] px-8 py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group"
+                        className="rounded-xl sm:rounded-[1.1rem] px-4 sm:px-8 py-2.5 sm:py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group shrink-0"
                     >
-                        <Megaphone className="w-4 h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
+                        <Megaphone className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
                         {content?.admin?.emailManager?.campaign?.title || "Campaign"}
                     </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="templates" className="space-y-12 mt-0">
                     {/* Header */}
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 flex-wrap">
-                <div className="space-y-3">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
+                <div className="space-y-3 flex-1 min-w-[280px]">
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.title || "Email Management"}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[9px] sm:text-[10px] leading-none">{content?.admin?.emailManager?.description}</p>
+                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.emailManager?.description}</p>
                     </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
-                    <Button 
-                        variant="outline" 
-                        onClick={handleSendTest} 
-                        disabled={sendingTest || saving} 
-                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark font-black uppercase text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-olive hover:text-white transition-all gap-3"
-                    >
-                        {sendingTest ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-                        {content?.admin?.emailManager?.form?.test || "Test"}
-                    </Button>
-                    <Button 
-                        variant="ghost"
-                        onClick={handleResetToDefault}
-                        disabled={saving || sendingTest}
-                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl text-olive-dark/40 font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-terracotta transition-all gap-3 group"
-                    >
-                        <RefreshCcw className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
-                        {content?.admin?.contentManager?.reset || "Reset"}
-                    </Button>
+                <div className="hidden sm:flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
                     <Button 
                         onClick={handleSave} 
                         disabled={saving || sendingTest} 
-                        className="h-14 px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
+                        className="h-12 sm:h-14 px-8 sm:px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
                     >
-                        {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                        {saving ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <Save className="h-4 sm:h-5 w-4 sm:w-5" />}
                         {content?.admin?.emailManager?.form?.save || "Save"}
                     </Button>
                 </div>
             </div>
 
+            {/* Mobile Template Selector (Horizontal) */}
+            <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-right">
+                <div className="flex gap-3">
+                    {templateTypes.map((type) => (
+                        <Button
+                            key={type.id}
+                            variant={selectedTypeId === type.id ? "default" : "outline"}
+                            onClick={() => setSelectedTypeId(type.id)}
+                            className={`h-auto py-3 px-4 rounded-2xl flex flex-col items-center gap-2 min-w-[100px] transition-all border-none ${
+                                selectedTypeId === type.id 
+                                ? 'bg-olive-dark text-white ring-4 ring-olive/5' 
+                                : 'bg-white text-olive-dark/40 hover:bg-white hover:text-olive-dark'
+                            }`}
+                        >
+                            <type.icon className={`h-5 w-5 ${selectedTypeId === type.id ? 'text-lime' : 'text-olive-dark/20'}`} />
+                            <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{type.label}</span>
+                        </Button>
+                    ))}
+                    <Button
+                        variant="ghost"
+                        onClick={() => setIsCreateOpen(true)}
+                        className="h-auto py-3 px-6 rounded-2xl border-2 border-dashed border-olive/10 flex flex-col items-center gap-2 min-w-[100px] text-olive-dark/30 hover:bg-white transition-all"
+                    >
+                        <Plus className="h-5 w-5 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">{content?.admin?.emailManager?.buttons?.new || "NEW"}</span>
+                    </Button>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
-                {/* Sidebar - Template List */}
-                <div className="lg:col-span-4 space-y-6">
+                {/* Sidebar - Template List (Hidden on mobile, used on Desktop) */}
+                <div className="hidden lg:block lg:col-span-4 space-y-6">
                     <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-olive-dark shadow-olive-dark/20">
                         <CardHeader className="p-8 pb-4">
                             <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">{content?.admin?.emailManager?.templatesTitle || "Templates"}</CardTitle>
@@ -658,6 +703,20 @@ const EmailManagement = () => {
                                     </div>
                                 </div>
                                 <div className="relative group">
+                                    {/* Placeholder Toolbar (Mobile) */}
+                                    <div className="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1 -mx-2 px-2">
+                                        {getPlaceholdersForType(selectedTypeId).map((tag) => (
+                                            <Button
+                                                key={tag}
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
+                                                className="h-8 rounded-lg bg-olive-dark/5 border-olive/10 text-olive-dark font-black text-[9px] uppercase tracking-widest whitespace-nowrap px-3 hover:bg-lime hover:border-lime"
+                                            >
+                                                {tag}
+                                            </Button>
+                                        ))}
+                                    </div>
                                     <Textarea 
                                         value={currentContent}
                                         onChange={(e) => setCurrentContent(e.target.value)}
@@ -667,8 +726,8 @@ const EmailManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Placeholders Help */}
-                            <div className="p-10 bg-olive-dark rounded-[2rem] space-y-6 shadow-xl">
+                            {/* Placeholders Help (Desktop) */}
+                            <div className="hidden sm:block p-10 bg-olive-dark rounded-[2rem] space-y-6 shadow-xl">
                                 <div className="flex items-center gap-4">
                                     <Info className="w-5 h-5 text-lime" />
                                     <h4 className="font-black uppercase text-xs tracking-widest text-white">{content?.admin?.emailManager?.editor?.tagsTitle || "Available Tags"}</h4>
@@ -723,12 +782,12 @@ const EmailManagement = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Campaign Controls */}
                     <div className="lg:col-span-12">
-                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 mb-12">
+                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 mb-8 sm:mb-12">
                             <div className="space-y-3">
                                 <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.campaign?.title || "Campaign"}</h2>
                                 <div className="flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                                    <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[10px] leading-none">{content?.admin?.emailManager?.campaign?.description}</p>
+                                    <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.emailManager?.campaign?.description}</p>
                                 </div>
                             </div>
 
@@ -742,9 +801,9 @@ const EmailManagement = () => {
                             </Button>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
                             {/* Audience Info */}
-                            <Card className="border-none shadow-2xl rounded-[2.5rem] bg-olive-dark text-white p-10 overflow-hidden relative">
+                            <Card className="border-none shadow-2xl rounded-[2.5rem] bg-olive-dark text-white p-6 sm:p-10 overflow-hidden relative">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-lime/10 blur-3xl -translate-y-1/2 translate-x-1/2" />
                                 <div className="space-y-6 relative z-10">
                                     <div className="flex items-center gap-4">
@@ -774,8 +833,8 @@ const EmailManagement = () => {
                             </Card>
 
                             {/* Campaign Setup */}
-                            <Card className="lg:col-span-2 border-none shadow-2xl rounded-[2.5rem] bg-white p-10">
-                                <div className="space-y-8">
+                            <Card className="lg:col-span-2 border-none shadow-2xl rounded-[2.5rem] bg-white p-6 sm:p-10">
+                                <div className="space-y-6 sm:space-y-8">
                                     <div className="space-y-4">
                                         <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/40">{content?.admin?.emailManager?.campaign?.selectTemplate || "Select Template"}</Label>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -836,8 +895,9 @@ const EmailManagement = () => {
                     </div>
                 </div>
             </TabsContent>
-        </Tabs>
-    </div>
+            </Tabs>
+            <ActionBar />
+        </div>
     );
 };
 

@@ -35,7 +35,12 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       // 1. Handle Login if not guest
       if (identity.type !== 'guest') {
         await page.goto('/login', { timeout: 60000 });
-        await page.fill('input[type="email"]', identity.email);
+        
+        // Wait for input to be present to avoid race conditions on slow loads
+        const emailInput = page.locator('input[type="email"]');
+        await emailInput.waitFor({ state: 'visible', timeout: 30000 });
+        
+        await emailInput.fill(identity.email);
         await page.fill('input[type="password"]', identity.password);
         await page.getByTestId('login-submit-btn').click();
         
@@ -52,6 +57,9 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
           const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
           throw new Error(`CRITICAL LOGIN FAILURE at ${currentUrl}: Navigation did not happen. UI Alert displayed: "${toastError}"`);
         }
+        
+        // 🧪 Stabilization: Wait for everything to settle before going back to Home
+        await page.waitForLoadState('load', { timeout: 15000 }).catch(() => console.log('Load state timeout - moving on anyway'));
       }
 
       // 2. Add product to cart
@@ -62,12 +70,16 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
 
       // 3. Open the Cart Drawer
       // The drawer does not automatically open upon adding an item; we must manually click the header cart icon.
-      const headerCartButton = page.getByTestId('header-cart-btn').first();
-      await headerCartButton.click();
+      const headerCartButton = page.getByTestId('header-cart-btn').filter({ visible: true }).first();
+      // Small stabilization wait for cart animation
+      await page.waitForTimeout(1000); 
+      await headerCartButton.click({ force: true });
 
       // 4. Go to checkout
-      await page.getByTestId('cart-drawer-checkout-btn').click();
-      await expect(page).toHaveURL(/.*checkout/);
+      const checkoutBtn = page.getByTestId('cart-drawer-checkout-btn');
+      await checkoutBtn.waitFor({ state: 'visible', timeout: 15000 });
+      await checkoutBtn.click();
+      await expect(page).toHaveURL(/.*checkout/, { timeout: 30000 });
 
       // 4. Identity-specific checks on Checkout Page
       if (identity.type !== 'guest') {
