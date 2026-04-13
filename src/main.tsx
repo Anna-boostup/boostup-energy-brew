@@ -9,7 +9,18 @@ if (import.meta.env.VITE_SENTRY_DSN) {
         dsn: import.meta.env.VITE_SENTRY_DSN,
         integrations: [
             Sentry.browserTracingIntegration(),
-            Sentry.replayIntegration(),
+            Sentry.replayIntegration({
+                // --- Privacy Settings (Sentry v8) ---
+                maskAllText: false,        // We allow site text to be visible
+                maskAllInputs: true,       // But we aggressively mask all user inputs
+                blockAllMedia: true,       // And block images/videos for PII safety
+                
+                // Re-enabling standard selectors for v8
+                unmask: ['.sentry-unmask', '[data-sentry-unmask]'],
+                mask: ['.sentry-mask', '[data-sentry-mask]'],
+                unblock: ['.sentry-unblock', '[data-sentry-unblock]'],
+                block: ['.sentry-block', '[data-sentry-block]'],
+            }),
         ],
         // Performance Monitoring
         tracesSampleRate: 1.0, 

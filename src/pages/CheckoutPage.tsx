@@ -877,7 +877,7 @@ const CheckoutPage = () => {
                           <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-black">
                             <MapPin size={24} />
                           </div>
-                          <div>
+                          <div data-sentry-mask>
                             <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{content.checkout.delivery.pickupPoint}</p>
                             <p className="font-black text-lg leading-tight">{selectedPoint.name}</p>
                             <p className="text-xs font-bold text-muted-foreground">{selectedPoint.street}, {selectedPoint.city}</p>

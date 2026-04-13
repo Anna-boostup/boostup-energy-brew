@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { useSearchParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
+import { newsletterTemplateService } from "@/lib/newsletterTemplateService";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -81,6 +79,8 @@ const EmailManagement = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [sendingTest, setSendingTest] = useState(false);
+    const [searchParams] = useSearchParams();
+    const [useMasterFrame, setUseMasterFrame] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
     // New template dialog state
@@ -103,7 +103,32 @@ const EmailManagement = () => {
 
     useEffect(() => {
         fetchTemplates();
-    }, []);
+        const blogId = searchParams.get('from_blog');
+        if (blogId) {
+            importBlogContent(blogId);
+        }
+    }, [searchParams]);
+
+    const importBlogContent = async (id: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('blog_posts')
+                .select('*')
+                .eq('id', id)
+                .single();
+            
+            if (error) throw error;
+            if (data) {
+                setCurrentSubject(data.title);
+                setCurrentContent(data.content);
+                setSelectedTypeId('newsletter_custom'); // Default to a custom type or keep existing
+                toast.success("Obsah blogu byl úspěšně importován.");
+            }
+        } catch (err) {
+            console.error('Error importing blog:', err);
+            toast.error("Nepodařilo se importovat obsah blogu.");
+        }
+    };
 
     const fetchTemplates = async () => {
         try {
@@ -282,6 +307,13 @@ const EmailManagement = () => {
                 body: JSON.stringify({
                     to: user.email,
                     type: selectedTypeId,
+                    subject: currentSubject,
+                    content_html: useMasterFrame 
+                        ? newsletterTemplateService.render({ 
+                            heroTitle: currentSubject, 
+                            bodyContent: currentContent 
+                        }) 
+                        : currentContent,
                     customerName: content?.admin?.emailManager?.testData?.customerName || "Test Customer",
                     orderNumber: content?.admin?.emailManager?.testData?.orderNumber || "TEST-001",
                     total: 999,
@@ -353,6 +385,13 @@ const EmailManagement = () => {
                         body: JSON.stringify({
                             to: sub.email,
                             type: selectedCampaignTemplate,
+                            subject: currentSubject,
+                            content_html: useMasterFrame 
+                                ? newsletterTemplateService.render({ 
+                                    heroTitle: currentSubject, 
+                                    bodyContent: currentContent 
+                                }) 
+                                : currentContent,
                             subscription_id: sub.id
                         })
                     });
@@ -702,8 +741,21 @@ const EmailManagement = () => {
                                         <span className="text-[9px] font-black text-olive/20 uppercase tracking-widest">{content?.admin?.emailManager?.editor?.styleLabel}</span>
                                     </div>
                                 </div>
-                                <div className="relative group">
-                                    {/* Placeholder Toolbar (Mobile) */}
+                                    <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <Switch 
+                                                checked={useMasterFrame} 
+                                                onCheckedChange={setUseMasterFrame} 
+                                                className="data-[state=checked]:bg-lime"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black uppercase text-white/60">Použít Master Šablonu</span>
+                                                <span className="text-[8px] text-white/20 uppercase font-bold">Zabalit obsah do značkového layoutu BoostUp</span>
+                                            </div>
+                                        </div>
+                                        <Badge variant="outline" className="bg-lime/10 text-lime border-lime/20 text-[8px] font-black">ACTIVE</Badge>
+                                    </div>
+
                                     <div className="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1 -mx-2 px-2">
                                         {getPlaceholdersForType(selectedTypeId).map((tag) => (
                                             <Button
@@ -717,11 +769,10 @@ const EmailManagement = () => {
                                             </Button>
                                         ))}
                                     </div>
-                                    <Textarea 
+                                    <RichTextEditor
                                         value={currentContent}
-                                        onChange={(e) => setCurrentContent(e.target.value)}
-                                        placeholder={content?.admin?.emailManager?.editor?.contentPlaceholder || "<div>Content</div>"}
-                                        className="min-h-[500px] rounded-[2rem] bg-background border-transparent font-mono text-sm text-olive-dark p-10 focus-visible:ring-lime shadow-sm leading-relaxed resize-none"
+                                        onChange={setCurrentContent}
+                                        placeholder="Zadejte obsah newsletteru..."
                                     />
                                 </div>
                             </div>

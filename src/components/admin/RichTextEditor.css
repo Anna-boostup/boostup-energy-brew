@@ -1,0 +1,64 @@
+
+/* Custom styles for React Quill to match BoostUp Admin */
+
+.rich-text-editor .ql-toolbar.ql-snow {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  padding: 12px;
+}
+
+.rich-text-editor .ql-container.ql-snow {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  min-height: 400px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: white;
+}
+
+.rich-text-editor .ql-editor {
+  min-height: 400px;
+  padding: 24px;
+  line-height: 1.7;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.2);
+  font-style: normal;
+}
+
+/* Toolbar Icons and Buttons */
+.rich-text-editor .ql-snow .ql-stroke {
+  stroke: rgba(255, 255, 255, 0.6);
+}
+
+.rich-text-editor .ql-snow .ql-fill {
+  fill: rgba(255, 255, 255, 0.6);
+}
+
+.rich-text-editor .ql-snow .ql-picker {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.rich-text-editor .ql-snow.ql-toolbar button:hover .ql-stroke,
+.rich-text-editor .ql-snow.ql-toolbar button:hover .ql-fill,
+.rich-text-editor .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.rich-text-editor .ql-snow.ql-toolbar button.ql-active .ql-fill {
+  stroke: #dfdf57; /* lime */
+  fill: #dfdf57;
+}
+
+.rich-text-editor .ql-snow.ql-toolbar .ql-picker-label:hover,
+.rich-text-editor .ql-snow.ql-toolbar .ql-picker-label.ql-active {
+  color: #dfdf57;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options {
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
