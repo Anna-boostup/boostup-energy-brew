@@ -19,8 +19,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Enable parallel workers on CI - GHA runners have 2 cores */
-  workers: process.env.CI ? 2 : undefined,
+  /* Force 1 worker on CI for maximum stability in resource-constrained environments */
+  workers: process.env.CI ? 1 : undefined,
+  // CI_STABILITY_MARKER: V2_SINGLE_WORKER_FIX
   /* Timeout per test (increased for reliability) */
   timeout: 120000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
