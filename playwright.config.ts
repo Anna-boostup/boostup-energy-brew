@@ -33,6 +33,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173',
+    bypassCSP: true,
 
     /* Collect trace for CI debugging or when retrying locally */
     trace: process.env.CI ? 'on' : 'on-first-retry',

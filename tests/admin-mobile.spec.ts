@@ -57,6 +57,10 @@ test.describe('Admin Mobile UI Audit', () => {
         const loader = page.getByTestId('admin-loader');
         await expect(loader).toBeHidden({ timeout: 20000 });
         
+        // 🧪 EMERGENCY DIAGNOSTIC
+        console.log('DIAGNOSTIC - CURRENT URL:', page.url());
+        await page.screenshot({ path: 'test-results/safari-debug-pre-title.png', fullPage: true });
+        
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 45000 });
 
         // Check for specific icons known to be in Orders (e.g., sync icon)
