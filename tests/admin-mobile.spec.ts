@@ -51,7 +51,7 @@ test.describe('Admin Mobile UI Audit', () => {
 
         // 4. Verify specific mobile UI changes (Icons instead of Text)
         await page.goto('/admin/orders');
-        await page.waitForLoadState('networkidle', { timeout: 30000 });
+        await page.waitForLoadState('load', { timeout: 30000 });
         
         // Ensure loader is hidden before checking the title
         const loader = page.getByTestId('admin-loader');
@@ -73,10 +73,10 @@ test.describe('Admin Mobile UI Audit', () => {
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 45000 });
         
 
-        // Check for specific icons known to be in Orders (e.g., sync icon)
-        // We look for buttons that contain SVGs. In mobile mode, these buttons often lose their text label.
-        const iconButtons = page.locator('button').filter({ has: page.locator('svg') });
-        await expect(iconButtons.first()).toBeVisible({ timeout: 10000 });
+        // Check for specific icons known to be in Orders (e.g., eye icon)
+        // We look for buttons that contain SVGs and are VISIBLE (not in hidden sidebar).
+        const iconButtons = page.locator('button').filter({ has: page.locator('svg'), visible: true });
+        await expect(iconButtons.first()).toBeVisible({ timeout: 15000 });
         
         // 5. Visual health check: No horizontal scroll on the main container
         const hasHorizontalScroll = await page.evaluate(() => {

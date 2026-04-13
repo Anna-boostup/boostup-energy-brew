@@ -62,7 +62,7 @@ test.describe('Admin Dashboard Audit', () => {
 
     for (const adminPage of adminPages) {
       // Wait for navigation and loading to finish
-      await page.waitForLoadState('networkidle', { timeout: 30000 });
+      await page.waitForLoadState('load', { timeout: 30000 });
       const loader = page.getByTestId('admin-loader');
       await expect(loader).toBeHidden({ timeout: 20000 });
       

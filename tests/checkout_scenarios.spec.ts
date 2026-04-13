@@ -59,7 +59,7 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
         }
         
         // 🧪 Stabilization: Wait for everything to settle before going back to Home
-        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => console.log('Networkidle timeout - moving on anyway'));
+        await page.waitForLoadState('load', { timeout: 15000 }).catch(() => console.log('Load state timeout - moving on anyway'));
       }
 
       // 2. Add product to cart
