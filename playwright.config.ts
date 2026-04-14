@@ -41,13 +41,13 @@ export default defineConfig({
     // Setup project for authentication
     {
       name: 'setup',
-      testMatch: /auth\.setup\.ts/,
+      testMatch: 'tests/auth.setup.ts',
     },
     
-    // Admin Tests (Logged in)
+    // Admin Desktop
     {
-      name: 'admin-chromium',
-      testMatch: /admin\.spec\.ts|admin-mobile\.spec\.ts/,
+      name: 'admin-desktop',
+      testMatch: 'tests/admin.spec.ts',
       use: { 
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
@@ -55,28 +55,39 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
-    // Company & Customer Tests
+    // Admin Mobile
     {
-      name: 'checkout-scenarios',
-      testMatch: /checkout_scenarios\.spec\.ts/,
+      name: 'admin-mobile',
+      testMatch: 'tests/admin-mobile.spec.ts',
+      use: { 
+        ...devices['Pixel 5'],
+        storageState: 'playwright/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+    },
+
+    // Checkout Scenarios (Guest or Logged in depending on test logic)
+    {
+      name: 'checkout',
+      testMatch: 'tests/checkout_scenarios.spec.ts',
       use: { 
         ...devices['Desktop Chrome'],
       },
       dependencies: ['setup'],
     },
 
-    // Guest / General Tests (No Login)
+    // Guest / General Smoke Tests
     {
-      name: 'chromium-guest',
-      testMatch: /smoke\.spec\.ts/,
+      name: 'smoke-desktop',
+      testMatch: 'tests/smoke.spec.ts',
       use: { 
         ...devices['Desktop Chrome'],
       },
     },
 
     {
-      name: 'mobile-guest',
-      testMatch: /mobile\.spec\.ts/,
+      name: 'smoke-mobile',
+      testMatch: 'tests/mobile.spec.ts',
       use: { 
         ...devices['Pixel 5'],
       },

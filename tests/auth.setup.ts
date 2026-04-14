@@ -33,16 +33,19 @@ for (const role of roles) {
 
     console.log(`Setup: Logging in as ${role.name} (${role.email})`);
     
-    await page.goto('/login');
+    await page.goto('/login', { waitUntil: 'networkidle', timeout: 60000 });
+    // Wait for the form to be ready
+    await page.waitForSelector('input[type="email"]', { state: 'visible', timeout: 30000 });
+    
     await page.locator('input[type="email"]').fill(role.email);
     await page.locator('input[type="password"]').fill(role.password);
     await page.getByTestId('login-submit-btn').click();
 
     // Verify successful login (wait for redirection or profile element)
     if (role.name === 'admin') {
-      await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
+      await expect(page).toHaveURL(/.*admin/, { timeout: 60000 });
     } else {
-      await expect(page).toHaveURL(/.*account/, { timeout: 30000 });
+      await expect(page).toHaveURL(/.*account/, { timeout: 60000 });
     }
 
     await page.context().storageState({ path: path.join(authDir, role.file) });

@@ -5,16 +5,8 @@ test.describe('Admin Mobile UI Audit', () => {
     test.use({ viewport: { width: 390, height: 844 } }); // iPhone 12/13/14 viewport
 
     test('should verify mobile admin layout and iconography', async ({ page }) => {
-        const email = process.env.TEST_ADMIN_EMAIL;
-        const password = process.env.TEST_ADMIN_PASSWORD;
-
-        if (!email || !password) {
-            test.skip(true, 'Admin credentials not provided');
-            return;
-        }
-
-        // 1. Audit starts already logged in via storageState
-        await page.goto('/admin');
+        // 1. Audit starts already logged in via storageState from setup project
+        await page.goto('/admin', { waitUntil: 'networkidle', timeout: 60000 });
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 15000 });
 
         // 3. Test Sidebar/Mobile Menu
