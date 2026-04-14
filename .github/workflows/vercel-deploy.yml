@@ -176,7 +176,10 @@ jobs:
         with:
           urls: |
             https://drinkboostup.cz/
-            https://preview.drinkboostup.cz/?x-vercel-protection-bypass=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}&x-vercel-set-bypass-cookie=true
+            https://preview.drinkboostup.cz/
+          configPath: .github/lighthouse/lighthouserc.js
           uploadArtifacts: true
           temporaryPublicStorage: true
           budgetPath: ./lighthouse-budget.json
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
