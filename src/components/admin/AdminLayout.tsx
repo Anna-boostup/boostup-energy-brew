@@ -233,7 +233,7 @@ const AdminLayout = () => {
                         : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`pt-12 pb-8 shrink-0 relative flex items-center ${!isExpanded ? 'justify-center px-4' : 'px-10'}`}>
+                <div className={`pt-10 pb-8 shrink-0 relative flex items-center ${!isExpanded ? 'justify-center px-4' : 'px-10'}`}>
                     <Link to="/" className="flex items-center group">
                         <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white'}`}>
                             {isExpanded ? (
@@ -263,8 +263,8 @@ const AdminLayout = () => {
                     )}
                 </div>
 
-                <div className={`px-6 pt-8 pb-4 ${!isExpanded ? 'px-4 flex justify-center' : ''}`}>
-                    <Link to="/" className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'px-0 justify-center w-12 h-12 p-0' : ''}`}>
+                <div className={`px-6 pt-4 pb-4 ${!isExpanded ? 'px-0 flex justify-center' : ''}`}>
+                    <Link to="/" className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'px-0 justify-center w-12 h-12 p-0 mx-auto' : ''}`}>
                         <ExternalLink className={`w-5 h-5 ${!isExpanded ? '' : 'shrink-0'}`} />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}
                     </Link>
@@ -328,9 +328,9 @@ const AdminLayout = () => {
 
                     <Link 
                         to="/admin/profile" 
-                        className={`px-5 py-5 flex items-center gap-4 rounded-[2.5rem] transition-all duration-300 border border-transparent bg-olive-dark/10 border-white/5 hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${!isExpanded ? 'p-0 w-12 h-12 justify-center rounded-2xl' : ''}`}
+                        className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5' : 'p-0 w-12 h-12 justify-center rounded-2xl mx-auto'}`}
                     >
-                        <div className={`w-12 h-12 min-w-[3rem] rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-xl shadow-lime/20 shrink-0 ${!isExpanded ? 'w-full h-full min-w-0' : ''}`}>
+                        <div className={`rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem]' : 'w-full h-full'}`}>
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
                         </div>
                         {isExpanded && (
