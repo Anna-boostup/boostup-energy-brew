@@ -227,32 +227,47 @@ const AdminLayout = () => {
             <aside 
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className={`hidden md:flex flex-col sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 z-[45] rounded-[3rem] shadow-2xl border border-white/5 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                className={`hidden md:flex flex-col sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 z-[45] rounded-[3rem] shadow-2xl border border-white/5 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
                     isExpanded 
-                        ? 'w-80 left-4 translate-x-0 opacity-100' 
-                        : 'w-80 -translate-x-[calc(100%+2rem)] opacity-0 pointer-events-none'
+                        ? 'w-80 left-4 translate-x-0' 
+                        : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`p-10 pb-8 shrink-0 relative`}>
+                <div className={`p-10 pb-8 shrink-0 relative flex items-center ${!isExpanded ? 'justify-center p-6' : ''}`}>
                     <Link to="/" className="flex items-center group">
-                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 text-3xl`}>
-                            BOOST<span className="text-white">UP</span>
+                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-xl'}`}>
+                            {isExpanded ? (
+                                <>BOOST<span className="text-white">UP</span></>
+                            ) : (
+                                <><span className="text-white">B</span>U</>
+                            )}
                         </span>
                     </Link>
-                    <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500">
-                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
-                    </div>
+                    {isExpanded && (
+                        <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500 absolute -bottom-4 left-10">
+                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
+                        </div>
+                    )}
                     
                     {/* Pin Button */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsPinned(!isPinned)}
-                        className={`absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500`}
-                    >
-                        {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
-                    </Button>
+                    {isExpanded && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsPinned(!isPinned)}
+                            className="absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500"
+                        >
+                            {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
+                        </Button>
+                    )}
+                </div>
+
+                <div className={`px-6 pt-8 pb-4 ${!isExpanded ? 'px-4 flex justify-center' : ''}`}>
+                    <Link to="/" className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'px-0 justify-center w-12 h-12 p-0' : ''}`}>
+                        <ExternalLink className={`w-5 h-5 ${!isExpanded ? '' : 'shrink-0'}`} />
+                        {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}
+                    </Link>
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
@@ -267,23 +282,29 @@ const AdminLayout = () => {
                                         className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 group ${isActive
                                             ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.02] z-10"
                                             : "text-white/50 hover:bg-white/5 hover:text-white hover:pl-8"
-                                            } `}
+                                            } ${!isExpanded ? 'px-0 justify-center' : ''}`}
+                                        title={!isExpanded ? item.label : undefined}
                                         aria-current={isActive ? "page" : undefined}
                                     >
                                         <div className="flex items-center gap-4">
                                             <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
-                                            <span className="text-xs font-black uppercase tracking-widest animate-in slide-in-from-left-2 duration-300">{item.label}</span>
+                                            {isExpanded && <span className="text-xs font-black uppercase tracking-widest animate-in slide-in-from-left-2 duration-300">{item.label}</span>}
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
-                                                    {unreadCount}
-                                                </Badge>
-                                            )}
-                                            {item.hasAlert && (
-                                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
-                                            )}
-                                        </div>
+                                        {isExpanded && (
+                                            <div className="flex items-center gap-2">
+                                                {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                    <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
+                                                        {unreadCount}
+                                                    </Badge>
+                                                )}
+                                                {item.hasAlert && (
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+                                                )}
+                                            </div>
+                                        )}
+                                        {!isExpanded && (item.path === '/admin/messages' && unreadCount > 0 || item.hasAlert) && (
+                                            <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-lg" />
+                                        )}
                                     </button>
                                 </li>
                             );
@@ -291,45 +312,49 @@ const AdminLayout = () => {
                     </ul>
                 </div>
 
-                <div className="p-8 border-t border-white/5 space-y-4">
+                <div className={`p-8 border-t border-white/5 space-y-4 ${!isExpanded ? 'p-4 flex flex-col items-center' : ''}`}>
                     {/* Pin Logic in text for better UX */}
-                    <div className="flex items-center justify-between px-4">
-                        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20">Auto-hide Sidebar</span>
-                        <div 
-                            onClick={() => setIsPinned(!isPinned)}
-                            className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors duration-300 ${isPinned ? 'bg-lime/20' : 'bg-primary/20'}`}
-                        >
-                            <div className={`absolute top-0.5 h-3 w-3 rounded-full transition-all duration-300 ${isPinned ? 'right-0.5 bg-lime' : 'left-0.5 bg-white/40'}`} />
+                    {isExpanded && (
+                        <div className="flex items-center justify-between px-4">
+                            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20">Auto-hide Sidebar</span>
+                            <div 
+                                onClick={() => setIsPinned(!isPinned)}
+                                className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors duration-300 ${isPinned ? 'bg-lime/20' : 'bg-primary/20'}`}
+                            >
+                                <div className={`absolute top-0.5 h-3 w-3 rounded-full transition-all duration-300 ${isPinned ? 'right-0.5 bg-lime' : 'left-0.5 bg-white/40'}`} />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <Link 
                         to="/admin/profile" 
-                        className={`px-5 py-5 flex items-center gap-4 rounded-[2.5rem] transition-all duration-300 border border-transparent bg-olive-dark/10 border-white/5 hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''}`}
+                        className={`px-5 py-5 flex items-center gap-4 rounded-[2.5rem] transition-all duration-300 border border-transparent bg-olive-dark/10 border-white/5 hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${!isExpanded ? 'p-0 w-12 h-12 justify-center rounded-2xl' : ''}`}
                     >
-                        <div className="w-12 h-12 min-w-[3rem] rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-xl shadow-lime/20 shrink-0">
+                        <div className={`w-12 h-12 min-w-[3rem] rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-xl shadow-lime/20 shrink-0 ${!isExpanded ? 'w-full h-full min-w-0' : ''}`}>
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
                         </div>
-                        <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
-                            <span className="text-[11px] font-black text-white truncate leading-tight uppercase tracking-[0.2em]">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
-                            <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
-                        </div>
+                        {isExpanded && (
+                            <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
+                                <span className="text-[11px] font-black text-white truncate leading-tight uppercase tracking-[0.2em]">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
+                                <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
+                            </div>
+                        )}
                     </Link>
                     
                     <Button
                         variant="ghost"
                         size="sm"
-                        className={`w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2x h-12 px-6`}
+                        className={`w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 px-6 ${!isExpanded ? 'px-0 justify-center w-12' : ''}`}
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 shrink-0" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 animate-in slide-in-from-left-2 duration-300">{content?.admin?.auth?.logout || "Logout"}</span>
+                        {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 animate-in slide-in-from-left-2 duration-300">{content?.admin?.auth?.logout || "Logout"}</span>}
                     </Button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-0'}`}>
+            <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-24'}`}>
                 <div className="max-w-[1600px] mx-auto">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-in fade-in duration-700">
