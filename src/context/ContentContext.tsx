@@ -19,15 +19,44 @@ const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
 const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null): SiteContent => {
     if (!dbContent) return base;
+
+    // Helper to ensure Blog exists in a navigation array
+    const ensureBlogInNav = (nav: any[], contactLabel: string = "Kontakt") => {
+        if (!nav) return nav;
+        if (nav.some(item => item.label === "Blog")) return nav;
+        const contactIndex = nav.findIndex(item => item.label === contactLabel);
+        if (contactIndex === -1) return [...nav, { label: "Blog", href: "/blog" }];
+        
+        const newNav = [...nav];
+        newNav.splice(contactIndex, 0, { label: "Blog", href: "/blog" });
+        return newNav;
+    };
+
+    const navigation = ensureBlogInNav(dbContent.navigation || base.navigation, "Kontakt");
+    
+    const footer = { ...base.footer, ...(dbContent.footer || {}) };
+    if (footer.links) {
+        footer.links = footer.links.map(group => {
+            if (group.title === "NAVIGACE") {
+                return {
+                    ...group,
+                    items: ensureBlogInNav(group.items, "Kontakt")
+                };
+            }
+            return group;
+        });
+    }
+
     return {
         ...base,
         ...dbContent,
+        navigation,
+        footer,
         hero: { ...base.hero, ...(dbContent.hero || {}) },
         mission: { ...base.mission, ...(dbContent.mission || {}) },
         social: base.social,
         cta: { ...base.cta, ...(dbContent.cta || {}) },
         contact: { ...base.contact, ...(dbContent.contact || {}) },
-        footer: { ...base.footer, ...(dbContent.footer || {}) },
         flavors: (() => {
             const merged = { ...base.flavors };
             if (dbContent.flavors) {
