@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Edit2, Trash2, Mail, Search, Filter } from "lucide-react";
+import { Plus, Edit2, Trash2, Mail, Search, Filter, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -178,8 +178,17 @@ export default function BlogManagement() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                        className="w-9 h-9 rounded-xl border border-olive-dark/5 bg-olive-dark/5 text-olive-dark/60 hover:text-olive-dark hover:bg-olive-dark/10 transition-all"
+                        title="Náhled článku"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
-                        className="w-9 h-9 rounded-xl hover:bg-olive-dark/5 text-olive-dark/40 hover:text-olive-dark transition-all"
+                        className="w-9 h-9 rounded-xl border border-olive-dark/5 bg-olive-dark/5 text-olive-dark/60 hover:text-olive-dark hover:bg-olive-dark/10 transition-all"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
@@ -187,11 +196,10 @@ export default function BlogManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => {
-                          // Transfer content to newsletter logic
                           toast.info("Přenáším obsah do newsletteru...");
                           navigate(`/admin/emails?from_blog=${post.id}`);
                         }}
-                        className="w-9 h-9 rounded-xl hover:bg-lime/20 text-white/40 hover:text-lime transition-all"
+                        className="w-9 h-9 rounded-xl border border-primary/10 bg-primary/5 text-primary/60 hover:text-primary hover:bg-primary/20 transition-all"
                         title="Vytvořit Newsletter"
                       >
                         <Mail className="w-4 h-4" />
@@ -200,7 +208,7 @@ export default function BlogManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(post.id)}
-                        className="w-9 h-9 rounded-xl hover:bg-red-500/20 text-white/40 hover:text-red-500 transition-all"
+                        className="w-9 h-9 rounded-xl border border-red-500/10 bg-red-500/5 text-red-500/60 hover:text-red-500 hover:bg-red-500/20 transition-all"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
