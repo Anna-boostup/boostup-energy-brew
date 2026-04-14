@@ -137,13 +137,17 @@ export default function BlogEditor() {
         if (error) throw error;
         toast.success("Článek byl aktualizován.");
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('blog_posts')
-          .insert([{ ...payload, created_at: new Date().toISOString() }]);
+          .insert([{ ...payload, created_at: new Date().toISOString() }])
+          .select()
+          .single();
         if (error) throw error;
         toast.success("Článek byl vytvořen.");
+        if (data) {
+          navigate(`/admin/blog/edit/${data.id}`, { replace: true });
+        }
       }
-      navigate("/admin/blog");
     } catch (error: any) {
       console.error('Save error:', error);
       toast.error(`Chyba při ukládání článku: ${error.message || "Neznámá chyba"}`);
