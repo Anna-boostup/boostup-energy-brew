@@ -110,6 +110,14 @@ export default function BlogEditor() {
     }));
   };
 
+  const handlePreview = () => {
+    if (!formData.slug) {
+      toast.error("Před náhledem je nutné článek alespoň jednou uložit.");
+      return;
+    }
+    window.open(`/blog/${formData.slug}`, '_blank');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.content) {
@@ -205,7 +213,7 @@ export default function BlogEditor() {
           <Button 
             variant="outline" 
             className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-12 hover:bg-olive-dark/10 px-6 gap-2"
-            onClick={() => toast.info("Náhled bude k dispozici po uložení.")}
+            onClick={handlePreview}
           >
             <Eye className="w-4 h-4" />
             Náhled
