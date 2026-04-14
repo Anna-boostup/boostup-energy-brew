@@ -1,4 +1,4 @@
-import { test as setup, expect } from '@playwright/test';
+import { test as setup, expect } from './fixtures';
 import path from 'path';
 
 const authDir = path.join(import.meta.dirname || '', '../playwright/.auth');
