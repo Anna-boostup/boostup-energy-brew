@@ -177,7 +177,7 @@ jobs:
           urls: |
             https://drinkboostup.cz/
             https://preview.drinkboostup.cz/
-          configPath: .github/lighthouse/lighthouserc.js
+          configPath: .github/lighthouse/lighthouserc.cjs
           uploadArtifacts: true
           temporaryPublicStorage: true
           budgetPath: ./lighthouse-budget.json
