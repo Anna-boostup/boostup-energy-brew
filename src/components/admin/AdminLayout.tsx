@@ -292,15 +292,17 @@ const AdminLayout = () => {
                                                 )}
                                             </div>
                                             {isExpanded && (
-                                                {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                    <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
-                                                        {unreadCount}
-                                                    </Badge>
-                                                )}
-                                                {item.hasAlert && (
-                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label={content.admin.alerts.lowStock} />
-                                                )}
-                                            </div>
+                                                <div className="flex items-center gap-2">
+                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
+                                                            {unreadCount}
+                                                        </Badge>
+                                                    )}
+                                                    {item.hasAlert && (
+                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label={content.admin.alerts.lowStock} />
+                                                    )}
+                                                </div>
+                                            )}
                                         </button>
                                     )}
                                 </li>

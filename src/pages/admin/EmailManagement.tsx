@@ -741,40 +741,39 @@ const EmailManagement = () => {
                                         <span className="text-[9px] font-black text-olive/20 uppercase tracking-widest">{content?.admin?.emailManager?.editor?.styleLabel}</span>
                                     </div>
                                 </div>
-                                    <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <Switch 
-                                                checked={useMasterFrame} 
-                                                onCheckedChange={setUseMasterFrame} 
-                                                className="data-[state=checked]:bg-lime"
-                                            />
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black uppercase text-white/60">Použít Master Šablonu</span>
-                                                <span className="text-[8px] text-white/20 uppercase font-bold">Zabalit obsah do značkového layoutu BoostUp</span>
-                                            </div>
+                                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <Switch 
+                                            checked={useMasterFrame} 
+                                            onCheckedChange={setUseMasterFrame} 
+                                            className="data-[state=checked]:bg-lime"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase text-white/60">Použít Master Šablonu</span>
+                                            <span className="text-[8px] text-white/20 uppercase font-bold">Zabalit obsah do značkového layoutu BoostUp</span>
                                         </div>
-                                        <Badge variant="outline" className="bg-lime/10 text-lime border-lime/20 text-[8px] font-black">ACTIVE</Badge>
                                     </div>
-
-                                    <div className="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1 -mx-2 px-2">
-                                        {getPlaceholdersForType(selectedTypeId).map((tag) => (
-                                            <Button
-                                                key={tag}
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
-                                                className="h-8 rounded-lg bg-olive-dark/5 border-olive/10 text-olive-dark font-black text-[9px] uppercase tracking-widest whitespace-nowrap px-3 hover:bg-lime hover:border-lime"
-                                            >
-                                                {tag}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                    <RichTextEditor
-                                        value={currentContent}
-                                        onChange={setCurrentContent}
-                                        placeholder="Zadejte obsah newsletteru..."
-                                    />
+                                    <Badge variant="outline" className="bg-lime/10 text-lime border-lime/20 text-[8px] font-black">ACTIVE</Badge>
                                 </div>
+
+                                <div className="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1 -mx-2 px-2">
+                                    {getPlaceholdersForType(selectedTypeId).map((tag) => (
+                                        <Button
+                                            key={tag}
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
+                                            className="h-8 rounded-lg bg-olive-dark/5 border-olive/10 text-olive-dark font-black text-[9px] uppercase tracking-widest whitespace-nowrap px-3 hover:bg-lime hover:border-lime"
+                                        >
+                                            {tag}
+                                        </Button>
+                                    ))}
+                                </div>
+                                <RichTextEditor
+                                    value={currentContent}
+                                    onChange={setCurrentContent}
+                                    placeholder="Zadejte obsah newsletteru..."
+                                />
                             </div>
 
                             {/* Placeholders Help (Desktop) */}
