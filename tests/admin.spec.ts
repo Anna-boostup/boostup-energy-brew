@@ -10,41 +10,11 @@ test.describe('Admin Dashboard Audit', () => {
       return;
     }
 
-    // 1. Login
-    console.log(`DIAGNOSTIC: Attempting login with email: ${email.substring(0, 3)}...`);
-    await page.goto('/login', { timeout: 60000 });
-    
-    // Explicitly wait for the input to be present to avoid race conditions
-    const emailInput = page.locator('input[type="email"]');
-    await emailInput.waitFor({ state: 'visible', timeout: 60000 });
-    
-    await emailInput.fill(email);
-    await page.fill('input[type="password"]', password);
-    await page.getByTestId('login-submit-btn').click();
-    
-    // Diagnostic: Check for error messages if the URL doesn't change
-    try {
-        await expect(page).toHaveURL(/.*admin/, { timeout: 20000 });
-    } catch (e) {
-        // Take a screenshot of the login page state on failure
-        await page.screenshot({ path: 'test-results/login-failure-diagnostic.png' });
-        
-        const errorText = await page.innerText('body');
-        console.error('DIAGNOSTIC: Login failed or redirected slowly.');
-        console.log('Current URL:', page.url());
-        
-        if (errorText.includes('Nesprávné heslo') || errorText.includes('Uživatel nenalezen')) {
-            console.error('CRITICAL: Authentication rejected. Check CI Secrets (TEST_ADMIN_EMAIL/PASSWORD).');
-            throw new Error(`Auth failed: ${errorText.substring(0, 50)}`);
-        }
-        throw e;
-    }
-
-    // 2. Verify Dashboard redirection
-    await expect(page).toHaveURL(/.*admin/, { timeout: 45000 });
+    // 1. Audit all pages listed in AdminLayout
+    // Since we are using storageState, we start already logged in.
+    await page.goto('/admin');
     const dashboardTitle = page.getByTestId('admin-page-title');
-    await dashboardTitle.waitFor({ state: 'visible', timeout: 30000 });
-    await expect(dashboardTitle).toBeVisible();
+    await expect(dashboardTitle).toBeVisible({ timeout: 15000 });
 
     // 3. Audit all pages listed in AdminLayout
     const adminPages = [

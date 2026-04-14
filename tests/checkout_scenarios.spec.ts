@@ -29,53 +29,29 @@ const identities = [
 
 test.describe('Multi-Identity Checkout Scenarios', () => {
   for (const identity of identities) {
-    test(`Purchase flow as ${identity.name}`, async ({ page }, testInfo) => {
-      const workerId = testInfo.workerIndex;
-      
-      // 1. Handle Login if not guest
+    test.describe(`Purchase as ${identity.name}`, () => {
+      // Apply storage state for logged-in users
       if (identity.type !== 'guest') {
-        await page.goto('/login', { timeout: 60000 });
-        
-        // Wait for input to be present to avoid race conditions on slow loads
-        const emailInput = page.locator('input[type="email"]');
-        await emailInput.waitFor({ state: 'visible', timeout: 30000 });
-        
-        await emailInput.fill(identity.email);
-        await page.fill('input[type="password"]', identity.password);
-        await page.getByTestId('login-submit-btn').click();
-        
-        try {
-          if (identity.type === 'admin') {
-            await expect(page).toHaveURL(/.*admin/, { timeout: 15000 });
-          } else if (identity.type === 'company') {
-            await expect(page).toHaveURL(/.*company-account/, { timeout: 15000 });
-          } else {
-            await expect(page).toHaveURL(/.*account/, { timeout: 15000 });
-          }
-        } catch (e) {
-          const currentUrl = page.url();
-          const toastError = await page.getByRole('alert').or(page.getByRole('status')).innerText({ timeout: 3000 }).catch(() => "No alert visible. Silent crash or timeout?");
-          throw new Error(`CRITICAL LOGIN FAILURE at ${currentUrl}: Navigation did not happen. UI Alert displayed: "${toastError}"`);
-        }
-        
-        // 🧪 Stabilization: Wait for everything to settle before going back to Home
-        // Redirects can be slow, so we wait for the final URL to stabilize
-        await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => console.log('Network idle timeout - proceeding anyway'));
-        await page.waitForTimeout(1000); 
+        const stateFile = identity.type === 'personal' ? 'customer.json' : 
+                         identity.type === 'company' ? 'company.json' : 'admin.json';
+        test.use({ storageState: `playwright/.auth/${stateFile}` });
       }
 
-      // 2. Add product to cart
-      // Use domcontentloaded then follow with load check to be resilient to interruptions
-      try {
-        await page.goto('/', { waitUntil: 'load', timeout: 30000 });
-      } catch (e: any) {
-        if (e.message.includes('interrupted')) {
-          console.log('Navigation interrupted by internal redirect, retrying...');
+      test(`Purchase flow`, async ({ page }, testInfo) => {
+        const workerId = testInfo.workerIndex;
+        
+        // 1. Add product to cart (Starts already logged in if not guest)
+        // Use domcontentloaded then follow with load check to be resilient to interruptions
+        try {
           await page.goto('/', { waitUntil: 'load', timeout: 30000 });
-        } else {
-          throw e;
+        } catch (e: any) {
+          if (e.message.includes('interrupted')) {
+            console.log('Navigation interrupted by internal redirect, retrying...');
+            await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+          } else {
+            throw e;
+          }
         }
-      }
       const addToCartButton = page.getByTestId('add-to-cart-hero-btn');
       await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
       await addToCartButton.click();
@@ -137,6 +113,7 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       
       // We don't actually submit to avoid creating junk orders unless it's a dry run
       // await submitButton.click();
+      });
     });
   }
 });

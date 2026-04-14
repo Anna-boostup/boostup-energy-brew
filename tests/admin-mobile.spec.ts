@@ -13,30 +13,8 @@ test.describe('Admin Mobile UI Audit', () => {
             return;
         }
 
-        // 1. Login
-        await page.goto('/login', { timeout: 60000 });
-        
-        // Wait for input to be present
-        const emailInput = page.locator('input[type="email"]');
-        await emailInput.waitFor({ state: 'visible', timeout: 30000 });
-        
-        await emailInput.fill(email);
-        await page.fill('input[type="password"]', password);
-        await page.getByTestId('login-submit-btn').click();
-
-        // 2. Wait for Dashboard with Diagnostic
-        try {
-            await expect(page).toHaveURL(/.*admin/, { timeout: 15000 });
-        } catch (e) {
-            const errorText = await page.innerText('body');
-            console.error('DIAGNOSTIC: Login failed in development/mobile environment');
-            if (errorText.includes('Nesprávné heslo') || errorText.includes('Uživatel nenalezen')) {
-                throw new Error(`Authentication failed during test: ${errorText.substring(0, 100)}`);
-            }
-            throw e;
-        }
-
-        // 3. Verify Dashboard title to ensure full load
+        // 1. Audit starts already logged in via storageState
+        await page.goto('/admin');
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 15000 });
 
         // 3. Test Sidebar/Mobile Menu
