@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2 } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -84,6 +84,19 @@ const AdminLayout = () => {
 
     if (!user) {
         return <Navigate to="/login" replace />;
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-admin-canvas flex flex-col items-center justify-center p-8 gap-6 animate-in fade-in duration-700">
+                <div className="w-16 h-16 bg-olive-dark rounded-3xl flex items-center justify-center shadow-2xl animate-pulse-soft">
+                    <Sparkles className="w-8 h-8 text-lime" />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 animate-pulse">
+                    {content?.admin?.auth?.verifying || "Verifying Access..."}
+                </p>
+            </div>
+        );
     }
 
     if (profile?.role !== 'admin') {
@@ -265,7 +278,7 @@ const AdminLayout = () => {
 
                 <div className={`px-6 pt-4 pb-4 ${!isExpanded ? 'px-0 flex justify-center' : ''}`}>
                     <Link to="/" className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'px-0 justify-center w-12 h-12 p-0 mx-auto' : ''}`}>
-                        <ExternalLink className={`w-5 h-5 ${!isExpanded ? '' : 'shrink-0'}`} />
+                        <Home className={`w-5 h-5 ${!isExpanded ? '' : 'shrink-0'}`} />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}
                     </Link>
                 </div>
@@ -328,9 +341,9 @@ const AdminLayout = () => {
 
                     <Link 
                         to="/admin/profile" 
-                        className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5' : 'p-0 w-12 h-12 justify-center rounded-2xl mx-auto'}`}
+                        className={`flex items-center justify-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5' : 'p-0 w-12 h-12 rounded-2xl mx-auto'}`}
                     >
-                        <div className={`rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem]' : 'w-full h-full'}`}>
+                        <div className={`rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem] text-sm' : 'w-full h-full text-lg'}`}>
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
                         </div>
                         {isExpanded && (
@@ -356,14 +369,9 @@ const AdminLayout = () => {
             {/* Main Content */}
             <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-24'}`}>
                 <div className="max-w-[1600px] mx-auto">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-in fade-in duration-700">
-                            <div className="w-16 h-16 bg-olive-dark rounded-3xl flex items-center justify-center shadow-2xl animate-pulse-soft">
-                                <Sparkles className="w-8 h-8 text-lime" />
-                            </div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 animate-pulse">
-                                {content?.admin?.auth?.verifying || "Verifying Access..."}
-                            </p>
+                    {false ? (
+                        <div className="flex">
+                            {/* Removed old loader from here as it's now handled by higher-level guard */}
                         </div>
                     ) : (
                         <AdminErrorBoundary>
