@@ -1,7 +1,7 @@
 import { test as setup, expect } from '@playwright/test';
 import path from 'path';
 
-const authDir = path.join(__dirname, '../playwright/.auth');
+const authDir = path.join(import.meta.dirname || '', '../playwright/.auth');
 
 const roles = [
   {
