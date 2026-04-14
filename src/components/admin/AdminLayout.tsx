@@ -273,9 +273,9 @@ const AdminLayout = () => {
                         : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`pt-10 pb-8 shrink-0 relative flex items-center ${!isExpanded ? 'justify-center px-4' : 'px-10'}`}>
+                <div className={`pt-10 pb-8 shrink-0 relative flex items-center justify-center`}>
                     <Link to="/" className="flex items-center group">
-                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white'}`}>
+                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white text-center'}`}>
                             {isExpanded ? (
                                 <>BOOST<span className="text-white">UP</span></>
                             ) : (
@@ -303,9 +303,9 @@ const AdminLayout = () => {
                     )}
                 </div>
 
-                <div className={`px-6 pt-4 pb-4 ${!isExpanded ? 'px-0 flex justify-center' : ''}`}>
-                    <Link to="/" className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'px-0 justify-center w-12 h-12 p-0 mx-auto' : ''}`}>
-                        <Home className={`w-5 h-5 ${!isExpanded ? '' : 'shrink-0'}`} />
+                <div className={`pt-4 pb-4 flex justify-center w-full px-4`}>
+                    <Link to="/" className={`flex items-center gap-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'justify-center w-12 h-12 p-0' : 'w-full px-6 py-4'}`}>
+                        <Home className="w-5 h-5 shrink-0" />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}
                     </Link>
                 </div>
@@ -316,29 +316,29 @@ const AdminLayout = () => {
                             {isExpanded ? (
                                 <p className="px-10 text-[9px] font-black tracking-[0.4em] text-white/20 mb-4 uppercase">{group.title}</p>
                             ) : (
-                                <div className="h-px bg-white/5 mx-6 mb-4" />
+                                <div className="h-px bg-white/5 mx-4 mb-4" />
                             )}
-                            <ul className="space-y-1 px-4" role="list">
+                            <ul className="space-y-1 w-full" role="list">
                                 {group.items.map((item) => {
                                     const Icon = item.icon;
                                     const isActive = location.pathname === item.path;
                                     return (
-                                        <li key={item.path} className="relative group/nav">
-                                            {/* Active Pill Indicator */}
+                                        <li key={item.path} className="relative group/nav flex justify-center w-full px-4">
+                                            {/* Active Pill Indicator - absolutely positioned back to the very left edge of aside */}
                                             {isActive && (
-                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-lime rounded-r-full shadow-[0_0_15px_rgba(163,230,53,0.8)] z-20" />
+                                                <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-lime rounded-r-full shadow-[0_0_15px_rgba(163,230,53,0.8)] z-20" />
                                             )}
                                             
                                             <button
                                                 onClick={() => navigate(item.path)}
-                                                className={`w-full flex items-center justify-between transition-all duration-500 rounded-2xl relative overflow-hidden ${isActive
+                                                className={`flex items-center justify-between transition-all duration-500 rounded-2xl relative overflow-hidden ${isActive
                                                     ? "bg-white/5 text-white active-glow"
                                                     : "text-white/40 hover:bg-white/5 hover:text-white"
-                                                    } ${!isExpanded ? 'h-12 w-12 justify-center mx-auto' : 'px-6 py-4'}`}
+                                                    } ${!isExpanded ? 'h-12 w-12 justify-center' : 'w-full px-6 py-4'}`}
                                                 title={!isExpanded ? item.label : undefined}
                                                 aria-current={isActive ? "page" : undefined}
                                             >
-                                                <div className={`flex items-center ${isExpanded ? 'gap-4' : 'justify-center'} relative z-10`}>
+                                                <div className={`flex items-center ${isExpanded ? 'gap-4' : 'justify-center'} relative z-10 w-full`}>
                                                     <Icon className={`w-5 h-5 transition-all duration-500 ${isActive ? "text-lime scale-110 drop-shadow-[0_0_8px_rgba(163,230,53,0.5)]" : "text-white/20 group-hover/nav:text-white/80"}`} />
                                                     {isExpanded && <span className={`text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${isActive ? 'text-white' : 'text-white/40'}`}>{item.label}</span>}
                                                 </div>
