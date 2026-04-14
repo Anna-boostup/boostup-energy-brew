@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -27,8 +27,19 @@ const AdminLayout = () => {
 
     // Fetch analytics and unread messages count
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isPinned, setIsPinned] = useState(() => {
+        const saved = localStorage.getItem("admin_sidebar_pinned");
+        return saved === null ? true : saved === "true";
+    });
+    const [isHovered, setIsHovered] = useState(false);
+    const isExpanded = isPinned || isHovered;
+
     const [unreadCount, setUnreadCount] = useState(0);
     const [stats, setStats] = useState({ visits: 0, orders: 0, conversion: 0 });
+
+    useEffect(() => {
+        localStorage.setItem("admin_sidebar_pinned", String(isPinned));
+    }, [isPinned]);
 
     useEffect(() => {
         if (!user || profile?.role !== 'admin') return;
@@ -111,7 +122,8 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: Mail, label: content?.admin?.navigation?.messages, path: "/admin/messages" },
-        { icon: LayoutDashboard, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
+        { icon: Mail, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
+        { icon: PenTool, label: "Blog", path: "/admin/blog" },
         { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
         { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
         { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
@@ -215,17 +227,33 @@ const AdminLayout = () => {
             </div>
 
             {/* Desktop Sidebar */}
-            <aside className="hidden md:flex flex-col w-72 sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 ml-4 rounded-[3rem] shadow-2xl z-20 border border-white/5">
-                <div className="p-10 pb-8 shrink-0">
+            <aside 
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className={`hidden md:flex flex-col sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 ml-4 rounded-[3rem] shadow-2xl z-20 border border-white/5 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isExpanded ? 'w-72' : 'w-20'}`}
+            >
+                <div className={`p-10 pb-8 shrink-0 relative ${!isExpanded && 'px-6'}`}>
                     <Link to="/" className="flex items-center group">
-                        <span className="font-display font-black text-3xl tracking-tighter group-hover:scale-105 transition-transform duration-500">
-                            BOOST<span className="text-white">UP</span>
+                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-xl'}`}>
+                            B<span className={isExpanded ? 'inline' : 'hidden'}>OOST</span><span className="text-white">UP</span>
                         </span>
                     </Link>
-                    <div className="flex items-center gap-2 mt-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
-                    </div>
+                    {isExpanded && (
+                        <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500">
+                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
+                        </div>
+                    )}
+                    
+                    {/* Pin Button */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsPinned(!isPinned)}
+                        className={`absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500 ${!isExpanded && 'opacity-0 scale-0'}`}
+                    >
+                        {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
+                    </Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
@@ -253,24 +281,28 @@ const AdminLayout = () => {
                                             onClick={() => navigate(item.path)}
                                             className={`w-full flex items-center justify-between px-5 py-3 rounded-2xl transition-all duration-300 group ${isActive
                                                 ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.05] z-10"
-                                                : "text-white/50 hover:bg-white/5 hover:text-white hover:pl-7"
+                                                : `text-white/50 hover:bg-white/5 hover:text-white ${isExpanded ? 'hover:pl-7' : 'px-0 justify-center'}`
                                                 } `}
                                             aria-current={isActive ? "page" : undefined}
                                         >
                                             <div className="flex items-center gap-4">
                                                 <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
-                                                <span className="text-xs font-bold uppercase tracking-wider">{item.label}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                    <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
-                                                        {unreadCount}
-                                                    </Badge>
-                                                )}
-                                                {item.hasAlert && (
-                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label={content.admin.alerts.lowStock} />
+                                                {isExpanded && (
+                                                    <span className="text-xs font-bold uppercase tracking-wider animate-in slide-in-from-left-2 duration-300">{item.label}</span>
                                                 )}
                                             </div>
+                                            {isExpanded && (
+                                                <div className="flex items-center gap-2">
+                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
+                                                            {unreadCount}
+                                                        </Badge>
+                                                    )}
+                                                    {item.hasAlert && (
+                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label={content.admin.alerts.lowStock} />
+                                                    )}
+                                                </div>
+                                            )}
                                         </button>
                                     )}
                                 </li>
@@ -280,60 +312,64 @@ const AdminLayout = () => {
                 </div>
 
                 {/* Sidebar Stats Mini-Panel */}
-                <div className="mx-6 mb-4 p-5 rounded-[2rem] bg-white/5 border border-white/5 backdrop-blur-md">
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 italic">Live Insights (30d)</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Návštěvy</p>
-                            <p className="text-sm font-black text-white leading-none">{stats.visits.toLocaleString()}</p>
+                {isExpanded && (
+                    <div className="mx-6 mb-4 p-5 rounded-[2rem] bg-white/5 border border-white/5 backdrop-blur-md animate-in fade-in zoom-in duration-500">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 italic">Live Insights (30d)</span>
                         </div>
-                        <div>
-                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Konverze</p>
-                            <p className="text-sm font-black text-lime leading-none">{stats.conversion.toFixed(1)}%</p>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Návštěvy</p>
+                                <p className="text-sm font-black text-white leading-none">{stats.visits.toLocaleString()}</p>
+                            </div>
+                            <div>
+                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Konverze</p>
+                                <p className="text-sm font-black text-lime leading-none">{stats.conversion.toFixed(1)}%</p>
+                            </div>
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div>
+                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Orders</p>
+                                <p className="text-sm font-black text-white leading-none">{stats.orders}</p>
+                            </div>
+                            <Link to="/admin/insights" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-lime hover:bg-white/10 transition-all">
+                                <ChevronRight className="w-4 h-4" />
+                            </Link>
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                        <div>
-                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Orders</p>
-                            <p className="text-sm font-black text-white leading-none">{stats.orders}</p>
-                        </div>
-                        <Link to="/admin/insights" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-lime hover:bg-white/10 transition-all">
-                            <ChevronRight className="w-4 h-4" />
-                        </Link>
-                    </div>
-                </div>
+                )}
 
                 <div className="p-6 border-t border-white/5 space-y-3">
                     <Link 
                         to="/admin/profile" 
-                        className={`px-4 py-4 flex items-center gap-4 rounded-[2rem] transition-all duration-300 border border-transparent ${location.pathname === '/admin/profile' ? 'bg-white/10 border-white/10' : 'hover:bg-white/5'}`}
+                        className={`px-4 py-4 flex items-center gap-4 rounded-[2rem] transition-all duration-300 border border-transparent ${location.pathname === '/admin/profile' ? 'bg-white/10 border-white/10' : 'hover:bg-white/5'} ${!isExpanded && 'px-0 justify-center w-12 mx-auto'}`}
                     >
-                        <div className="w-11 h-11 rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-lg shadow-lime/20">
+                        <div className="w-11 h-11 min-w-[2.75rem] rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-lg shadow-lime/20 shrink-0">
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
                         </div>
-                        <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-black text-white truncate leading-tight uppercase tracking-widest">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
-                            <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
-                        </div>
+                        {isExpanded && (
+                            <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
+                                <span className="text-xs font-black text-white truncate leading-tight uppercase tracking-widest">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
+                                <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
+                            </div>
+                        )}
                     </Link>
                     
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 px-6"
+                        className={`w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 ${isExpanded ? 'px-6' : 'px-0 justify-center'}`}
                         onClick={handleLogout}
                     >
-                        <LogOut className="w-4 h-4 mr-3" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.logout || "Logout"}</span>
+                        <LogOut className="w-4 h-4 shrink-0" />
+                        {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-3 animate-in slide-in-from-left-2 duration-300">{content?.admin?.auth?.logout || "Logout"}</span>}
                     </Button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-80 p-4 md:p-6 pt-24 md:pt-6 min-h-screen">
+            <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-4 md:p-6 pt-24 md:pt-6 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-28'}`}>
                 <div className="max-w-full mx-auto">
                     <AdminErrorBoundary>
                         <Outlet />

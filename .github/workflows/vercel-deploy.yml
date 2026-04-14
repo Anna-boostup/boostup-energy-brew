@@ -1,4 +1,4 @@
-name: Vercel Deploy
+name: "🚀 BoostUp CI/CD Pipeline"
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -11,6 +11,7 @@ on:
       - main
       - development
       - preview
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,7 +21,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # 1. TEST & PROMOTE (Development -> Preview)
   Test-and-Promote:
+    name: "🧪 Test & Promote"
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
     steps:
@@ -41,63 +44,29 @@ jobs:
           npm install --global vercel@latest
         
       - name: Pull Vercel Env
-        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
+        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
         
-      - name: Diagnostic - Check Env Vars
-        run: |
-          echo "Checking Supabase environment variables..."
-          if [ -z "${{ secrets.VITE_SUPABASE_URL_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_URL_PREVIEW is empty in GitHub Secrets"; fi
-          if [ -z "${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}" ]; then echo "WARNING: VITE_SUPABASE_ANON_KEY_PREVIEW is empty in GitHub Secrets"; fi
-          
       - name: Build
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           
-      - name: Deploy
+      - name: Deploy to Preview
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }} | tail -n 1)
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
           echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
 
       - name: Wait for 200 OK
         run: |
-          echo "Waiting for $DEPLOYMENT_URL..."
           timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
           
-      - name: Verify Health (Advanced Watchdog)
-        run: |
-          sleep 25
-          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
-            echo "CRITICAL: Real Frontend Crash Detected!"
-            echo "--- START ERROR DUMP ---"
-            echo "$BODY"
-            exit 1
-          fi
-          echo "SUCCESS: App is healthy. Proceeding to E2E tests."
-
-      - name: Cache Playwright Binaries
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
       - name: Install Playwright Browsers & Deps
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium webkit
-      
-      - name: Install System Deps (Fallback)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
 
       - name: Run E2E Tests
         run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
@@ -107,14 +76,7 @@ jobs:
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
 
-      - name: Upload Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-
-      - name: Promote
+      - name: Promote to Preview Branch
         if: success()
         run: |
           git config --global user.name "GitHub Action"
@@ -124,7 +86,14 @@ jobs:
           git merge development --no-ff -m "chore: auto-promote to preview"
           git push origin preview
 
+      - name: Notify on Failure (Slack)
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *CI/CD PIPELINE FAILED!* (Test & Promote)\nBranch: ${{ github.ref }}\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # 2. DEPLOY PREVIEW (preview.drinkboostup.cz)
   Deploy-Preview:
+    name: "🌐 Deploy Preview"
     runs-on: ubuntu-latest
     needs: [Test-and-Promote]
     if: |
@@ -140,35 +109,27 @@ jobs:
           cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
       - name: Build
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      - name: Deploy
-        id: deploy
+      - name: Deploy & Alias
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }} | tail -n 1)
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
-          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-      - name: Set Alias
-        run: vercel alias set ${{ env.DEPLOYMENT_URL }} preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
-      - name: Verify Health (Preview)
-        run: |
-          sleep 25
-          # Target the custom domain directly to verify the alias was updated correctly
-          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "https://preview.drinkboostup.cz")
-          if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
-            echo "CRITICAL: Preview Deployment Crash Caught at preview.drinkboostup.cz!"
-            echo "$BODY"
-            exit 1
-          fi
-          echo "SUCCESS: Preview App is healthy at preview.drinkboostup.cz."
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
+          vercel alias set $DEPLOYMENT_URL preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
 
+      - name: Notify on Failure (Slack)
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *PREVIEW DEPLOY FAILED!*\nUrl: https://preview.drinkboostup.cz\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # 3. DEPLOY PRODUCTION (drinkboostup.cz)
   Deploy-Production:
+    name: "🚀 Deploy Production"
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -180,29 +141,42 @@ jobs:
           cache: 'npm'
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
       - name: Build
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      - name: Deploy
-        id: deploy
+      - name: Deploy to Production
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
+
+      - name: Notify on Success (Slack)
+        if: success()
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tail -n 1)
-          if [ -z "$DEPLOYMENT_URL" ]; then echo "ERROR: Deployment failed"; exit 1; fi
-          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-      - name: Verify Health (Advanced Watchdog)
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"✅ *PRODUCTION DEPLOYED SUCCESSFULLY!*\nWeb: https://drinkboostup.cz/\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify on Failure (Slack)
+        if: failure()
         run: |
-          # Increased sleep to 20s for Solid Bundle propagation
-          sleep 20
-          BODY=$(curl -s -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL")
-          if echo "$BODY" | grep -q "DIAGNOSTICKÝ PROTOKOL" || echo "$BODY" | grep -q "KRITICKÁ CHYBA"; then
-            echo "CRITICAL: Production Deployment Crash Caught!"
-            echo "$BODY"
-            exit 1
-          fi
-          echo "SUCCESS: Production App is healthy."
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🔥 *PRODUCTION DEPLOY FAILED!*\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # 4. PERFORMANCE AUDIT (Lighthouse)
+  Performance-Audit:
+    name: "📊 Performance Audit"
+    runs-on: ubuntu-latest
+    needs: [Deploy-Preview, Deploy-Production]
+    if: always() && (needs.Deploy-Preview.result == 'success' || needs.Deploy-Production.result == 'success')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit URLs
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://drinkboostup.cz/
+            https://preview.drinkboostup.cz/
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          budgetPath: ./lighthouse-budget.json

@@ -98,6 +98,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [movements, setMovements] = useState<StockMovement[]>([]);
+    const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
 
     // 1. Initial Fetch
     useEffect(() => {
@@ -327,51 +328,88 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+        if (processingOrders.has(orderId)) {
+            console.log(`[Inventory] Order ${orderId} is already being processed. Skipping.`);
+            return;
+        }
+
         // Find existing order to check for stock return on cancellation
         const currentOrder = orders.find(o => o.id === orderId);
-        const wasCancelled = currentOrder?.status === 'cancelled';
+        if (!currentOrder) return;
+
+        const wasCancelled = currentOrder.status === 'cancelled';
         const isNowCancelling = status === 'cancelled';
+        
+        // Only proceed if status actually changed to/from cancelled
+        if (wasCancelled === isNowCancelling) {
+            // Just update status if it's not a cancellation toggle
+            const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+            if (error) {
+                console.error('Error updating order status:', error);
+                alert("Chyba při aktualizaci stavu: " + error.message);
+            } else {
+                setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+            }
+            return;
+        }
 
-        const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+        setProcessingOrders(prev => new Set(prev).add(orderId));
 
-        if (error) {
-            console.error('Error updating order status:', error);
-            alert("Chyba při aktualizaci stavu: " + error.message);
-        } else {
-            // If the order is being cancelled and wasn't before, return items to stock
-            if (isNowCancelling && !wasCancelled && currentOrder) {
-                console.log(`[Inventory] Order ${orderId} cancelled. Returning items to stock.`);
-                
-                for (const item of currentOrder.items) {
-                    if (item.mixConfiguration) {
-                        // Return specific bottles from MIX
-                        if (item.mixConfiguration.lemon > 0) 
-                            await addMovement('lemon', item.mixConfiguration.lemon * item.quantity, 'restock', `Storno obj. ${orderId} (Mix)`);
-                        if (item.mixConfiguration.red > 0) 
-                            await addMovement('red', item.mixConfiguration.red * item.quantity, 'restock', `Storno obj. ${orderId} (Mix)`);
-                        if (item.mixConfiguration.silky > 0) 
-                            await addMovement('silky', item.mixConfiguration.silky * item.quantity, 'restock', `Storno obj. ${orderId} (Mix)`);
-                    } else if (item.sku) {
-                        // Regular flavor - pattern: {flavor}-{pack}
-                        // Flavor part can be multi-word, but we are looking for 'lemon', 'red' or 'silky' keywords
-                        // Pack size is after the dash
-                        const flavorKey = item.sku.toLowerCase().includes('lemon') ? 'lemon'
-                            : item.sku.toLowerCase().includes('red') ? 'red'
-                            : item.sku.toLowerCase().includes('silky') ? 'silky' : null;
-                        
-                        if (flavorKey) {
-                            const packParts = item.sku.split('-');
-                            const packSize = parseInt(packParts[packParts.length - 1]) || 1;
-                            const returnQty = item.quantity * packSize;
-                            
-                            await addMovement(flavorKey, returnQty, 'restock', `Storno obj. ${orderId}`);
-                        }
+        try {
+            console.log(`[Inventory] Order ${orderId} status changing: ${currentOrder.status} -> ${status}`);
+            
+            const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+
+            if (error) {
+                console.error('Error updating order status:', error);
+                alert("Chyba při aktualizaci stavu: " + error.message);
+                return;
+            }
+
+            // Calculate total bottles in order to avoid multiple movements per flavor
+            const totals: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
+            
+            currentOrder.items.forEach(item => {
+                if (item.mixConfiguration) {
+                    totals.lemon += (item.mixConfiguration.lemon || 0) * item.quantity;
+                    totals.red += (item.mixConfiguration.red || 0) * item.quantity;
+                    totals.silky += (item.mixConfiguration.silky || 0) * item.quantity;
+                } else if (item.sku) {
+                    const flavorKey = item.sku.toLowerCase().includes('lemon') ? 'lemon'
+                        : item.sku.toLowerCase().includes('red') ? 'red'
+                        : item.sku.toLowerCase().includes('silky') ? 'silky' : null;
+                    
+                    if (flavorKey) {
+                        const packParts = item.sku.split('-');
+                        const packSize = parseInt(packParts[packParts.length - 1]) || 1;
+                        totals[flavorKey] += item.quantity * packSize;
                     }
+                }
+            });
+
+            // Determine if we are returning to stock (+) or taking from stock (-)
+            const multiplier = isNowCancelling ? 1 : -1;
+            const movementType = isNowCancelling ? 'restock' : 'sale';
+            const note = isNowCancelling ? `Storno obj. ${orderId}` : `Reaktivace obj. ${orderId}`;
+
+            for (const [flavor, amount] of Object.entries(totals)) {
+                if (amount > 0) {
+                    console.log(`[Inventory] ${isNowCancelling ? 'Returning' : 'Re-decrementing'} ${amount} ${flavor} bottles for order ${orderId}`);
+                    await addMovement(flavor, amount * multiplier, movementType, note);
                 }
             }
 
-            // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
+            // Update local state
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+            
+        } catch (e) {
+            console.error('[Inventory] critical error during status update:', e);
+        } finally {
+            setProcessingOrders(prev => {
+                const next = new Set(prev);
+                next.delete(orderId);
+                return next;
+            });
         }
     };
 

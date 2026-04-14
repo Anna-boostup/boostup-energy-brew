@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import PaymentInstructions from '@/components/PaymentInstructions';
 import { useCart } from '@/context/CartContext';
 import { track } from '@vercel/analytics';
+import { useCookieConsent } from '@/context/CookieContext';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
     const { clearCart } = useCart();
+    const { consent } = useCookieConsent();
     const [searchParams] = useSearchParams();
     const stripeStatus = searchParams.get('redirect_status');
     const urlStatus = searchParams.get('status');
@@ -46,6 +48,17 @@ const PaymentSuccess = () => {
                         currency: 'CZK',
                         items: [] 
                     });
+                }
+
+                // Meta Pixel (Facebook)
+                if (consent?.marketing && typeof window !== 'undefined' && (window as any).fbq) {
+                    (window as any).fbq('track', 'Purchase', {
+                        value: numericAmount,
+                        currency: 'CZK',
+                        content_type: 'product',
+                        content_ids: [orderNumber]
+                    });
+                    console.log('[Meta Pixel] Purchase tracked:', orderNumber, numericAmount);
                 }
                 sessionStorage.setItem(`tracked_${orderNumber}`, 'true');
             }
@@ -125,11 +138,11 @@ const PaymentSuccess = () => {
                     )}
 
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50">
+                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50" data-sentry-mask>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Číslo objednávky</p>
                             <p className="text-xl font-display font-bold">#{orderNumber}</p>
                         </div>
-                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50">
+                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50" data-sentry-mask>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Celková částka</p>
                             <p className="text-xl font-display font-bold text-primary">{amount} Kč</p>
                         </div>

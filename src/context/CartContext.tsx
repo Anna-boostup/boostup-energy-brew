@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect, ReactNode, use
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { track } from '@vercel/analytics';
+import { useCookieConsent } from './CookieContext';
 
 export interface CartItem {
     id: string;
@@ -97,6 +98,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
 
     const [appliedPromoCode, setAppliedPromoCode] = useState<{ code: string; discount: number } | null>(null);
+    const { consent } = useCookieConsent();
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -128,18 +130,27 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Tracking: Google Analytics 4
         if (typeof window !== 'undefined' && (window as any).gtag) {
             (window as any).gtag('event', 'add_to_cart', {
-                currency: 'CZK',
-                value: item.price * item.quantity,
                 items: [{
                     item_id: item.id,
                     item_name: item.name,
-                    item_variant: item.flavor || 'mix',
                     price: item.price,
-                    quantity: item.quantity
+                    quantity: 1
                 }]
             });
         }
-    }, []);
+
+        // Tracking: Meta Pixel (Facebook)
+        if (consent?.marketing && typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'AddToCart', {
+                content_name: item.name,
+                content_category: 'Energy Brew',
+                content_ids: [item.id],
+                content_type: 'product',
+                value: item.price,
+                currency: 'CZK'
+            });
+        }
+    }, [consent?.marketing]);
 
     const removeFromCart = useCallback((id: string) => {
         dispatch({ type: 'REMOVE_FROM_CART', payload: id });
