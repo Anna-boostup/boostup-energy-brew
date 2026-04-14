@@ -91,10 +91,10 @@ export default function BlogManagement() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-black tracking-tight text-white uppercase italic">
+          <h1 className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
             Správa <span className="text-lime">Blogu</span>
           </h1>
-          <p className="text-white/40 text-sm mt-1">Vytvářejte a spravujte články pro váš web a newslettery.</p>
+          <p className="text-olive-dark/40 text-sm mt-1">Vytvářejte a spravujte články pro váš web a newslettery.</p>
         </div>
         <Link to="/admin/blog/new">
           <Button className="bg-lime hover:bg-lime/90 text-olive-dark font-black rounded-2xl px-6 gap-2">
@@ -106,12 +106,12 @@ export default function BlogManagement() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-olive-dark/20" />
           <Input
             placeholder="Hledat v článcích..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 bg-white/5 border-white/10 text-white rounded-2xl h-12 focus:border-lime/50 transition-all"
+            className="pl-12 bg-white/50 border-olive-dark/10 text-olive-dark rounded-2xl h-12 focus:border-lime/50 transition-all"
           />
         </div>
         <div className="flex gap-2">
@@ -125,12 +125,12 @@ export default function BlogManagement() {
       <div className="bg-white/5 backdrop-blur-md rounded-[2.5rem] border border-white/10 overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-white/5 hover:bg-transparent">
-              <TableHead className="text-white/40 uppercase tracking-widest text-[10px] font-black py-6 pl-8">Název článku</TableHead>
-              <TableHead className="text-white/40 uppercase tracking-widest text-[10px] font-black py-6">Kategorie</TableHead>
-              <TableHead className="text-white/40 uppercase tracking-widest text-[10px] font-black py-6">Stav</TableHead>
-              <TableHead className="text-white/40 uppercase tracking-widest text-[10px] font-black py-6">Datum</TableHead>
-              <TableHead className="text-white/40 uppercase tracking-widest text-[10px] font-black py-6 text-right pr-8">Akce</TableHead>
+            <TableRow className="border-olive-dark/5 hover:bg-transparent">
+              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6 pl-8">Název článku</TableHead>
+              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6">Kategorie</TableHead>
+              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6">Stav</TableHead>
+              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6">Datum</TableHead>
+              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6 text-right pr-8">Akce</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

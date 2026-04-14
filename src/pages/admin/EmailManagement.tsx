@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
@@ -749,8 +750,8 @@ const EmailManagement = () => {
                                             className="data-[state=checked]:bg-lime"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase text-white/60">Použít Master Šablonu</span>
-                                            <span className="text-[8px] text-white/20 uppercase font-bold">Zabalit obsah do značkového layoutu BoostUp</span>
+                                            <span className="text-[10px] font-black uppercase text-olive-dark/60">Použít Master Šablonu</span>
+                                            <span className="text-[8px] text-olive-dark/20 uppercase font-bold">Zabalit obsah do značkového layoutu BoostUp</span>
                                         </div>
                                     </div>
                                     <Badge variant="outline" className="bg-lime/10 text-lime border-lime/20 text-[8px] font-black">ACTIVE</Badge>

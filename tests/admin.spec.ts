@@ -61,6 +61,9 @@ test.describe('Admin Dashboard Audit', () => {
     ];
 
     for (const adminPage of adminPages) {
+      console.log(`DIAGNOSTIC: Auditing admin page: ${adminPage.path}`);
+      await page.goto(adminPage.path, { timeout: 30000 });
+      
       // Wait for navigation and loading to finish
       await page.waitForLoadState('load', { timeout: 30000 });
       const loader = page.getByTestId('admin-loader');
