@@ -127,26 +127,46 @@ const AdminLayout = () => {
         )
     );
 
-    const navItems = [
-        { icon: LayoutDashboard, label: content?.admin?.navigation?.dashboard, path: "/admin" },
-        { icon: ShoppingCart, label: content?.admin?.navigation?.orders, path: "/admin/orders" },
-        { icon: Package, label: content?.admin?.navigation?.inventory, path: "/admin/inventory" },
+    const navGroups = [
         {
-            icon: Factory,
-            label: content?.admin?.navigation?.manufacture,
-            path: "/admin/manufacture",
-            hasAlert: hasLowStockAlert
+            title: "OBCHOD",
+            items: [
+                { icon: LayoutDashboard, label: content?.admin?.navigation?.dashboard, path: "/admin" },
+                { icon: ShoppingCart, label: content?.admin?.navigation?.orders, path: "/admin/orders" },
+                { icon: Mail, label: content?.admin?.navigation?.messages, path: "/admin/messages" },
+            ]
         },
-        { icon: Mail, label: content?.admin?.navigation?.messages, path: "/admin/messages" },
-        { icon: Users, label: "Zákazníci", path: "/admin/users" },
-        { icon: Mail, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
-        { icon: PenTool, label: "Blog", path: "/admin/blog" },
-        { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
-        { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
-        { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
-        { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
-        { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },
-        { icon: HelpCircle, label: content?.admin?.navigation?.help, path: "/admin/help" },
+        {
+            title: "SKLAD & VÝROBA",
+            items: [
+                { icon: Package, label: content?.admin?.navigation?.inventory, path: "/admin/inventory" },
+                {
+                    icon: Factory,
+                    label: content?.admin?.navigation?.manufacture,
+                    path: "/admin/manufacture",
+                    hasAlert: hasLowStockAlert
+                },
+                { icon: Users, label: "Zákazníci", path: "/admin/users" },
+            ]
+        },
+        {
+            title: "MARKETING & OBSAH",
+            items: [
+                { icon: PenTool, label: "Blog", path: "/admin/blog" },
+                { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
+                { icon: Mail, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
+                { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
+            ]
+        },
+        {
+            title: "SYSTÉM",
+            items: [
+                { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
+                { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
+                { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },
+                { icon: HelpCircle, label: content?.admin?.navigation?.help, path: "/admin/help" },
+            ]
+        }
     ];
 
     return (
@@ -178,40 +198,47 @@ const AdminLayout = () => {
                         </div>
                         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                             <ul className="space-y-2" role="list">
-                                {navItems.map((item) => {
-                                    const Icon = item.icon;
-                                    const isActive = location.pathname === item.path;
-                                    return (
-                                        <li key={item.path}>
-                                            <button
-                                                onClick={() => {
-                                                    navigate(item.path);
-                                                    setIsMobileMenuOpen(false);
-                                                }}
-                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
-                                                    ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
-                                                    : "text-white/60 hover:bg-white/5 hover:text-white"
-                                                    } `}
-                                                aria-current={isActive ? "page" : undefined}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <Icon className="w-5 h-5" />
-                                                    {item.label}
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
-                                                            {unreadCount}
-                                                        </Badge>
-                                                    )}
-                                                    {item.hasAlert && (
-                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-                                                    )}
-                                                </div>
-                                            </button>
-                                        </li>
-                                    );
-                                })}
+                                {navGroups.map((group, gIdx) => (
+                                    <div key={group.title} className={gIdx > 0 ? "pt-6" : ""}>
+                                        <p className="px-4 text-[9px] font-black tracking-[0.3em] text-white/20 mb-4 uppercase">{group.title}</p>
+                                        <div className="space-y-1">
+                                            {group.items.map((item) => {
+                                                const Icon = item.icon;
+                                                const isActive = location.pathname === item.path;
+                                                return (
+                                                    <li key={item.path} className="list-none">
+                                                        <button
+                                                            onClick={() => {
+                                                                navigate(item.path);
+                                                                setIsMobileMenuOpen(false);
+                                                            }}
+                                                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
+                                                                ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
+                                                                : "text-white/60 hover:bg-white/5 hover:text-white"
+                                                                } `}
+                                                            aria-current={isActive ? "page" : undefined}
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <Icon className="w-5 h-5" />
+                                                                {item.label}
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                                    <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
+                                                                        {unreadCount}
+                                                                    </Badge>
+                                                                )}
+                                                                {item.hasAlert && (
+                                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                                                )}
+                                                            </div>
+                                                        </button>
+                                                    </li>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
                             </ul>
                         </div>
                         <div className="p-4 border-t border-white/5 shrink-0 bg-olive-dark/50">
@@ -283,46 +310,61 @@ const AdminLayout = () => {
                     </Link>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-                    <ul className="space-y-2" role="list">
-                        {navItems.map((item) => {
-                            const Icon = item.icon;
-                            const isActive = location.pathname === item.path;
-                            return (
-                                <li key={item.path}>
-                                    <button
-                                        onClick={() => navigate(item.path)}
-                                        className={`w-full flex items-center justify-between transition-all duration-300 group ${isActive
-                                            ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.02] z-10"
-                                            : "text-white/50 hover:bg-white/5 hover:text-white"
-                                            } ${!isExpanded ? 'aspect-square justify-center rounded-2xl mx-auto w-12' : 'px-6 py-4 rounded-2xl'}`}
-                                        title={!isExpanded ? item.label : undefined}
-                                        aria-current={isActive ? "page" : undefined}
-                                    >
-                                        <div className={`flex items-center ${isExpanded ? 'gap-4' : 'justify-center'}`}>
-                                            <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
-                                            {isExpanded && <span className="text-xs font-black uppercase tracking-widest animate-in slide-in-from-left-2 duration-300">{item.label}</span>}
-                                        </div>
-                                        {isExpanded && (
-                                            <div className="flex items-center gap-2">
-                                                {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                    <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
-                                                        {unreadCount}
-                                                    </Badge>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
+                    {navGroups.map((group, gIdx) => (
+                        <div key={group.title} className={`${gIdx > 0 ? "pt-8" : "pt-4"} pb-2 relative`}>
+                            {isExpanded ? (
+                                <p className="px-10 text-[9px] font-black tracking-[0.4em] text-white/20 mb-4 uppercase">{group.title}</p>
+                            ) : (
+                                <div className="h-px bg-white/5 mx-6 mb-4" />
+                            )}
+                            <ul className="space-y-1 px-4" role="list">
+                                {group.items.map((item) => {
+                                    const Icon = item.icon;
+                                    const isActive = location.pathname === item.path;
+                                    return (
+                                        <li key={item.path} className="relative group/nav">
+                                            {/* Active Pill Indicator */}
+                                            {isActive && (
+                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-lime rounded-r-full shadow-[0_0_15px_rgba(163,230,53,0.8)] z-20" />
+                                            )}
+                                            
+                                            <button
+                                                onClick={() => navigate(item.path)}
+                                                className={`w-full flex items-center justify-between transition-all duration-500 rounded-2xl relative overflow-hidden ${isActive
+                                                    ? "bg-white/5 text-white active-glow"
+                                                    : "text-white/40 hover:bg-white/5 hover:text-white"
+                                                    } ${!isExpanded ? 'h-12 w-12 justify-center mx-auto' : 'px-6 py-4'}`}
+                                                title={!isExpanded ? item.label : undefined}
+                                                aria-current={isActive ? "page" : undefined}
+                                            >
+                                                <div className={`flex items-center ${isExpanded ? 'gap-4' : 'justify-center'} relative z-10`}>
+                                                    <Icon className={`w-5 h-5 transition-all duration-500 ${isActive ? "text-lime scale-110 drop-shadow-[0_0_8px_rgba(163,230,53,0.5)]" : "text-white/20 group-hover/nav:text-white/80"}`} />
+                                                    {isExpanded && <span className={`text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 ${isActive ? 'text-white' : 'text-white/40'}`}>{item.label}</span>}
+                                                </div>
+                                                
+                                                {isExpanded && (
+                                                    <div className="flex items-center gap-2 relative z-10">
+                                                        {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                            <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 shadow-lg">
+                                                                {unreadCount}
+                                                            </Badge>
+                                                        )}
+                                                        {item.hasAlert && (
+                                                            <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
+                                                        )}
+                                                    </div>
                                                 )}
-                                                {item.hasAlert && (
-                                                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+                                                {!isExpanded && (item.path === '/admin/messages' && unreadCount > 0 || item.hasAlert) && (
+                                                    <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-lg border border-black/50" />
                                                 )}
-                                            </div>
-                                        )}
-                                        {!isExpanded && (item.path === '/admin/messages' && unreadCount > 0 || item.hasAlert) && (
-                                            <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-lg" />
-                                        )}
-                                    </button>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    ))}
                 </div>
 
                 <div className={`p-8 border-t border-white/5 space-y-4 ${!isExpanded ? 'p-4 flex flex-col items-center' : ''}`}>
@@ -343,8 +385,8 @@ const AdminLayout = () => {
                         to="/admin/profile" 
                         className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5' : 'p-0 w-12 h-12 justify-center rounded-2xl mx-auto'}`}
                     >
-                        <div className={`rounded-2xl bg-lime overflow-hidden grid place-items-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem] text-sm' : 'w-full h-full text-xl'}`}>
-                            <span className="leading-none mt-[2px]">{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}</span>
+                        <div className={`rounded-2xl bg-lime overflow-hidden flex items-center justify-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem] text-sm' : 'w-full h-full text-xl'}`}>
+                            <span className="leading-none select-none">{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}</span>
                         </div>
                         {isExpanded && (
                             <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">

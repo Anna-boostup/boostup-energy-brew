@@ -257,7 +257,22 @@
   }
 
   .sidebar-premium {
-    background: linear-gradient(180deg, hsl(101 40% 12%) 0%, hsl(101 40% 8%) 100%);
+    background: linear-gradient(180deg, hsl(101 40% 14%) 0%, hsl(101 40% 8%) 100%);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .sidebar-active-indicator {
+    background: linear-gradient(90deg, hsl(60 68% 61%) 0%, transparent 100%);
+  }
+
+  .glass-sidebar-item {
+     @apply transition-all duration-300;
+  }
+  
+  .glass-sidebar-item:hover {
+     background: rgba(255, 255, 255, 0.03);
+     backdrop-filter: blur(8px);
   }
 }
 

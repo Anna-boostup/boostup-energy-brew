@@ -10,7 +10,7 @@ const DesktopNav = ({ navigation }: DesktopNavProps) => {
           key={link.href}
           href={link.href}
           onClick={(e) => {
-            if (window.location.pathname === '/') {
+            if (window.location.pathname === '/' && link.href.includes('#')) {
               e.preventDefault();
               const id = link.href.split('#')[1];
               document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
