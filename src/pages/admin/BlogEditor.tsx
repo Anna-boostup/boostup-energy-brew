@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Globe, Eye, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -156,7 +156,7 @@ export default function BlogEditor() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-display font-black tracking-tight text-white uppercase italic">
+            <h1 className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
               {isEditing ? "Upravit" : "Nový"} <span className="text-lime">Článek</span>
             </h1>
           </div>
@@ -185,17 +185,17 @@ export default function BlogEditor() {
           <div className="bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 p-8 space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black ml-1">Název článku</Label>
+                <Label className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black ml-1">Název článku</Label>
                 <Input
                   value={formData.title}
                   onChange={handleTitleChange}
                   placeholder="Zadejte chytlavý nadpis..."
-                  className="bg-white/5 border-white/10 text-white rounded-2xl h-14 text-xl font-bold focus:border-lime/50 transition-all px-6"
+                  className="bg-white/50 border-olive-dark/10 text-olive-dark rounded-2xl h-14 text-xl font-bold focus:border-lime/50 transition-all px-6"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black ml-1">Obsah článku</Label>
+                <Label className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black ml-1">Obsah článku</Label>
                 <RichTextEditor 
                   value={formData.content}
                   onChange={(content) => setFormData(prev => ({ ...prev, content }))}
@@ -208,7 +208,7 @@ export default function BlogEditor() {
 
         <div className="space-y-6">
           <div className="bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 p-8 space-y-6">
-            <h3 className="text-white/40 uppercase tracking-widest text-[10px] font-black">Nastavení publikace</h3>
+            <h3 className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black">Nastavení publikace</h3>
             
             <div className="space-y-4">
               <div className="space-y-2">
@@ -257,7 +257,7 @@ export default function BlogEditor() {
           </div>
 
           <div className="bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 p-8 space-y-6">
-            <h3 className="text-white/40 uppercase tracking-widest text-[10px] font-black">Náhledový obrázek</h3>
+            <h3 className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black">Náhledový obrázek</h3>
             <div className="space-y-4">
               <div className="aspect-video bg-white/5 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:border-lime/50 transition-all overflow-hidden relative">
                 {formData.featured_image_url ? (

@@ -311,34 +311,7 @@ const AdminLayout = () => {
                     </ul>
                 </div>
 
-                {/* Sidebar Stats Mini-Panel */}
-                {isExpanded && (
-                    <div className="mx-6 mb-4 p-5 rounded-[2rem] bg-white/5 border border-white/5 backdrop-blur-md animate-in fade-in zoom-in duration-500">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 italic">Live Insights (30d)</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Návštěvy</p>
-                                <p className="text-sm font-black text-white leading-none">{stats.visits.toLocaleString()}</p>
-                            </div>
-                            <div>
-                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Konverze</p>
-                                <p className="text-sm font-black text-lime leading-none">{stats.conversion.toFixed(1)}%</p>
-                            </div>
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                            <div>
-                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Orders</p>
-                                <p className="text-sm font-black text-white leading-none">{stats.orders}</p>
-                            </div>
-                            <Link to="/admin/insights" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-lime hover:bg-white/10 transition-all">
-                                <ChevronRight className="w-4 h-4" />
-                            </Link>
-                        </div>
-                    </div>
-                )}
+                {/* Sidebar Bottom Actions */}
 
                 <div className="p-6 border-t border-white/5 space-y-3">
                     <Link 
