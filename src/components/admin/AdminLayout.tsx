@@ -233,13 +233,13 @@ const AdminLayout = () => {
                         : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`p-10 pb-8 shrink-0 relative flex items-center ${!isExpanded ? 'justify-center p-6' : ''}`}>
+                <div className={`pt-12 pb-8 shrink-0 relative flex items-center ${!isExpanded ? 'justify-center px-4' : 'px-10'}`}>
                     <Link to="/" className="flex items-center group">
-                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-xl'}`}>
+                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white'}`}>
                             {isExpanded ? (
                                 <>BOOST<span className="text-white">UP</span></>
                             ) : (
-                                <><span className="text-white">B</span>U</>
+                                <>B<span className="text-lime">U</span></>
                             )}
                         </span>
                     </Link>
@@ -279,14 +279,14 @@ const AdminLayout = () => {
                                 <li key={item.path}>
                                     <button
                                         onClick={() => navigate(item.path)}
-                                        className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 group ${isActive
+                                        className={`w-full flex items-center justify-between transition-all duration-300 group ${isActive
                                             ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.02] z-10"
-                                            : "text-white/50 hover:bg-white/5 hover:text-white hover:pl-8"
-                                            } ${!isExpanded ? 'px-0 justify-center' : ''}`}
+                                            : "text-white/50 hover:bg-white/5 hover:text-white"
+                                            } ${!isExpanded ? 'aspect-square justify-center rounded-2xl mx-auto w-12' : 'px-6 py-4 rounded-2xl'}`}
                                         title={!isExpanded ? item.label : undefined}
                                         aria-current={isActive ? "page" : undefined}
                                     >
-                                        <div className="flex items-center gap-4">
+                                        <div className={`flex items-center ${isExpanded ? 'gap-4' : 'justify-center'}`}>
                                             <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
                                             {isExpanded && <span className="text-xs font-black uppercase tracking-widest animate-in slide-in-from-left-2 duration-300">{item.label}</span>}
                                         </div>
@@ -316,12 +316,12 @@ const AdminLayout = () => {
                     {/* Pin Logic in text for better UX */}
                     {isExpanded && (
                         <div className="flex items-center justify-between px-4">
-                            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20">Auto-hide Sidebar</span>
+                            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20">{content?.admin?.auth?.autoHideSidebar || "Auto-hide Sidebar"}</span>
                             <div 
                                 onClick={() => setIsPinned(!isPinned)}
-                                className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors duration-300 ${isPinned ? 'bg-lime/20' : 'bg-primary/20'}`}
+                                className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors duration-300 ${!isPinned ? 'bg-lime/20' : 'bg-white/5'}`}
                             >
-                                <div className={`absolute top-0.5 h-3 w-3 rounded-full transition-all duration-300 ${isPinned ? 'right-0.5 bg-lime' : 'left-0.5 bg-white/40'}`} />
+                                <div className={`absolute top-0.5 h-3 w-3 rounded-full transition-all duration-300 ${!isPinned ? 'right-0.5 bg-lime' : 'left-0.5 bg-white/20'}`} />
                             </div>
                         </div>
                     )}

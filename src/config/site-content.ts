@@ -508,7 +508,8 @@ export const SITE_CONTENT = {
             verifying: "Ověřuji oprávnění...",
             noPermission: "Nemáte oprávnění pro přístup do administrace.",
             backToHome: "Zpět na hlavní stránku",
-            logout: "Odhlásit se"
+            logout: "Odhlásit se",
+            autoHideSidebar: "Automatické skrývání"
         },
         navigation: {
             dashboard: "Přehled",
