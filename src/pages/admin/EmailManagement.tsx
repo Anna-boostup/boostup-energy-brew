@@ -512,7 +512,7 @@ const EmailManagement = () => {
                             className={`h-auto py-3 px-4 rounded-2xl flex flex-col items-center gap-2 min-w-[100px] transition-all border-none ${
                                 selectedTypeId === type.id 
                                 ? 'bg-olive-dark text-white ring-4 ring-olive/5' 
-                                : 'bg-white text-olive-dark/40 hover:bg-white hover:text-olive-dark'
+                                : 'bg-white text-olive-dark/60 hover:bg-white hover:text-olive-dark'
                             }`}
                         >
                             <type.icon className={`h-5 w-5 ${selectedTypeId === type.id ? 'text-lime' : 'text-olive-dark/20'}`} />
@@ -524,8 +524,8 @@ const EmailManagement = () => {
                         onClick={() => setIsCreateOpen(true)}
                         className="h-auto py-3 px-6 rounded-2xl border-2 border-dashed border-olive/10 flex flex-col items-center gap-2 min-w-[100px] text-olive-dark/30 hover:bg-white transition-all"
                     >
-                        <Plus className="h-5 w-5 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">{content?.admin?.emailManager?.buttons?.new || "NEW"}</span>
+                        <Plus className="h-5 w-5" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">{content?.admin?.emailManager?.buttons?.new || "NEW"}</span>
                     </Button>
                 </div>
             </div>
@@ -681,7 +681,7 @@ const EmailManagement = () => {
                                     </div>
                                     <div>
                                         <h4 className="text-xs sm:text-sm font-black text-olive-dark uppercase tracking-wide">{content?.admin?.emailManager?.editor?.structure || "Structure"}</h4>
-                                        <p className="text-[9px] sm:text-[11px] text-olive-dark/40 font-bold">{content?.admin?.emailManager?.editor?.structureDesc}</p>
+                                        <p className="text-[9px] sm:text-[11px] text-olive-dark/70 font-bold">{content?.admin?.emailManager?.editor?.structureDesc}</p>
                                     </div>
                                 </div>
                                 <Dialog>
@@ -731,7 +731,7 @@ const EmailManagement = () => {
                             {/* Subject Field */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.emailManager?.editor?.subject || "Subject"}</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.subject || "Subject"}</Label>
                                     <div className="flex items-center gap-2">
                                         <Badge variant="outline" className="text-olive/50 hover:bg-lime hover:text-olive-dark cursor-pointer text-[9px] border-olive/10 font-black transition-all" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {"{{orderNumber}}"}</Badge>
                                     </div>
@@ -747,7 +747,7 @@ const EmailManagement = () => {
                             {/* HTML Content Editor */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.emailManager?.editor?.content || "HTML Content"}</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.content || "HTML Content"}</Label>
                                     <div className="flex items-center gap-4">
                                         <span className="text-[9px] font-black text-olive/20 uppercase tracking-widest">{content?.admin?.emailManager?.editor?.styleLabel}</span>
                                     </div>
@@ -760,8 +760,8 @@ const EmailManagement = () => {
                                             className="data-[state=checked]:bg-lime"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase text-olive-dark/60">Použít Master Šablonu</span>
-                                            <span className="text-[8px] text-olive-dark/20 uppercase font-bold">Zabalit obsah do značkového layoutu BoostUp</span>
+                                            <span className="text-[10px] font-black uppercase text-olive-dark/80">Použít Master Šablonu</span>
+                                            <span className="text-[8px] text-olive-dark/50 uppercase font-black tracking-widest">Zabalit obsah do značkového layoutu BoostUp</span>
                                         </div>
                                     </div>
                                     <Badge variant="outline" className="bg-lime/10 text-lime border-lime/20 text-[8px] font-black">ACTIVE</Badge>

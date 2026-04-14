@@ -35,9 +35,9 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
     const { content } = useContent();
     const { toast } = useToast();
     return (
-        <div className="bg-white/40 backdrop-blur-xl rounded-[2.8rem] p-6 sm:p-10 space-y-7 mb-8 border border-white/20 shadow-2xl shadow-olive/5 transition-all duration-700 hover:shadow-olive/10 hover:-translate-y-1 relative overflow-hidden group animate-in fade-in slide-in-from-bottom-10">
+        <div className="bg-admin-canvas/60 backdrop-blur-xl rounded-[2.8rem] p-6 sm:p-10 space-y-7 mb-8 border border-white/20 shadow-2xl shadow-olive/5 transition-all duration-700 hover:shadow-olive/10 hover:-translate-y-1 relative overflow-hidden group animate-in fade-in slide-in-from-bottom-10">
             {/* Glossy glass reflection element */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
@@ -45,7 +45,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-olive/50 hover:text-black hover:bg-olive/10 transition-colors" 
+                            className="h-8 w-8 text-olive-dark/40 hover:text-olive-dark hover:bg-olive-dark/10 transition-colors" 
                             onClick={(e) => {
                                 e.stopPropagation();
                                 navigator.clipboard.writeText(order.id);
@@ -55,19 +55,19 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                             <Copy className="h-4 w-4" />
                         </Button>
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/30">{new Date(order.date).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70">{new Date(order.date).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}</p>
                 </div>
                 <div className="flex flex-col gap-3 items-end">
                     <div className="flex flex-col gap-1 items-end">
                         <Badge className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
-                            order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                            order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/40' :
                             order.status === 'pending' ? 'bg-red-500/10 text-red-600' : 
                             'bg-lime text-olive-dark'
                         }`}>
                             {order.status === 'cancelled' ? content.admin.orders.status.storno :
                              order.status === 'pending' ? content.admin.orders.status.unpaid : content.admin.orders.status.paid}
                         </Badge>
-                        <span className="text-[8px] font-black text-olive/40 uppercase tracking-widest mt-0.5 pr-1">
+                        <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-0.5 pr-1">
                             {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer :
                              order.delivery_info?.paymentMethod === 'stripe_express' ? content.admin.orders.status.express :
                              order.delivery_info?.paymentMethod || content.admin.orders.table.payment}
@@ -76,8 +76,8 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     <Badge
                         className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
-                                order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
-                                    order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                                order.status === 'processing' ? 'bg-olive-dark text-white' :
+                                    order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/40' :
                                         'bg-lime/20 text-olive-dark'
                         }`}
                     >
@@ -89,26 +89,26 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                 </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-olive-dark/5 border border-olive/5 space-y-3">
+            <div className="p-5 rounded-2xl bg-olive-dark/5 border border-olive/10 space-y-3">
                 <p className="text-sm font-black text-olive-dark uppercase tracking-tight">{order.customer.name}</p>
-                <p className="text-[11px] text-olive/50 font-bold truncate">{order.customer.email}</p>
+                <p className="text-[11px] text-olive-dark/80 font-bold truncate">{order.customer.email}</p>
             </div>
 
             <div className="space-y-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-olive/40">{content.admin.orders.itemsLabel}:</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">{content.admin.orders.itemsLabel}:</p>
                 <div className="space-y-1">
                     {order.items.map((item: any, idx: number) => (
-                        <div key={idx} className="text-xs flex justify-between items-center bg-background/50 p-2 rounded-xl border border-background">
-                            <span className="font-medium text-olive">{item.quantity}{content.admin.dashboard.multiplier} {item.name}</span>
-                            <span className="font-bold text-olive/40">{item.price} {content.bankInfo.currency}</span>
+                        <div key={idx} className="text-xs flex justify-between items-center bg-admin-canvas/60 p-2 rounded-xl border border-olive-dark/5">
+                            <span className="font-bold text-olive-dark">{item.quantity}{content.admin.dashboard.multiplier} {item.name}</span>
+                            <span className="font-black text-olive-dark/70">{item.price} {content.bankInfo.currency}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-background">
+            <div className="flex justify-between items-center pt-4 border-t border-olive-dark/10">
                 <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-olive/40">{content.admin.orders.totalPriceLabel}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-olive-dark/60">{content.admin.orders.totalPriceLabel}</span>
                     <span className="font-display font-black text-lg text-olive-dark">{order.total} {content.bankInfo.currency}</span>
                 </div>
                 <div className="flex gap-2">
@@ -131,7 +131,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         </Button>
                     )}
                     <InvoiceModal order={order}>
-                        <Button size="icon" variant="ghost" className="h-11 w-11 p-0 text-olive/40 hover:text-olive-dark hover:bg-background rounded-xl" aria-label={content.admin.orders.viewInvoice}>
+                        <Button size="icon" variant="ghost" className="h-11 w-11 p-0 text-olive-dark/60 hover:text-olive-dark hover:bg-admin-canvas/80 rounded-xl" aria-label={content.admin.orders.viewInvoice}>
                             <FileText className="h-5 h-5" />
                         </Button>
                     </InvoiceModal>
@@ -157,9 +157,9 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
     return (
     <>
         {/* Desktop View */}
-        <div className="hidden md:block overflow-x-auto rounded-[2.5rem] border border-olive/5 bg-white/50 backdrop-blur-sm shadow-sm">
+        <div className="hidden md:block overflow-x-auto rounded-[2.5rem] border border-olive/5 bg-admin-canvas/50 backdrop-blur-sm shadow-sm">
             <Table>
-                <TableHeader className="bg-white/40 border-b border-olive/5">
+                <TableHeader className="bg-admin-canvas/40 border-b border-olive/5">
                     <TableRow className="hover:bg-transparent border-none">
                         <TableHead className="w-10 pl-4">
                             <Checkbox
@@ -176,40 +176,40 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                             />
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors text-center w-24"
+                            className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:bg-olive-dark/5 transition-colors text-center w-24"
                             onClick={() => onSort('id')}
                         >
                             <div className="flex items-center justify-center gap-2">
-                                {content?.admin?.orders?.table?.id} {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-white" />}
+                                {content?.admin?.orders?.table?.id} {sortConfig.key === 'id' && <ArrowUpDown className="w-3 h-3 text-olive-dark" />}
                             </div>
                         </TableHead>
                         <TableHead
-                            className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:text-white transition-colors text-center w-28"
+                            className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 cursor-pointer hover:bg-olive-dark/5 transition-colors text-center w-28"
                             onClick={() => onSort('date')}
                         >
                             <div className="flex items-center justify-center gap-2">
-                                {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-white" />}
+                                {content?.admin?.orders?.table?.date} {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 text-olive-dark" />}
                             </div>
                         </TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center">{content?.admin?.orders?.table?.customer}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.items}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.amount}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.payment}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.method}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-28">{content?.admin?.orders?.table?.status}</TableHead>
-                        <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center">{content?.admin?.orders?.table?.customer}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.items}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.amount}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.payment}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center w-24">{content?.admin?.orders?.table?.method}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center w-28">{content?.admin?.orders?.table?.status}</TableHead>
+                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center pr-4">{content?.admin?.orders?.table?.actions}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {data.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={8} className="text-center py-20 text-olive/40 font-medium italic">
+                            <TableCell colSpan={8} className="text-center py-20 text-olive-dark/60 font-black uppercase tracking-[0.2em] italic">
                                 {content.admin.orders.empty}
                             </TableCell>
                         </TableRow>
                     ) : (
                         data.map((order) => (
-                            <TableRow key={order.id} className={`transition-all duration-300 hover:bg-white border-b border-olive/5 group ${selectedOrders.has(order.id) ? "bg-lime/5" : ""}`}>
+                            <TableRow key={order.id} className={`transition-all duration-300 hover:bg-admin-canvas border-b border-olive/5 group ${selectedOrders.has(order.id) ? "bg-lime/5" : ""}`}>
                                 <TableCell className="pl-4">
                                     <Checkbox
                                         checked={selectedOrders.has(order.id)}
@@ -223,7 +223,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                         <Button 
                                             variant="ghost" 
                                             size="icon" 
-                                            className="h-7 w-7 opacity-40 group-hover:opacity-100 transition-all text-olive/80 hover:text-black hover:bg-olive/10" 
+                                            className="h-7 w-7 opacity-60 group-hover:opacity-100 transition-all text-olive-dark/70 hover:text-olive-dark hover:bg-olive-dark/10" 
                                             onClick={() => {
                                                 navigator.clipboard.writeText(order.id);
                                                 toast({ title: content.admin.orders.copyId, duration: 1000 });
@@ -234,33 +234,33 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-center px-1">
-                                    <span className="text-[9px] font-black text-brand-muted uppercase tracking-wider bg-olive/5 px-2 py-1 rounded-lg">
+                                    <span className="text-[9px] font-black text-olive-dark/70 uppercase tracking-wider bg-olive-dark/5 px-2 py-1 rounded-lg">
                                         {new Date(order.date).toLocaleDateString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}
                                     </span>
                                 </TableCell>
                                 <TableCell className="px-2">
                                     <div className="flex flex-col min-w-0">
                                         <span className="font-black text-olive-dark text-[11px] uppercase tracking-tight truncate">{order.customer.name}</span>
-                                        <span className="text-[9px] text-brand-muted font-bold tracking-tight truncate">{order.customer.email}</span>
+                                        <span className="text-[9px] text-olive-dark/70 font-bold tracking-tight truncate">{order.customer.email}</span>
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-center px-1">
                                     <div className="flex flex-col gap-0.5 items-center">
                                         {order.items.slice(0, 1).map((item, idx) => (
-                                            <div key={idx} className="text-[8px] font-black uppercase text-brand-muted bg-white border border-olive/5 px-2 py-0.5 rounded-lg shadow-sm">
+                                            <div key={idx} className="text-[8px] font-black uppercase text-olive-dark/80 bg-admin-canvas border border-olive-dark/10 px-2 py-0.5 rounded-lg shadow-sm">
                                                 {item.quantity}x {item.name.split(' ')[0]}
                                             </div>
                                         ))}
-                                        {order.items.length > 1 && <span className="text-[7px] text-olive/30 font-black uppercase tracking-widest">+ {order.items.length - 1} {content.admin.orders.more}</span>}
+                                        {order.items.length > 1 && <span className="text-[7px] text-olive-dark/40 font-black uppercase tracking-widest">+ {order.items.length - 1} {content.admin.orders.more}</span>}
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-center px-2">
-                                    <span className="font-display font-black text-sm text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[8px] text-olive/20 tracking-normal">{content.bankInfo.currency}</span></span>
+                                    <span className="font-display font-black text-sm text-olive-dark">{(order.total || 0).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-[8px] text-olive-dark/40 tracking-normal">{content.bankInfo.currency}</span></span>
                                 </TableCell>
                                 <TableCell className="text-center px-1">
                                     <Badge 
                                         className={`text-[8px] font-black uppercase tracking-widest px-2 h-5 rounded-md border-none shadow-sm ${
-                                            order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                                            order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/60' :
                                             order.status === 'pending' ? 'bg-red-500/10 text-red-600' : 
                                             'bg-lime text-olive-dark'
                                         }`}
@@ -270,7 +270,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-center px-1">
-                                    <span className="text-[9px] font-black text-olive/40 uppercase tracking-widest">
+                                    <span className="text-[9px] font-black text-olive-dark/60 uppercase tracking-widest">
                                         {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer.slice(0, 4) :
                                          order.delivery_info?.paymentMethod === 'stripe_express' ? 'STRP' :
                                          order.delivery_info?.paymentMethod?.toUpperCase().slice(0, 4) || 'CARD'}
@@ -339,7 +339,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl"
+                                                        className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-xl"
                                                         title={content.admin.orders.cancelDialog.title}
                                                     >
                                                         <XCircle className="w-5 h-5" />
@@ -357,14 +357,14 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                                 <div className="font-mono text-xs font-black text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 8)}</div>
                                                                 <div className="text-xs font-black text-olive-dark uppercase tracking-tight">{order.customer.name}</div>
                                                             </div>
-                                                            <p className="text-xs text-olive/40 font-bold leading-relaxed px-1">
+                                                            <p className="text-xs text-olive-dark/70 font-bold leading-relaxed px-1">
                                                                 {content.admin.orders.cancelDialog.warning}
                                                             </p>
                                                         </div>
                                                     </DialogHeader>
                                                     <DialogFooter className="gap-3 mt-8">
                                                         <DialogClose asChild>
-                                                            <Button variant="ghost" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest text-olive/40 hover:text-olive-dark transition-all">{content.admin.orders.cancelDialog.back}</Button>
+                                                            <Button variant="ghost" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest text-olive-dark/40 hover:text-olive-dark transition-all">{content.admin.orders.cancelDialog.back}</Button>
                                                         </DialogClose>
                                                         <DialogClose asChild>
                                                             <Button variant="destructive" className="rounded-xl bg-red-600 hover:bg-red-700 px-8 font-black uppercase text-[10px] tracking-widest text-white shadow-xl shadow-red-600/20" onClick={() => onStatusChange(order.id, 'cancelled')}>
@@ -388,7 +388,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                             </Button>
                                         )}
                                         <InvoiceModal order={order}>
-                                            <Button size="sm" variant="outline" className="h-10 w-10 p-0 text-olive-dark/40 border-olive/10 hover:text-olive-dark hover:bg-white rounded-xl transition-all" title={content.admin.orders.viewInvoice}>
+                                            <Button size="sm" variant="outline" className="h-10 w-10 p-0 text-olive-dark/70 border-olive-dark/10 hover:text-olive-dark hover:bg-admin-canvas rounded-xl transition-all" title={content.admin.orders.viewInvoice}>
                                                 <FileText className="w-5 h-5" />
                                             </Button>
                                         </InvoiceModal>
@@ -628,7 +628,7 @@ const Orders = () => {
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <div className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse shadow-[0_0_12px_rgba(163,230,53,0.8)]" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 italic">Admin Terminal v2.0</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/70 italic">Admin Terminal v2.0</span>
                     </div>
                     <h2 
                         data-testid="admin-page-title" 
@@ -643,7 +643,7 @@ const Orders = () => {
                         <Button
                             variant="outline"
                             size="sm"
-                            className="gap-2 h-10 px-4 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 font-bold animate-pulse"
+                            className="gap-2 h-10 px-4 border-amber-500/30 bg-amber-500/10 text-amber-900 hover:bg-amber-500/20 font-bold animate-pulse"
                             onClick={requestNotificationPermission}
                             aria-label={content.admin.orders.notifToggle}
                         >
@@ -692,7 +692,7 @@ const Orders = () => {
             </div>
             <Tabs defaultValue="pending" className="w-full">
                 <div className="overflow-x-auto pb-6 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8 sm:mb-12">
-                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-white/40 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
+                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
                         <TabsTrigger value="pending" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
                         <TabsTrigger value="processing" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
                         <TabsTrigger value="shipped" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>

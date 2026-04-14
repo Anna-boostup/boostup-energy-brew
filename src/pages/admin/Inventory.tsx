@@ -32,11 +32,11 @@ const PackBreakdown = ({ bottles, content }: { bottles: number, content: any }) 
                     key={size}
                     className={`flex items-center gap-1.5 rounded-xl border transition-all duration-500 ${
                         count > 0
-                            ? "bg-white/80 border-olive/10 shadow-sm backdrop-blur-sm"
-                            : "bg-olive-dark/5 border-transparent opacity-20"
+                            ? "bg-admin-canvas/80 border-olive-dark/10 shadow-sm backdrop-blur-sm"
+                            : "bg-olive-dark/10 border-transparent opacity-40grayscale"
                     } px-3 py-1.5 hover:scale-105`}
                 >
-                    <span className="text-[9px] font-black uppercase tracking-[0.15em] text-olive/40">{size}{content?.admin?.dashboard?.unitKs || "ks"}</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.15em] text-olive-dark/60">{size}{content?.admin?.dashboard?.unitKs || "ks"}</span>
                     <span className="text-sm font-black text-olive-dark font-display">{count}{content?.admin?.dashboard?.multiplier || "x"}</span>
                 </div>
             );
@@ -53,17 +53,17 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, 
                     <span className="font-black text-lg text-olive-dark leading-tight uppercase tracking-tight truncate">
                         {product?.name || getFlavorLabel(sku, content)}
                     </span>
-                    <span className="text-[10px] text-olive/40 font-black uppercase tracking-widest mt-1">{content?.admin?.dashboard?.salesStatus}</span>
+                    <span className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest mt-1">{content?.admin?.dashboard?.salesStatus}</span>
                 </div>
             </div>
             <div className={`text-right shrink-0 ${qty < 10 ? "text-terracotta font-black" : "text-olive-dark"}`}>
                 <div className="text-3xl font-black font-display leading-none">{qty}</div>
-                <div className="text-[10px] font-black uppercase tracking-widest opacity-30 mt-1">{content?.admin?.inventory?.unit}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 mt-1">{content?.admin?.inventory?.unit}</div>
             </div>
         </div>
 
         <div className="flex items-center justify-between p-5 rounded-[2rem] bg-olive-dark/5 border border-olive/5">
-            <span className="text-[10px] font-black text-olive/40 uppercase tracking-[0.2em]">{content?.promoCodes?.popupSection?.toggleLabel}</span>
+            <span className="text-[10px] font-black text-olive-dark/70 uppercase tracking-[0.2em]">{content?.promoCodes?.popupSection?.toggleLabel}</span>
             <Switch
                 checked={product?.is_active !== false}
                 onCheckedChange={async (checked) => {
@@ -74,7 +74,7 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, 
         </div>
 
         <div className="space-y-4">
-            <span className="text-[10px] font-black text-olive/20 uppercase tracking-[0.3em] ml-2">{content?.admin?.inventory?.description}</span>
+            <span className="text-[10px] font-black text-olive-dark/50 uppercase tracking-[0.3em] ml-2">{content?.admin?.inventory?.description}</span>
             <PackBreakdown bottles={qty} content={content} />
         </div>
 
@@ -127,7 +127,7 @@ const Inventory = () => {
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic">{content?.admin?.navigation?.inventory}</h2>
                     <div className="flex items-center gap-3 mt-2">
                         <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted leading-none">{content?.admin?.inventory?.description}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/70 leading-none">{content?.admin?.inventory?.description}</p>
                     </div>
                 </div>
             </div>
@@ -135,20 +135,20 @@ const Inventory = () => {
             {/* Desktop Table Container */}
             <div className="hidden md:block overflow-hidden rounded-[3rem] glass-card border-none shadow-2xl">
                 <Table>
-                    <TableHeader className="bg-white/40 border-b border-olive/5">
+                    <TableHeader className="bg-admin-canvas/40 border-b border-olive/5">
                         <TableRow className="hover:bg-transparent border-none">
-                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 px-4">{content?.admin?.inventory?.title}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right w-[100px]">{content?.admin?.dashboard?.revenueDesc}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 pl-4">{content?.admin?.inventory?.unit}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-center w-[100px]">{content?.admin?.dashboard?.salesStatus}</TableHead>
-                            <TableHead className="font-black text-brand-primary uppercase text-[9px] tracking-widest py-3 text-right px-4">{content?.promoCodes?.listSection?.table?.actions}</TableHead>
+                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 px-4">{content?.admin?.inventory?.title}</TableHead>
+                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-right w-[100px]">{content?.admin?.dashboard?.revenueDesc}</TableHead>
+                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 pl-4">{content?.admin?.inventory?.unit}</TableHead>
+                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-center w-[100px]">{content?.admin?.dashboard?.salesStatus}</TableHead>
+                            <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-3 text-right px-4">{content?.promoCodes?.listSection?.table?.actions}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {sortedStock.map(([sku, qty]) => {
                             const product = products.find(p => p.sku === sku);
                             return (
-                                <TableRow key={sku} className="transition-all duration-300 hover:bg-white border-b border-olive/8 group">
+                                <TableRow key={sku} className="transition-all duration-300 hover:bg-admin-canvas border-b border-olive/8 group">
                                     <TableCell className="py-4 px-6">
                                         <div className="flex flex-col">
                                             <span className="font-display font-black text-olive-dark text-lg leading-tight uppercase tracking-tight">
@@ -162,7 +162,7 @@ const Inventory = () => {
                                             <span className={`font-display font-black text-3xl tabular-nums leading-none ${qty < 10 ? "text-terracotta" : "text-olive-dark"}`}>
                                                 {qty}
                                             </span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-olive/20 mt-1">{content?.admin?.inventory?.unit}</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-olive-dark/50 mt-1">{content?.admin?.inventory?.unit}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="pl-8">
@@ -177,7 +177,7 @@ const Inventory = () => {
                                                 }}
                                                 className="data-[state=checked]:bg-lime shadow-lg shadow-lime/10"
                                             />
-                                            <span className={`text-[9px] font-black uppercase tracking-widest ${product?.is_active !== false ? "text-white" : "text-olive/30"}`}>
+                                            <span className={`text-[9px] font-black uppercase tracking-widest ${product?.is_active !== false ? "text-olive-dark" : "text-olive-dark/60"}`}>
                                                 {product?.is_active !== false ? content?.admin?.dashboard?.statusShipped : content?.admin?.dashboard?.statusCancelled}
                                             </span>
                                         </div>
@@ -188,7 +188,7 @@ const Inventory = () => {
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => setHistorySku(sku)}
-                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-white hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
+                                                className="h-10 w-10 p-0 rounded-xl border-olive-dark/20 hover:bg-olive-dark hover:text-white hover:border-olive-dark transition-all duration-200 text-olive-dark/70"
                                                 title={content?.admin?.inventory?.historyTitle}
                                             >
                                                 <History className="h-4 w-4" />
@@ -196,7 +196,7 @@ const Inventory = () => {
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                className="h-10 w-10 p-0 rounded-xl border-olive/15 hover:bg-olive-dark hover:text-white hover:border-olive-dark transition-all duration-200 text-olive-dark/50"
+                                                className="h-10 w-10 p-0 rounded-xl border-olive-dark/20 hover:bg-olive-dark hover:text-white hover:border-olive-dark transition-all duration-200 text-olive-dark/70"
                                                 onClick={() => setEditSku(sku)}
                                                 title={content?.admin?.inventory?.editDetails}
                                             >

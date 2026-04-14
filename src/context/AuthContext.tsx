@@ -9,6 +9,7 @@ interface Profile {
     role: 'admin' | 'user';
     account_type: 'personal' | 'company' | 'admin';
     address: any;
+    assigned_promo_code: string | null;
 }
 
 interface AuthContextType {

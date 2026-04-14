@@ -125,32 +125,32 @@ export default function BlogManagement() {
       <div className="bg-white/5 backdrop-blur-md rounded-[2.5rem] border border-white/10 overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-olive-dark/5 hover:bg-transparent">
-              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6 pl-8">Název článku</TableHead>
-              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6">Kategorie</TableHead>
-              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6">Stav</TableHead>
-              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6">Datum</TableHead>
-              <TableHead className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black py-6 text-right pr-8">Akce</TableHead>
+            <TableRow className="border-olive-dark/10 hover:bg-transparent">
+              <TableHead className="text-olive-dark font-black uppercase tracking-widest text-[10px] py-6 pl-8">Název článku</TableHead>
+              <TableHead className="text-olive-dark font-black uppercase tracking-widest text-[10px] py-6">Kategorie</TableHead>
+              <TableHead className="text-olive-dark font-black uppercase tracking-widest text-[10px] py-6">Stav</TableHead>
+              <TableHead className="text-olive-dark font-black uppercase tracking-widest text-[10px] py-6">Datum</TableHead>
+              <TableHead className="text-olive-dark font-black uppercase tracking-widest text-[10px] py-6 text-right pr-8">Akce</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-20 text-white/20 font-medium">Načítám články...</TableCell>
+                <TableCell colSpan={5} className="text-center py-20 text-olive-dark/40 font-black uppercase tracking-widest">Načítám články...</TableCell>
               </TableRow>
             ) : filteredPosts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-20 text-white/20 font-medium">Žádné články nebyly nalezeny.</TableCell>
+                <TableCell colSpan={5} className="text-center py-20 text-olive-dark/40 font-black uppercase tracking-widest">Žádné články nebyly nalezeny.</TableCell>
               </TableRow>
             ) : (
               filteredPosts.map((post) => (
                 <TableRow key={post.id} className="border-white/5 hover:bg-white/5 transition-colors group">
                   <TableCell className="py-6 pl-8">
-                    <span className="text-white font-bold group-hover:text-lime transition-colors">{post.title}</span>
-                    <p className="text-[10px] text-white/20 font-mono mt-1">/{post.slug}</p>
+                    <span className="text-olive-dark font-display font-black group-hover:text-lime transition-colors">{post.title}</span>
+                    <p className="text-[10px] text-olive-dark/40 font-mono mt-1">/{post.slug}</p>
                   </TableCell>
                   <TableCell className="py-6">
-                    <Badge variant="outline" className="bg-white/5 border-white/10 text-white/60 font-bold rounded-lg px-3 py-1">
+                    <Badge variant="outline" className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark/80 font-bold rounded-lg px-3 py-1">
                       {post.category?.name || "Bez kategorie"}
                     </Badge>
                   </TableCell>
@@ -161,13 +161,13 @@ export default function BlogManagement() {
                         <span className="text-[10px] font-black text-lime uppercase tracking-wider">Publikováno</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2 text-white/20">
+                      <div className="flex items-center gap-2 text-olive-dark/20">
                         <div className="w-1.5 h-1.5 rounded-full bg-current" />
                         <span className="text-[10px] font-black uppercase tracking-wider">Koncept</span>
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="py-6 text-white/40 text-xs">
+                  <TableCell className="py-6 text-olive-dark/60 font-bold text-xs">
                     {post.published_at 
                       ? format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs })
                       : format(new Date(post.created_at), 'd. MMMM yyyy', { locale: cs })
@@ -179,7 +179,7 @@ export default function BlogManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
-                        className="w-9 h-9 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-all"
+                        className="w-9 h-9 rounded-xl hover:bg-olive-dark/5 text-olive-dark/40 hover:text-olive-dark transition-all"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>

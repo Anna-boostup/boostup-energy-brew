@@ -39,7 +39,7 @@ const ManufactureInventory = () => {
                         <h1 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.inventory?.manufacture?.title || "Staff Inventory"}</h1>
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
+                            <p className="text-olive-dark/70 font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
                                 {content?.admin?.inventory?.manufacture?.subtitle}
                             </p>
                         </div>
@@ -63,7 +63,7 @@ const ManufactureInventory = () => {
                         </div>
                         <div className="space-y-2">
                             <p className="text-2xl font-black text-olive-dark font-display uppercase italic">{content?.admin?.inventory?.manufacture?.emptyTitle || "No materials"}</p>
-                            <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest">{content?.admin?.inventory?.manufacture?.emptyDesc}</p>
+                            <p className="text-[10px] text-olive-dark/70 font-black uppercase tracking-widest">{content?.admin?.inventory?.manufacture?.emptyDesc}</p>
                         </div>
                     </div>
                 ) : (
@@ -73,10 +73,10 @@ const ManufactureInventory = () => {
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b border-olive/10 bg-olive-dark">
-                                        <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.admin?.inventory?.manufacture?.table?.id || "ID"}</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.admin?.inventory?.manufacture?.table?.status || "Status"}</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.admin?.inventory?.manufacture?.table?.limits || "Limits"}</th>
-                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/60">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</th>
+                                        <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/80">{content?.admin?.inventory?.manufacture?.table?.id || "ID"}</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/80">{content?.admin?.inventory?.manufacture?.table?.status || "Status"}</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/80">{content?.admin?.inventory?.manufacture?.table?.limits || "Limits"}</th>
+                                        <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/80">{content?.promoCodes?.listSection?.table?.actions || "Actions"}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-olive/5">
@@ -98,16 +98,16 @@ const ManufactureInventory = () => {
                                                         </div>
                                                         <div className="space-y-1">
                                                             <p className="font-display font-black text-xl text-olive-dark uppercase italic tracking-tight group-hover:translate-x-1 transition-transform">{m.name}</p>
-                                                            <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest leading-none">ID {m.id.split('-')[0]}</p>
+                                                            <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest leading-none">ID {m.id.split('-')[0]}</p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-10 py-8 text-right">
                                                     <div className="space-y-1">
                                                         <div className={`text-3xl font-black font-display italic leading-none ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark'}`}>
-                                                            {m.quantity} <span className="text-sm font-black uppercase text-brand-muted opacity-40">{m.unit}</span>
+                                                            {m.quantity} <span className="text-sm font-black uppercase text-olive-dark/50">{m.unit}</span>
                                                         </div>
-                                                        <Badge variant="outline" className={`border-none px-0 text-[10px] font-black uppercase tracking-widest ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-white-dark'}`}>
+                                                        <Badge variant="outline" className={`border-none px-0 text-[10px] font-black uppercase tracking-widest ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark/70'}`}>
                                                             {isCritical ? content?.admin?.inventory?.manufacture?.status?.critical : isWarning ? content?.admin?.inventory?.manufacture?.status?.warning : content?.admin?.inventory?.manufacture?.status?.ok}
                                                         </Badge>
                                                     </div>
@@ -115,12 +115,12 @@ const ManufactureInventory = () => {
                                                 <td className="px-10 py-8 text-right">
                                                     <div className="flex flex-col items-end gap-1.5">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-[9px] font-black uppercase tracking-widest text-brand-muted">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"}</span>
+                                                            <span className="text-[9px] font-black uppercase tracking-widest text-olive-dark/60">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"}</span>
                                                             <span className="text-xs font-black text-olive-dark">{m.min_quantity} {m.unit}</span>
                                                         </div>
                                                         {m.warning_quantity > 0 && (
                                                             <div className="flex items-center gap-2">
-                                                                 <span className="text-[9px] font-black uppercase tracking-widest text-brand-muted">{content?.admin?.inventory?.manufacture?.warnAtLabel || "Warn"}</span>
+                                                                 <span className="text-[9px] font-black uppercase tracking-widest text-olive-dark/60">{content?.admin?.inventory?.manufacture?.warnAtLabel || "Warn"}</span>
                                                                 <span className="text-xs font-black text-orange-500">{m.warning_quantity} {m.unit}</span>
                                                             </div>
                                                         )}
@@ -174,14 +174,14 @@ const ManufactureInventory = () => {
                                                 </div>
                                                 <div className="flex flex-col min-w-0">
                                                     <p className="font-display font-black text-xl text-olive-dark uppercase italic leading-tight truncate">{m.name}</p>
-                                                    <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest mt-1">ID {m.id.split('-')[0]}</p>
+                                                    <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest mt-1">ID {m.id.split('-')[0]}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right shrink-0">
                                                 <p className={`text-3xl font-black font-display italic leading-none ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark'}`}>
                                                     {m.quantity} <span className="text-[11px] uppercase opacity-40">{m.unit}</span>
                                                 </p>
-                                                <Badge variant="outline" className={`border-none px-0 text-[9px] font-black uppercase tracking-widest mt-1.5 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive/40'}`}>
+                                                <Badge variant="outline" className={`border-none px-0 text-[9px] font-black uppercase tracking-widest mt-1.5 ${isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-olive-dark/60'}`}>
                                                     {isCritical ? content?.admin?.inventory?.manufacture?.status?.critical : isWarning ? content?.admin?.inventory?.manufacture?.status?.warning : content?.admin?.inventory?.manufacture?.status?.ok}
                                                 </Badge>
                                             </div>
@@ -189,12 +189,12 @@ const ManufactureInventory = () => {
 
                                         <div className="p-5 rounded-[2rem] bg-olive-dark/5 border border-olive/5 grid grid-cols-2 gap-4">
                                             <div className="flex flex-col">
-                                                <span className="text-[9px] font-black text-olive/30 uppercase tracking-[0.2em] mb-1">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"}</span>
+                                                <span className="text-[9px] font-black text-olive-dark/50 uppercase tracking-[0.2em] mb-1">{content?.admin?.inventory?.manufacture?.limitLabel || "Min"}</span>
                                                 <span className="text-xs font-black text-olive-dark">{m.min_quantity} {m.unit}</span>
                                             </div>
                                             {m.warning_quantity > 0 && (
                                                 <div className="flex flex-col">
-                                                    <span className="text-[9px] font-black text-olive/30 uppercase tracking-[0.2em] mb-1">{content?.admin?.inventory?.warnAtLabel || "Warn"}</span>
+                                                    <span className="text-[9px] font-black text-olive-dark/50 uppercase tracking-[0.2em] mb-1">{content?.admin?.inventory?.warnAtLabel || "Warn"}</span>
                                                     <span className="text-xs font-black text-orange-500">{m.warning_quantity} {m.unit}</span>
                                                 </div>
                                             )}

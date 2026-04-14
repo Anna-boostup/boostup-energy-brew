@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { track } from '@vercel/analytics';
 import { useCookieConsent } from './CookieContext';
+import { useAuth } from './AuthContext';
 
 export interface CartItem {
     id: string;
@@ -115,6 +116,16 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, []);
 
+    const { profile } = useAuth();
+
+    // Auto-apply personal promo code from profile
+    useEffect(() => {
+        if (profile?.assigned_promo_code && !appliedPromoCode) {
+            // Silently apply the code if it's assigned to the user
+            applyPromoCode(profile.assigned_promo_code, true);
+        }
+    }, [profile?.assigned_promo_code, !!appliedPromoCode]);
+
     const addToCart = useCallback((item: CartItem) => {
         dispatch({ type: 'ADD_TO_CART', payload: item });
         
@@ -164,7 +175,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dispatch({ type: 'CLEAR_CART' });
     }, []);
 
-    const applyPromoCode = async (code: string) => {
+    const applyPromoCode = async (code: string, silent = false) => {
         try {
             if (!supabase) {
                 console.error('CartContext: Supabase client not initialized. Cannot apply promo code.');
@@ -179,14 +190,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 .single();
 
             if (error || !data) {
-                toast.error('Neplatný nebo neaktivní slevový kód');
+                if (!silent) toast.error('Neplatný nebo neaktivní slevový kód');
                 return false;
             }
 
             const promo = { code: data.code, discount: data.discount_percent };
             setAppliedPromoCode(promo);
             sessionStorage.setItem('boostup_promo', JSON.stringify(promo));
-            toast.success(`Sleva ${data.discount_percent}% byla uplatněna`);
+            if (!silent) toast.success(`Sleva ${data.discount_percent}% byla uplatněna`);
             return true;
         } catch (err) {
             console.error('Error applying promo code:', err);
