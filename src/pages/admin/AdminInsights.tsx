@@ -85,7 +85,7 @@ const AdminInsights = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
-                <p className="text-brand-muted font-black uppercase tracking-[0.4em] animate-pulse">Načítám Insights...</p>
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">Načítám Insights...</p>
             </div>
         );
     }
@@ -109,7 +109,7 @@ const AdminInsights = () => {
                         </div>
                     </div>
                     <h2 data-testid="admin-page-title" className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
-                        Insights <span className="text-brand-muted opacity-30">Center</span>
+                        Insights <span className="text-olive-dark/40">Center</span>
                     </h2>
                 </div>
 
@@ -118,7 +118,7 @@ const AdminInsights = () => {
                         <Activity className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className="text-[10px] font-black text-brand-muted uppercase tracking-widest">Globalni dosah</p>
+                        <p className="text-[10px] font-black text-olive-dark/70 uppercase tracking-widest">Globalni dosah</p>
                         <p className="text-xl font-black text-olive-dark leading-none">99.8% <span className="text-[10px] text-lime-dark font-black tracking-normal uppercase ml-1">Uptime</span></p>
                     </div>
                 </div>
@@ -163,7 +163,7 @@ const AdminInsights = () => {
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <CardTitle className="text-2xl font-black text-olive-dark uppercase tracking-tight">Trend návštěvnosti</CardTitle>
-                            <p className="text-xs font-bold text-brand-muted uppercase tracking-widest mt-1">Sledování denní aktivity ve 14-denním okně</p>
+                            <p className="text-xs font-black text-olive-dark/80 uppercase tracking-widest mt-1">Sledování denní aktivity ve 14-denním okně</p>
                         </div>
                         <div className="w-12 h-12 rounded-2xl bg-lime/10 flex items-center justify-center text-olive-dark">
                             <Calendar className="w-6 h-6" />
@@ -181,7 +181,7 @@ const AdminInsights = () => {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} 
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#3d5a2f' }} 
                                     axisLine={false}
                                     tickLine={false}
                                     dy={10}
@@ -189,7 +189,7 @@ const AdminInsights = () => {
                                 <YAxis 
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }}
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#3d5a2f' }}
                                     dx={-10}
                                 />
                                 <Tooltip 
@@ -247,10 +247,10 @@ const AdminInsights = () => {
                     </div>
                     <div className="mt-8 space-y-4">
                         <div className="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/5">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Drop-off:</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Drop-off:</span>
                             <span className="text-xl font-black text-terracotta">-{Math.floor(Math.random() * 15) + 60}%</span>
                         </div>
-                        <p className="text-[9px] text-center text-white/30 font-bold uppercase tracking-widest leading-loose px-4">
+                        <p className="text-[9px] text-center text-white/40 font-black uppercase tracking-widest leading-loose px-4">
                             Konverzní cesta je stabilní. Zaměřte se na optimalizaci kroku "Pokladna" pro zvýšení celkových prodejů.
                         </p>
                     </div>
@@ -266,10 +266,10 @@ const AdminInsights = () => {
                 <div className="space-y-4 font-mono">
                     {trafficData.slice(-5).reverse().map((event, i) => (
                         <div key={i} className="flex flex-wrap items-center gap-4 p-4 rounded-2xl bg-white/30 border border-white/5 text-[10px] sm:text-xs">
-                            <span className="font-black text-olive/40">{format(parseISO(event.created_at), 'HH:mm:ss')}</span>
+                            <span className="font-black text-olive-dark/60">{format(parseISO(event.created_at), 'HH:mm:ss')}</span>
                             <span className="px-2 py-0.5 rounded-lg bg-olive-dark text-white text-[10px] uppercase font-bold">{event.event_type}</span>
                             <span className="text-olive-dark font-black tracking-tighter truncate max-w-[200px]">{event.page_path}</span>
-                            <span className="ml-auto text-brand-muted opacity-30 text-[9px] hidden sm:block">SID: {event.session_id.slice(0, 8)}...</span>
+                            <span className="ml-auto text-olive-dark/40 text-[9px] hidden sm:block">SID: {event.session_id.slice(0, 8)}...</span>
                         </div>
                     ))}
                     {trafficData.length === 0 && (

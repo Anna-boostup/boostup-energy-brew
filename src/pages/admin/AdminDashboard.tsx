@@ -87,7 +87,7 @@ const AdminDashboard = () => {
                             <div className="w-2 h-2 rounded-full bg-lime" />
                             <div className="w-2 h-2 rounded-full bg-lime/40" />
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive/40 leading-none">{content?.admin?.dashboard?.welcome}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/60 leading-none">{content?.admin?.dashboard?.welcome}</p>
                     </div>
                 </div>
                 
@@ -138,7 +138,7 @@ const AdminDashboard = () => {
                         <DollarSign className="w-48 h-48 text-white" />
                     </div>
                     <CardHeader className="p-0 relative z-10">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">{content?.admin?.dashboard?.revenue}</CardTitle>
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">{content?.admin?.dashboard?.revenue}</CardTitle>
                     </CardHeader>
                     <CardContent className="relative z-10 pt-4 p-0">
                         <div className="text-3xl sm:text-5xl font-black text-white font-display tracking-tighter mb-1">
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-[2px] bg-lime/30" />
-                            <p className="text-[9px] text-white/30 font-black uppercase tracking-[0.2em]">{content?.admin?.dashboard?.revenueDesc}</p>
+                            <p className="text-[9px] text-white/50 font-black uppercase tracking-[0.2em]">{content?.admin?.dashboard?.revenueDesc}</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -161,24 +161,24 @@ const AdminDashboard = () => {
                     <CardContent className="px-6 sm:px-10 pb-6 sm:pb-10">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
                             <div className="relative group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">{content?.admin?.dashboard?.newOrders}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.newOrders}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
                                 <div className="mt-4 inline-flex items-center px-4 py-1.5 rounded-full bg-lime text-olive-dark text-[9px] font-black shadow-lg shadow-lime/20">
                                     +{todayOrders} {content?.admin?.dashboard?.todayLabel}
                                 </div>
                             </div>
                             <div className="group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">{content?.admin?.dashboard?.processing}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.processing}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{processingCount}</div>
                                 <div className="w-6 h-1 bg-olive/10 mt-5 rounded-full" />
                             </div>
                             <div className="group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-muted mb-3 ml-1">{content?.admin?.dashboard?.shipped}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.shipped}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{shippedCount}</div>
                                 <div className="w-6 h-1 bg-lime mt-5 rounded-full" />
                             </div>
-                            <div className="group/stat opacity-40 grayscale-[0.5]">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/60 mb-3 ml-1">{content?.admin?.dashboard?.cancelled}</p>
+                            <div className="group/stat opacity-60">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/80 mb-3 ml-1">{content?.admin?.dashboard?.cancelled}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none">{cancelledCount}</div>
                             </div>
                         </div>
@@ -195,10 +195,10 @@ const AdminDashboard = () => {
                                 <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-widest">{content?.admin?.inventory?.description}</p>
                             </div>
                             <div className="p-6 sm:p-10 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
-                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">{content?.admin?.inventory?.lemon}</span>
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive-dark/60 mb-3">{content?.admin?.inventory?.lemon}</span>
                                 <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
-                                    <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
+                                    <span className="text-[11px] font-black text-olive-dark/40 mb-1">{content?.admin?.dashboard?.unitKs}</span>
                                 </div>
                             </div>
                             <div className="p-6 sm:p-10 flex flex-col justify-center border-b md:border-b-0 md:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
@@ -222,10 +222,10 @@ const AdminDashboard = () => {
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-7 overflow-hidden rounded-[2.5rem] sm:rounded-[4rem] glass-card border-none shadow-2xl">
-                    <CardHeader className="bg-white/40 backdrop-blur-md py-6 sm:py-10 px-6 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-olive/5 gap-6">
+                    <CardHeader className="bg-admin-canvas/40 backdrop-blur-md py-6 sm:py-10 px-6 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-olive/5 gap-6">
                         <div>
                             <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.recentOrders}</CardTitle>
-                            <CardDescription className="text-[10px] font-black text-brand-muted mt-2 uppercase tracking-[0.2em]">{content?.admin?.dashboard?.recentOrdersDesc}</CardDescription>
+                            <CardDescription className="text-[10px] font-black text-olive-dark/70 mt-2 uppercase tracking-[0.2em]">{content?.admin?.dashboard?.recentOrdersDesc}</CardDescription>
                         </div>
                         <Button variant="outline" className="rounded-2xl font-black text-[10px] uppercase tracking-widest border-olive/10 h-12 sm:h-14 px-6 sm:px-8 hover:bg-olive-dark hover:text-white transition-all duration-300 shadow-xl shadow-olive/5 w-full sm:w-auto" onClick={() => window.location.hash = '/admin/orders'}>
                             {content?.admin?.dashboard?.viewAll}
@@ -234,16 +234,16 @@ const AdminDashboard = () => {
                     <CardContent className="p-0">
                         {orders.length === 0 ? (
                             <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
-                                <ShoppingBag className="w-12 h-12 text-background" />
-                                <p className="text-olive/40 font-bold uppercase text-xs tracking-widest">{content?.admin?.dashboard?.noOrders}</p>
+                                <ShoppingBag className="w-12 h-12 text-olive-dark/10" />
+                                <p className="text-olive-dark/60 font-black uppercase text-[10px] tracking-[0.2em]">{content?.admin?.dashboard?.noOrders}</p>
                             </div>
                         ) : (
                             <div className="divide-y-2 divide-olive/8">
                                 {orders.slice(0, 10).map((order, index) => (
                                     <div
                                         key={order.id}
-                                        className={`flex flex-col xl:flex-row xl:items-center justify-between p-6 sm:p-10 transition-all duration-300 gap-8 group hover:bg-white/80 ${
-                                            index % 2 === 0 ? 'bg-white/30' : 'bg-cream/60'
+                                        className={`flex flex-col xl:flex-row xl:items-center justify-between p-6 sm:p-10 transition-all duration-300 gap-8 group hover:bg-admin-canvas/80 ${
+                                            index % 2 === 0 ? 'bg-admin-canvas/30' : 'bg-cream/40'
                                         }`}
                                     >
                                         <div className="flex-1 min-w-0">
@@ -251,21 +251,21 @@ const AdminDashboard = () => {
                                                 <span className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl tracking-tighter uppercase whitespace-nowrap shadow-xl shadow-olive-dark/10">
                                                     #{order.id.slice(0, 8)}
                                                 </span>
-                                                <span className="text-[10px] font-black text-olive/20 uppercase tracking-[0.3em] flex items-center gap-2">
+                                                <span className="text-[10px] font-black text-olive-dark/50 uppercase tracking-[0.3em] flex items-center gap-2">
                                                     <div className="w-1 h-1 rounded-full bg-lime" />
                                                     {new Date(order.date).toLocaleDateString(content?.lang === 'en' ? 'en-US' : 'cs-CZ', { day: 'numeric', month: 'long' })}
                                                 </span>
                                             </div>
                                             <div className="flex flex-col">
                                                 <h4 className="text-xl sm:text-2xl font-black text-olive-dark group-hover:scale-105 origin-left transition-transform duration-500">{order.customer.name}</h4>
-                                                <span className="text-[10px] sm:text-xs font-bold text-brand-muted mt-1 group-hover:text-olive-dark transition-colors">{order.customer.email}</span>
+                                                <span className="text-[10px] sm:text-xs font-bold text-olive-dark/70 mt-1 group-hover:text-olive-dark transition-colors">{order.customer.email}</span>
                                             </div>
                                         </div>
 
                                         <div className="flex flex-wrap items-center justify-between xl:justify-end gap-x-12 gap-y-6 shrink-0">
                                             <div className="flex flex-col items-start xl:items-end gap-3">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/20">{content?.admin?.dashboard?.paymentLabel}</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50">{content?.admin?.dashboard?.paymentLabel}</span>
                                                     <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
                                                         order.status === 'pending' 
                                                             ? 'bg-orange/10 text-orange' 
@@ -275,11 +275,11 @@ const AdminDashboard = () => {
                                                     </Badge>
                                                 </div>
                                                 <div className="flex items-center gap-3">
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/20">{content?.admin?.dashboard?.statusLabel}</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50">{content?.admin?.dashboard?.statusLabel}</span>
                                                     <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
                                                         order.status === 'shipped' ? 'bg-olive-dark text-white' :
                                                         order.status === 'processing' ? 'bg-olive-light text-white' :
-                                                        order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
+                                                        order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/50' :
                                                         'bg-lime/20 text-olive-dark'
                                                     }`}>
                                                         {order.status === 'shipped' ? content?.admin?.dashboard?.statusShipped :
@@ -291,8 +291,8 @@ const AdminDashboard = () => {
                                             </div>
 
                                             <div className="flex flex-col items-start xl:items-end">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-muted leading-none mb-2">{content?.admin?.dashboard?.amountLabel}</span>
-                                                <span className="text-3xl font-black text-olive-dark font-display leading-none">{(order.total || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-sm font-bold text-olive/20 tracking-normal ml-1">{content?.bankInfo?.currency}</span></span>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 leading-none mb-2">{content?.admin?.dashboard?.amountLabel}</span>
+                                                <span className="text-3xl font-black text-olive-dark font-display leading-none">{(order.total || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-sm font-bold text-olive-dark/40 tracking-normal ml-1">{content?.bankInfo?.currency}</span></span>
                                             </div>
 
                                             <div className="flex items-center gap-3">
@@ -306,7 +306,7 @@ const AdminDashboard = () => {
                                                 </Dialog>
                                                 
                                                 <InvoiceModal order={order}>
-                                                    <Button variant="outline" className="h-16 w-16 rounded-[1.5rem] border-olive/10 hover:bg-white text-olive/40 hover:text-olive-dark transition-all duration-500 shadow-lg shadow-olive/5">
+                                                    <Button variant="outline" className="h-16 w-16 rounded-[1.5rem] border-olive/10 hover:bg-admin-canvas text-olive-dark/60 hover:text-olive-dark transition-all duration-500 shadow-lg shadow-olive/5">
                                                         <FileText className="h-6 w-6" />
                                                     </Button>
                                                 </InvoiceModal>

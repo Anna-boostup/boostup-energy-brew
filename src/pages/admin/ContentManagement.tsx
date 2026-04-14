@@ -172,7 +172,7 @@ const ContentManagement = () => {
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.contentManager?.title || "Content Management"}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.contentManager?.description}</p>
+                        <p className="text-olive-dark/70 font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.contentManager?.description}</p>
                     </div>
                 </div>
 
@@ -182,7 +182,7 @@ const ContentManagement = () => {
                             variant="ghost"
                             size="sm"
                             className={`h-12 px-8 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all duration-500 border-none ${
-                                editingLang === 'cs' ? 'bg-lime text-olive-dark shadow-xl' : 'text-white/50 hover:text-white hover:bg-white/5'
+                                editingLang === 'cs' ? 'bg-lime text-olive-dark shadow-xl' : 'text-white/70 hover:text-white hover:bg-white/5'
                             }`}
                             onClick={() => setEditingLang('cs')}
                         >
@@ -192,7 +192,7 @@ const ContentManagement = () => {
                             variant="ghost"
                             size="sm"
                             className={`h-12 px-8 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all duration-500 border-none ${
-                                editingLang === 'en' ? 'bg-lime text-olive-dark shadow-xl' : 'text-white/50 hover:text-white hover:bg-white/5'
+                                editingLang === 'en' ? 'bg-lime text-olive-dark shadow-xl' : 'text-white/70 hover:text-white hover:bg-white/5'
                             }`}
                             onClick={() => setEditingLang('en')}
                         >
@@ -205,7 +205,7 @@ const ContentManagement = () => {
                             <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
                             {content?.admin?.contentManager?.preview || "Preview"}
                         </Button>
-                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive/40 font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
+                        <Button variant="outline" onClick={handleReset} disabled={isResetting || isSaving} className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl bg-white border-olive/10 text-olive-dark/60 font-black uppercase text-[9px] sm:text-[10px] tracking-widest shadow-xl shadow-olive/5 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all gap-2 sm:gap-3 flex-1 sm:flex-initial">
                             {isResetting ? <Loader2 className="h-4 sm:h-5 w-4 sm:w-5 animate-spin" /> : <RotateCcw className="h-4 sm:h-5 w-4 sm:w-5" />}
                             {content?.admin?.contentManager?.reset || "Reset"}
                         </Button>
@@ -234,7 +234,7 @@ const ContentManagement = () => {
                             <TabsTrigger 
                                 key={tab.id}
                                 value={tab.id} 
-                                className="px-4 sm:px-8 py-3 sm:py-5 rounded-xl sm:rounded-[2rem] font-black uppercase text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-olive/40 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none shrink-0 flex items-center gap-2"
+                                className="px-4 sm:px-8 py-3 sm:py-5 rounded-xl sm:rounded-[2rem] font-black uppercase text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-olive-dark/60 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none shrink-0 flex items-center gap-2"
                             >
                                 <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                 <span className="hidden xs:inline">{content?.admin?.contentManager?.tabs?.[tab.id as keyof typeof content.admin.contentManager.tabs] || tab.id.toUpperCase()}</span>
@@ -254,7 +254,7 @@ const ContentManagement = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.hero?.title || "Hero"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.hero?.description}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.hero?.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -351,7 +351,7 @@ const ContentManagement = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.mission?.title || "Mission"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.mission?.description}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.mission?.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -383,7 +383,7 @@ const ContentManagement = () => {
                                 />
                             </div>
                             <div className="space-y-8 pt-8 border-t border-background">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive/40 pl-1">{content?.admin?.contentManager?.sections?.mission?.paragraphs || "Paragraphs"}</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/60 pl-1">{content?.admin?.contentManager?.sections?.mission?.paragraphs || "Paragraphs"}</Label>
                                 {localContent.mission.paragraphs.map((text: string, i: number) => (
                                     <StyledTextField
                                         key={i}
@@ -416,7 +416,7 @@ const ContentManagement = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.ingredients?.title || "Ingredients"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.ingredients?.description}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.ingredients?.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -441,7 +441,7 @@ const ContentManagement = () => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content?.admin?.contentManager?.sections?.ingredients?.category || "Category"}</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">{content?.admin?.contentManager?.sections?.ingredients?.category || "Category"}</Label>
                                             <Input
                                                 value={details.title}
                                                 onChange={(e) => updateField(['ingredientDetails', key, 'title'], e.target.value)}
@@ -449,7 +449,7 @@ const ContentManagement = () => {
                                             />
                                         </div>
                                         <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content?.admin?.contentManager?.sections?.ingredients?.subtitle || "Subtitle"}</Label>
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">{content?.admin?.contentManager?.sections?.ingredients?.subtitle || "Subtitle"}</Label>
                                             <Input
                                                 value={details.subtitle}
                                                 onChange={(e) => updateField(['ingredientDetails', key, 'subtitle'], e.target.value)}
@@ -521,14 +521,14 @@ const ContentManagement = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.concept?.title || "Concept"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.concept?.description}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.concept?.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="p-6 sm:p-12 space-y-8 sm:space-y-12">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content?.admin?.contentManager?.sections?.concept?.headline || "Headline"}</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">{content?.admin?.contentManager?.sections?.concept?.headline || "Headline"}</Label>
                                     <Input
                                         value={localContent.concept3b.headline}
                                         onChange={(e) => updateField(['concept3b', 'headline'], e.target.value)}
@@ -536,7 +536,7 @@ const ContentManagement = () => {
                                     />
                                 </div>
                                 <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content?.admin?.contentManager?.sections?.concept?.cta || "CTA"}</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">{content?.admin?.contentManager?.sections?.concept?.cta || "CTA"}</Label>
                                     <Input
                                         value={localContent.concept3b.cta}
                                         onChange={(e) => updateField(['concept3b', 'cta'], e.target.value)}
@@ -545,7 +545,7 @@ const ContentManagement = () => {
                                 </div>
                             </div>
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-olive/40 pl-1">{content?.admin?.contentManager?.sections?.concept?.intro || "Intro"}</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">{content?.admin?.contentManager?.sections?.concept?.intro || "Intro"}</Label>
                                 <Textarea
                                     rows={3}
                                     value={localContent.concept3b.description}
@@ -668,7 +668,7 @@ const ContentManagement = () => {
                                 </div>
                                  <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.cta?.title || "CTA"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.cta?.description}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.cta?.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -721,7 +721,7 @@ const ContentManagement = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.contact?.title || "Contact"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.contact?.description}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.contact?.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -783,7 +783,7 @@ const ContentManagement = () => {
                                 </div>
                                  <div>
                                     <h3 className="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight italic">{content?.admin?.contentManager?.sections?.flavors?.sectionTitle || "Flavors"}</h3>
-                                    <p className="text-white/40 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.flavors?.sectionDesc}</p>
+                                    <p className="text-white/60 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.4em] mt-2">{content?.admin?.contentManager?.sections?.flavors?.sectionDesc}</p>
                                 </div>
                             </div>
                         </div>
@@ -797,7 +797,7 @@ const ContentManagement = () => {
                                             </div>
                                             <div className="space-y-1">
                                                 <h3 className="text-2xl font-black font-display uppercase tracking-tight text-olive-dark">{flavor.name}</h3>
-                                                <p className="text-[10px] font-black text-olive/40 uppercase tracking-widest leading-none bg-background px-3 py-1.5 rounded-full border border-background inline-block">{flavor.tagline}</p>
+                                                <p className="text-[10px] font-black text-olive-dark/60 uppercase tracking-widest leading-none bg-background px-3 py-1.5 rounded-full border border-background inline-block">{flavor.tagline}</p>
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-4">

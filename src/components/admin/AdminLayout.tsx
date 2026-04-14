@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -21,7 +21,6 @@ const AdminLayout = () => {
     const { user, profile, loading, signOut } = useAuth();
     const { materials } = useManufacture();
     const { content } = useContent();
-    if (!content) return null;
     // Fetch unread messages count
     const { orders = [] } = useInventory() || { orders: [] };
 
@@ -80,9 +79,8 @@ const AdminLayout = () => {
         return () => clearInterval(interval);
     }, [user, profile, orders.length]);
 
-    if (loading) {
-        return <div className="p-8">{content?.admin?.auth?.verifying || "Verifying..."}</div>;
-    }
+    // No full-screen loading guard here to prevent flicker
+    // Logic will be handled inside return for skeleton/shell stability
 
     if (!user) {
         return <Navigate to="/login" replace />;
@@ -90,10 +88,15 @@ const AdminLayout = () => {
 
     if (profile?.role !== 'admin') {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-                <p className="text-red-500 font-bold">{content?.admin?.auth?.noPermission || "Access Denied"}</p>
+            <div className="min-h-screen bg-admin-canvas flex flex-col items-center justify-center p-8 gap-6 text-center">
+                <div className="p-6 bg-red-500/10 rounded-3xl border border-red-500/20">
+                    <LogOut className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                    <p className="text-olive-dark font-black uppercase tracking-widest">{content?.admin?.auth?.noPermission || "Access Denied"}</p>
+                </div>
                 <Link to="/">
-                    <Button>{content?.admin?.auth?.backToHome || "Back to Home"}</Button>
+                    <Button className="bg-olive-dark hover:bg-olive-dark/90 text-white rounded-2xl px-8 h-12 font-bold uppercase tracking-widest text-xs">
+                        {content?.admin?.auth?.backToHome || "Back to Home"}
+                    </Button>
                 </Link>
             </div>
         );
@@ -122,6 +125,7 @@ const AdminLayout = () => {
             hasAlert: hasLowStockAlert
         },
         { icon: Mail, label: content?.admin?.navigation?.messages, path: "/admin/messages" },
+        { icon: Users, label: "Zákazníci", path: "/admin/users" },
         { icon: Mail, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
         { icon: PenTool, label: "Blog", path: "/admin/blog" },
         { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
@@ -133,7 +137,7 @@ const AdminLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-admin-canvas flex font-sans">
+        <div className="min-h-screen bg-admin-canvas flex font-sans overflow-x-hidden">
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 left-0 right-0 bg-olive-dark/90 backdrop-blur-xl text-white p-5 flex items-center justify-between z-50 border-b border-white/5 shadow-2xl">
                 <Link to="/" className="font-display font-black text-2xl tracking-tighter hover:scale-105 transition-all duration-500 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
@@ -166,47 +170,32 @@ const AdminLayout = () => {
                                     const isActive = location.pathname === item.path;
                                     return (
                                         <li key={item.path}>
-                                            {item.isExternal ? (
-                                                <a
-                                                    href={item.path}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-olive/20 hover:bg-olive-dark hover:text-white"
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <Icon className="w-5 h-5" />
-                                                        {item.label}
-                                                    </div>
-                                                    <ExternalLink className="w-4 h-4 opacity-50" />
-                                                </a>
-                                            ) : (
-                                                <button
-                                                    onClick={() => {
-                                                        navigate(item.path);
-                                                        setIsMobileMenuOpen(false);
-                                                    }}
-                                                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
-                                                        ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
-                                                        : "text-white/60 hover:bg-white/5 hover:text-white"
-                                                        } `}
-                                                    aria-current={isActive ? "page" : undefined}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <Icon className="w-5 h-5" />
-                                                        {item.label}
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                            <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
-                                                                {unreadCount}
-                                                            </Badge>
-                                                        )}
-                                                        {item.hasAlert && (
-                                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" aria-label={content.admin.alerts.lowStock} />
-                                                        )}
-                                                    </div>
-                                                </button>
-                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    navigate(item.path);
+                                                    setIsMobileMenuOpen(false);
+                                                }}
+                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 ${isActive
+                                                    ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20"
+                                                    : "text-white/60 hover:bg-white/5 hover:text-white"
+                                                    } `}
+                                                aria-current={isActive ? "page" : undefined}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <Icon className="w-5 h-5" />
+                                                    {item.label}
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0">
+                                                            {unreadCount}
+                                                        </Badge>
+                                                    )}
+                                                    {item.hasAlert && (
+                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                                    )}
+                                                </div>
+                                            </button>
                                         </li>
                                     );
                                 })}
@@ -226,127 +215,151 @@ const AdminLayout = () => {
                 </Sheet>
             </div>
 
+            {/* Desktop Sidebar Overlay Trigger (thin strip) */}
+            {!isPinned && !isExpanded && (
+                <div 
+                    onMouseEnter={() => setIsHovered(true)}
+                    className="fixed inset-y-0 left-0 w-4 z-40 cursor-e-resize"
+                />
+            )}
+
             {/* Desktop Sidebar */}
             <aside 
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className={`hidden md:flex flex-col sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 ml-4 rounded-[3rem] shadow-2xl z-20 border border-white/5 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isExpanded ? 'w-72' : 'w-20'}`}
+                className={`hidden md:flex flex-col sidebar-premium text-white fixed h-[calc(100vh-2rem)] my-4 z-[45] rounded-[3rem] shadow-2xl border border-white/5 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                    isExpanded 
+                        ? 'w-80 left-4 translate-x-0 opacity-100' 
+                        : 'w-80 -translate-x-[calc(100%+2rem)] opacity-0 pointer-events-none'
+                }`}
             >
-                <div className={`p-10 pb-8 shrink-0 relative ${!isExpanded && 'px-6'}`}>
+                <div className={`p-10 pb-8 shrink-0 relative`}>
                     <Link to="/" className="flex items-center group">
-                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-xl'}`}>
-                            B<span className={isExpanded ? 'inline' : 'hidden'}>OOST</span><span className="text-white">UP</span>
+                        <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 text-3xl`}>
+                            BOOST<span className="text-white">UP</span>
                         </span>
                     </Link>
-                    {isExpanded && (
-                        <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500">
-                            <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
-                        </div>
-                    )}
+                    <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500">
+                        <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
+                    </div>
                     
                     {/* Pin Button */}
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setIsPinned(!isPinned)}
-                        className={`absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500 ${!isExpanded && 'opacity-0 scale-0'}`}
+                        className={`absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500`}
                     >
                         {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
                     </Button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
-                    <ul className="space-y-1.5" role="list">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+                    <ul className="space-y-2" role="list">
                         {navItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = location.pathname === item.path;
                             return (
                                 <li key={item.path}>
-                                    {item.isExternal ? (
-                                        <a
-                                            href={item.path}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all text-olive/20 hover:bg-olive-dark hover:text-white group"
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <Icon className="w-5 h-5 text-olive/40 group-hover:text-white transition-colors" />
-                                                <span className="text-sm">{item.label}</span>
-                                            </div>
-                                            <ExternalLink className="w-3.5 h-3.5 opacity-30 group-hover:opacity-60" />
-                                        </a>
-                                    ) : (
-                                        <button
-                                            onClick={() => navigate(item.path)}
-                                            className={`w-full flex items-center justify-between px-5 py-3 rounded-2xl transition-all duration-300 group ${isActive
-                                                ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.05] z-10"
-                                                : `text-white/50 hover:bg-white/5 hover:text-white ${isExpanded ? 'hover:pl-7' : 'px-0 justify-center'}`
-                                                } `}
-                                            aria-current={isActive ? "page" : undefined}
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
-                                                {isExpanded && (
-                                                    <span className="text-xs font-bold uppercase tracking-wider animate-in slide-in-from-left-2 duration-300">{item.label}</span>
-                                                )}
-                                            </div>
-                                            {isExpanded && (
-                                                <div className="flex items-center gap-2">
-                                                    {item.path === '/admin/messages' && unreadCount > 0 && (
-                                                        <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
-                                                            {unreadCount}
-                                                        </Badge>
-                                                    )}
-                                                    {item.hasAlert && (
-                                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" aria-label={content.admin.alerts.lowStock} />
-                                                    )}
-                                                </div>
+                                    <button
+                                        onClick={() => navigate(item.path)}
+                                        className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl transition-all duration-300 group ${isActive
+                                            ? "bg-lime text-olive-dark font-black shadow-xl shadow-lime/20 scale-[1.02] z-10"
+                                            : "text-white/50 hover:bg-white/5 hover:text-white hover:pl-8"
+                                            } `}
+                                        aria-current={isActive ? "page" : undefined}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <Icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? "text-olive-dark scale-110" : "text-white/30 group-hover:text-white"}`} />
+                                            <span className="text-xs font-black uppercase tracking-widest animate-in slide-in-from-left-2 duration-300">{item.label}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {item.path === '/admin/messages' && unreadCount > 0 && (
+                                                <Badge className="bg-terracotta text-white border-none text-[10px] h-5 w-5 flex items-center justify-center p-0 animate-in zoom-in duration-300">
+                                                    {unreadCount}
+                                                </Badge>
                                             )}
-                                        </button>
-                                    )}
+                                            {item.hasAlert && (
+                                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+                                            )}
+                                        </div>
+                                    </button>
                                 </li>
                             );
                         })}
                     </ul>
                 </div>
 
-                {/* Sidebar Bottom Actions */}
+                <div className="p-8 border-t border-white/5 space-y-4">
+                    {/* Pin Logic in text for better UX */}
+                    <div className="flex items-center justify-between px-4">
+                        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20">Auto-hide Sidebar</span>
+                        <div 
+                            onClick={() => setIsPinned(!isPinned)}
+                            className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors duration-300 ${isPinned ? 'bg-lime/20' : 'bg-primary/20'}`}
+                        >
+                            <div className={`absolute top-0.5 h-3 w-3 rounded-full transition-all duration-300 ${isPinned ? 'right-0.5 bg-lime' : 'left-0.5 bg-white/40'}`} />
+                        </div>
+                    </div>
 
-                <div className="p-6 border-t border-white/5 space-y-3">
                     <Link 
                         to="/admin/profile" 
-                        className={`px-4 py-4 flex items-center gap-4 rounded-[2rem] transition-all duration-300 border border-transparent ${location.pathname === '/admin/profile' ? 'bg-white/10 border-white/10' : 'hover:bg-white/5'} ${!isExpanded && 'px-0 justify-center w-12 mx-auto'}`}
+                        className={`px-5 py-5 flex items-center gap-4 rounded-[2.5rem] transition-all duration-300 border border-transparent bg-olive-dark/10 border-white/5 hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''}`}
                     >
-                        <div className="w-11 h-11 min-w-[2.75rem] rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-lg shadow-lime/20 shrink-0">
+                        <div className="w-12 h-12 min-w-[3rem] rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black text-sm shadow-xl shadow-lime/20 shrink-0">
                             {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
                         </div>
-                        {isExpanded && (
-                            <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
-                                <span className="text-xs font-black text-white truncate leading-tight uppercase tracking-widest">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
-                                <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
-                            </div>
-                        )}
+                        <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
+                            <span className="text-[11px] font-black text-white truncate leading-tight uppercase tracking-[0.2em]">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
+                            <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
+                        </div>
                     </Link>
                     
                     <Button
                         variant="ghost"
                         size="sm"
-                        className={`w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 ${isExpanded ? 'px-6' : 'px-0 justify-center'}`}
+                        className={`w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2x h-12 px-6`}
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 shrink-0" />
-                        {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-3 animate-in slide-in-from-left-2 duration-300">{content?.admin?.auth?.logout || "Logout"}</span>}
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 animate-in slide-in-from-left-2 duration-300">{content?.admin?.auth?.logout || "Logout"}</span>
                     </Button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] p-4 md:p-6 pt-24 md:pt-6 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-28'}`}>
-                <div className="max-w-full mx-auto">
-                    <AdminErrorBoundary>
-                        <Outlet />
-                    </AdminErrorBoundary>
+            <main className={`flex-1 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-0'}`}>
+                <div className="max-w-[1600px] mx-auto">
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-in fade-in duration-700">
+                            <div className="w-16 h-16 bg-olive-dark rounded-3xl flex items-center justify-center shadow-2xl animate-pulse-soft">
+                                <Sparkles className="w-8 h-8 text-lime" />
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 animate-pulse">
+                                {content?.admin?.auth?.verifying || "Verifying Access..."}
+                            </p>
+                        </div>
+                    ) : (
+                        <AdminErrorBoundary>
+                            <Suspense fallback={
+                                <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                                    <Loader2 className="w-8 h-8 animate-spin text-olive-dark/20" />
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/20 animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
+                                </div>
+                            }>
+                                {content ? <Outlet /> : (
+                                    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-pulse">
+                                        <div className="w-12 h-12 bg-olive-dark/5 rounded-2xl flex items-center justify-center mb-6">
+                                            <Sparkles className="w-6 h-6 text-olive-dark/10" />
+                                        </div>
+                                        <div className="h-4 w-48 bg-olive-dark/5 rounded-full mb-3" />
+                                        <div className="h-3 w-32 bg-olive-dark/5 rounded-full" />
+                                    </div>
+                                )}
+                            </Suspense>
+                        </AdminErrorBoundary>
+                    )}
                 </div>
             </main>
         </div>
@@ -354,3 +367,4 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+

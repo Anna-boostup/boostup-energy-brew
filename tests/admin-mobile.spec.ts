@@ -5,38 +5,8 @@ test.describe('Admin Mobile UI Audit', () => {
     test.use({ viewport: { width: 390, height: 844 } }); // iPhone 12/13/14 viewport
 
     test('should verify mobile admin layout and iconography', async ({ page }) => {
-        const email = process.env.TEST_ADMIN_EMAIL;
-        const password = process.env.TEST_ADMIN_PASSWORD;
-
-        if (!email || !password) {
-            test.skip(true, 'Admin credentials not provided');
-            return;
-        }
-
-        // 1. Login
-        await page.goto('/login', { timeout: 60000 });
-        
-        // Wait for input to be present
-        const emailInput = page.locator('input[type="email"]');
-        await emailInput.waitFor({ state: 'visible', timeout: 30000 });
-        
-        await emailInput.fill(email);
-        await page.fill('input[type="password"]', password);
-        await page.getByTestId('login-submit-btn').click();
-
-        // 2. Wait for Dashboard with Diagnostic
-        try {
-            await expect(page).toHaveURL(/.*admin/, { timeout: 15000 });
-        } catch (e) {
-            const errorText = await page.innerText('body');
-            console.error('DIAGNOSTIC: Login failed in development/mobile environment');
-            if (errorText.includes('Nesprávné heslo') || errorText.includes('Uživatel nenalezen')) {
-                throw new Error(`Authentication failed during test: ${errorText.substring(0, 100)}`);
-            }
-            throw e;
-        }
-
-        // 3. Verify Dashboard title to ensure full load
+        // 1. Audit starts already logged in via storageState from setup project
+        await page.goto('/admin', { waitUntil: 'networkidle', timeout: 60000 });
         await expect(page.getByTestId('admin-page-title')).toBeVisible({ timeout: 15000 });
 
         // 3. Test Sidebar/Mobile Menu

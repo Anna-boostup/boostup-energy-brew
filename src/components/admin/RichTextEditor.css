@@ -2,22 +2,22 @@
 /* Custom styles for React Quill to match BoostUp Admin */
 
 .rich-text-editor .ql-toolbar.ql-snow {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(61, 64, 21, 0.03);
+  border: 1px solid rgba(61, 64, 21, 0.1);
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
   padding: 12px;
 }
 
 .rich-text-editor .ql-container.ql-snow {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(61, 64, 21, 0.1);
   border-bottom-left-radius: 1.5rem;
   border-bottom-right-radius: 1.5rem;
   min-height: 400px;
   font-family: 'DM Sans', sans-serif;
   font-size: 15px;
-  color: white;
+  color: #3d4015; /* olive-dark */
 }
 
 .rich-text-editor .ql-editor {
@@ -27,38 +27,38 @@
 }
 
 .rich-text-editor .ql-editor.ql-blank::before {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(61, 64, 21, 0.3);
   font-style: normal;
 }
 
 /* Toolbar Icons and Buttons */
 .rich-text-editor .ql-snow .ql-stroke {
-  stroke: rgba(255, 255, 255, 0.6);
+  stroke: rgba(61, 64, 21, 0.7);
 }
 
 .rich-text-editor .ql-snow .ql-fill {
-  fill: rgba(255, 255, 255, 0.6);
+  fill: rgba(61, 64, 21, 0.7);
 }
 
 .rich-text-editor .ql-snow .ql-picker {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(61, 64, 21, 0.7);
 }
 
 .rich-text-editor .ql-snow.ql-toolbar button:hover .ql-stroke,
 .rich-text-editor .ql-snow.ql-toolbar button:hover .ql-fill,
 .rich-text-editor .ql-snow.ql-toolbar button.ql-active .ql-stroke,
 .rich-text-editor .ql-snow.ql-toolbar button.ql-active .ql-fill {
-  stroke: #dfdf57; /* lime */
-  fill: #dfdf57;
+  stroke: #a2b006; /* lime-dark for better contrast on cream */
+  fill: #a2b006;
 }
 
 .rich-text-editor .ql-snow.ql-toolbar .ql-picker-label:hover,
 .rich-text-editor .ql-snow.ql-toolbar .ql-picker-label.ql-active {
-  color: #dfdf57;
+  color: #a2b006;
 }
 
 .rich-text-editor .ql-snow .ql-picker-options {
-  background-color: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #f8f8f0;
+  border: 1px solid rgba(61, 64, 21, 0.1);
   border-radius: 8px;
 }

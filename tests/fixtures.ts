@@ -21,12 +21,13 @@ export const test = base.extend({
           url.hostname === 'localhost';
 
         if (isTargetHost) {
-          const headers = route.request().headers();
-          headers['x-vercel-protection-bypass'] = bypassSecret;
-          headers['x-vercel-skip-toolbar'] = '1';
+          const headers = {
+            ...route.request().headers(),
+            'x-vercel-protection-bypass': bypassSecret,
+            'x-vercel-skip-toolbar': '1',
+          };
           route.continue({ headers });
         } else {
-          // Do not inject headers for third-party scripts like Stripe
           route.continue();
         }
       });

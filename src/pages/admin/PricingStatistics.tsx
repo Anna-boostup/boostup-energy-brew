@@ -160,7 +160,7 @@ const PricingStatistics = () => {
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.pricing?.title || "Pricing & Stats"}</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                        <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.pricing?.description}</p>
+                        <p className="text-olive-dark/70 font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.pricing?.description}</p>
                     </div>
                 </div>
                 
@@ -174,7 +174,7 @@ const PricingStatistics = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
                 {/* Pricing Form */}
-                <Card className="border-none shadow-2xl rounded-[2.5rem] bg-white shadow-olive/10 overflow-hidden group">
+                <Card className="border-none shadow-2xl rounded-[2.5rem] bg-admin-canvas shadow-olive/10 overflow-hidden group">
                     <CardHeader className="bg-olive-dark p-8 sm:p-10 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-lime/10 blur-[60px] -translate-y-1/2 translate-x-1/2" />
                         <CardTitle className="text-white text-xl font-black uppercase italic tracking-tight flex items-center gap-3 relative z-10">
@@ -195,7 +195,7 @@ const PricingStatistics = () => {
                                             type="number" 
                                             value={prices.pack3} 
                                             onChange={(e) => setPrices(p => ({ ...p, pack3: parseInt(e.target.value) || 0 }))}
-                                            className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                            className="h-14 pl-5 rounded-2xl border-background bg-admin-canvas font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">{content?.admin?.pricing?.card?.currency}</span>
                                     </div>
@@ -212,7 +212,7 @@ const PricingStatistics = () => {
                                             type="number" 
                                             value={prices.pack12} 
                                             onChange={(e) => setPrices(p => ({ ...p, pack12: parseInt(e.target.value) || 0 }))}
-                                            className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                            className="h-14 pl-5 rounded-2xl border-background bg-admin-canvas font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">{content?.admin?.pricing?.card?.currency}</span>
                                     </div>
@@ -229,7 +229,7 @@ const PricingStatistics = () => {
                                             type="number" 
                                             value={prices.pack21} 
                                             onChange={(e) => setPrices(p => ({ ...p, pack21: parseInt(e.target.value) || 0 }))}
-                                            className="h-14 pl-5 rounded-2xl border-background bg-white font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
+                                            className="h-14 pl-5 rounded-2xl border-background bg-admin-canvas font-display font-black text-xl text-olive-dark focus-visible:ring-primary focus-visible:border-primary transition-all shadow-sm"
                                         />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-olive-dark">{content?.admin?.pricing?.card?.currency}</span>
                                     </div>
@@ -239,8 +239,8 @@ const PricingStatistics = () => {
                 </Card>
 
                 {/* Orders Stats Card */}
-                <Card className="lg:col-span-2 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
-                    <CardHeader className="bg-white/40 border-b border-olive/8 py-6 sm:py-8 px-6 sm:px-10">
+                <Card className="lg:col-span-2 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-admin-canvas/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
+                    <CardHeader className="bg-admin-canvas/40 border-b border-olive/8 py-6 sm:py-8 px-6 sm:px-10">
                         <div className="flex items-center gap-3 mb-1">
                             <div className="p-2 bg-olive-dark rounded-xl">
                                 <ShoppingCart className="w-5 h-5 text-primary" />
@@ -255,7 +255,7 @@ const PricingStatistics = () => {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 9, fontWeight: 900, fill: '#94a3b8' }} 
+                                    tick={{ fontSize: 9, fontWeight: 900, fill: '#3d5a2f' }} 
                                     axisLine={false}
                                     tickLine={false}
                                     interval={window?.innerWidth < 640 ? 6 : 2}
@@ -264,7 +264,7 @@ const PricingStatistics = () => {
                                 <YAxis 
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }}
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#3d5a2f' }}
                                     dx={-10}
                                 />
                                 <Tooltip 
@@ -294,7 +294,7 @@ const PricingStatistics = () => {
                 </Card>
 
                 {/* Units Stats Card */}
-                <Card className="lg:col-span-3 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-white/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <Card className="lg:col-span-3 border border-white/40 shadow-sm rounded-[2rem] sm:rounded-[2.5rem] bg-admin-canvas/50 backdrop-blur-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <CardHeader className="bg-olive-dark border-b border-olive/10 py-6 sm:py-8 px-6 sm:px-10">
                         <div className="flex items-center gap-3 mb-1">
                             <div className="p-2 bg-primary/20 rounded-xl">
@@ -302,7 +302,7 @@ const PricingStatistics = () => {
                             </div>
                             <CardTitle className="text-lg sm:text-xl font-black text-white">{content?.admin?.pricing?.stats?.unitsTitle}</CardTitle>
                         </div>
-                        <CardDescription className="text-white/40 text-[10px] sm:text-xs font-bold uppercase tracking-widest">{content?.admin?.pricing?.stats?.unitsSubtitle}</CardDescription>
+                        <CardDescription className="text-white/60 text-[10px] sm:text-xs font-bold uppercase tracking-widest">{content?.admin?.pricing?.stats?.unitsSubtitle}</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-10 sm:pt-12 px-2 sm:px-10 h-[350px] sm:h-[500px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -310,7 +310,7 @@ const PricingStatistics = () => {
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis 
                                     dataKey="label" 
-                                    tick={{ fontSize: 9, fontWeight: 900, fill: '#94a3b8' }} 
+                                    tick={{ fontSize: 9, fontWeight: 900, fill: '#3d5a2f' }} 
                                     axisLine={false}
                                     tickLine={false}
                                     interval={window?.innerWidth < 640 ? 6 : 2}
@@ -319,7 +319,7 @@ const PricingStatistics = () => {
                                 <YAxis 
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }}
+                                    tick={{ fontSize: 10, fontWeight: 900, fill: '#3d5a2f' }}
                                     dx={-10}
                                 />
                                 <Tooltip 

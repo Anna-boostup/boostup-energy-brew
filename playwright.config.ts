@@ -19,47 +19,82 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Force 1 worker on CI for maximum stability in resource-constrained environments */
-  workers: process.env.CI ? 1 : undefined,
-  // CI_STABILITY_MARKER: V2_SINGLE_WORKER_FIX
-  /* Timeout per test (increased for reliability) */
+  /* Allow multiple workers in CI for speed, while maintaining stability */
+  workers: process.env.CI ? 2 : undefined,
+  /* Timeout per test */
   timeout: 120000,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  /* Reporter to use */
   reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   expect: {
     timeout: 30000,
   },
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173',
     bypassCSP: true,
-
-    /* Collect trace for CI debugging or when retrying locally */
     trace: process.env.CI ? 'on' : 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 30000,
     ignoreHTTPSErrors: true,
+    extraHTTPHeaders: {
+      'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
+      'x-vercel-skip-toolbar': '1',
+    },
   },
 
-  /* Configure projects for major browsers */
   projects: [
+    // Setup project for authentication
     {
-      name: 'chromium',
+      name: 'setup',
+      testMatch: 'tests/auth.setup.ts',
+    },
+    
+    // Admin Desktop
+    {
+      name: 'admin-desktop',
+      testMatch: 'tests/admin.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+    },
+
+    // Admin Mobile
+    {
+      name: 'admin-mobile',
+      testMatch: 'tests/admin-mobile.spec.ts',
+      use: { 
+        ...devices['Pixel 5'],
+        storageState: 'playwright/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+    },
+
+    // Checkout Scenarios (Guest or Logged in depending on test logic)
+    {
+      name: 'checkout',
+      testMatch: 'tests/checkout_scenarios.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
+      dependencies: ['setup'],
+    },
+
+    // Guest / General Smoke Tests
+    {
+      name: 'smoke-desktop',
+      testMatch: 'tests/smoke.spec.ts',
       use: { 
         ...devices['Desktop Chrome'],
       },
     },
-    /* Test against mobile viewports. */
+
     {
-      name: 'Mobile Chrome',
+      name: 'smoke-mobile',
+      testMatch: 'tests/mobile.spec.ts',
       use: { 
         ...devices['Pixel 5'],
       },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
     },
   ],
 

@@ -1,5 +1,5 @@
 // Force redeploy - Final Merged Production Version (Loveble Design + Development Logic)
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -8,7 +8,7 @@ import { useInventory, Order } from '@/context/InventoryContext';
 import {
   ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
   Loader2, Package, FileText, ChevronLeft, MapPin,
-  Minus, Plus, Trash2, Lock, Sparkles
+  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -77,6 +77,7 @@ const CheckoutPage = () => {
   const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Billing Address State
   const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
@@ -279,7 +280,9 @@ const CheckoutPage = () => {
       }
     }
 
-    setIsProcessing(true);
+    startTransition(() => {
+      setIsProcessing(true);
+    });
     let currentUser = user;
 
     try {
@@ -414,7 +417,9 @@ const CheckoutPage = () => {
           description: "Nepodařilo se uložit objednávku. Zkuste to prosím znovu.",
           variant: "destructive"
         });
-        setIsProcessing(false);
+        startTransition(() => {
+          setIsProcessing(false);
+        });
         return;
       }
 
@@ -465,8 +470,10 @@ const CheckoutPage = () => {
             description: stripeError.message || "Nepodařilo se inicializovat Stripe Checkout.",
             variant: "destructive"
           });
-          setIsProcessing(false);
-          setIsRedirecting(false);
+          startTransition(() => {
+            setIsProcessing(false);
+            setIsRedirecting(false);
+          });
           return;
         }
       }
@@ -513,8 +520,10 @@ const CheckoutPage = () => {
           description: gopayError.message || "Nepodařilo se inicializovat platební bránu GoPay.",
           variant: "destructive"
         });
-        setIsProcessing(false);
-        setIsRedirecting(false);
+        startTransition(() => {
+          setIsProcessing(false);
+          setIsRedirecting(false);
+        });
       }
 
     } catch (error) {
@@ -524,7 +533,9 @@ const CheckoutPage = () => {
         description: "Při zpracování objednávky došlo k chybě.",
         variant: "destructive"
       });
-      setIsProcessing(false);
+      startTransition(() => {
+        setIsProcessing(false);
+      });
     }
   };
 

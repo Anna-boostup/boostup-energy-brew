@@ -151,7 +151,7 @@ export default function BlogEditor() {
             variant="ghost" 
             size="icon" 
             onClick={() => navigate("/admin/blog")}
-            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white"
+            className="w-10 h-10 rounded-xl bg-olive-dark/5 border border-olive-dark/10 text-olive-dark/60 hover:text-olive-dark hover:bg-olive-dark/10"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -164,7 +164,7 @@ export default function BlogEditor() {
         <div className="flex gap-3">
           <Button 
             variant="outline" 
-            className="bg-white/5 border-white/10 text-white rounded-xl h-12 hover:bg-white/10 px-6 gap-2"
+            className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-12 hover:bg-olive-dark/10 px-6 gap-2"
             onClick={() => toast.info("Náhled bude k dispozici po uložení.")}
           >
             <Eye className="w-4 h-4" />
@@ -182,20 +182,20 @@ export default function BlogEditor() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 p-8 space-y-6">
+          <div className="bg-admin-canvas border border-olive-dark/10 rounded-[2rem] shadow-sm p-8 space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black ml-1">Název článku</Label>
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Název článku</Label>
                 <Input
                   value={formData.title}
                   onChange={handleTitleChange}
                   placeholder="Zadejte chytlavý nadpis..."
-                  className="bg-white/50 border-olive-dark/10 text-olive-dark rounded-2xl h-14 text-xl font-bold focus:border-lime/50 transition-all px-6"
+                  className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-2xl h-14 text-xl font-bold focus:border-lime-dark/50 transition-all px-6 shadow-sm"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black ml-1">Obsah článku</Label>
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Obsah článku</Label>
                 <RichTextEditor 
                   value={formData.content}
                   onChange={(content) => setFormData(prev => ({ ...prev, content }))}
@@ -207,47 +207,47 @@ export default function BlogEditor() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 p-8 space-y-6">
-            <h3 className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black">Nastavení publikace</h3>
+          <div className="bg-admin-canvas border border-olive-dark/10 rounded-[2rem] shadow-sm p-8 space-y-6">
+            <h3 className="text-olive-dark font-black uppercase tracking-widest text-[10px]">Nastavení publikace</h3>
             
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black ml-1">URL Sluga</Label>
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">URL Sluga</Label>
                 <Input
                   value={formData.slug}
                   onChange={(e) => setFormData(prev => ({ ...prev, slug: generateSlug(e.target.value) }))}
                   placeholder="url-clanku"
-                  className="bg-white/5 border-white/10 text-white rounded-xl h-11 focus:border-lime/50 transition-all"
+                  className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black ml-1">Kategorie</Label>
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Kategorie</Label>
                 <Select 
                   value={formData.category_id} 
                   onValueChange={(val) => setFormData(prev => ({ ...prev, category_id: val }))}
                 >
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-11">
+                  <SelectTrigger className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11">
                     <SelectValue placeholder="Vyberte kategorii" />
                   </SelectTrigger>
-                  <SelectContent className="bg-olive-dark border-white/10 text-white rounded-xl">
+                  <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-xl">
                     {categories.map(cat => (
-                      <SelectItem key={cat.id} value={cat.id} className="hover:bg-white/5 focus:bg-white/5">{cat.name}</SelectItem>
+                      <SelectItem key={cat.id} value={cat.id} className="hover:bg-olive-dark/5 focus:bg-olive-dark/10">{cat.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black ml-1">Stav</Label>
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Stav</Label>
                 <Select 
                   value={formData.status} 
                   onValueChange={(val: any) => setFormData(prev => ({ ...prev, status: val }))}
                 >
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-11">
+                  <SelectTrigger className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-olive-dark border-white/10 text-white rounded-xl">
+                  <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-xl">
                     <SelectItem value="draft">Koncept</SelectItem>
                     <SelectItem value="published">Publikovat</SelectItem>
                   </SelectContent>
@@ -256,16 +256,16 @@ export default function BlogEditor() {
             </div>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-[2rem] border border-white/10 p-8 space-y-6">
-            <h3 className="text-olive-dark/40 uppercase tracking-widest text-[10px] font-black">Náhledový obrázek</h3>
+          <div className="bg-admin-canvas border border-olive-dark/10 rounded-[2rem] shadow-sm p-8 space-y-6">
+            <h3 className="text-olive-dark font-black uppercase tracking-widest text-[10px]">Náhledový obrázek</h3>
             <div className="space-y-4">
-              <div className="aspect-video bg-white/5 rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:border-lime/50 transition-all overflow-hidden relative">
+              <div className="aspect-video bg-olive-dark/5 rounded-2xl border-2 border-dashed border-olive-dark/10 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:border-lime-dark/50 transition-all overflow-hidden relative">
                 {formData.featured_image_url ? (
                   <img src={formData.featured_image_url} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
                   <>
-                    <ImageIcon className="w-8 h-8 text-white/10 group-hover:text-lime/50 transition-colors" />
-                    <span className="text-[10px] text-white/20 uppercase font-black">Nahrát obrázek</span>
+                    <ImageIcon className="w-8 h-8 text-olive-dark/10 group-hover:text-olive-dark/30 transition-colors" />
+                    <span className="text-[10px] text-olive-dark/20 uppercase font-black">Nahrát obrázek</span>
                   </>
                 )}
               </div>
@@ -273,7 +273,7 @@ export default function BlogEditor() {
                 placeholder="URL obrázku..."
                 value={formData.featured_image_url}
                 onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
-                className="bg-white/5 border-white/10 text-white rounded-xl h-11 focus:border-lime/50 transition-all text-xs"
+                className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all text-xs"
               />
             </div>
           </div>

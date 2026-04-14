@@ -193,7 +193,7 @@ const AdminHelp = () => {
                             </div>
                             <div className="space-y-1">
                                 <h2 className="text-xl sm:text-2xl font-black text-olive-dark font-display uppercase italic tracking-tight">{section.title}</h2>
-                                <p className="text-[10px] sm:text-xs text-olive/40 font-bold uppercase tracking-[0.2em]">{section.description}</p>
+                                <p className="text-[10px] sm:text-xs text-olive-dark/60 font-black uppercase tracking-[0.2em]">{section.description}</p>
                             </div>
                         </div>
 
@@ -211,7 +211,7 @@ const AdminHelp = () => {
                                                     {item.label}
                                                 </span>
                                             </AccordionTrigger>
-                                            <AccordionContent className="px-6 sm:px-8 pb-6 sm:pb-8 text-xs sm:text-sm text-olive/60 leading-relaxed font-bold">
+                                            <AccordionContent className="px-6 sm:px-8 pb-6 sm:pb-8 text-xs sm:text-sm text-olive-dark/80 leading-relaxed font-bold">
                                                 {item.description}
                                             </AccordionContent>
                                         </AccordionItem>

@@ -165,7 +165,7 @@ const AdminProfile = () => {
                         <h1 data-testid="admin-page-title" className="text-3xl sm:text-6xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">{content?.admin?.profile?.title || "My Profile"}</h1>
                         <div className="flex items-center gap-2 sm:gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
-                            <p className="text-brand-muted font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] text-[8px] sm:text-[10px]">
+                            <p className="text-olive-dark/70 font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] text-[8px] sm:text-[10px]">
                                 {content?.admin?.profile?.description}
                             </p>
                         </div>
@@ -176,15 +176,15 @@ const AdminProfile = () => {
             <Tabs defaultValue="profile" className="space-y-12">
                 <div className="p-1.5 sm:p-2 bg-olive-dark rounded-[2rem] sm:rounded-[2.5rem] w-full md:w-fit shadow-2xl overflow-hidden">
                     <TabsList className="bg-transparent h-auto p-0.5 sm:p-1 gap-1 sm:gap-2 flex sm:flex-nowrap overflow-x-auto no-scrollbar">
-                        <TabsTrigger value="profile" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
+                        <TabsTrigger value="profile" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             <span>{content?.admin?.profile?.tabs?.info || "Info"}</span>
                         </TabsTrigger>
-                        <TabsTrigger value="orders" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
+                        <TabsTrigger value="orders" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             <span>{content?.admin?.profile?.tabs?.orders || "Orders"}</span>
                         </TabsTrigger>
-                        <TabsTrigger value="subscriptions" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/40 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
+                        <TabsTrigger value="subscriptions" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             <span>{content?.admin?.profile?.tabs?.subscriptions || "Subscriptions"}</span>
                         </TabsTrigger>
@@ -201,7 +201,7 @@ const AdminProfile = () => {
                                 </div>
                                 <h3 className="text-lg sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">{content?.admin?.profile?.form?.personal || "Personal"}</h3>
                             </div>
-                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[10px]">{content?.admin?.profile?.form?.personalDesc}</p>
+                            <p className="text-white/60 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[10px]">{content?.admin?.profile?.form?.personalDesc}</p>
                         </div>
                         <div className="p-5 sm:p-10 flex-1">
                             <form onSubmit={handleSaveProfile} className="space-y-8">
@@ -216,7 +216,7 @@ const AdminProfile = () => {
                                         />
                                         <Mail className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-olive-dark/20" />
                                     </div>
-                                    <p className="text-[9px] text-brand-muted font-bold uppercase tracking-widest pl-1">{content?.admin?.profile?.form?.emailNote}</p>
+                                    <p className="text-[9px] text-olive-dark/70 font-black uppercase tracking-widest pl-1">{content?.admin?.profile?.form?.emailNote}</p>
                                 </div>
 
                                 <div className="space-y-3">
@@ -245,19 +245,19 @@ const AdminProfile = () => {
                                     
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-2 sm:col-span-2">
-                                            <Label htmlFor="deliveryStreet" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.street}</Label>
+                                            <Label htmlFor="deliveryStreet" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.street}</Label>
                                             <Input id="deliveryStreet" value={deliveryStreet} onChange={e => setDeliveryStreet(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="deliveryHouseNumber" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.houseNumber}</Label>
+                                            <Label htmlFor="deliveryHouseNumber" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.houseNumber}</Label>
                                             <Input id="deliveryHouseNumber" value={deliveryHouseNumber} onChange={e => setDeliveryHouseNumber(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="deliveryCity" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.city}</Label>
+                                            <Label htmlFor="deliveryCity" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.city}</Label>
                                             <Input id="deliveryCity" value={deliveryCity} onChange={e => setDeliveryCity(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                         <div className="space-y-2 sm:col-span-2">
-                                            <Label htmlFor="deliveryZip" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.zip}</Label>
+                                            <Label htmlFor="deliveryZip" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.zip}</Label>
                                             <Input id="deliveryZip" value={deliveryZip} onChange={e => setDeliveryZip(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                         </div>
                                     </div>
@@ -286,19 +286,19 @@ const AdminProfile = () => {
                                     {!billingSame && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-2 sm:col-span-2">
-                                                <Label htmlFor="billingStreet" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingStreet}</Label>
+                                                <Label htmlFor="billingStreet" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.billingStreet}</Label>
                                                 <Input id="billingStreet" value={billingStreet} onChange={e => setBillingStreet(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
-                                            <div className="space-y-2 text-white-dark">
-                                                <Label htmlFor="billingHouseNumber" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingHouseNumber}</Label>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="billingHouseNumber" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.billingHouseNumber}</Label>
                                                 <Input id="billingHouseNumber" value={billingHouseNumber} onChange={e => setBillingHouseNumber(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="billingCity" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingCity}</Label>
+                                                <Label htmlFor="billingCity" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.billingCity}</Label>
                                                 <Input id="billingCity" value={billingCity} onChange={e => setBillingCity(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2 sm:col-span-2">
-                                                <Label htmlFor="billingZip" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingZip}</Label>
+                                                <Label htmlFor="billingZip" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.billingZip}</Label>
                                                 <Input id="billingZip" value={billingZip} onChange={e => setBillingZip(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                         </div>
@@ -315,16 +315,16 @@ const AdminProfile = () => {
 
                                     {isCompany && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in slide-in-from-top-2">
-                                            <div className="space-y-2 sm:col-span-2 font-white-dark">
-                                                <Label htmlFor="billingCompany" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.billingCompany}</Label>
+                                            <div className="space-y-2 sm:col-span-2">
+                                                <Label htmlFor="billingCompany" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.billingCompany}</Label>
                                                 <Input id="billingCompany" value={billingCompany} onChange={e => setBillingCompany(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="billingICO" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.ico}</Label>
+                                                <Label htmlFor="billingICO" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.ico}</Label>
                                                 <Input id="billingICO" value={billingICO} onChange={e => setBillingICO(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
-                                            <div className="space-y-2 text-white-dark">
-                                                <Label htmlFor="billingDIC" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/40 pl-1">{content?.admin?.profile?.form?.dic}</Label>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="billingDIC" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/50 pl-1">{content?.admin?.profile?.form?.dic}</Label>
                                                 <Input id="billingDIC" value={billingDIC} onChange={e => setBillingDIC(e.target.value)} className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime transition-all font-black text-olive-dark" />
                                             </div>
                                         </div>
@@ -352,7 +352,7 @@ const AdminProfile = () => {
                                 </div>
                                 <h3 className="text-lg sm:text-2xl font-black text-white font-display uppercase italic tracking-tight">{content?.admin?.profile?.security?.password || "Password"}</h3>
                             </div>
-                            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[10px]">{content?.admin?.profile?.security?.passwordDesc}</p>
+                            <p className="text-white/60 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[10px]">{content?.admin?.profile?.security?.passwordDesc}</p>
                         </div>
                         <div className="p-5 sm:p-10 flex-1">
                             <form onSubmit={handleChangePassword} className="space-y-8">

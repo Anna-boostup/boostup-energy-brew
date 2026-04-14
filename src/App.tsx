@@ -42,6 +42,7 @@ const BlogManagement = lazy(() => import("./pages/admin/BlogManagement"));
 const BlogEditor = lazy(() => import("./pages/admin/BlogEditor"));
 const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 
 // Legal pages
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -128,7 +129,11 @@ const App = () => (
                       <MetaPixelTracker />
                       <ScrollToTop />
                       <CookieBanner />
-                      <Suspense fallback={<div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>}>
+                      <Suspense fallback={
+                        <div className="h-screen w-full flex items-center justify-center bg-background">
+                          <Loader2 className="animate-spin text-primary w-8 h-8" />
+                        </div>
+                      }>
                         <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/login" element={<Login />} />
@@ -181,6 +186,7 @@ const App = () => (
                             <Route path="promo-codes" element={<PromoCodes />} />
                             <Route path="insights" element={<AdminInsights />} />
                             <Route path="messages" element={<Messages />} />
+                            <Route path="users" element={<AdminUsers />} />
                             <Route path="emails" element={<EmailManagement />} />
                             <Route path="blog" element={<BlogManagement />} />
                             <Route path="blog/new" element={<BlogEditor />} />
@@ -202,7 +208,7 @@ const App = () => (
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </Suspense>
-                    </BrowserRouter>
+                      </BrowserRouter>
                   </CartProvider>
                 </ManufactureProvider>
               </InventoryProvider>
