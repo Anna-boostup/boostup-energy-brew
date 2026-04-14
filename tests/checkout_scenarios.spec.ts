@@ -5,30 +5,39 @@ const identities = [
     name: 'Guest', 
     type: 'guest',
     email: '',
-    password: ''
+    password: '',
+    enabled: true
   },
   { 
     name: 'Basic User', 
     type: 'personal',
-    email: process.env.TEST_BASIC_EMAIL || 'basic-test@drinkboostup.cz',
-    password: process.env.TEST_BASIC_PASSWORD || 'BoostUpBasicTest2026!'
+    email: process.env.TEST_BASIC_EMAIL,
+    password: process.env.TEST_BASIC_PASSWORD,
+    enabled: !!process.env.TEST_BASIC_EMAIL
   },
   { 
     name: 'Company User', 
     type: 'company',
-    email: process.env.TEST_COMPANY_EMAIL || 'company-test@drinkboostup.cz',
-    password: process.env.TEST_COMPANY_PASSWORD || 'BoostUpCompanyTest2026!'
+    email: process.env.TEST_COMPANY_EMAIL,
+    password: process.env.TEST_COMPANY_PASSWORD,
+    enabled: !!process.env.TEST_COMPANY_EMAIL
   },
   { 
     name: 'Admin User', 
     type: 'admin',
-    email: process.env.TEST_ADMIN_EMAIL || 'admin-test@drinkboostup.cz',
-    password: process.env.TEST_ADMIN_PASSWORD || 'BoostUpAdminTest2026!'
+    email: process.env.TEST_ADMIN_EMAIL,
+    password: process.env.TEST_ADMIN_PASSWORD,
+    enabled: !!process.env.TEST_ADMIN_EMAIL
   }
 ];
 
 test.describe('Multi-Identity Checkout Scenarios', () => {
   for (const identity of identities) {
+    if (!identity.enabled) {
+        console.log(`Skipping checkout scenarios for ${identity.name} (Credentials missing)`);
+        continue;
+    }
+
     test.describe(`Purchase as ${identity.name}`, () => {
       // Apply storage state for logged-in users
       if (identity.type !== 'guest') {
