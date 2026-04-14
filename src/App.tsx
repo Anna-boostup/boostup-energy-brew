@@ -17,6 +17,8 @@ const Register = lazy(() => import("./pages/Register"));
 const Logout = lazy(() => import("./pages/Logout"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 
 // Account pages
 const AccountLayout = lazy(() => import("./pages/account/AccountLayout"));
@@ -203,6 +205,10 @@ const App = () => (
                           <Route path="/reklamace" element={<Returns />} />
                           <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
                           <Route path="/unsubscribe" element={<Unsubscribe />} />
+
+                          {/* Blog Routes */}
+                          <Route path="/blog" element={<Blog />} />
+                          <Route path="/blog/:slug" element={<BlogPost />} />
 
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />

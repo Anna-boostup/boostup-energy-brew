@@ -9,6 +9,7 @@ export const SITE_CONTENT = {
         { label: "Naše mise", href: "/#mise" },
         { label: "Produkty", href: "/#produkty" },
         { label: "3B Koncept", href: "/#3b" },
+        { label: "Blog", href: "/blog" },
         { label: "Kontakt", href: "/#kontakt" },
     ],
 
@@ -226,6 +227,7 @@ export const SITE_CONTENT = {
                     { label: "O nás", href: "/#mise" },
                     { label: "Produkty", href: "/#produkty" },
                     { label: "3B Koncept", href: "/#3b" },
+                    { label: "Blog", href: "/blog" },
                     { label: "Kontakt", href: "/#kontakt" }
                 ]
             },

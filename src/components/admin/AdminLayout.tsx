@@ -343,8 +343,8 @@ const AdminLayout = () => {
                         to="/admin/profile" 
                         className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5' : 'p-0 w-12 h-12 justify-center rounded-2xl mx-auto'}`}
                     >
-                        <div className={`rounded-2xl bg-lime flex items-center justify-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem] text-sm' : 'w-full h-full text-xl leading-none'}`}>
-                            {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
+                        <div className={`rounded-2xl bg-lime overflow-hidden grid place-items-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem] text-sm' : 'w-full h-full text-xl'}`}>
+                            <span className="leading-none mt-[2px]">{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}</span>
                         </div>
                         {isExpanded && (
                             <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
