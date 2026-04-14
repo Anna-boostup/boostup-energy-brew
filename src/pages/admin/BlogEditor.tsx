@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Globe, Eye, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Globe, Eye, Image as ImageIcon, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -28,6 +35,9 @@ export default function BlogEditor() {
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -116,7 +126,6 @@ export default function BlogEditor() {
         category_id: formData.category_id || null,
         status: formData.status,
         featured_image_url: formData.featured_image_url || null,
-        updated_at: new Date().toISOString(),
         published_at: formData.status === 'published' ? new Date().toISOString() : null
       };
 
@@ -137,9 +146,36 @@ export default function BlogEditor() {
       navigate("/admin/blog");
     } catch (error: any) {
       console.error('Save error:', error);
-      toast.error("Chyba při ukládání článku.");
+      toast.error(`Chyba při ukládání článku: ${error.message || "Neznámá chyba"}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) return;
+    
+    try {
+      setCreatingCategory(true);
+      const slug = generateSlug(newCategoryName);
+      const { data, error } = await supabase
+        .from('blog_categories')
+        .insert([{ name: newCategoryName, slug }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setCategories(prev => [...prev, data]);
+      setFormData(prev => ({ ...prev, category_id: data.id }));
+      setNewCategoryName("");
+      setIsAddingCategory(false);
+      toast.success("Kategorie byla vytvořena.");
+    } catch (error: any) {
+      console.error('Category error:', error);
+      toast.error(`Chyba při vytváření kategorie: ${error.message}`);
+    } finally {
+      setCreatingCategory(false);
     }
   };
 
@@ -223,19 +259,29 @@ export default function BlogEditor() {
 
               <div className="space-y-2">
                 <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Kategorie</Label>
-                <Select 
-                  value={formData.category_id} 
-                  onValueChange={(val) => setFormData(prev => ({ ...prev, category_id: val }))}
-                >
-                  <SelectTrigger className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11">
-                    <SelectValue placeholder="Vyberte kategorii" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-xl">
-                    {categories.map(cat => (
-                      <SelectItem key={cat.id} value={cat.id} className="hover:bg-olive-dark/5 focus:bg-olive-dark/10">{cat.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Select 
+                    value={formData.category_id} 
+                    onValueChange={(val) => setFormData(prev => ({ ...prev, category_id: val }))}
+                  >
+                    <SelectTrigger className="flex-1 bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11">
+                      <SelectValue placeholder="Vyberte kategorii" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-xl">
+                      {categories.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id} className="hover:bg-olive-dark/5 focus:bg-olive-dark/10">{cat.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setIsAddingCategory(true)}
+                    className="w-11 h-11 rounded-xl bg-olive-dark/5 border-olive-dark/10 text-olive-dark/60 hover:text-olive-dark hover:bg-olive-dark/10 shadow-sm"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -279,6 +325,44 @@ export default function BlogEditor() {
           </div>
         </div>
       </div>
+
+      <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+        <DialogContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-[2rem] p-8 max-w-sm">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-2xl font-display font-black tracking-tight uppercase italic">
+              Nová <span className="text-lime">Kategorie</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Název kategorie</Label>
+              <Input
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="Příklad: Novinky"
+                className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-12 focus:border-lime-dark/50 transition-all font-bold px-4"
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateCategory()}
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsAddingCategory(false)}
+              className="flex-1 bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-12 hover:bg-olive-dark/10"
+            >
+              Zrušit
+            </Button>
+            <Button 
+              onClick={handleCreateCategory} 
+              disabled={creatingCategory || !newCategoryName.trim()}
+              className="flex-[2] bg-lime hover:bg-lime/90 text-olive-dark font-black rounded-xl h-12 px-6"
+            >
+              {creatingCategory ? "Vytvářím..." : "Vytvořit kategorii"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
