@@ -129,7 +129,12 @@ const App = () => (
                       <MetaPixelTracker />
                       <ScrollToTop />
                       <CookieBanner />
-                      <Routes>
+                      <Suspense fallback={
+                        <div className="h-screen w-full flex items-center justify-center bg-background">
+                          <Loader2 className="animate-spin text-primary w-8 h-8" />
+                        </div>
+                      }>
+                        <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/login" element={<Login />} />
                           <Route path="/register" element={<Register />} />
@@ -202,6 +207,7 @@ const App = () => (
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
+                      </Suspense>
                       </BrowserRouter>
                   </CartProvider>
                 </ManufactureProvider>
