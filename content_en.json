@@ -1,0 +1,426 @@
+{
+  "cta": {
+    "badge": "Be the first to try it",
+    "button": "Subscribe to newsletter",
+    "headline": {
+      "part1": "PREPARE FOR",
+      "highlight": "A NEW ERA OF ENERGY"
+    },
+    "description": "Subscribe and get exclusive access to testers, discounts and news. Be part of the BoostUp community.",
+    "placeholder": "your@email.com",
+    "socialProof": {
+      "launch": "Launch Q1 2025",
+      "natural": "100% natural",
+      "waiting": "+500 waiting for launch"
+    }
+  },
+  "hero": {
+    "cta": {
+      "primary": "Buy now",
+      "concept3b": "3B Concept",
+      "secondary": "Discover more"
+    },
+    "tags": [
+      {
+        "label": "FOCUS",
+        "dotColor": "#3d5a2f",
+        "colorClass": "bg-olive",
+        "ingredientId": "vitamins"
+      },
+      {
+        "label": "STIMULATION",
+        "dotColor": "#dfdf57",
+        "colorClass": "bg-lime",
+        "ingredientId": "stimulants"
+      },
+      {
+        "label": "RESILIENCE",
+        "dotColor": "#f29739",
+        "colorClass": "bg-orange",
+        "ingredientId": "adaptogens"
+      },
+      {
+        "label": "BALANCE",
+        "dotColor": "#aa263e",
+        "colorClass": "bg-terracotta",
+        "ingredientId": "electrolytes"
+      }
+    ],
+    "benefits": [
+      {
+        "bold": "Up to 6 hours of energy",
+        "text": "no crash at the end"
+      },
+      {
+        "bold": "Natural extracts",
+        "text": "no sugar, no artificial sweeteners"
+      },
+      {
+        "bold": "Calm under pressure",
+        "text": "performance without chaos"
+      },
+      {
+        "bold": "Developed with experts",
+        "text": "at Mendel University"
+      }
+    ],
+    "headline": {
+      "part1": "DISCOVER THE NEW STANDARD OF",
+      "part2": "Efficiency, speed and precision even under pressure.",
+      "gradient": "STABLE FOCUS"
+    },
+    "description": "Up to 6 hours of focus and clean energy from stimulants. The power of 2.5 espressos without the jitters. No artificial sweeteners or flavourings.",
+    "testimonial": "Tested among professionals working under high pressure.",
+    "trustBadges": [
+      "Natural stimulants",
+      "Electrolytes",
+      "Adaptogens",
+      "Vitamins"
+    ],
+    "announcement": "COMING SOON",
+    "discountCode": "BOOST10",
+    "showDiscountPopup": false
+  },
+  "footer": {
+    "brand": {
+      "description": "6 hours of focus and clean energy from stimulants. The power of 2.5 espressos without the jitters. No artificial sweeteners or flavourings."
+    },
+    "links": [
+      {
+        "items": [
+          {
+            "href": "/#mise",
+            "label": "About us"
+          },
+          {
+            "href": "/#produkty",
+            "label": "Products"
+          },
+          {
+            "href": "/#3b",
+            "label": "3B Concept"
+          },
+          {
+            "href": "/#kontakt",
+            "label": "Contact"
+          }
+        ],
+        "title": "NAVIGATION"
+      },
+      {
+        "items": [
+          {
+            "href": "/obchodni-podminky",
+            "label": "Terms of Service"
+          },
+          {
+            "href": "/ochrana-osobnich-udaju",
+            "label": "Privacy Policy"
+          },
+          {
+            "href": "/reklamace",
+            "label": "Returns"
+          },
+          {
+            "href": "/cookies",
+            "label": "Cookies"
+          },
+          {
+            "href": "/doprava-a-platba",
+            "label": "Shipping & Payment"
+          },
+          {
+            "href": "/podminky-opakovane-platby",
+            "label": "Recurring Payments"
+          }
+        ],
+        "title": "SUPPORT"
+      }
+    ],
+    "bottom": {
+      "legal": [
+        {
+          "href": "/obchodni-podminky",
+          "label": "Terms of Service"
+        },
+        {
+          "href": "/ochrana-osobnich-udaju",
+          "label": "Privacy Policy"
+        }
+      ],
+      "copyright": "© 2026 BOOSTUP SUPPLEMENTS S.R.O. ALL RIGHTS RESERVED."
+    },
+    "contact": {
+      "email": "info@drinkboostup.cz",
+      "phone": "+420 775 222 037",
+      "title": "CONTACT",
+      "address": {
+        "line1": "Chaloupkova 3002/1a, Královo Pole",
+        "line2": "612 00 Brno, Czech Republic"
+      }
+    }
+  },
+  "social": {
+    "facebook": "https://www.facebook.com/profile.php?id=61567084724538",
+    "linkedin": "https://www.linkedin.com/company/112783959/admin/dashboard/",
+    "instagram": "https://www.instagram.com/boost_up_czech/"
+  },
+  "contact": {
+    "form": {
+      "name": {
+        "label": "Name",
+        "placeholder": "John Smith"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "john@email.com"
+      },
+      "submit": "Send message",
+      "message": {
+        "label": "Message",
+        "placeholder": "How can we help you?"
+      }
+    },
+    "info": {
+      "email": {
+        "label": "Email",
+        "value": "info@drinkboostup.cz"
+      },
+      "phone": {
+        "label": "Phone",
+        "value": "775 222 037"
+      },
+      "address": {
+        "label": "Address",
+        "value": {
+          "line1": "Chaloupkova 3002/1a, Královo Pole",
+          "line2": "612 00 Brno, Czech Republic"
+        }
+      }
+    },
+    "title": "CONTACT",
+    "toast": {
+      "success": {
+        "title": "Message sent",
+        "description": "Thank you for your interest, we'll be in touch soon."
+      }
+    },
+    "headline": "HAVE A QUESTION?",
+    "description": "Curious about our products, partnership or just want to say hello? Write to us or call – we'd love to connect."
+  },
+  "flavors": {
+    "red": {
+      "name": "RED RUSH",
+      "labels": [
+        "Vitamins",
+        "Fast onset",
+        "Performance"
+      ],
+      "description": "Red fruits and guarana for your fast and effective kick-start"
+    },
+    "lemon": {
+      "name": "LEMON BLAST",
+      "labels": [
+        "Sugar free",
+        "Vegan",
+        "Energy"
+      ],
+      "description": "Citrus freshness and energy for a clear and focused mind"
+    },
+    "silky": {
+      "name": "SILKY LEAF",
+      "labels": [
+        "Antioxidants",
+        "Calm power",
+        "Focus"
+      ],
+      "description": "Milky, delicate, green tea with notes of basil"
+    }
+  },
+  "mission": {
+    "badge": "ABOUT US",
+    "features": [
+      {
+        "stat": "2.5x",
+        "color": "bg-lime",
+        "title": "Clean energy",
+        "description": "The power of 2.5 espressos in one shot"
+      },
+      {
+        "stat": "6h+",
+        "color": "bg-terracotta",
+        "title": "Long-lasting",
+        "description": "Sustained focus without the crash effect"
+      },
+      {
+        "stat": "100%",
+        "color": "bg-olive",
+        "title": "Natural formula",
+        "description": "Tea extract, adaptogens and vitamins"
+      },
+      {
+        "stat": "0%",
+        "color": "bg-orange",
+        "title": "No compromises",
+        "description": "No artificial sweeteners or preservatives"
+      }
+    ],
+    "headline": {
+      "part1": "OUR",
+      "highlight": "MISSION"
+    },
+    "paragraphs": [
+      "We all know that day when you're trying to focus, finish a task, but your mental capacity just isn't enough. Coffee no longer helps and classic energy drinks?",
+      "They bring a quick burst of energy, but within minutes you feel the crash. We wanted to change that.",
+      "That's why we created BoostUp – a clean, effective shot that keeps you in peak condition for long hours."
+    ]
+  },
+  "pricing": {
+    "pack3": 229,
+    "pack12": 849,
+    "pack21": 1399
+  },
+  "bankInfo": {
+    "iban": "CZ4755000000006654376004",
+    "bankCode": "5500",
+    "bankName": "Raiffeisenbank",
+    "currency": "CZK",
+    "qrMessage": "Objednávka",
+    "accountName": "BOOSTUP SUPPLEMENTS S.R.O.",
+    "accountNumber": "6654376004"
+  },
+  "concept3b": {
+    "cta": "Discover the power of 3B",
+    "badge": "OUR APPROACH",
+    "concepts": [
+      {
+        "id": "brain",
+        "stats": "Focus +85%",
+        "title": "BRAIN",
+        "subtitle": "Cognitive focus",
+        "description": "Maximum mental performance and concentration throughout the entire working day",
+        "fullDescription": "\n          BRAIN represents the first pillar of our 3B concept focused on optimising cognitive functions.\n          \n          **What it contains:**\n          • L-theanine for calm concentration without jitters\n          • Guarana for gradual energy release\n          • B-complex for optimal nervous system function\n          \n          **Benefits:**\n          • Enhanced mental sharpness and clarity of thought\n          • Better ability to concentrate on demanding tasks\n          • Support for memory and information processing speed\n          • No \"brain fog\" or fatigue after the effect wears off\n          \n          Ideal for students, professionals and anyone who needs maximum mental performance.\n        "
+      },
+      {
+        "id": "body",
+        "stats": "Energy +6h",
+        "title": "BODY",
+        "subtitle": "Physical energy",
+        "description": "Sustained physical energy without jitters and the crash effect",
+        "fullDescription": "\n          BODY is the second pillar focused on sustainable physical energy throughout the day.\n          \n          **What it contains:**\n          • Natural caffeine in an optimal dose\n          • Taurine for muscle performance support\n          • Electrolytes for proper hydration\n          \n          **Benefits:**\n          • Stable energy for 6+ hours\n          • No sharp onset or subsequent \"crash\"\n          • Support for physical performance and endurance\n          • Faster recovery after exertion\n          \n          Perfect for athletes, active people and those who need energy for long working days.\n        "
+      },
+      {
+        "id": "balance",
+        "stats": "Stability 100%",
+        "title": "BALANCE",
+        "subtitle": "Harmony",
+        "description": "Balanced formula for optimal functioning of body and mind",
+        "fullDescription": "\n          BALANCE is the third pillar that unites BRAIN and BODY into a harmonious whole.\n          \n          **What it contains:**\n          • Adaptogens for stress resilience\n          • Antioxidants for cell protection\n          • Natural ingredients without artificial additives\n          \n          **Benefits:**\n          • Synergy between mental and physical components\n          • Support for natural body balance\n          • Reduction of negative stress effects\n          • Long-term support for health and vitality\n          \n          The key to a sustainable lifestyle without extremes or compromises.\n        "
+      }
+    ],
+    "headline": "THE 3B CONCEPT",
+    "description": "We bring a unique approach to energy to the market. Three pillars that are missing."
+  },
+  "navigation": [
+    {
+      "href": "/#mise",
+      "label": "Our Mission"
+    },
+    {
+      "href": "/#produkty",
+      "label": "Products"
+    },
+    {
+      "href": "/#3b",
+      "label": "3B Concept"
+    },
+    {
+      "href": "/#kontakt",
+      "label": "Contact"
+    }
+  ],
+  "textStyles": {},
+  "typography": {
+    "bodyFont": "Poppins",
+    "bodyWeight": "400",
+    "headingFont": "Poppins",
+    "baseFontSize": "16",
+    "headingWeight": "800",
+    "bodyLineHeight": "1.6",
+    "bodyLetterSpacing": "0em",
+    "headingLineHeight": "1.1",
+    "headingLetterSpacing": "0.05em"
+  },
+  "badgeVisible": {},
+  "configurator": {
+    "cta": "ADD TO CART",
+    "badge": "PACK CONFIGURATOR",
+    "total": "Total",
+    "headline": "CREATE YOUR ENERGY",
+    "outOfStock": "OUT OF STOCK",
+    "description": "Choose your pack size, flavor and delivery method. All freshly prepared for peak performance."
+  },
+  "ingredientDetails": {
+    "vitamins": {
+      "title": "Vitamins",
+      "benefits": [
+        "Support for energy metabolism",
+        "Reduction of fatigue and exhaustion",
+        "DNA and cell protection"
+      ],
+      "subtitle": "Fuel for your metabolism",
+      "description": "A complex of B and C vitamins that are key for transforming food into energy and protection against oxidative stress.",
+      "ingredients": [
+        "Vitamin B6",
+        "Vitamin B12",
+        "Vitamin C"
+      ]
+    },
+    "adaptogens": {
+      "title": "Adaptogens",
+      "benefits": [
+        "Reduction of cortisol levels",
+        "Immune system support",
+        "Improved mood and recovery"
+      ],
+      "subtitle": "Stress resilience",
+      "description": "Herbs and mushrooms that help the body adapt to physical and mental stress and maintain inner balance.",
+      "ingredients": [
+        "Ashwagandha",
+        "Rhodiola rosea",
+        "Lemon balm"
+      ]
+    },
+    "stimulants": {
+      "title": "Natural stimulants",
+      "benefits": [
+        "Increased alertness and attention",
+        "Support for mental performance",
+        "Gradual release without jitters"
+      ],
+      "subtitle": "Clean energy from nature",
+      "description": "We harness the power of proven natural substances that deliver energy gradually, without sharp fluctuations or subsequent fatigue.",
+      "ingredients": [
+        "Natural caffeine",
+        "Guarana",
+        "L-Theanine"
+      ]
+    },
+    "electrolytes": {
+      "title": "Electrolytes",
+      "benefits": [
+        "Prevention of muscle cramps",
+        "Better nerve impulse transmission",
+        "Maintaining energy in cells"
+      ],
+      "subtitle": "Optimal cell hydration",
+      "description": "Essential minerals for proper muscle function, nervous system health and maintaining deep hydration throughout the day.",
+      "ingredients": [
+        "Magnesium",
+        "Potassium",
+        "Sodium",
+        "Calcium"
+      ]
+    }
+  }
+}
