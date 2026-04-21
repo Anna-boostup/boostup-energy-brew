@@ -562,7 +562,7 @@ const CheckoutPage = () => {
         <div className="mb-12 flex flex-wrap items-center justify-between gap-6">
           <div className="flex flex-wrap items-center gap-4 sm:gap-8">
             <button
-              onClick={() => navigate('/', { replace: true })}
+              onClick={() => navigate('/', { replace: true, state: { openCart: true } })}
               className="flex items-center gap-2 text-primary hover:text-primary transition-colors font-bold group"
             >
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
@@ -609,7 +609,6 @@ const CheckoutPage = () => {
                 <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">{content.checkout.steps.stepCount}</div>
                 <div className="text-xs font-black uppercase tracking-tight">{content.checkout.steps.confirmation}</div>
               </div>
-            </div>
           </div>
         </div>
 
@@ -1119,6 +1118,7 @@ const CheckoutPage = () => {
         orderNumber={pendingOrder?.id || ""}
         amount={pendingOrder?.total || 0}
       />
+      </div>
     </main>
   );
 };
