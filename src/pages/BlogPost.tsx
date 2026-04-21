@@ -13,11 +13,12 @@ import { Button } from "@/components/ui/button";
 interface Post {
   id: string;
   title: string;
-  content_html: string;
+  content: string;
   excerpt: string;
   slug: string;
   featured_image_url: string;
-  category: string;
+  category_id: string;
+  blog_categories: { name: string } | null;
   published_at: string;
   status: string;
 }
@@ -33,8 +34,8 @@ const BlogPost = () => {
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .from("posts")
-          .select("*")
+          .from("blog_posts")
+          .select("*, blog_categories(name)")
           .eq("slug", slug)
           .single();
 
@@ -114,7 +115,7 @@ const BlogPost = () => {
               >
                 <div className="flex items-center gap-4 mb-6">
                   <span className="bg-lime text-olive-dark px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                    {post.category}
+                    {post.blog_categories?.name || "Obecné"}
                   </span>
                   <div className="flex items-center gap-2 text-white/60 text-[10px] font-bold uppercase tracking-widest">
                     <Calendar className="w-4 h-4" />
@@ -140,7 +141,7 @@ const BlogPost = () => {
             >
               {/* Injecting raw HTML safely */}
               <div 
-                dangerouslySetInnerHTML={{ __html: post.content_html || '' }} 
+                dangerouslySetInnerHTML={{ __html: post.content || '' }} 
                 className="text-olive-dark/80 prose-headings:font-display prose-headings:font-black prose-headings:tracking-tighter prose-headings:text-olive-dark prose-p:leading-relaxed prose-img:rounded-3xl prose-img:shadow-2xl prose-a:text-lime-dark prose-a:font-bold prose-strong:text-olive-dark prose-blockquote:border-l-lime prose-blockquote:bg-olive-dark/5 prose-blockquote:p-8 prose-blockquote:rounded-r-3xl"
               />
             </motion.div>

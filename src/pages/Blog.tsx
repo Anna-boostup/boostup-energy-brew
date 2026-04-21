@@ -15,7 +15,8 @@ interface Post {
   excerpt: string;
   slug: string;
   featured_image_url: string;
-  category: string;
+  category_id: string;
+  blog_categories: { name: string } | null;
   published_at: string;
   author_id: string;
 }
@@ -28,8 +29,8 @@ const Blog = () => {
     const fetchPosts = async () => {
       try {
         const { data, error } = await supabase
-          .from("posts")
-          .select("*")
+          .from("blog_posts")
+          .select("*, blog_categories(name)")
           .eq("status", "published")
           .order("published_at", { ascending: false });
 
@@ -103,7 +104,7 @@ const Blog = () => {
                         )}
                         <div className="absolute top-6 left-6">
                           <span className="bg-white/90 backdrop-blur-md text-olive-dark px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl">
-                            {post.category}
+                            {post.blog_categories?.name || "Obecné"}
                           </span>
                         </div>
                       </div>
