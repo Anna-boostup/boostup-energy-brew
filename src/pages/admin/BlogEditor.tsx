@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Globe, Eye, Image as ImageIcon, Plus } from "lucide-react";
+import { ArrowLeft, Save, Globe, Eye, Image as ImageIcon, Plus, Upload, Loader2, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +38,8 @@ export default function BlogEditor() {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [creatingCategory, setCreatingCategory] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -45,7 +47,8 @@ export default function BlogEditor() {
     content: "",
     category_id: "",
     status: "draft" as "draft" | "published",
-    featured_image_url: ""
+    featured_image_url: "",
+    template: "modern" as "modern" | "centered" | "minimal"
   });
 
   useEffect(() => {
@@ -81,7 +84,8 @@ export default function BlogEditor() {
           content: data.content,
           category_id: data.category_id || "",
           status: data.status,
-          featured_image_url: data.featured_image_url || ""
+          featured_image_url: data.featured_image_url || "",
+          template: data.template || "modern"
         });
       }
     } catch (error) {
@@ -118,6 +122,40 @@ export default function BlogEditor() {
     window.open(`/blog/${formData.slug}`, '_blank');
   };
 
+  const handleImageUpload = async (file: File) => {
+    if (!file) return;
+    
+    try {
+      setUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('blog-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(filePath);
+
+      setFormData(prev => ({ ...prev, featured_image_url: publicUrl }));
+      toast.success("Obrázek byl úspěšně nahrán.");
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(`Chyba při nahrávání obrázku: ${error.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleImageUpload(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.content) {
@@ -134,6 +172,7 @@ export default function BlogEditor() {
         category_id: formData.category_id || null,
         status: formData.status,
         featured_image_url: formData.featured_image_url || null,
+        template: formData.template,
         published_at: formData.status === 'published' ? new Date().toISOString() : null
       };
 
@@ -311,14 +350,42 @@ export default function BlogEditor() {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="space-y-2">
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Šablona vzhledu</Label>
+                <Select 
+                  value={formData.template} 
+                  onValueChange={(val: any) => setFormData(prev => ({ ...prev, template: val }))}
+                >
+                  <SelectTrigger className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11">
+                    <div className="flex items-center gap-2">
+                      <Layout className="w-4 h-4 text-olive-dark/40" />
+                      <SelectValue />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark rounded-xl">
+                    <SelectItem value="modern">Modern (Standard)</SelectItem>
+                    <SelectItem value="centered">Centered (Střed)</SelectItem>
+                    <SelectItem value="minimal">Minimal (Čistý)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
           <div className="bg-admin-canvas border border-olive-dark/10 rounded-[2rem] shadow-sm p-8 space-y-6">
             <h3 className="text-olive-dark font-black uppercase tracking-widest text-[10px]">Náhledový obrázek</h3>
             <div className="space-y-4">
-              <div className="aspect-video bg-olive-dark/5 rounded-2xl border-2 border-dashed border-olive-dark/10 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:border-lime-dark/50 transition-all overflow-hidden relative">
-                {formData.featured_image_url ? (
+              <div 
+                className="aspect-video bg-olive-dark/5 rounded-2xl border-2 border-dashed border-olive-dark/10 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:border-lime-dark/50 transition-all overflow-hidden relative"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {uploading ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="w-8 h-8 text-lime animate-spin" />
+                    <span className="text-[10px] text-olive-dark/40 uppercase font-black">Nahrávám...</span>
+                  </div>
+                ) : formData.featured_image_url ? (
                   <img src={formData.featured_image_url} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
                   <>
@@ -327,12 +394,22 @@ export default function BlogEditor() {
                   </>
                 )}
               </div>
-              <Input
-                placeholder="URL obrázku..."
-                value={formData.featured_image_url}
-                onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
-                className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all text-xs"
+              <input 
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
               />
+              <div className="space-y-1">
+                <Label className="text-[10px] text-olive-dark/40 font-black uppercase ml-1">Nebo vložte URL</Label>
+                <Input
+                  placeholder="https://images.unsplash.com/..."
+                  value={formData.featured_image_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
+                  className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all text-xs"
+                />
+              </div>
             </div>
           </div>
         </div>
