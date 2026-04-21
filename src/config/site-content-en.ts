@@ -1210,7 +1210,8 @@ export const SITE_CONTENT_EN = {
         titleLine1: "COMPLETE",
         titleLine2: "ORDER",
         subTitle: "Secure Checkout / Delivery within 48h",
-        backToCart: "Back to selecting packs",
+        backToCart: "Back to home page",
+        cancelOrder: "Cancel order/payment",
         cartTitle: "My Cart",
         summaryTitle: "Summary",
         steps: {
