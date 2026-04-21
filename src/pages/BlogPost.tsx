@@ -75,14 +75,6 @@ const BlogPost = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <SEO 
-        title={`${post.title} - Blog BoostUp`} 
-        description={post.excerpt}
-        ogImage={post.featured_image_url}
-      />
-      <Header />
 
   const renderTemplate = () => {
     switch (post.template) {
