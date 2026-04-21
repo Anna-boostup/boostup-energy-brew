@@ -14,15 +14,19 @@ const modules = {
     [{ 'header': [1, 2, 3, false] }],
     ['bold', 'italic', 'underline', 'strike'],
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    [{ 'align': [] }],
     ['link', 'image'],
     ['clean']
   ],
+  clipboard: {
+    matchVisual: false, // Prevents weird padding issues when pasting from other sources
+  }
 };
 
 const formats = [
   'header',
   'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet',
+  'list', 'bullet', 'align',
   'link', 'image'
 ];
 
