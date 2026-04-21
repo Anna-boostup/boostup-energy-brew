@@ -1305,7 +1305,8 @@ export const SITE_CONTENT = {
         titleLine1: "DOKONČENÍ",
         titleLine2: "NÁKUPU",
         subTitle: "Zabezpečená pokladna / Doručení do 48 hodin",
-        backToCart: "Zpět k výběru balení",
+        backToCart: "Zpět na hlavní stránku",
+        cancelOrder: "Zrušit objednávku/platbu",
         cartTitle: "Můj košík",
         summaryTitle: "Shrnutí",
         steps: {
