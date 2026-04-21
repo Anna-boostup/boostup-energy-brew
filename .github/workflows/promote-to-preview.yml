@@ -2,6 +2,11 @@ name: Promote to Preview (Staging)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - development
+    paths:
+      - .github/workflows/promote-to-preview.yml
 
 permissions:
   contents: write
