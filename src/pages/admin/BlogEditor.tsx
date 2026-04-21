@@ -495,7 +495,6 @@ export default function BlogEditor() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      </Dialog>
 
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="max-w-[95vw] w-[1200px] h-[90vh] overflow-y-auto p-0 bg-background border-none rounded-[3rem] shadow-2xl">
