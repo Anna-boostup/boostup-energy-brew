@@ -1,0 +1,37 @@
+name: Promote to Preview (Staging)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  Promote-to-Preview:
+    name: "🔄 Promote to Preview"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          
+      - name: Merge Development into Preview
+        run: |
+          # Ensure branches are available
+          git fetch origin development preview
+          
+          # Checkout preview and ensure it is up to date
+          git checkout preview
+          git reset --hard origin/preview
+          
+          # Merge the development branch into preview
+          git merge origin/development --no-ff -m "chore: promote development to preview via manual trigger"
+          
+          # Push to trigger the Deploy-Preview pipeline
+          git push origin preview
