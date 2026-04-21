@@ -108,7 +108,14 @@ const AnalyticsTracker = () => { useAnalytics(); return null; };
 // Tracks page views for Meta Pixel (Facebook)
 const MetaPixelTracker = () => { useMetaPixel(); return null; };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <ErrorBoundary>

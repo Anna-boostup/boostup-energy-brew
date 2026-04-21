@@ -56,7 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(session?.user ?? null);
 
             if (session?.user) {
-                setLoading(true);
+                // Fetch profile in background without triggering global loading 
+                // if we are already past the initial load
                 fetchProfile(session.user.id);
             } else {
                 setProfile(null);

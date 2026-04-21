@@ -109,7 +109,15 @@ const BlogPost = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   className="rounded-[3.5rem] overflow-hidden shadow-2xl aspect-[21/9]"
                 >
-                  <img src={post.featured_image_url} alt={post.title} className="w-full h-full object-cover" />
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title} 
+                    className={`w-full h-full object-cover ${
+                      post.featured_image_position === 'top' ? 'object-top' : 
+                      post.featured_image_position === 'bottom' ? 'object-bottom' : 
+                      'object-center'
+                    }`} 
+                  />
                 </motion.div>
               </div>
             )}
@@ -151,6 +159,26 @@ const BlogPost = () => {
               </motion.div>
             </div>
 
+            {post.featured_image_url && (
+              <div className="max-w-3xl mx-auto mb-16">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-3xl overflow-hidden shadow-lg aspect-video"
+                >
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title} 
+                    className={`w-full h-full object-cover ${
+                      post.featured_image_position === 'top' ? 'object-top' : 
+                      post.featured_image_position === 'bottom' ? 'object-bottom' : 
+                      'object-center'
+                    }`} 
+                  />
+                </motion.div>
+              </div>
+            )}
+
             <div className="max-w-3xl mx-auto">
               <motion.div 
                 initial={{ opacity: 0 }}
@@ -170,7 +198,15 @@ const BlogPost = () => {
             <div className="relative h-[60vh] min-h-[500px] w-full mb-16 px-4 md:px-8">
               <div className="container mx-auto h-full p-0 flex flex-col gap-8 rounded-[3.5rem] overflow-hidden relative shadow-2xl">
                 {post.featured_image_url ? (
-                  <img src={post.featured_image_url} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title} 
+                    className={`absolute inset-0 w-full h-full object-cover ${
+                      post.featured_image_position === 'top' ? 'object-top' : 
+                      post.featured_image_position === 'bottom' ? 'object-bottom' : 
+                      'object-center'
+                    }`} 
+                  />
                 ) : (
                   <div className="absolute inset-0 bg-olive-dark"></div>
                 )}
