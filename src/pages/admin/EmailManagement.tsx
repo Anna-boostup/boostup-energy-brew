@@ -516,6 +516,8 @@ const EmailManagement = () => {
                 }
             }}>
 
+            <TabsContent value="templates" className="mt-0">
+
             {/* Mobile Template Selector (Horizontal) */}
             <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-right">
                 <div className="flex gap-3">
