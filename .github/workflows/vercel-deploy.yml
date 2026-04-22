@@ -78,6 +78,10 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
 
       - name: Notify on Success (Slack)
         if: success()
@@ -132,6 +136,10 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
 
       - name: Notify on Success (Slack)
         if: success()

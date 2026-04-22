@@ -74,6 +74,26 @@ const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null)
         textStyles: { ...base.textStyles, ...(dbContent.textStyles || {}) },
         badgeVisible: { ...base.badgeVisible, ...(dbContent.badgeVisible || {}) },
         pricing: { ...base.pricing, ...(dbContent.pricing || {}) },
+        admin: {
+            ...base.admin,
+            ...(dbContent.admin || {}),
+            auth: { ...base.admin.auth, ...(dbContent.admin?.auth || {}) },
+            navigation: { ...base.admin.navigation, ...(dbContent.admin?.navigation || {}) },
+            dashboard: { ...base.admin.dashboard, ...(dbContent.admin?.dashboard || {}) },
+            inventory: { 
+                ...base.admin.inventory, 
+                ...(dbContent.admin?.inventory || {}),
+                manufacture: { ...base.admin.inventory.manufacture, ...(dbContent.admin?.inventory?.manufacture || {}) }
+            },
+            invoices: { ...base.admin.invoices, ...(dbContent.admin?.invoices || {}) },
+            orders: { 
+                ...base.admin.orders, 
+                ...(dbContent.admin?.orders || {}),
+                cancelDialog: { ...base.admin.orders.cancelDialog, ...(dbContent.admin?.orders?.cancelDialog || {}) },
+                detail: { ...base.admin.orders.detail, ...(dbContent.admin?.orders?.detail || {}) }
+            },
+            contentManager: { ...base.admin.contentManager, ...(dbContent.admin?.contentManager || {}) }
+        }
     };
 };
 
