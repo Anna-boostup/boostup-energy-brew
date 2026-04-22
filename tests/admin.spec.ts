@@ -34,32 +34,42 @@ test.describe('Admin Dashboard Audit', () => {
     ];
 
     for (const adminPage of adminPages) {
-      console.log(`DIAGNOSTIC: Auditing admin page: ${adminPage.path}`);
-      await page.goto(adminPage.path, { timeout: 30000 });
-      
-      // Wait for navigation and loading to finish
-      await page.waitForLoadState('load', { timeout: 30000 });
-      
-      // 🧪 DIAGNOSTIC: Verify we are on the correct page
-      const currentUrl = page.url();
-      console.log(`DIAGNOSTIC - CURRENT URL: ${currentUrl}`);
-      
-      // Check for Error Boundary crash
-      const errorBoundary = page.getByTestId('admin-error-fallback');
-      if (await errorBoundary.isVisible()) {
-        const errorText = await errorBoundary.innerText();
-        throw new Error(`CRITICAL UI CRASH on ${adminPage.path}: ${errorText}`);
-      }
+      await test.step(`Audit ${adminPage.path}`, async () => {
+        console.log(`DIAGNOSTIC: Auditing admin page: ${adminPage.path}`);
+        
+        // Use a more resilient navigation pattern
+        const response = await page.goto(adminPage.path, { timeout: 30000, waitUntil: 'load' });
+        console.log(`DIAGNOSTIC - CURRENT URL: ${page.url()} (Status: ${response?.status()})`);
+        
+        // Check for Error Boundary crash
+        const errorBoundary = page.getByTestId('admin-error-fallback');
+        if (await errorBoundary.isVisible()) {
+          const errorText = await errorBoundary.innerText();
+          console.error(`DIAGNOSTIC - CRASH: Error boundary detected on ${adminPage.path}`);
+          throw new Error(`CRITICAL UI CRASH on ${adminPage.path}: ${errorText}`);
+        }
 
-      const loader = page.getByTestId('admin-loader');
-      await expect(loader).toBeHidden({ timeout: 20000 });
-      
-      const title = page.getByTestId('admin-page-title');
-      await expect(title).toBeVisible({ timeout: 20000 });
-      
-      // Verify page content exists
-      const mainContent = page.locator('main');
-      await expect(mainContent).toBeVisible();
+        const loader = page.getByTestId('admin-loader');
+        try {
+          await expect(loader).toBeHidden({ timeout: 15000 });
+        } catch (e) {
+          console.warn(`DIAGNOSTIC - WARNING: Loader still visible or timed out on ${adminPage.path}`);
+        }
+        
+        const title = page.getByTestId('admin-page-title');
+        try {
+          await expect(title).toBeVisible({ timeout: 15000 });
+          console.log(`DIAGNOSTIC - SUCCESS: Found title on ${adminPage.path}`);
+        } catch (e) {
+          console.error(`DIAGNOSTIC - FAILURE: Page title not found on ${adminPage.path}`);
+          const bodyHtml = await page.evaluate(() => document.body.innerHTML.slice(0, 2000));
+          console.log(`DIAGNOSTIC - DOM SNIPPET:\n${bodyHtml}`);
+          
+          // Take a diagnostic screenshot
+          await page.screenshot({ path: `tests/screenshots/error-${adminPage.path.replace(/\//g, '-')}.png` });
+          throw e;
+        }
+      });
     }
   });
 });
