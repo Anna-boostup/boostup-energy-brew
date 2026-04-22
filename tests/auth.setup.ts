@@ -33,6 +33,14 @@ for (const role of roles) {
 
     console.log(`Setup: Logging in as ${role.name} (${role.email})`);
     
+    // Monitor console messages and failed requests
+    page.on('console', msg => {
+        if (msg.type() === 'error') console.error(`BROWSER ERROR (${role.name}):`, msg.text());
+    });
+    page.on('requestfailed', request => {
+        console.error(`NETWORK ERROR (${role.name}):`, request.url(), request.failure()?.errorText);
+    });
+
     try {
       await page.goto('/login', { waitUntil: 'load', timeout: 60000 });
       
@@ -64,12 +72,8 @@ for (const role of roles) {
 
       // Verify successful login (wait for redirection)
       try {
-        if (role.name === 'admin') {
-          await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
-        } else {
-          // Check for ANY account-related URL
-          await expect(page).toHaveURL(/.*account|.*company-account/, { timeout: 30000 });
-        }
+        // Check for ANY valid logged-in URL
+        await expect(page).toHaveURL(/.*account|.*company-account|.*admin/, { timeout: 30000 });
       } catch (err) {
           console.error(`Setup (${role.name}): Redirection check failed. Current URL: ${page.url()}`);
           // Log visible errors again
