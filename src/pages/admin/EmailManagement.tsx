@@ -454,7 +454,7 @@ const EmailManagement = () => {
     }
 
     return (
-        <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
+        <div data-testid="admin-email-management" className="space-y-12 pb-32">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
                 <div className="space-y-3 flex-1 min-w-[280px]">
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
@@ -1005,7 +1005,6 @@ const EmailManagement = () => {
                     </div>
                 </DialogContent>
             </Dialog>
-            <ActionBar />
         </div>
     );
 };
