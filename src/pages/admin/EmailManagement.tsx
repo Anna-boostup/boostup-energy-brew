@@ -29,7 +29,8 @@ import {
     HelpCircle,
     Code,
     RefreshCw,
-    Eye
+    Eye,
+    X
 } from "lucide-react";
 import { EMAIL_DEFAULTS, EMAIL_BASE_LAYOUT } from '@/data/emailDefaults';
 import { useAuth } from "@/context/AuthContext";
@@ -479,31 +480,8 @@ const EmailManagement = () => {
 
     return (
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
-            <Tabs defaultValue="templates" className="w-full" onValueChange={(val) => {
-                if (val === 'campaigns' && subscribers.length === 0) {
-                    fetchSubscribers();
-                }
-            }}>
-                <TabsList className="bg-white/40 backdrop-blur-md border border-white/40 p-1 sm:p-1.5 h-auto rounded-2xl sm:rounded-[1.5rem] mb-6 sm:mb-12 flex sm:flex-wrap justify-start sm:justify-center shadow-xl shadow-olive-dark/5 overflow-x-auto no-scrollbar scroll-smooth">
-                    <TabsTrigger 
-                        value="templates" 
-                        className="rounded-xl sm:rounded-[1.1rem] px-4 sm:px-8 py-2.5 sm:py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group shrink-0"
-                    >
-                        <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
-                        {content?.admin?.emailManager?.tabs?.settings || "Settings"}
-                    </TabsTrigger>
-                    <TabsTrigger 
-                        value="campaigns" 
-                        className="rounded-xl sm:rounded-[1.1rem] px-4 sm:px-8 py-2.5 sm:py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group shrink-0"
-                    >
-                        <Megaphone className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
-                        {content?.admin?.emailManager?.campaign?.title || "Campaign"}
-                    </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="templates" className="space-y-12 mt-0">
-                    {/* Header */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
+            {/* Header section moved above Tabs for better E2E synchronization */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
                 <div className="space-y-3 flex-1 min-w-[280px]">
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.title || "Email Management"}</h2>
                     <div className="flex items-center gap-3">
@@ -531,6 +509,12 @@ const EmailManagement = () => {
                     </Button>
                 </div>
             </div>
+
+            <Tabs defaultValue="templates" className="w-full" onValueChange={(val) => {
+                if (val === 'campaigns' && subscribers.length === 0) {
+                    fetchSubscribers();
+                }
+            }}>
 
             {/* Mobile Template Selector (Horizontal) */}
             <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-right">
