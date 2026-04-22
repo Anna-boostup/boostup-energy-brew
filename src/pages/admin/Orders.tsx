@@ -12,6 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useContent } from "@/context/ContentContext";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cs } from "date-fns/locale";
+import { Calendar as CalendarIcon } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -439,8 +444,8 @@ const Orders = () => {
     // Export State
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
     const [exportType, setExportType] = useState<'month' | 'quarter' | 'year' | 'custom'>('month');
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
+    const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+    const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
     if (!content || !orders) {
         return (
@@ -507,30 +512,30 @@ const Orders = () => {
     const handleExportCSV = () => {
         let filteredForExport = orders;
         const now = new Date();
-        let fromDateStr = dateFrom;
-        let toDateStr = dateTo;
+        let fromDate = dateFrom;
+        let toDate = dateTo;
 
         if (exportType === 'month') {
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-            fromDateStr = firstDay.toISOString();
-            toDateStr = lastDay.toISOString();
+            fromDate = firstDay;
+            toDate = lastDay;
         } else if (exportType === 'quarter') {
             const currentQuarter = Math.floor(now.getMonth() / 3);
             const firstDay = new Date(now.getFullYear(), currentQuarter * 3, 1);
             const lastDay = new Date(now.getFullYear(), currentQuarter * 3 + 3, 0);
-            fromDateStr = firstDay.toISOString();
-            toDateStr = lastDay.toISOString();
+            fromDate = firstDay;
+            toDate = lastDay;
         } else if (exportType === 'year') {
             const firstDay = new Date(now.getFullYear(), 0, 1);
             const lastDay = new Date(now.getFullYear(), 11, 31);
-            fromDateStr = firstDay.toISOString();
-            toDateStr = lastDay.toISOString();
+            fromDate = firstDay;
+            toDate = lastDay;
         }
 
-        if (fromDateStr && toDateStr) {
-            const from = new Date(fromDateStr).getTime();
-            const to = new Date(toDateStr).getTime() + 86400000; // Přidat den pro obsáhnutí i posledního dne
+        if (fromDate && toDate) {
+            const from = fromDate.getTime();
+            const to = toDate.getTime() + 86400000; // Přidat den pro obsáhnutí i posledního dne
             filteredForExport = orders.filter(o => {
                 const oDate = new Date(o.date).getTime();
                 return oDate >= from && oDate < to;
@@ -996,21 +1001,51 @@ const Orders = () => {
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <div className="space-y-3 flex-1">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Datum od</Label>
-                                    <Input 
-                                        type="date" 
-                                        value={dateFrom} 
-                                        onChange={(e) => setDateFrom(e.target.value)} 
-                                        className="rounded-xl border-olive/10 bg-white shadow-sm h-12"
-                                    />
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={`w-full justify-start text-left font-bold rounded-xl border-olive/10 bg-white shadow-sm h-12 ${!dateFrom && "text-muted-foreground"}`}
+                                            >
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {dateFrom ? format(dateFrom, "d. MMMM yyyy", { locale: cs }) : <span>Vyberte datum</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 rounded-2xl border-none shadow-2xl" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={dateFrom}
+                                                onSelect={setDateFrom}
+                                                initialFocus
+                                                locale={cs}
+                                                className="bg-white rounded-2xl p-4"
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
                                 <div className="space-y-3 flex-1">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Datum do</Label>
-                                    <Input 
-                                        type="date" 
-                                        value={dateTo} 
-                                        onChange={(e) => setDateTo(e.target.value)} 
-                                        className="rounded-xl border-olive/10 bg-white shadow-sm h-12"
-                                    />
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={`w-full justify-start text-left font-bold rounded-xl border-olive/10 bg-white shadow-sm h-12 ${!dateTo && "text-muted-foreground"}`}
+                                            >
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {dateTo ? format(dateTo, "d. MMMM yyyy", { locale: cs }) : <span>Vyberte datum</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 rounded-2xl border-none shadow-2xl" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={dateTo}
+                                                onSelect={setDateTo}
+                                                initialFocus
+                                                locale={cs}
+                                                className="bg-white rounded-2xl p-4"
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
                             </div>
                         )}

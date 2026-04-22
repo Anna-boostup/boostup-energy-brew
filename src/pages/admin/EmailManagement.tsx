@@ -68,6 +68,8 @@ interface EmailTemplate {
     content_html: string;
     placeholders: string[];
     updated_at: string;
+    trigger?: string;
+    description?: string;
 }
 
 const FRIENDLY_PLACEHOLDERS: Record<string, string> = {
@@ -76,12 +78,19 @@ const FRIENDLY_PLACEHOLDERS: Record<string, string> = {
     itemsHtml: "Seznam produktů (tabulka)",
     total: "Celková cena",
     trackingNumber: "Sledovací kód dopravy",
+    shippingAddress: "Doručovací adresa",
+    paymentMethod: "Způsob platby",
+    discountCode: "Slevový kód",
+    discountAmount: "Výše slevy",
     message: "Text zprávy",
     customerEmail: "Email odesílatele",
     resetLink: "Odkaz na zresetování hesla",
     magicLink: "Přihlašovací odkaz",
     subscriberEmail: "Email odběratele",
-    BASE_URL: "Adresa webu (URL)"
+    unsubscribeLink: "Odkaz pro odhlášení",
+    BASE_URL: "Adresa webu (URL)",
+    date: "Aktuální datum",
+    year: "Aktuální rok"
 };
 
 const EmailManagement = () => {
@@ -89,14 +98,14 @@ const EmailManagement = () => {
     const { content } = useContent();
 
     const SYSTEM_TEMPLATES = [
-        { id: 'order_confirmation', label: content?.admin?.emailManager?.templates?.order_confirmation, icon: Database },
-        { id: 'shipping', label: content?.admin?.emailManager?.templates?.shipping, icon: Send },
-        { id: 'contact_auto_reply', label: content?.admin?.emailManager?.templates?.contact_auto_reply, icon: Mail },
-        { id: 'registration', label: content?.admin?.emailManager?.templates?.registration, icon: Zap },
-        { id: 'reset_password', label: content?.admin?.emailManager?.templates?.reset_password, icon: Key },
-        { id: 'magic_link', label: content?.admin?.emailManager?.templates?.magic_link, icon: Key },
-        { id: 'contact_inquiry', label: content?.admin?.emailManager?.templates?.contact_inquiry, icon: Info },
-        { id: 'newsletter_signup', label: content?.admin?.emailManager?.templates?.newsletter_signup, icon: Mail },
+        { id: 'order_confirmation', label: content?.admin?.emailManager?.templates?.order_confirmation, icon: Database, category: 'system' },
+        { id: 'shipping', label: content?.admin?.emailManager?.templates?.shipping, icon: Send, category: 'system' },
+        { id: 'contact_auto_reply', label: content?.admin?.emailManager?.templates?.contact_auto_reply, icon: Mail, category: 'system' },
+        { id: 'registration', label: content?.admin?.emailManager?.templates?.registration, icon: Zap, category: 'system' },
+        { id: 'reset_password', label: content?.admin?.emailManager?.templates?.reset_password, icon: Key, category: 'system' },
+        { id: 'magic_link', label: content?.admin?.emailManager?.templates?.magic_link, icon: Key, category: 'system' },
+        { id: 'contact_inquiry', label: content?.admin?.emailManager?.templates?.contact_inquiry, icon: Info, category: 'system' },
+        { id: 'newsletter_signup', label: content?.admin?.emailManager?.templates?.newsletter_signup, icon: Mail, category: 'marketing' },
     ];
 
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
@@ -108,6 +117,7 @@ const EmailManagement = () => {
     const [searchParams] = useSearchParams();
     const [useMasterFrame, setUseMasterFrame] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategory, setActiveCategory] = useState('all');
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [newId, setNewId] = useState('');
@@ -115,6 +125,8 @@ const EmailManagement = () => {
 
     const [currentSubject, setCurrentSubject] = useState('');
     const [currentContent, setCurrentContent] = useState('');
+    const [currentTrigger, setCurrentTrigger] = useState('');
+    const [currentDescription, setCurrentDescription] = useState('');
     const quillRef = useRef<any>(null);
 
     const [subscribers, setSubscribers] = useState<{id: string, email: string}[]>([]);
@@ -172,7 +184,8 @@ const EmailManagement = () => {
                     id: dbT.id,
                     label: dbT.id.toUpperCase().replace(/_/g, ' '),
                     icon: Mail,
-                    isCustom: true
+                    isCustom: true,
+                    category: 'custom'
                 }));
             
             setTemplateTypes([...SYSTEM_TEMPLATES, ...customTypes]);
@@ -181,6 +194,8 @@ const EmailManagement = () => {
             if (existing) {
                 setCurrentSubject(existing.subject);
                 setCurrentContent(existing.content_html);
+                setCurrentTrigger(existing.trigger || '');
+                setCurrentDescription(existing.description || '');
             }
         } catch (err: any) {
             console.error('Error fetching templates:', err);
@@ -201,6 +216,8 @@ const EmailManagement = () => {
         } else {
             setCurrentSubject('');
             setCurrentContent('');
+            setCurrentTrigger('');
+            setCurrentDescription('');
         }
     }, [selectedTypeId, templates]);
 
@@ -236,6 +253,7 @@ const EmailManagement = () => {
                     id: sanitizedId,
                     subject: content?.admin?.emailManager?.editor?.newSubject || "New Subject",
                     content_html: content?.admin?.emailManager?.editor?.newContent || "<p>Content</p>",
+                    category: 'custom',
                     updated_at: new Date().toISOString()
                 });
 
@@ -268,6 +286,8 @@ const EmailManagement = () => {
                     id: selectedTypeId,
                     subject: currentSubject,
                     content_html: currentContent,
+                    trigger: currentTrigger,
+                    description: currentDescription,
                     updated_at: new Date().toISOString()
                 });
 
@@ -401,10 +421,12 @@ const EmailManagement = () => {
     };
 
     const selectedType = templateTypes.find(t => t.id === selectedTypeId);
-    const filteredTypes = templateTypes.filter(t => 
-        (t.label || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (t.id || "").toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredTypes = templateTypes.filter(t => {
+        const matchesSearch = (t.label || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+                             (t.id || "").toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = activeCategory === 'all' || (t as any).category === activeCategory;
+        return matchesSearch && matchesCategory;
+    });
 
     const getPlaceholdersForType = (typeId: string) => {
         const typeInfo = templateTypes.find(t => t.id === typeId);
@@ -412,15 +434,15 @@ const EmailManagement = () => {
             return Object.keys(FRIENDLY_PLACEHOLDERS);
         }
         switch (typeId) {
-            case 'order_confirmation': return ['customerName', 'orderNumber', 'itemsHtml', 'total', 'BASE_URL'];
-            case 'shipping': return ['customerName', 'orderNumber', 'trackingNumber', 'BASE_URL'];
-            case 'contact_auto_reply': return ['message', 'BASE_URL'];
-            case 'registration': return ['customerName', 'BASE_URL'];
-            case 'reset_password': return ['resetLink', 'BASE_URL'];
-            case 'magic_link': return ['magicLink', 'BASE_URL'];
-            case 'contact_inquiry': return ['customerName', 'customerEmail', 'message', 'BASE_URL'];
-            case 'newsletter_signup': return ['subscriberEmail', 'BASE_URL'];
-            default: return ['BASE_URL'];
+            case 'order_confirmation': return ['customerName', 'orderNumber', 'itemsHtml', 'total', 'shippingAddress', 'paymentMethod', 'discountCode', 'discountAmount', 'BASE_URL', 'date', 'year'];
+            case 'shipping': return ['customerName', 'orderNumber', 'trackingNumber', 'shippingAddress', 'BASE_URL', 'date', 'year'];
+            case 'contact_auto_reply': return ['message', 'BASE_URL', 'date', 'year'];
+            case 'registration': return ['customerName', 'BASE_URL', 'date', 'year'];
+            case 'reset_password': return ['resetLink', 'BASE_URL', 'date', 'year'];
+            case 'magic_link': return ['magicLink', 'BASE_URL', 'date', 'year'];
+            case 'contact_inquiry': return ['customerName', 'customerEmail', 'message', 'BASE_URL', 'date', 'year'];
+            case 'newsletter_signup': return ['subscriberEmail', 'unsubscribeLink', 'BASE_URL', 'date', 'year'];
+            default: return ['BASE_URL', 'date', 'year'];
         }
     };
 
@@ -529,7 +551,28 @@ const EmailManagement = () => {
                             <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">{content?.admin?.emailManager?.templatesTitle || "Templates"}</CardTitle>
                             <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{content?.admin?.emailManager?.templatesDesc}</CardDescription>
                             
-                            <div className="flex items-center justify-between gap-4 mt-6">
+                            <div className="flex gap-1 bg-white/5 p-1 rounded-xl mt-6">
+                                {[
+                                    { id: 'all', label: 'Vše' },
+                                    { id: 'system', label: 'Systém' },
+                                    { id: 'marketing', label: 'Marketing' },
+                                    { id: 'custom', label: 'Vlastní' }
+                                ].map(cat => (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setActiveCategory(cat.id)}
+                                        className={`flex-1 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+                                            activeCategory === cat.id 
+                                            ? 'bg-lime text-olive-dark shadow-lg shadow-lime/10' 
+                                            : 'text-white/40 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        {cat.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 mt-4">
                                 <div className="relative flex-1">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                                     <Input 
@@ -591,11 +634,11 @@ const EmailManagement = () => {
                                                 className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group ${
                                                     isActive 
                                                     ? 'bg-lime text-olive-dark shadow-lg shadow-lime/20' 
-                                                    : 'hover:bg-white/5 text-white/50 hover:text-white'
+                                                    : 'hover:bg-olive-dark/5 text-olive-dark/40 hover:text-olive-dark'
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-olive-dark/10' : 'bg-white/5 group-hover:bg-white/10'}`}>
+                                                    <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-olive-dark/10' : 'bg-olive-dark/5 group-hover:bg-olive-dark/10'}`}>
                                                         <Icon className="w-4 h-4" />
                                                     </div>
                                                     <div className="flex flex-col items-start">
@@ -717,7 +760,29 @@ const EmailManagement = () => {
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                            <div className="space-y-4">
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                                <div className="space-y-4">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">Automatický spouštěč (Trigger)</Label>
+                                    <Input 
+                                        value={currentTrigger}
+                                        onChange={(e) => setCurrentTrigger(e.target.value)}
+                                        placeholder="Např. po_objednavce, po_registraci..."
+                                        className="h-12 rounded-xl bg-background border-transparent font-bold text-olive-dark text-sm px-6 focus-visible:ring-lime shadow-sm"
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">Popis šablony</Label>
+                                    <Input 
+                                        value={currentDescription}
+                                        onChange={(e) => setCurrentDescription(e.target.value)}
+                                        placeholder="K čemu tato šablona slouží..."
+                                        className="h-12 rounded-xl bg-background border-transparent font-bold text-olive-dark text-sm px-6 focus-visible:ring-lime shadow-sm"
+                                    />
+                                </div>
+                             </div>
+
+                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.subject || "Subject"}</Label>
                                 </div>
@@ -777,8 +842,8 @@ const EmailManagement = () => {
                                 <div className="flex flex-col gap-4">
                                     {[
                                         { title: "Zákazník", tags: ["customerName", "customerEmail", "subscriberEmail"] },
-                                        { title: "Objednávka", tags: ["orderNumber", "itemsHtml", "total", "trackingNumber"] },
-                                        { title: "Systém a Odkazy", tags: ["message", "resetLink", "magicLink", "BASE_URL"] }
+                                        { title: "Objednávka", tags: ["orderNumber", "itemsHtml", "total", "trackingNumber", "shippingAddress", "paymentMethod", "discountCode", "discountAmount"] },
+                                        { title: "Systém a Odkazy", tags: ["message", "resetLink", "magicLink", "unsubscribeLink", "BASE_URL", "date", "year"] }
                                     ].map(group => ({ ...group, tags: group.tags.filter(t => getPlaceholdersForType(selectedTypeId).includes(t)) }))
                                      .filter(g => g.tags.length > 0)
                                      .map((group, idx) => (

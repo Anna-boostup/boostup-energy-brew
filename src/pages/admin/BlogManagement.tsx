@@ -115,14 +115,14 @@ export default function BlogManagement() {
           />
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex-1 bg-white/5 border-white/10 text-white rounded-2xl h-12 hover:bg-white/10">
+          <Button variant="outline" className="flex-1 bg-white/40 border-olive-dark/10 text-olive-dark rounded-2xl h-12 hover:bg-white/60 transition-all">
             <Filter className="w-4 h-4 mr-2" />
             Všechny kategorie
           </Button>
         </div>
       </div>
 
-      <div className="bg-white/5 backdrop-blur-md rounded-[2.5rem] border border-white/10 overflow-hidden">
+      <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] border border-olive-dark/5 overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="border-olive-dark/10 hover:bg-transparent">
