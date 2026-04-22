@@ -11,7 +11,7 @@ import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
     AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette,
-    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText
+    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download
 } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 
@@ -159,6 +159,30 @@ const AdminHelp = () => {
                 { label: "Seznam uživatelů", description: "Přehled všech registrovaných osob na platformě." },
                 { label: "Změna role", description: "Možnost přidělit jinému uživateli práva typu Admin, čímž získá přístup k tomuto rozhraní." },
                 { label: "Historie nákupů", description: "Pohled na minulé transakce konkrétní osoby." }
+            ]
+        },
+        {
+            icon: Mail,
+            title: "Email Marketing",
+            description: "Hromadné rozesílání a správa šablon",
+            image: "/admin-guide/emails.png",
+            path: "/admin/emails",
+            items: [
+                { label: "Placeholdery", description: "Při tvorbě šablon používejte značky jako {{customerName}} nebo {{orderNumber}}. Tyto budou automaticky nahrazeny reálnými daty." },
+                { label: "Kampaně", description: "Můžete odeslat newsletter všem odběratelům najednou s vizuálním sledováním průběhu odesílání." },
+                { label: "Zkušební e-mail", description: "Vždy si nejdříve odešlete testovací e-mail na svou adresu, abyste viděli reálný vzhled šablony." }
+            ]
+        },
+        {
+            icon: Download,
+            title: "Účetnictví a Exporty",
+            description: "Generování podkladů pro účetní systémy",
+            image: "/admin-guide/accounting-export.png",
+            path: "/admin/orders",
+            items: [
+                { label: "Export do CSV", description: "V horní části správy objednávek naleznete tlačítko pro stažení všech dat ve formátu CSV pro systémy jako Pohoda nebo iDoklad." },
+                { label: "Časová období", description: "Data můžete exportovat za konkrétní měsíc, čtvrtletí, rok nebo si zvolit libovolné vlastní rozmezí." },
+                { label: "Formát dat", description: "Soubor používá středník jako oddělovač a kódování UTF-8 s BOM pro bezproblémové otevření v Excelu." }
             ]
         }
     ];

@@ -5,9 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Copy, ArrowUpDown, Bell, MousePointer2, FileText, Loader2 } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Printer, RefreshCcw, CheckSquare, Square, XCircle, AlertTriangle, LayoutGrid, Copy, ArrowUpDown, Bell, MousePointer2, FileText, Loader2, Download, CalendarRange } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useContent } from "@/context/ContentContext";
 import {
     DropdownMenu,
@@ -432,6 +435,12 @@ const Orders = () => {
         key: 'date',
         direction: 'desc'
     });
+    
+    // Export State
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+    const [exportType, setExportType] = useState<'month' | 'quarter' | 'year' | 'custom'>('month');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
 
     if (!content || !orders) {
         return (
@@ -492,6 +501,83 @@ const Orders = () => {
                     ? new Date(a.date).getTime() - new Date(b.date).getTime()
                     : new Date(b.date).getTime() - new Date(a.date).getTime();
             }
+        });
+    };
+
+    const handleExportCSV = () => {
+        let filteredForExport = orders;
+        const now = new Date();
+        let fromDateStr = dateFrom;
+        let toDateStr = dateTo;
+
+        if (exportType === 'month') {
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            fromDateStr = firstDay.toISOString();
+            toDateStr = lastDay.toISOString();
+        } else if (exportType === 'quarter') {
+            const currentQuarter = Math.floor(now.getMonth() / 3);
+            const firstDay = new Date(now.getFullYear(), currentQuarter * 3, 1);
+            const lastDay = new Date(now.getFullYear(), currentQuarter * 3 + 3, 0);
+            fromDateStr = firstDay.toISOString();
+            toDateStr = lastDay.toISOString();
+        } else if (exportType === 'year') {
+            const firstDay = new Date(now.getFullYear(), 0, 1);
+            const lastDay = new Date(now.getFullYear(), 11, 31);
+            fromDateStr = firstDay.toISOString();
+            toDateStr = lastDay.toISOString();
+        }
+
+        if (fromDateStr && toDateStr) {
+            const from = new Date(fromDateStr).getTime();
+            const to = new Date(toDateStr).getTime() + 86400000; // Přidat den pro obsáhnutí i posledního dne
+            filteredForExport = orders.filter(o => {
+                const oDate = new Date(o.date).getTime();
+                return oDate >= from && oDate < to;
+            });
+        }
+
+        if (filteredForExport.length === 0) {
+            toast({
+                title: "Chyba exportu",
+                description: "Za vybrané období nebyly nalezeny žádné objednávky.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        const headers = ["Číslo objednávky", "Datum", "Zákazník", "E-mail", "Celková částka", "Měna", "Způsob platby", "Stav objednávky", "Zboží (souhrn)"];
+        const rows = filteredForExport.map(o => {
+            const itemsStr = o.items.map((i: any) => `${i.quantity}x ${i.name}`).join(', ');
+            return [
+                o.id,
+                new Date(o.date).toLocaleDateString('cs-CZ'),
+                `"${o.customer.name}"`,
+                o.customer.email,
+                o.total,
+                content.bankInfo.currency,
+                o.delivery_info?.paymentMethod || "Neuvedeno",
+                o.status,
+                `"${itemsStr}"`
+            ].join(';');
+        });
+
+        // Přidání UTF-8 BOM pro korektní češtinu v Excelu
+        const csvContent = '\uFEFF' + headers.join(';') + '\n' + rows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        const timestamp = new Date().toISOString().split('T')[0];
+        link.setAttribute("download", `boostup-faktury-${exportType}-${timestamp}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setIsExportDialogOpen(false);
+        toast({
+            title: "Export úspěšný",
+            description: `Bylo exportováno ${filteredForExport.length} objednávek.`,
         });
     };
 
@@ -688,6 +774,15 @@ const Orders = () => {
                         <span className="hidden sm:inline">{isSyncing ? content.admin.orders.syncNow + '...' : content.admin.orders.syncNow}</span>
                         <span className="sm:hidden">{isSyncing ? '...' : content.admin.orders.syncNow.slice(0, 4)}</span>
                     </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 h-10 px-4 border-olive/20 shadow-sm text-olive-dark hover:text-olive-dark font-semibold bg-lime/10 hover:bg-lime/20"
+                        onClick={() => setIsExportDialogOpen(true)}
+                    >
+                        <Download className="w-4 h-4" />
+                        <span className="hidden sm:inline">Export CSV</span>
+                    </Button>
                 </div>
             </div>
             <Tabs defaultValue="pending" className="w-full">
@@ -866,6 +961,73 @@ const Orders = () => {
                     </div>
                     <DialogFooter className="sm:justify-start">
                         <Button variant="ghost" onClick={() => setIsPrintDialogOpen(false)}>{content.admin.orders.cancel}</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
+                <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none shadow-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-3 font-black uppercase text-lg tracking-tight text-olive-dark">
+                            <Download className="w-6 h-6 text-lime" />
+                            Export faktur do CSV
+                        </DialogTitle>
+                        <DialogDescription className="text-olive-dark/60 font-bold">
+                            Stáhněte si údaje z objednávek ve formátu pro import do účetnictví. Zvolte období, za které chcete data vygenerovat.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-1 gap-6 mt-4 p-2">
+                        <div className="space-y-3">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Období exportu</Label>
+                            <Select value={exportType} onValueChange={(val: any) => setExportType(val)}>
+                                <SelectTrigger className="rounded-xl border-olive/10 bg-white shadow-sm h-12">
+                                    <SelectValue placeholder="Vyberte období" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl border-olive/10 shadow-xl">
+                                    <SelectItem value="month">Aktuální měsíc</SelectItem>
+                                    <SelectItem value="quarter">Aktuální čtvrtletí</SelectItem>
+                                    <SelectItem value="year">Celý aktuální rok</SelectItem>
+                                    <SelectItem value="custom">Vlastní rozsah (Od-Do)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        
+                        {exportType === 'custom' && (
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <div className="space-y-3 flex-1">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Datum od</Label>
+                                    <Input 
+                                        type="date" 
+                                        value={dateFrom} 
+                                        onChange={(e) => setDateFrom(e.target.value)} 
+                                        className="rounded-xl border-olive/10 bg-white shadow-sm h-12"
+                                    />
+                                </div>
+                                <div className="space-y-3 flex-1">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Datum do</Label>
+                                    <Input 
+                                        type="date" 
+                                        value={dateTo} 
+                                        onChange={(e) => setDateTo(e.target.value)} 
+                                        className="rounded-xl border-olive/10 bg-white shadow-sm h-12"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        
+                        <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20 flex gap-4 mt-2">
+                            <CalendarRange className="w-5 h-5 text-lime-dark shrink-0" />
+                            <p className="text-xs font-bold text-olive-dark leading-relaxed">
+                                Vygenerovaný soubor <strong>.csv</strong> použijte k nahrání do softwaru jako je Pohoda, FlexiBee, iDoklad a další. Soubor používá kódování UTF-8 a oddělovač ";" (standard pro český Excel).
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-3 mt-4">
+                        <Button variant="ghost" onClick={() => setIsExportDialogOpen(false)} className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest text-olive-dark/40 hover:text-olive-dark transition-all">Zrušit</Button>
+                        <Button onClick={handleExportCSV} className="rounded-xl bg-lime hover:bg-lime/90 text-olive-dark px-8 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-lime/20 h-12 gap-2">
+                            <Download className="w-4 h-4" />
+                            Stáhnout Export
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

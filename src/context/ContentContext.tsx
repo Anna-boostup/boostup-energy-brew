@@ -92,7 +92,8 @@ const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null)
                 cancelDialog: { ...base.admin.orders.cancelDialog, ...(dbContent.admin?.orders?.cancelDialog || {}) },
                 detail: { ...base.admin.orders.detail, ...(dbContent.admin?.orders?.detail || {}) }
             },
-            contentManager: { ...base.admin.contentManager, ...(dbContent.admin?.contentManager || {}) }
+            contentManager: { ...base.admin.contentManager, ...(dbContent.admin?.contentManager || {}) },
+            emailManager: { ...base.admin.emailManager, ...(dbContent.admin?.emailManager || {}) }
         }
     };
 };
