@@ -25,6 +25,7 @@ jobs:
   Deploy-to-Test:
     name: "🧪 Deploy to Test"
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.49.1-noble
     if: github.ref == 'refs/heads/development'
     steps:
       - name: Checkout Repository
@@ -66,8 +67,9 @@ jobs:
         run: |
           timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
           
-      - name: Install Playwright Browsers & Deps
-        run: npx playwright install --with-deps chromium webkit
+      # Browsers are pre-installed in the container, but we ensure chromium for our tests
+      - name: Ensure Browsers
+        run: npx playwright install chromium
 
       - name: Run E2E Tests
         run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
@@ -76,6 +78,10 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
 
       - name: Notify on Success (Slack)
         if: success()
@@ -91,6 +97,7 @@ jobs:
   Deploy-Preview:
     name: "🌐 Deploy Preview"
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.49.1-noble
     if: github.ref == 'refs/heads/preview'
     steps:
       - uses: actions/checkout@v4
@@ -118,8 +125,9 @@ jobs:
         run: |
           timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "https://preview.drinkboostup.cz" | grep "200" > /dev/null; do sleep 5; done'
           
-      - name: Install Playwright Browsers & Deps
-        run: npx playwright install --with-deps chromium webkit
+      # Browsers are pre-installed in the container
+      - name: Ensure Browsers
+        run: npx playwright install chromium
 
       - name: Run E2E Tests
         run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
@@ -128,6 +136,10 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
 
       - name: Notify on Success (Slack)
         if: success()

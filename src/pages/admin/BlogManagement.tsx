@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Edit2, Trash2, Mail, Search, Filter, Eye } from "lucide-react";
+import { Plus, Edit2, Trash2, Mail, Search, Filter, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -91,7 +91,7 @@ export default function BlogManagement() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
+          <h1 data-testid="admin-page-title" className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
             Správa <span className="text-lime">Blogu</span>
           </h1>
           <p className="text-olive-dark/40 text-sm mt-1">Vytvářejte a spravujte články pro váš web a newslettery.</p>
@@ -136,7 +136,12 @@ export default function BlogManagement() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-20 text-olive-dark/40 font-black uppercase tracking-widest">Načítám články...</TableCell>
+                <TableCell colSpan={5} className="text-center py-20 text-olive-dark/40 font-black uppercase tracking-widest">
+                  <div className="flex items-center justify-center gap-3">
+                    <Loader2 data-testid="admin-loader" className="w-5 h-5 animate-spin" />
+                    Načítám články...
+                  </div>
+                </TableCell>
               </TableRow>
             ) : filteredPosts.length === 0 ? (
               <TableRow>

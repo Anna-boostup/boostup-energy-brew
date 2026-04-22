@@ -29,7 +29,8 @@ import {
     HelpCircle,
     Code,
     RefreshCw,
-    Eye
+    Eye,
+    X
 } from "lucide-react";
 import { EMAIL_DEFAULTS, EMAIL_BASE_LAYOUT } from '@/data/emailDefaults';
 import { useAuth } from "@/context/AuthContext";
@@ -69,6 +70,20 @@ interface EmailTemplate {
     updated_at: string;
 }
 
+const FRIENDLY_PLACEHOLDERS: Record<string, string> = {
+    customerName: "Jméno zákazníka",
+    orderNumber: "Číslo objednávky",
+    itemsHtml: "Seznam produktů (tabulka)",
+    total: "Celková cena",
+    trackingNumber: "Sledovací kód dopravy",
+    message: "Text zprávy",
+    customerEmail: "Email odesílatele",
+    resetLink: "Odkaz na zresetování hesla",
+    magicLink: "Přihlašovací odkaz",
+    subscriberEmail: "Email odběratele",
+    BASE_URL: "Adresa webu (URL)"
+};
+
 const EmailManagement = () => {
     const { user } = useAuth();
     const { content } = useContent();
@@ -107,6 +122,7 @@ const EmailManagement = () => {
     const [subscribers, setSubscribers] = useState<{id: string, email: string}[]>([]);
     const [campaignLoading, setCampaignLoading] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [sendProgress, setSendProgress] = useState(0);
     const [totalToSend, setTotalToSend] = useState(0);
     const [sentCount, setSentCount] = useState(0);
@@ -182,6 +198,14 @@ const EmailManagement = () => {
         <div className="fixed bottom-6 left-4 right-4 z-50 sm:hidden">
             <div className="bg-olive-dark/95 backdrop-blur-xl rounded-3xl p-3 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => setIsPreviewOpen(true)} 
+                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-lime active:bg-lime active:text-olive-dark transition-all"
+                    >
+                        <Eye className="h-5 w-5" />
+                    </Button>
                     <Button 
                         variant="ghost" 
                         size="icon" 
@@ -448,7 +472,7 @@ const EmailManagement = () => {
     if (loading && templates.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-lime" />
+                <Loader2 data-testid="admin-loader" className="w-10 h-10 animate-spin text-lime" />
                 <p className="text-olive-dark font-black uppercase tracking-[0.3em] text-xs">{content?.admin?.emailManager?.loading || content?.admin?.general?.loading || "Loading..."}</p>
             </div>
         );
@@ -456,31 +480,8 @@ const EmailManagement = () => {
 
     return (
         <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
-            <Tabs defaultValue="templates" className="w-full" onValueChange={(val) => {
-                if (val === 'campaigns' && subscribers.length === 0) {
-                    fetchSubscribers();
-                }
-            }}>
-                <TabsList className="bg-white/40 backdrop-blur-md border border-white/40 p-1 sm:p-1.5 h-auto rounded-2xl sm:rounded-[1.5rem] mb-6 sm:mb-12 flex sm:flex-wrap justify-start sm:justify-center shadow-xl shadow-olive-dark/5 overflow-x-auto no-scrollbar scroll-smooth">
-                    <TabsTrigger 
-                        value="templates" 
-                        className="rounded-xl sm:rounded-[1.1rem] px-4 sm:px-8 py-2.5 sm:py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group shrink-0"
-                    >
-                        <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
-                        {content?.admin?.emailManager?.tabs?.settings || "Settings"}
-                    </TabsTrigger>
-                    <TabsTrigger 
-                        value="campaigns" 
-                        className="rounded-xl sm:rounded-[1.1rem] px-4 sm:px-8 py-2.5 sm:py-3.5 data-[state=active]:bg-lime data-[state=active]:text-olive-dark data-[state=active]:shadow-lg data-[state=active]:shadow-lime/20 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-500 flex items-center gap-2 group shrink-0"
-                    >
-                        <Megaphone className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500 group-data-[state=active]:scale-110" />
-                        {content?.admin?.emailManager?.campaign?.title || "Campaign"}
-                    </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="templates" className="space-y-12 mt-0">
-                    {/* Header */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
+            {/* Header section moved above Tabs for better E2E synchronization */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
                 <div className="space-y-3 flex-1 min-w-[280px]">
                     <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.title || "Email Management"}</h2>
                     <div className="flex items-center gap-3">
@@ -491,6 +492,14 @@ const EmailManagement = () => {
 
                 <div className="hidden sm:flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
                     <Button 
+                        onClick={() => setIsPreviewOpen(true)} 
+                        variant="outline"
+                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl border-white/10 text-white hover:bg-white/5 font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] transition-all gap-3"
+                    >
+                        <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
+                        Náhled
+                    </Button>
+                    <Button 
                         onClick={handleSave} 
                         disabled={saving || sendingTest} 
                         className="h-12 sm:h-14 px-8 sm:px-12 rounded-2xl bg-olive-dark hover:bg-black text-white font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] shadow-2xl shadow-olive-dark/20 transition-all hover:scale-[1.02] active:scale-[0.98] gap-3"
@@ -500,6 +509,14 @@ const EmailManagement = () => {
                     </Button>
                 </div>
             </div>
+
+            <Tabs defaultValue="templates" className="w-full" onValueChange={(val) => {
+                if (val === 'campaigns' && subscribers.length === 0) {
+                    fetchSubscribers();
+                }
+            }}>
+
+            <TabsContent value="templates" className="mt-0">
 
             {/* Mobile Template Selector (Horizontal) */}
             <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-right">
@@ -733,7 +750,14 @@ const EmailManagement = () => {
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.subject || "Subject"}</Label>
                                     <div className="flex items-center gap-2">
-                                        <Badge variant="outline" className="text-olive/50 hover:bg-lime hover:text-olive-dark cursor-pointer text-[9px] border-olive/10 font-black transition-all" onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}>+ {"{{orderNumber}}"}</Badge>
+                                        <Badge 
+                                            variant="outline" 
+                                            className="text-white/50 bg-white/5 hover:bg-lime hover:text-olive-dark cursor-pointer text-[9px] border-white/10 font-black transition-all px-3 py-1 gap-2 rounded-lg" 
+                                            onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}
+                                        >
+                                            <Plus className="w-3 h-3" />
+                                            Číslo objednávky
+                                        </Badge>
                                     </div>
                                 </div>
                                 <Input 
@@ -774,9 +798,10 @@ const EmailManagement = () => {
                                             variant="outline"
                                             size="sm"
                                             onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
-                                            className="h-8 rounded-lg bg-olive-dark/5 border-olive/10 text-olive-dark font-black text-[9px] uppercase tracking-widest whitespace-nowrap px-3 hover:bg-lime hover:border-lime"
+                                            className="h-9 rounded-xl bg-lime/10 border-lime/20 text-lime font-black text-[9px] uppercase tracking-widest whitespace-nowrap px-4 hover:bg-lime hover:text-olive-dark transition-all flex items-center gap-2"
                                         >
-                                            {tag}
+                                            <Zap className="w-3 h-3" />
+                                            {FRIENDLY_PLACEHOLDERS[tag] || tag}
                                         </Button>
                                     ))}
                                 </div>
@@ -793,16 +818,19 @@ const EmailManagement = () => {
                                     <Info className="w-5 h-5 text-lime" />
                                     <h4 className="font-black uppercase text-xs tracking-widest text-white">{content?.admin?.emailManager?.editor?.tagsTitle || "Available Tags"}</h4>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-3">
                                     {getPlaceholdersForType(selectedTypeId).map((tag) => (
                                         <button
                                             key={tag}
                                             onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
-                                            className="px-4 py-2 bg-white/5 hover:bg-lime hover:text-olive-dark rounded-xl text-[10px] font-black tracking-widest text-white/40 transition-all border border-white/5 flex items-center gap-2 group"
+                                            className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-lime hover:border-lime group transition-all duration-300"
                                         >
-                                            <span className="opacity-40 group-hover:opacity-100">{"{{"}</span>
-                                            {tag}
-                                            <span className="opacity-40 group-hover:opacity-100">{"}}"}</span>
+                                            <div className="p-1.5 rounded-lg bg-white/10 group-hover:bg-olive-dark/10">
+                                                <Plus className="w-3 h-3 text-lime group-hover:text-olive-dark" />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-white/70 group-hover:text-olive-dark">
+                                                {FRIENDLY_PLACEHOLDERS[tag] || tag}
+                                            </span>
                                         </button>
                                     ))}
                                 </div>
@@ -957,6 +985,60 @@ const EmailManagement = () => {
                 </div>
             </TabsContent>
             </Tabs>
+
+            <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+                <DialogContent className="max-w-[95vw] w-[900px] h-[90vh] p-0 overflow-hidden bg-background border-none rounded-[2rem] sm:rounded-[3rem] shadow-2xl">
+                    <div className="flex flex-col h-full">
+                        <div className="bg-olive-dark p-6 sm:p-8 flex items-center justify-between">
+                            <div className="space-y-1">
+                                <h3 className="text-white font-black uppercase tracking-widest text-[10px] opacity-40">Náhled Emailu</h3>
+                                <p className="text-white font-display text-lg sm:text-2xl font-black italic">{currentSubject || "Bez předmětu"}</p>
+                            </div>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                onClick={() => setIsPreviewOpen(false)}
+                                className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 text-white"
+                            >
+                                <X className="w-6 h-6" />
+                            </Button>
+                        </div>
+                        
+                        <div className="flex-1 bg-[#f4f1e6] overflow-y-auto p-4 sm:p-12 flex justify-center">
+                            <div className="w-full max-w-[680px] bg-white shadow-2xl rounded-2xl overflow-hidden min-h-full">
+                                <iframe 
+                                    srcDoc={
+                                        useMasterFrame 
+                                            ? newsletterTemplateService.render({ 
+                                                heroTitle: currentSubject, 
+                                                bodyContent: currentContent 
+                                            }) 
+                                            : `<!DOCTYPE html><html><head><style>body{font-family:sans-serif;padding:40px;line-height:1.6;}</style></head><body>${currentContent}</body></html>`
+                                    }
+                                    className="w-full h-full min-h-[600px] border-none"
+                                    title="Email Preview"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="bg-white border-t border-olive/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-4 text-[10px] font-black uppercase text-olive-dark/40 tracking-[0.2em]">
+                                <Mail className="w-4 h-4" />
+                                Modul: {selectedTypeId}
+                                {useMasterFrame && <Badge className="bg-lime/10 text-lime border-none ml-2">Master Frame</Badge>}
+                            </div>
+                            <Button 
+                                onClick={handleSendTest} 
+                                disabled={sendingTest}
+                                className="w-full sm:w-auto bg-olive-dark text-white font-black uppercase text-[10px] tracking-widest px-8 h-12 rounded-xl"
+                            >
+                                {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                                Odeslat testovací email
+                            </Button>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
             <ActionBar />
         </div>
     );

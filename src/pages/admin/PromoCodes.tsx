@@ -303,7 +303,7 @@ const PromoCodes = () => {
                 <CardContent className="p-0">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center p-24 gap-6">
-                            <Loader2 className="h-12 w-12 animate-spin text-olive-dark" />
+                            <Loader2 data-testid="admin-loader" className="h-12 w-12 animate-spin text-olive-dark" />
                             <p className="text-olive-dark font-black uppercase text-xs tracking-widest">{content?.promoCodes?.syncing || "Syncing..."}</p>
                         </div>
                     ) : codes.length > 0 ? (

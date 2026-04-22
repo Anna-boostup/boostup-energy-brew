@@ -63,7 +63,7 @@ import { Loader2 } from "lucide-react";
 const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allowedType: 'personal' | 'company' }) => {
   const { profile, loading } = useAuth();
 
-  if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>;
+  if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 data-testid="admin-loader" className="animate-spin text-primary" /></div>;
 
   if (!profile) return <Navigate to="/login" replace />;
 
@@ -108,7 +108,14 @@ const AnalyticsTracker = () => { useAnalytics(); return null; };
 // Tracks page views for Meta Pixel (Facebook)
 const MetaPixelTracker = () => { useMetaPixel(); return null; };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <ErrorBoundary>
@@ -133,7 +140,7 @@ const App = () => (
                       <CookieBanner />
                       <Suspense fallback={
                         <div className="h-screen w-full flex items-center justify-center bg-background">
-                          <Loader2 className="animate-spin text-primary w-8 h-8" />
+                          <Loader2 data-testid="admin-loader" className="animate-spin text-primary w-8 h-8" />
                         </div>
                       }>
                         <Routes>

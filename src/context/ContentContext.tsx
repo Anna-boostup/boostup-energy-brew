@@ -74,6 +74,26 @@ const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null)
         textStyles: { ...base.textStyles, ...(dbContent.textStyles || {}) },
         badgeVisible: { ...base.badgeVisible, ...(dbContent.badgeVisible || {}) },
         pricing: { ...base.pricing, ...(dbContent.pricing || {}) },
+        admin: {
+            ...base.admin,
+            ...(dbContent.admin || {}),
+            auth: { ...base.admin.auth, ...(dbContent.admin?.auth || {}) },
+            navigation: { ...base.admin.navigation, ...(dbContent.admin?.navigation || {}) },
+            dashboard: { ...base.admin.dashboard, ...(dbContent.admin?.dashboard || {}) },
+            inventory: { 
+                ...base.admin.inventory, 
+                ...(dbContent.admin?.inventory || {}),
+                manufacture: { ...base.admin.inventory.manufacture, ...(dbContent.admin?.inventory?.manufacture || {}) }
+            },
+            invoices: { ...base.admin.invoices, ...(dbContent.admin?.invoices || {}) },
+            orders: { 
+                ...base.admin.orders, 
+                ...(dbContent.admin?.orders || {}),
+                cancelDialog: { ...base.admin.orders.cancelDialog, ...(dbContent.admin?.orders?.cancelDialog || {}) },
+                detail: { ...base.admin.orders.detail, ...(dbContent.admin?.orders?.detail || {}) }
+            },
+            contentManager: { ...base.admin.contentManager, ...(dbContent.admin?.contentManager || {}) }
+        }
     };
 };
 
@@ -158,7 +178,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return (
         <ContentContext.Provider value={value}>
             {loading ? (
-                <div className="h-screen w-full flex items-center justify-center bg-background">
+                <div data-testid="admin-loader" className="h-screen w-full flex items-center justify-center bg-background">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
                 </div>
             ) : children}
