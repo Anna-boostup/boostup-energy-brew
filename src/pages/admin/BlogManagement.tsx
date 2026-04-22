@@ -91,7 +91,7 @@ export default function BlogManagement() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
+          <h1 data-testid="admin-page-title" className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
             Správa <span className="text-lime">Blogu</span>
           </h1>
           <p className="text-olive-dark/40 text-sm mt-1">Vytvářejte a spravujte články pro váš web a newslettery.</p>

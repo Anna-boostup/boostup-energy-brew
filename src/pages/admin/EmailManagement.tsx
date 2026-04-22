@@ -471,7 +471,7 @@ const EmailManagement = () => {
     if (loading && templates.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-lime" />
+                <Loader2 data-testid="admin-loader" className="w-10 h-10 animate-spin text-lime" />
                 <p className="text-olive-dark font-black uppercase tracking-[0.3em] text-xs">{content?.admin?.emailManager?.loading || content?.admin?.general?.loading || "Loading..."}</p>
             </div>
         );

@@ -236,6 +236,15 @@ export default function BlogEditor() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+        <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">Načítám editor...</p>
+      </div>
+    );
+  }
+
   return (
     <form className="max-w-5xl mx-auto space-y-8 pb-20" onSubmit={(e) => e.preventDefault()}>
       <div className="flex items-center justify-between">
@@ -249,7 +258,7 @@ export default function BlogEditor() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
+            <h1 data-testid="admin-page-title" className="text-3xl font-display font-black tracking-tight text-olive-dark uppercase italic">
               {isEditing ? "Upravit" : "Nový"} <span className="text-lime">Článek</span>
             </h1>
           </div>

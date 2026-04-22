@@ -95,7 +95,7 @@ const AdminUsers = () => {
         <div className="space-y-8 sm:space-y-12 pb-20 animate-in fade-in duration-700">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
                 <div className="space-y-2 sm:space-y-3">
-                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
                         Zákazníci
                     </h2>
                     <div className="flex items-center gap-3">

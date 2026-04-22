@@ -195,6 +195,15 @@ const Messages = () => {
 
     const unreadCount = messages.filter(m => !m.is_read).length;
 
+    if (loading && messages.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">Načítám zprávy...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col h-[calc(100vh-140px)] md:h-[calc(100vh-64px)] overflow-hidden bg-admin-canvas border border-olive-dark/10 rounded-[3rem] shadow-2xl animate-in fade-in duration-700">
             {/* Header Content */}
