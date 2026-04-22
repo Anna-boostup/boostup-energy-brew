@@ -167,6 +167,20 @@ const EmailManagement = () => {
         }
     };
 
+    useEffect(() => {
+        const customTypes = templates
+            .filter(dbT => !SYSTEM_TEMPLATES.some(sysT => sysT.id === dbT.id))
+            .map(dbT => ({
+                id: dbT.id,
+                label: dbT.id.toUpperCase().replace(/_/g, ' '),
+                icon: Mail,
+                isCustom: true,
+                category: 'custom'
+            }));
+        
+        setTemplateTypes([...SYSTEM_TEMPLATES, ...customTypes]);
+    }, [content, templates]);
+
     const fetchTemplates = async () => {
         try {
             setLoading(true);
@@ -178,18 +192,6 @@ const EmailManagement = () => {
             const dbData = data || [];
             setTemplates(dbData);
             
-            const customTypes = dbData
-                .filter(dbT => !SYSTEM_TEMPLATES.some(sysT => sysT.id === dbT.id))
-                .map(dbT => ({
-                    id: dbT.id,
-                    label: dbT.id.toUpperCase().replace(/_/g, ' '),
-                    icon: Mail,
-                    isCustom: true,
-                    category: 'custom'
-                }));
-            
-            setTemplateTypes([...SYSTEM_TEMPLATES, ...customTypes]);
-
             const existing = dbData.find(t => t.id === selectedTypeId);
             if (existing) {
                 setCurrentSubject(existing.subject);
@@ -422,8 +424,9 @@ const EmailManagement = () => {
 
     const selectedType = templateTypes.find(t => t.id === selectedTypeId);
     const filteredTypes = templateTypes.filter(t => {
-        const matchesSearch = (t.label || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-                             (t.id || "").toLowerCase().includes(searchQuery.toLowerCase());
+        const label = t.label || t.id.toUpperCase().replace(/_/g, ' ');
+        const matchesSearch = label.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                             t.id.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = activeCategory === 'all' || (t as any).category === activeCategory;
         return matchesSearch && matchesCategory;
     });
@@ -644,7 +647,7 @@ const EmailManagement = () => {
                                                     <div className="flex flex-col items-start">
                                                         <span className="text-xs font-black uppercase tracking-wider text-left">
                                                             {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">{content?.admin?.emailManager?.editor?.customBadge || "Custom"}</span>}
-                                                            {type.label}
+                                                            {type.label || type.id.toUpperCase().replace(/_/g, ' ')}
                                                         </span>
                                                         <span className={`text-[9px] font-bold tracking-widest opacity-30 uppercase`}>
                                                             {type.id}
