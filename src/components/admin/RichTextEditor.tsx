@@ -1,4 +1,4 @@
-
+import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './RichTextEditor.css';
@@ -30,10 +30,11 @@ const formats = [
   'link', 'image'
 ];
 
-export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+export const RichTextEditor = React.forwardRef<ReactQuill, RichTextEditorProps>(({ value, onChange, placeholder }, ref) => {
   return (
     <div className="rich-text-editor">
       <ReactQuill 
+        ref={ref}
         theme="snow"
         value={value}
         onChange={onChange}
@@ -43,4 +44,6 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
       />
     </div>
   );
-}
+});
+
+export default RichTextEditor;

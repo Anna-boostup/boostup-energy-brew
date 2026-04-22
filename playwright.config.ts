@@ -51,7 +51,7 @@ export default defineConfig({
     // Admin Desktop
     {
       name: 'admin-desktop',
-      testMatch: 'tests/admin.spec.ts',
+      testMatch: ['tests/admin.spec.ts', 'tests/capture_admin_screenshots.spec.ts'],
       use: { 
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
@@ -100,8 +100,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: process.env.CI ? undefined : {
-    command: 'npm run dev',
-    url: 'http://localhost:8080',
+    command: 'npm run dev -- --host 127.0.0.1 --port 5176',
+    url: 'http://127.0.0.1:5176',
     reuseExistingServer: true,
     timeout: 120000,
   },

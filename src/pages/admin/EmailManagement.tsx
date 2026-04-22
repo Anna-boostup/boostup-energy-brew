@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
@@ -68,6 +68,8 @@ interface EmailTemplate {
     content_html: string;
     placeholders: string[];
     updated_at: string;
+    trigger?: string;
+    description?: string;
 }
 
 const FRIENDLY_PLACEHOLDERS: Record<string, string> = {
@@ -76,12 +78,19 @@ const FRIENDLY_PLACEHOLDERS: Record<string, string> = {
     itemsHtml: "Seznam produktů (tabulka)",
     total: "Celková cena",
     trackingNumber: "Sledovací kód dopravy",
+    shippingAddress: "Doručovací adresa",
+    paymentMethod: "Způsob platby",
+    discountCode: "Slevový kód",
+    discountAmount: "Výše slevy",
     message: "Text zprávy",
     customerEmail: "Email odesílatele",
     resetLink: "Odkaz na zresetování hesla",
     magicLink: "Přihlašovací odkaz",
     subscriberEmail: "Email odběratele",
-    BASE_URL: "Adresa webu (URL)"
+    unsubscribeLink: "Odkaz pro odhlášení",
+    BASE_URL: "Adresa webu (URL)",
+    date: "Aktuální datum",
+    year: "Aktuální rok"
 };
 
 const EmailManagement = () => {
@@ -89,14 +98,14 @@ const EmailManagement = () => {
     const { content } = useContent();
 
     const SYSTEM_TEMPLATES = [
-        { id: 'order_confirmation', label: content?.admin?.emailManager?.templates?.order_confirmation, icon: Database },
-        { id: 'shipping', label: content?.admin?.emailManager?.templates?.shipping, icon: Send },
-        { id: 'contact_auto_reply', label: content?.admin?.emailManager?.templates?.contact_auto_reply, icon: Mail },
-        { id: 'registration', label: content?.admin?.emailManager?.templates?.registration, icon: Zap },
-        { id: 'reset_password', label: content?.admin?.emailManager?.templates?.reset_password, icon: Key },
-        { id: 'magic_link', label: content?.admin?.emailManager?.templates?.magic_link, icon: Key },
-        { id: 'contact_inquiry', label: content?.admin?.emailManager?.templates?.contact_inquiry, icon: Info },
-        { id: 'newsletter_signup', label: content?.admin?.emailManager?.templates?.newsletter_signup, icon: Mail },
+        { id: 'order_confirmation', label: content?.admin?.emailManager?.templates?.order_confirmation, icon: Database, category: 'system' },
+        { id: 'shipping', label: content?.admin?.emailManager?.templates?.shipping, icon: Send, category: 'system' },
+        { id: 'contact_auto_reply', label: content?.admin?.emailManager?.templates?.contact_auto_reply, icon: Mail, category: 'system' },
+        { id: 'registration', label: content?.admin?.emailManager?.templates?.registration, icon: Zap, category: 'system' },
+        { id: 'reset_password', label: content?.admin?.emailManager?.templates?.reset_password, icon: Key, category: 'system' },
+        { id: 'magic_link', label: content?.admin?.emailManager?.templates?.magic_link, icon: Key, category: 'system' },
+        { id: 'contact_inquiry', label: content?.admin?.emailManager?.templates?.contact_inquiry, icon: Info, category: 'system' },
+        { id: 'newsletter_signup', label: content?.admin?.emailManager?.templates?.newsletter_signup, icon: Mail, category: 'marketing' },
     ];
 
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);
@@ -108,17 +117,18 @@ const EmailManagement = () => {
     const [searchParams] = useSearchParams();
     const [useMasterFrame, setUseMasterFrame] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategory, setActiveCategory] = useState('all');
 
-    // New template dialog state
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [newId, setNewId] = useState('');
     const [newLabel, setNewLabel] = useState('');
 
-    // Local form state
     const [currentSubject, setCurrentSubject] = useState('');
     const [currentContent, setCurrentContent] = useState('');
+    const [currentTrigger, setCurrentTrigger] = useState('');
+    const [currentDescription, setCurrentDescription] = useState('');
+    const quillRef = useRef<any>(null);
 
-    // Campaign state
     const [subscribers, setSubscribers] = useState<{id: string, email: string}[]>([]);
     const [campaignLoading, setCampaignLoading] = useState(false);
     const [isSending, setIsSending] = useState(false);
@@ -148,7 +158,7 @@ const EmailManagement = () => {
             if (data) {
                 setCurrentSubject(data.title);
                 setCurrentContent(data.content);
-                setSelectedTypeId('newsletter_custom'); // Default to a custom type or keep existing
+                setSelectedTypeId('newsletter_custom');
                 toast.success("Obsah blogu byl úspěšně importován.");
             }
         } catch (err) {
@@ -156,6 +166,20 @@ const EmailManagement = () => {
             toast.error("Nepodařilo se importovat obsah blogu.");
         }
     };
+
+    useEffect(() => {
+        const customTypes = templates
+            .filter(dbT => !SYSTEM_TEMPLATES.some(sysT => sysT.id === dbT.id))
+            .map(dbT => ({
+                id: dbT.id,
+                label: dbT.id.toUpperCase().replace(/_/g, ' '),
+                icon: Mail,
+                isCustom: true,
+                category: 'custom'
+            }));
+        
+        setTemplateTypes([...SYSTEM_TEMPLATES, ...customTypes]);
+    }, [content, templates]);
 
     const fetchTemplates = async () => {
         try {
@@ -168,23 +192,12 @@ const EmailManagement = () => {
             const dbData = data || [];
             setTemplates(dbData);
             
-            // Merge system templates with custom ones found in DB
-            const customTypes = dbData
-                .filter(dbT => !SYSTEM_TEMPLATES.some(sysT => sysT.id === dbT.id))
-                .map(dbT => ({
-                    id: dbT.id,
-                    label: dbT.id.toUpperCase().replace(/_/g, ' '),
-                    icon: Mail,
-                    isCustom: true
-                }));
-            
-            setTemplateTypes([...SYSTEM_TEMPLATES, ...customTypes]);
-
-            // Set initial form values for the selected type if template exists
             const existing = dbData.find(t => t.id === selectedTypeId);
             if (existing) {
                 setCurrentSubject(existing.subject);
                 setCurrentContent(existing.content_html);
+                setCurrentTrigger(existing.trigger || '');
+                setCurrentDescription(existing.description || '');
             }
         } catch (err: any) {
             console.error('Error fetching templates:', err);
@@ -194,61 +207,19 @@ const EmailManagement = () => {
         }
     };
 
-    const ActionBar = () => (
-        <div className="fixed bottom-6 left-4 right-4 z-50 sm:hidden">
-            <div className="bg-olive-dark/95 backdrop-blur-xl rounded-3xl p-3 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => setIsPreviewOpen(true)} 
-                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-lime active:bg-lime active:text-olive-dark transition-all"
-                    >
-                        <Eye className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={handleSendTest} 
-                        disabled={sendingTest || saving} 
-                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-white/70 active:bg-lime active:text-olive-dark transition-all"
-                    >
-                        <Send className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={handleResetToDefault} 
-                        disabled={saving || sendingTest}
-                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-red-400/70 active:bg-red-500 active:text-white transition-all"
-                    >
-                        <RefreshCcw className="h-5 w-5" />
-                    </Button>
-                </div>
-                <Button 
-                    onClick={handleSave} 
-                    disabled={saving || sendingTest}
-                    className="flex-1 h-12 rounded-2xl bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] tracking-[0.2em] shadow-xl active:scale-[0.97] transition-all gap-2"
-                >
-                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    {content?.admin?.emailManager?.form?.save || "Save"}
-                </Button>
-            </div>
-        </div>
-    );
-
     useEffect(() => {
         const existing = templates.find(t => t.id === selectedTypeId);
         if (existing) {
             setCurrentSubject(existing.subject || '');
             setCurrentContent(existing.content_html || '');
         } else if (EMAIL_DEFAULTS[selectedTypeId]) {
-            // Fallback to system defaults if no DB override exists
             setCurrentSubject(EMAIL_DEFAULTS[selectedTypeId].subject);
             setCurrentContent(EMAIL_DEFAULTS[selectedTypeId].content_html);
         } else {
             setCurrentSubject('');
             setCurrentContent('');
+            setCurrentTrigger('');
+            setCurrentDescription('');
         }
     }, [selectedTypeId, templates]);
 
@@ -284,6 +255,7 @@ const EmailManagement = () => {
                     id: sanitizedId,
                     subject: content?.admin?.emailManager?.editor?.newSubject || "New Subject",
                     content_html: content?.admin?.emailManager?.editor?.newContent || "<p>Content</p>",
+                    category: 'custom',
                     updated_at: new Date().toISOString()
                 });
 
@@ -316,6 +288,8 @@ const EmailManagement = () => {
                     id: selectedTypeId,
                     subject: currentSubject,
                     content_html: currentContent,
+                    trigger: currentTrigger,
+                    description: currentDescription,
                     updated_at: new Date().toISOString()
                 });
 
@@ -439,7 +413,6 @@ const EmailManagement = () => {
             const progress = Math.round(((i + batch.length) / subscribers.length) * 100);
             setSendProgress(progress);
             
-            // Wait slightly between batches to avoid rate limits
             if (i + batchSize < subscribers.length) {
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
@@ -450,22 +423,49 @@ const EmailManagement = () => {
     };
 
     const selectedType = templateTypes.find(t => t.id === selectedTypeId);
-    const filteredTypes = templateTypes.filter(t => 
-        (t.label || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (t.id || "").toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredTypes = templateTypes.filter(t => {
+        const label = t.label || t.id.toUpperCase().replace(/_/g, ' ');
+        const matchesSearch = label.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                             t.id.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = activeCategory === 'all' || (t as any).category === activeCategory;
+        return matchesSearch && matchesCategory;
+    });
 
     const getPlaceholdersForType = (typeId: string) => {
+        const typeInfo = templateTypes.find(t => t.id === typeId);
+        if (typeInfo?.isCustom) {
+            return Object.keys(FRIENDLY_PLACEHOLDERS);
+        }
         switch (typeId) {
-            case 'order_confirmation': return ['customerName', 'orderNumber', 'itemsHtml', 'total', 'BASE_URL'];
-            case 'shipping': return ['customerName', 'orderNumber', 'trackingNumber', 'BASE_URL'];
-            case 'contact_auto_reply': return ['message', 'BASE_URL'];
-            case 'registration': return ['customerName', 'BASE_URL'];
-            case 'reset_password': return ['resetLink', 'BASE_URL'];
-            case 'magic_link': return ['magicLink', 'BASE_URL'];
-            case 'contact_inquiry': return ['customerName', 'customerEmail', 'message', 'BASE_URL'];
-            case 'newsletter_signup': return ['subscriberEmail', 'BASE_URL'];
-            default: return ['BASE_URL'];
+            case 'order_confirmation': return ['customerName', 'orderNumber', 'itemsHtml', 'total', 'shippingAddress', 'paymentMethod', 'discountCode', 'discountAmount', 'BASE_URL', 'date', 'year'];
+            case 'shipping': return ['customerName', 'orderNumber', 'trackingNumber', 'shippingAddress', 'BASE_URL', 'date', 'year'];
+            case 'contact_auto_reply': return ['message', 'BASE_URL', 'date', 'year'];
+            case 'registration': return ['customerName', 'BASE_URL', 'date', 'year'];
+            case 'reset_password': return ['resetLink', 'BASE_URL', 'date', 'year'];
+            case 'magic_link': return ['magicLink', 'BASE_URL', 'date', 'year'];
+            case 'contact_inquiry': return ['customerName', 'customerEmail', 'message', 'BASE_URL', 'date', 'year'];
+            case 'newsletter_signup': return ['subscriberEmail', 'unsubscribeLink', 'BASE_URL', 'date', 'year'];
+            default: return ['BASE_URL', 'date', 'year'];
+        }
+    };
+
+    const handleInsertPlaceholder = (tag: string) => {
+        if (quillRef.current) {
+            const editor = quillRef.current.getEditor();
+            let range = editor.getSelection();
+            
+            if (!range) {
+                const length = editor.getLength();
+                editor.insertText(length - 1, `{{${tag}}}`);
+                editor.setSelection(length - 1 + tag.length + 4, 0);
+            } else {
+                editor.insertText(range.index, `{{${tag}}}`);
+                editor.setSelection(range.index + tag.length + 4, 0);
+            }
+            
+            setCurrentContent(editor.root.innerHTML);
+        } else {
+            setCurrentContent(currentContent + `{{${tag}}}`);
         }
     };
 
@@ -479,11 +479,12 @@ const EmailManagement = () => {
     }
 
     return (
-        <div className="space-y-12 pb-32 animate-in fade-in duration-1000">
-            {/* Header section moved above Tabs for better E2E synchronization */}
+        <div data-testid="admin-email-management" className="space-y-12 pb-32">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-10 flex-wrap">
                 <div className="space-y-3 flex-1 min-w-[280px]">
-                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">{content?.admin?.emailManager?.title || "Email Management"}</h2>
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
+                        {content?.admin?.emailManager?.title || "E-mail Management"}
+                    </h2>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                         <p className="text-brand-muted font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">{content?.admin?.emailManager?.description}</p>
@@ -494,7 +495,7 @@ const EmailManagement = () => {
                     <Button 
                         onClick={() => setIsPreviewOpen(true)} 
                         variant="outline"
-                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl border-white/10 text-white hover:bg-white/5 font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] transition-all gap-3"
+                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl border-olive-dark/20 text-olive-dark hover:bg-olive-dark hover:text-white font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] transition-all gap-3"
                     >
                         <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
                         Náhled
@@ -518,7 +519,6 @@ const EmailManagement = () => {
 
             <TabsContent value="templates" className="mt-0">
 
-            {/* Mobile Template Selector (Horizontal) */}
             <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-right">
                 <div className="flex gap-3">
                     {templateTypes.map((type) => (
@@ -548,14 +548,34 @@ const EmailManagement = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
-                {/* Sidebar - Template List (Hidden on mobile, used on Desktop) */}
                 <div className="hidden lg:block lg:col-span-4 space-y-6">
                     <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-olive-dark shadow-olive-dark/20">
                         <CardHeader className="p-8 pb-4">
                             <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">{content?.admin?.emailManager?.templatesTitle || "Templates"}</CardTitle>
                             <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{content?.admin?.emailManager?.templatesDesc}</CardDescription>
                             
-                            <div className="flex items-center justify-between gap-4 mt-6">
+                            <div className="flex gap-1 bg-white/5 p-1 rounded-xl mt-6">
+                                {[
+                                    { id: 'all', label: 'Vše' },
+                                    { id: 'system', label: 'Systém' },
+                                    { id: 'marketing', label: 'Marketing' },
+                                    { id: 'custom', label: 'Vlastní' }
+                                ].map(cat => (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setActiveCategory(cat.id)}
+                                        className={`flex-1 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+                                            activeCategory === cat.id 
+                                            ? 'bg-lime text-olive-dark shadow-lg shadow-lime/10' 
+                                            : 'text-white/40 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        {cat.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 mt-4">
                                 <div className="relative flex-1">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                                     <Input 
@@ -617,19 +637,19 @@ const EmailManagement = () => {
                                                 className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group ${
                                                     isActive 
                                                     ? 'bg-lime text-olive-dark shadow-lg shadow-lime/20' 
-                                                    : 'hover:bg-white/5 text-white/50 hover:text-white'
+                                                    : 'hover:bg-white/5 text-white/40 hover:text-white'
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-4">
                                                     <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-olive-dark/10' : 'bg-white/5 group-hover:bg-white/10'}`}>
-                                                        <Icon className="w-4 h-4" />
+                                                        <Icon className={`w-4 h-4 ${isActive ? 'text-olive-dark' : 'text-white/20 group-hover:text-white/60'}`} />
                                                     </div>
                                                     <div className="flex flex-col items-start">
                                                         <span className="text-xs font-black uppercase tracking-wider text-left">
                                                             {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">{content?.admin?.emailManager?.editor?.customBadge || "Custom"}</span>}
-                                                            {type.label}
+                                                            {type.label || type.id.toUpperCase().replace(/_/g, ' ')}
                                                         </span>
-                                                        <span className={`text-[9px] font-bold tracking-widest opacity-30 uppercase`}>
+                                                        <span className={`text-[9px] font-bold tracking-widest uppercase ${isActive ? 'text-olive-dark/40' : 'text-white/20 group-hover:text-white/40'}`}>
                                                             {type.id}
                                                         </span>
                                                     </div>
@@ -663,7 +683,6 @@ const EmailManagement = () => {
                     </Card>
                 </div>
 
-                {/* Main Editor */}
                 <div className="lg:col-span-8 space-y-8">
                     <Card className="border-none shadow-2xl rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-white shadow-olive/10">
                         <div className="bg-olive-dark py-8 sm:py-10 px-6 sm:px-12 relative overflow-hidden">
@@ -690,7 +709,6 @@ const EmailManagement = () => {
                         </div>
 
                         <CardContent className="p-6 sm:p-12 space-y-10">
-                            {/* Layout Reference Alert */}
                             <div className="bg-lime/5 border border-lime/20 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 mb-4">
                                 <div className="flex items-center gap-3 sm:gap-4 text-left mr-auto">
                                     <div className="p-2 sm:p-3 bg-lime/10 rounded-xl">
@@ -745,20 +763,31 @@ const EmailManagement = () => {
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                            {/* Subject Field */}
-                            <div className="space-y-4">
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                                <div className="space-y-4">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">Automatický spouštěč (Trigger)</Label>
+                                    <Input 
+                                        value={currentTrigger}
+                                        onChange={(e) => setCurrentTrigger(e.target.value)}
+                                        placeholder="Např. po_objednavce, po_registraci..."
+                                        className="h-12 rounded-xl bg-background border-transparent font-bold text-olive-dark text-sm px-6 focus-visible:ring-lime shadow-sm"
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">Popis šablony</Label>
+                                    <Input 
+                                        value={currentDescription}
+                                        onChange={(e) => setCurrentDescription(e.target.value)}
+                                        placeholder="K čemu tato šablona slouží..."
+                                        className="h-12 rounded-xl bg-background border-transparent font-bold text-olive-dark text-sm px-6 focus-visible:ring-lime shadow-sm"
+                                    />
+                                </div>
+                             </div>
+
+                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.subject || "Subject"}</Label>
-                                    <div className="flex items-center gap-2">
-                                        <Badge 
-                                            variant="outline" 
-                                            className="text-white/50 bg-white/5 hover:bg-lime hover:text-olive-dark cursor-pointer text-[9px] border-white/10 font-black transition-all px-3 py-1 gap-2 rounded-lg" 
-                                            onClick={() => setCurrentSubject(currentSubject + ' {{orderNumber}}')}
-                                        >
-                                            <Plus className="w-3 h-3" />
-                                            Číslo objednávky
-                                        </Badge>
-                                    </div>
                                 </div>
                                 <Input 
                                     value={currentSubject}
@@ -768,13 +797,9 @@ const EmailManagement = () => {
                                 />
                             </div>
 
-                            {/* HTML Content Editor */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.content || "HTML Content"}</Label>
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-[9px] font-black text-olive/20 uppercase tracking-widest">{content?.admin?.emailManager?.editor?.styleLabel}</span>
-                                    </div>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3">
@@ -797,7 +822,7 @@ const EmailManagement = () => {
                                             key={tag}
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
+                                            onClick={() => handleInsertPlaceholder(tag)}
                                             className="h-9 rounded-xl bg-lime/10 border-lime/20 text-lime font-black text-[9px] uppercase tracking-widest whitespace-nowrap px-4 hover:bg-lime hover:text-olive-dark transition-all flex items-center gap-2"
                                         >
                                             <Zap className="w-3 h-3" />
@@ -806,37 +831,46 @@ const EmailManagement = () => {
                                     ))}
                                 </div>
                                 <RichTextEditor
+                                    ref={quillRef}
                                     value={currentContent}
                                     onChange={setCurrentContent}
                                     placeholder="Zadejte obsah newsletteru..."
                                 />
                             </div>
 
-                            {/* Placeholders Help (Desktop) */}
-                            <div className="hidden sm:block p-10 bg-olive-dark rounded-[2rem] space-y-6 shadow-xl">
-                                <div className="flex items-center gap-4">
-                                    <Info className="w-5 h-5 text-lime" />
-                                    <h4 className="font-black uppercase text-xs tracking-widest text-white">{content?.admin?.emailManager?.editor?.tagsTitle || "Available Tags"}</h4>
-                                </div>
-                                <div className="flex flex-wrap gap-3">
-                                    {getPlaceholdersForType(selectedTypeId).map((tag) => (
-                                        <button
-                                            key={tag}
-                                            onClick={() => setCurrentContent(currentContent + `{{${tag}}}`)}
-                                            className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-lime hover:border-lime group transition-all duration-300"
-                                        >
-                                            <div className="p-1.5 rounded-lg bg-white/10 group-hover:bg-olive-dark/10">
-                                                <Plus className="w-3 h-3 text-lime group-hover:text-olive-dark" />
+                            <div className="bg-olive-dark/5 p-4 rounded-xl space-y-4">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-olive-dark">
+                                    {content?.admin?.emailManager?.editor?.tagsTitle || "Dostupné značky"}
+                                </p>
+                                <div className="flex flex-col gap-4">
+                                    {[
+                                        { title: "Zákazník", tags: ["customerName", "customerEmail", "subscriberEmail"] },
+                                        { title: "Objednávka", tags: ["orderNumber", "itemsHtml", "total", "trackingNumber", "shippingAddress", "paymentMethod", "discountCode", "discountAmount"] },
+                                        { title: "Systém a Odkazy", tags: ["message", "resetLink", "magicLink", "unsubscribeLink", "BASE_URL", "date", "year"] }
+                                    ].map(group => ({ ...group, tags: group.tags.filter(t => getPlaceholdersForType(selectedTypeId).includes(t)) }))
+                                     .filter(g => g.tags.length > 0)
+                                     .map((group, idx) => (
+                                        <div key={idx} className="space-y-2">
+                                            <h5 className="text-[9px] font-bold uppercase tracking-widest text-olive-dark/50">{group.title}</h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {group.tags.map(tag => (
+                                                    <button
+                                                        key={tag}
+                                                        onClick={() => handleInsertPlaceholder(tag)}
+                                                        className="flex items-center gap-2 bg-olive-dark/10 hover:bg-lime border border-white/10 hover:border-lime px-3 py-1.5 rounded-lg group transition-colors text-left"
+                                                    >
+                                                        <code className="text-olive-dark/60 group-hover:text-olive-dark text-[10px] font-mono font-bold tracking-wider">
+                                                            {`{{${tag}}}`}
+                                                        </code>
+                                                        <span className="text-[9px] text-olive-dark font-black uppercase tracking-[0.1em]">
+                                                            {FRIENDLY_PLACEHOLDERS[tag] || tag}
+                                                        </span>
+                                                    </button>
+                                                ))}
                                             </div>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-white/70 group-hover:text-olive-dark">
-                                                {FRIENDLY_PLACEHOLDERS[tag] || tag}
-                                            </span>
-                                        </button>
+                                        </div>
                                     ))}
                                 </div>
-                                <p className="text-[9px] font-bold text-white/20 italic tracking-wider">
-                                    {content?.admin?.emailManager?.editor?.tagsNote}
-                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -1039,7 +1073,6 @@ const EmailManagement = () => {
                     </div>
                 </DialogContent>
             </Dialog>
-            <ActionBar />
         </div>
     );
 };

@@ -22,6 +22,8 @@ interface Post {
   published_at: string;
   status: string;
   template: "modern" | "centered" | "minimal";
+  author_name: string | null;
+  author_role: string | null;
 }
 
 const BlogPost = () => {
@@ -265,10 +267,12 @@ const BlogPost = () => {
         <div className="container mx-auto px-4 pb-20">
           <div className="max-w-3xl mx-auto border-t border-olive-dark/10 pt-10 flex flex-col md:flex-row items-center justify-between gap-6">
              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-olive-dark flex items-center justify-center text-lime font-display font-black">BU</div>
+                <div className="w-12 h-12 rounded-full bg-olive-dark flex items-center justify-center text-lime font-display font-black">
+                  {(post.author_name || "BU").substring(0, 2).toUpperCase()}
+                </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-olive-dark">Redakce BoostUp</p>
-                  <p className="text-[10px] font-bold text-olive-dark/40 uppercase tracking-widest">Kvalita & Energie</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-olive-dark">{post.author_name || "Redakce BoostUp"}</p>
+                  <p className="text-[10px] font-bold text-olive-dark/40 uppercase tracking-widest">{post.author_role || "Kvalita & Energie"}</p>
                 </div>
              </div>
              <div className="flex items-center gap-3">

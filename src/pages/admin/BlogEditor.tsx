@@ -55,7 +55,9 @@ export default function BlogEditor() {
     status: "draft" as "draft" | "published",
     featured_image_url: "",
     template: "modern" as "modern" | "centered" | "minimal",
-    featured_image_position: "center" as "top" | "center" | "bottom"
+    featured_image_position: "center" as "top" | "center" | "bottom",
+    author_name: "Redakce BoostUp",
+    author_role: "Kvalita & Energie"
   });
 
   useEffect(() => {
@@ -93,7 +95,9 @@ export default function BlogEditor() {
           status: data.status,
           featured_image_url: data.featured_image_url || "",
           template: data.template || "modern",
-          featured_image_position: data.featured_image_position || "center"
+          featured_image_position: data.featured_image_position || "center",
+          author_name: data.author_name || "Redakce BoostUp",
+          author_role: data.author_role || "Kvalita & Energie"
         });
       }
     } catch (error) {
@@ -178,6 +182,8 @@ export default function BlogEditor() {
         featured_image_url: formData.featured_image_url || null,
         template: formData.template,
         featured_image_position: formData.featured_image_position,
+        author_name: formData.author_name,
+        author_role: formData.author_role,
         published_at: formData.status === 'published' ? new Date().toISOString() : null
       };
 
@@ -387,6 +393,30 @@ export default function BlogEditor() {
                     <SelectItem value="minimal">Minimal (Čistý)</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-admin-canvas border border-olive-dark/10 rounded-[2rem] shadow-sm p-8 space-y-6">
+            <h3 className="text-olive-dark font-black uppercase tracking-widest text-[10px]">Podpis autora</h3>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Jméno autora</Label>
+                <Input
+                  value={formData.author_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, author_name: e.target.value }))}
+                  placeholder="Např. Zdeněk Dias"
+                  className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Role / Podtitul</Label>
+                <Input
+                  value={formData.author_role}
+                  onChange={(e) => setFormData(prev => ({ ...prev, author_role: e.target.value }))}
+                  placeholder="Např. Zakladatel BoostUp"
+                  className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all"
+                />
               </div>
             </div>
           </div>
