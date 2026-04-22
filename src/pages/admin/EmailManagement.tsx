@@ -494,7 +494,7 @@ const EmailManagement = () => {
                     <Button 
                         onClick={() => setIsPreviewOpen(true)} 
                         variant="outline"
-                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl border-white/10 text-white hover:bg-white/5 font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] transition-all gap-3"
+                        className="h-12 sm:h-14 px-6 sm:px-8 rounded-2xl border-olive-dark/20 text-olive-dark hover:bg-olive-dark hover:text-white font-black uppercase text-[9px] sm:text-[10px] tracking-[0.2em] transition-all gap-3"
                     >
                         <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
                         Náhled
