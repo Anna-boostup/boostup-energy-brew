@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint, MapPin, CreditCard, Phone } from "lucide-react";
+import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint, MapPin, CreditCard, Phone, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountOrders from "@/pages/account/Orders";
 import Subscriptions from "@/pages/account/Subscriptions";

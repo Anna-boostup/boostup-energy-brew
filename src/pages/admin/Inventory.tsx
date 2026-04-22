@@ -3,7 +3,7 @@ import { useInventory, SKU } from "@/context/InventoryContext";
 import { useContent } from "@/context/ContentContext";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Minus, History, Edit } from "lucide-react";
+import { Plus, Minus, History, Edit, Loader2 } from "lucide-react";
 import { RestockDialog } from "@/components/admin/RestockDialog";
 import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
 import { ProductEditDialog } from "@/components/admin/ProductEditDialog";
