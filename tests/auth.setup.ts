@@ -34,26 +34,40 @@ for (const role of roles) {
     console.log(`Setup: Logging in as ${role.name} (${role.email})`);
     
     try {
-      await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
+      await page.goto('/login', { waitUntil: 'load', timeout: 60000 });
       
       // Wait for the app to initialize (global loader to disappear)
       const loader = page.getByTestId('auth-loading');
       if (await loader.isVisible()) {
-          console.log('Setup: Waiting for auth-loading spinner to disappear...');
+          console.log(`Setup (${role.name}): Waiting for auth-loading spinner to disappear...`);
           await expect(loader).toBeHidden({ timeout: 30000 });
       }
 
-      // Explicitly wait for the login form
+      // Explicitly wait for the login form and ensure it's interactable
       const emailInput = page.locator('#email');
-      await expect(emailInput).toBeVisible({ timeout: 30000 });
+      await emailInput.waitFor({ state: 'visible', timeout: 30000 });
       
       await emailInput.fill(role.email);
       await page.locator('#password').fill(role.password);
-      await page.getByTestId('login-submit-btn').click();
+      
+      const submitBtn = page.getByTestId('login-submit-btn');
+      await expect(submitBtn).toBeEnabled({ timeout: 10000 });
+      await submitBtn.click();
 
-      // Verify successful login (wait for redirection or profile element)
+      // Check for potential error toast immediately after click
+      const errorToast = page.locator('.sonner-toast[data-type="error"], .toast-destructive');
+      const isErrorVisible = await errorToast.isVisible({ timeout: 5000 }).catch(() => false);
+      if (isErrorVisible) {
+          const errorMsg = await errorToast.textContent();
+          console.error(`Setup (${role.name}): Login failed with UI error: ${errorMsg}`);
+      }
+
+      // Verify successful login (wait for redirection)
       if (role.name === 'admin') {
         await expect(page).toHaveURL(/.*admin/, { timeout: 60000 });
+      } else if (role.name === 'company') {
+        // Company account might go to /company-account or /account depending on profile
+        await expect(page).toHaveURL(/.*account/, { timeout: 60000 });
       } else {
         await expect(page).toHaveURL(/.*account/, { timeout: 60000 });
       }
@@ -62,10 +76,20 @@ for (const role of roles) {
       console.log(`Setup: Saved state for ${role.name} to ${role.file}`);
     } catch (error: any) {
       console.error(`Setup FAILED for ${role.name}:`, error.message);
-      console.log('DIAGNOSTIC - URL:', page.url());
-      const html = await page.content();
-      console.log('DIAGNOSTIC - HTML Snippet:', html.substring(0, 1000));
-      // Save full HTML to a file if possible within the runner (it will show in logs)
+      console.log('DIAGNOSTIC - CURRENT URL:', page.url());
+      
+      // Try to take a screenshot if it's a browser error
+      try {
+          const html = await page.content();
+          console.log('DIAGNOSTIC - HTML Snippet (first 1000 chars):', html.substring(0, 1000));
+          
+          // Check for any visible text that looks like an error
+          const bodyText = await page.innerText('body');
+          if (bodyText.includes('Neplatný e-mail') || bodyText.includes('heslo')) {
+              console.error('DIAGNOSTIC: Detected invalid credentials error text in body');
+          }
+      } catch (e) {}
+      
       throw error;
     }
   });
