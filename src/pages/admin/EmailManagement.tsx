@@ -637,19 +637,19 @@ const EmailManagement = () => {
                                                 className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group ${
                                                     isActive 
                                                     ? 'bg-lime text-olive-dark shadow-lg shadow-lime/20' 
-                                                    : 'hover:bg-olive-dark/5 text-olive-dark/40 hover:text-olive-dark'
+                                                    : 'hover:bg-white/5 text-white/40 hover:text-white'
                                                 }`}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-olive-dark/10' : 'bg-olive-dark/5 group-hover:bg-olive-dark/10'}`}>
-                                                        <Icon className="w-4 h-4" />
+                                                    <div className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-olive-dark/10' : 'bg-white/5 group-hover:bg-white/10'}`}>
+                                                        <Icon className={`w-4 h-4 ${isActive ? 'text-olive-dark' : 'text-white/20 group-hover:text-white/60'}`} />
                                                     </div>
                                                     <div className="flex flex-col items-start">
                                                         <span className="text-xs font-black uppercase tracking-wider text-left">
                                                             {(type as any).isCustom && <span className="text-[8px] bg-olive-dark/20 px-1.5 py-0.5 rounded-sm mr-2 text-olive-dark/60">{content?.admin?.emailManager?.editor?.customBadge || "Custom"}</span>}
                                                             {type.label || type.id.toUpperCase().replace(/_/g, ' ')}
                                                         </span>
-                                                        <span className={`text-[9px] font-bold tracking-widest opacity-30 uppercase`}>
+                                                        <span className={`text-[9px] font-bold tracking-widest uppercase ${isActive ? 'text-olive-dark/40' : 'text-white/20 group-hover:text-white/40'}`}>
                                                             {type.id}
                                                         </span>
                                                     </div>
