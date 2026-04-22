@@ -26,6 +26,9 @@ test.describe('Admin Dashboard Audit', () => {
         { path: '/admin/content', title: 'CONTENT ENGINE' },
         { path: '/admin/pricing', title: 'Ceny & Statistiky' },
         { path: '/admin/promo-codes', title: 'SLEVOVÉ KÓDY' },
+        { path: '/admin/users', title: 'Zákazníci' },
+        { path: '/admin/blog', title: 'Blog' },
+        { path: '/admin/insights', title: 'Insights' },
         { path: '/admin/profile', title: 'Můj Profil' },
         { path: '/admin/help', title: 'Centrum Nápovědy' },
     ];

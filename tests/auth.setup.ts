@@ -45,7 +45,7 @@ for (const role of roles) {
       await page.goto('/login', { waitUntil: 'load', timeout: 60000 });
       
       // Wait for the app to initialize (global loader to disappear)
-      const loader = page.getByTestId('auth-loading');
+      const loader = page.getByTestId('admin-loader');
       if (await loader.isVisible()) {
           console.log(`Setup (${role.name}): Waiting for auth-loading spinner to disappear...`);
           await expect(loader).toBeHidden({ timeout: 30000 });
