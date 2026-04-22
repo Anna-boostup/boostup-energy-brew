@@ -124,7 +124,7 @@ const ContentManagement = () => {
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="flex items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-white" />
+                    <Loader2 data-testid="admin-loader" className="w-8 h-8 animate-spin text-white" />
                     <span className="font-black uppercase tracking-[0.3em] text-sm text-olive-dark">{content?.admin?.contentManager?.loading || "Loading..."}</span>
                 </div>
             </div>

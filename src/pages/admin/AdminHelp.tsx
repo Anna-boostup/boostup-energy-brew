@@ -27,7 +27,16 @@ interface Section {
 }
 
 const AdminHelp = () => {
-    const { content } = useContent();
+    const { content, loading } = useContent();
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám nápovědu..."}</p>
+            </div>
+        );
+    }
 
     const sections: Section[] = [
         {

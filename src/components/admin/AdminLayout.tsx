@@ -89,7 +89,7 @@ const AdminLayout = () => {
     if (loading) {
         return (
             <div className="min-h-screen bg-admin-canvas flex flex-col items-center justify-center p-8 gap-6 animate-in fade-in duration-700">
-                <div className="w-16 h-16 bg-olive-dark rounded-3xl flex items-center justify-center shadow-2xl animate-pulse-soft">
+                <div data-testid="admin-loader" className="w-16 h-16 bg-olive-dark rounded-3xl flex items-center justify-center shadow-2xl animate-pulse-soft">
                     <Sparkles className="w-8 h-8 text-lime" />
                 </div>
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/40 animate-pulse">
@@ -419,7 +419,7 @@ const AdminLayout = () => {
                         <AdminErrorBoundary>
                             <Suspense fallback={
                                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                                    <Loader2 className="w-8 h-8 animate-spin text-olive-dark/20" />
+                                    <Loader2 data-testid="admin-loader" className="w-8 h-8 animate-spin text-olive-dark/20" />
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/20 animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
                                 </div>
                             }>

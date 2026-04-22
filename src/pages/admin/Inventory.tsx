@@ -108,7 +108,16 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, 
 
 const Inventory = () => {
     const { content } = useContent();
-    const { stock, products, updateProduct } = useInventory();
+    const { stock, products, updateProduct, loading } = useInventory();
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám inventář..."}</p>
+            </div>
+        );
+    }
 
     // Dialog States
     const [restockData, setRestockData] = useState<{ sku: SKU; mode: "in" | "out" } | null>(null);

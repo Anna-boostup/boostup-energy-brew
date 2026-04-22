@@ -16,9 +16,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
 const AdminProfile = () => {
-    const { user, profile } = useAuth();
-    const { content } = useContent();
+    const { user, profile, loading: authLoading } = useAuth();
+    const { content, loading: contentLoading } = useContent();
     const { toast } = useToast();
+
+    if (authLoading || contentLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám profil..."}</p>
+            </div>
+        );
+    }
 
     // Profile info state
     const [fullName, setFullName] = useState(profile?.full_name || "");
