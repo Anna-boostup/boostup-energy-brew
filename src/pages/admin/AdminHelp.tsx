@@ -1,4 +1,6 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
     Accordion,
     AccordionContent,
@@ -9,7 +11,7 @@ import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
     AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette,
-    Database, Send, Info, Key, Newspaper, Loader2
+    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText
 } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 
@@ -24,10 +26,12 @@ interface Section {
     description: string;
     items: HelpItem[];
     image?: string;
+    path?: string;
 }
 
 const AdminHelp = () => {
     const { content, loading } = useContent();
+    const navigate = useNavigate();
 
     if (loading) {
         return (
@@ -41,145 +45,120 @@ const AdminHelp = () => {
     const sections: Section[] = [
         {
             icon: Globe,
-            title: content?.admin?.help?.sections?.content?.title || "Content Management",
-            description: content?.admin?.help?.sections?.content?.description || "Manage your website content",
+            title: content?.admin?.help?.sections?.content?.title || "Obsah webu",
+            description: content?.admin?.help?.sections?.content?.description || "Správa textů, ingrediencí a domovské stránky",
             image: "/admin-guide/content-management.png",
+            path: "/admin/content",
             items: [
-                { label: content?.admin?.help?.sections?.content?.items?.hero?.label || "Hero Section", description: content?.admin?.help?.sections?.content?.items?.hero?.desc || "Manage top banner" },
-                { label: content?.admin?.help?.sections?.content?.items?.mission?.label || "Mission", description: content?.admin?.help?.sections?.content?.items?.mission?.desc || "Manage mission text" },
-                { label: content?.admin?.help?.sections?.content?.items?.ingredients?.label || "Ingredients", description: content?.admin?.help?.sections?.content?.items?.ingredients?.desc || "Manage ingredients" },
-                { label: content?.admin?.help?.sections?.content?.items?.concept?.label || "Concept", description: content?.admin?.help?.sections?.content?.items?.concept?.desc || "Manage concept section" },
-                { label: content?.admin?.help?.sections?.content?.items?.cta?.label || "CTA", description: content?.admin?.help?.sections?.content?.items?.cta?.desc || "Manage call to action" },
-                { label: content?.admin?.help?.sections?.content?.items?.contact?.label || "Contact", description: content?.admin?.help?.sections?.content?.items?.contact?.desc || "Manage contact details" },
-                { label: content?.admin?.help?.sections?.content?.items?.flavors?.label || "Flavors", description: content?.admin?.help?.sections?.content?.items?.flavors?.desc || "Manage flavors" },
-                { label: content?.admin?.help?.sections?.content?.items?.footer?.label || "Footer", description: content?.admin?.help?.sections?.content?.items?.footer?.desc || "Manage footer content" }
+                { label: content?.admin?.help?.sections?.content?.items?.hero?.label || "Hlavní sekce", description: content?.admin?.help?.sections?.content?.items?.hero?.desc || "Správa úvodního banneru a textů." },
+                { label: content?.admin?.help?.sections?.content?.items?.mission?.label || "Mise", description: content?.admin?.help?.sections?.content?.items?.mission?.desc || "Úprava vizí a filosofie značky." },
+                { label: content?.admin?.help?.sections?.content?.items?.ingredients?.label || "Ingredience", description: content?.admin?.help?.sections?.content?.items?.ingredients?.desc || "Editace popisu klíčových složek." },
+                { label: content?.admin?.help?.sections?.content?.items?.flavors?.label || "Příchutě", description: content?.admin?.help?.sections?.content?.items?.flavors?.desc || "Správa produktové sekce příchutí." },
+                { label: content?.admin?.help?.sections?.content?.items?.footer?.label || "Patička", description: content?.admin?.help?.sections?.content?.items?.footer?.desc || "Správa odkazů a informací dole na webu." }
             ]
         },
         {
-            icon: Type,
-            title: content?.admin?.help?.sections?.typography?.title || "Typography",
-            description: content?.admin?.help?.sections?.typography?.description || "Manage fonts and text styles",
+            icon: FileText,
+            title: "Blog a Články",
+            description: "Publikační systém pro tvorbu obsahu",
+            image: "/admin-guide/blog.png",
+            path: "/admin/blog",
             items: [
-                { label: content?.admin?.help?.sections?.typography?.items?.font?.label || "Fonts", description: content?.admin?.help?.sections?.typography?.items?.font?.desc || "Select typography" },
-                { label: content?.admin?.help?.sections?.typography?.items?.size?.label || "Sizes", description: content?.admin?.help?.sections?.typography?.items?.size?.desc || "Adjust font sizes" },
-                { label: content?.admin?.help?.sections?.typography?.items?.styles?.label || "Styles", description: content?.admin?.help?.sections?.typography?.items?.styles?.desc || "Text aesthetics" },
-                { label: content?.admin?.help?.sections?.typography?.items?.reset?.label || "Reset", description: content?.admin?.help?.sections?.typography?.items?.reset?.desc || "Restore defaults" },
-                { label: content?.admin?.help?.sections?.typography?.items?.live?.label || "Live", description: content?.admin?.help?.sections?.typography?.items?.live?.desc || "Real-time updates" }
+                { label: "Vytvoření článku", description: "Použijte textový editor pro napsání formátovaného obsahu s možností vkládat obrázky." },
+                { label: "Designové šablony", description: "Při tvorbě článku můžete vybrat rozložení: Modern, Centered, nebo Minimal." },
+                { label: "SEO Metada", description: "Před publikací vyplňte název, perex a klíčová slova pro lepší dohledatelnost na Googlu." }
             ]
         },
         {
-            icon: ToggleLeft,
-            title: content?.admin?.help?.sections?.visibility?.title || "Visibility",
-            description: content?.admin?.help?.sections?.visibility?.description || "Toggle website sections",
+            icon: Send,
+            title: "E-mailové šablony",
+            description: "Komunikace se zákazníky a automatizace",
+            image: "/admin-guide/emails.png",
+            path: "/admin/emails",
             items: [
-                { label: content?.admin?.help?.sections?.visibility?.items?.active?.label || "Active", description: content?.admin?.help?.sections?.visibility?.items?.active?.desc || "Section is visible" },
-                { label: content?.admin?.help?.sections?.visibility?.items?.inactive?.label || "Inactive", description: content?.admin?.help?.sections?.visibility?.items?.inactive?.desc || "Section is hidden" },
-                { label: content?.admin?.help?.sections?.visibility?.items?.location?.label || "Location", description: content?.admin?.help?.sections?.visibility?.items?.location?.desc || "Find on site" }
-            ]
-        },
-        {
-            icon: ShoppingCart,
-            title: content?.admin?.help?.sections?.orders?.title || "Orders",
-            description: content?.admin?.help?.sections?.orders?.description || "Process customer orders",
-            image: "/admin-guide/orders.png",
-            items: [
-                { label: content?.admin?.help?.sections?.orders?.items?.filtering?.label || "Filtering", description: content?.admin?.help?.sections?.orders?.items?.filtering?.desc || "Filter list" },
-                { label: content?.admin?.help?.sections?.orders?.items?.detail?.label || "Order Details", description: content?.admin?.help?.sections?.orders?.items?.detail?.desc || "Full order info" },
-                { label: content?.admin?.help?.sections?.orders?.items?.copy?.label || "Copy Info", description: content?.admin?.help?.sections?.orders?.items?.copy?.desc || "Quick duplicate" },
-                { label: content?.admin?.help?.sections?.orders?.items?.status?.label || "Status Flow", description: content?.admin?.help?.sections?.orders?.items?.status?.desc || "Update progress" },
-                { label: content?.admin?.help?.sections?.orders?.items?.packeta?.label || "Packeta", description: content?.admin?.help?.sections?.orders?.items?.packeta?.desc || "Shipping integration" },
-                { label: content?.admin?.help?.sections?.orders?.items?.notifications?.label || "Notifications", description: content?.admin?.help?.sections?.orders?.items?.notifications?.desc || "Email alerts" }
-            ]
-        },
-        {
-            icon: BarChart,
-            title: content?.admin?.help?.sections?.pricing?.title || "Pricing & Stats",
-            description: content?.admin?.help?.sections?.pricing?.description || "Financial overview",
-            items: [
-                { label: content?.admin?.help?.sections?.pricing?.items?.global?.label || "Global Pricing", description: content?.admin?.help?.sections?.pricing?.items?.global?.desc || "Base prices" },
-                { label: content?.admin?.help?.sections?.pricing?.items?.stats?.label || "Statistics", description: content?.admin?.help?.sections?.pricing?.items?.stats?.desc || "Sales charts" },
-                { label: content?.admin?.help?.sections?.pricing?.items?.analysis?.label || "Analysis", description: content?.admin?.help?.sections?.pricing?.items?.analysis?.desc || "Insights" }
-            ]
-        },
-        {
-            icon: Gift,
-            title: content?.admin?.help?.sections?.promos?.title || "Promo Codes",
-            description: content?.admin?.help?.sections?.promos?.description || "Discounts & Campaigns",
-            items: [
-                { label: content?.admin?.help?.sections?.promos?.items?.creation?.label || "Creation", description: content?.admin?.help?.sections?.promos?.items?.creation?.desc || "New codes" },
-                { label: content?.admin?.help?.sections?.promos?.items?.popup?.label || "Popups", description: content?.admin?.help?.sections?.promos?.items?.popup?.desc || "Front-end visibility" },
-                { label: content?.admin?.help?.sections?.promos?.items?.rules?.label || "Rules", description: content?.admin?.help?.sections?.promos?.items?.rules?.desc || "Usage limits" }
-            ]
-        },
-        {
-            icon: Package,
-            title: content?.admin?.help?.sections?.inventory?.title || "Inventory",
-            description: content?.admin?.help?.sections?.inventory?.description || "Product stock levels",
-            image: "/admin-guide/inventory.png",
-            items: [
-                { label: content?.admin?.help?.sections?.inventory?.items?.add?.label || "Stock Entry", description: content?.admin?.help?.sections?.inventory?.items?.add?.desc || "Update quantities" },
-                { label: content?.admin?.help?.sections?.inventory?.items?.minimum?.label || "Alerts", description: content?.admin?.help?.sections?.inventory?.items?.minimum?.desc || "Low stock warning" }
-            ]
-        },
-        {
-            icon: Factory,
-            title: content?.admin?.help?.sections?.manufacture?.title || "Manufacture",
-            description: content?.admin?.help?.sections?.manufacture?.description || "Production inventory",
-            image: "/admin-guide/manufacture.png",
-            items: [
-                { label: content?.admin?.help?.sections?.manufacture?.items?.alert?.label || "Ingredients Alert", description: content?.admin?.help?.sections?.manufacture?.items?.alert?.desc || "Raw materials" },
-                { label: content?.admin?.help?.sections?.manufacture?.items?.edit?.label || "Recipes", description: content?.admin?.help?.sections?.manufacture?.items?.edit?.desc || "Modify requirements" },
-                { label: content?.admin?.help?.sections?.manufacture?.items?.notifications?.label || "Auto-supply", description: content?.admin?.help?.sections?.manufacture?.items?.notifications?.desc || "Restock workflow" }
-            ]
-        },
-        {
-            icon: Save,
-            title: content?.admin?.help?.sections?.saving?.title || "Saving & Sync",
-            description: content?.admin?.help?.sections?.saving?.description || "Keep data safe",
-            items: [
-                { label: content?.admin?.help?.sections?.saving?.items?.button?.label || "Saving", description: content?.admin?.help?.sections?.saving?.items?.button?.desc || "Apply changes" },
-                { label: content?.admin?.help?.sections?.saving?.items?.loading?.label || "Synchronization", description: content?.admin?.help?.sections?.saving?.items?.loading?.desc || "Real-time sync" },
-                { label: content?.admin?.help?.sections?.saving?.items?.reset?.label || "Safe Reset", description: content?.admin?.help?.sections?.saving?.items?.reset?.desc || "Rollback support" }
-            ]
-        },
-        {
-            icon: ShieldCheck,
-            title: content?.admin?.help?.sections?.security?.title || "Security",
-            description: content?.admin?.help?.sections?.security?.description || "Access & Protection",
-            items: [
-                { label: content?.admin?.help?.sections?.security?.items?.magic?.label || "Magic Link", description: content?.admin?.help?.sections?.security?.items?.magic?.desc || "Secure login" },
-                { label: content?.admin?.help?.sections?.security?.items?.detection?.label || "Fraud Detection", description: content?.admin?.help?.sections?.security?.items?.detection?.desc || "Pattern analysis" },
-                { label: content?.admin?.help?.sections?.security?.items?.supabase?.label || "Database", description: content?.admin?.help?.sections?.security?.items?.supabase?.desc || "Infra security" }
-            ]
-        },
-        {
-            icon: Palette,
-            title: content?.admin?.help?.sections?.design?.title || "Design System",
-            description: content?.admin?.help?.sections?.design?.description || "Visual consistency",
-            items: [
-                { label: content?.admin?.help?.sections?.design?.items?.palette?.label || "Colors", description: content?.admin?.help?.sections?.design?.items?.palette?.desc || "Brand palette" },
-                { label: content?.admin?.help?.sections?.design?.items?.charts?.label || "Visualization", description: content?.admin?.help?.sections?.design?.items?.charts?.desc || "Data design" },
-                { label: content?.admin?.help?.sections?.design?.items?.readability?.label || "UX Flow", description: content?.admin?.help?.sections?.design?.items?.readability?.desc || "User journey" }
+                { label: "Transakční e-maily", description: "Úprava zpráv, které se odesílají automaticky (např. potvrzení objednávky, expedice)." },
+                { label: "Dynamické značky", description: "V editoru můžete kliknout na speciální proměnné (např. {{customerName}}), které se při odeslání nahradí skutečnými daty." },
+                { label: "Vlastní kampaně", description: "Záložka Newslettery umožňuje odesílat hromadná sdělení a prohlížet dřívější komunikaci." }
             ]
         },
         {
             icon: Mail,
-            title: content?.admin?.help?.sections?.marketing?.title || "Marketing Tools",
-            description: content?.admin?.help?.sections?.marketing?.description || "Customer interaction",
+            title: "Příchozí zprávy",
+            description: "Zpracování dotazů od zákazníků",
+            image: "/admin-guide/messages.png",
+            path: "/admin/messages",
             items: [
-                { label: content?.admin?.help?.sections?.marketing?.items?.campaigns?.label || "Email Campaigns", description: content?.admin?.help?.sections?.marketing?.items?.campaigns?.desc || "Outreach tools" },
-                { label: content?.admin?.help?.sections?.marketing?.items?.progress?.label || "Tracking", description: content?.admin?.help?.sections?.marketing?.items?.progress?.desc || "Engagement stats" }
+                { label: "Nový dotaz", description: "Všechny zprávy z kontaktního formuláře se řadí sem. Neoznačené zprávy ukáží upozornění." },
+                { label: "Odpovědi", description: "Ze sekce můžete rovnou odesílat odpovědi zákazníkům e-mailem přes integrovaný systém." }
             ]
         },
         {
-            icon: Newspaper,
-            title: content?.admin?.help?.sections?.newsletter?.title || "Newsletter & Opt-out",
-            description: content?.admin?.help?.sections?.newsletter?.description || "Subscriber management",
+            icon: ShoppingCart,
+            title: content?.admin?.help?.sections?.orders?.title || "Objednávky",
+            description: content?.admin?.help?.sections?.orders?.description || "Zpracování nákupů zákazníků",
+            image: "/admin-guide/orders.png",
+            path: "/admin/orders",
             items: [
-                { label: content?.admin?.help?.sections?.newsletter?.items?.subscribers?.label || "Subscribers", description: content?.admin?.help?.sections?.newsletter?.items?.subscribers?.desc || "Database of active contacts" },
-                { label: content?.admin?.help?.sections?.newsletter?.items?.campaigns?.label || "Campaign Creation", description: content?.admin?.help?.sections?.newsletter?.items?.campaigns?.desc || "Mass mailing automation" },
-                { label: content?.admin?.help?.sections?.newsletter?.items?.unsub?.label || "Unsubscribe (GDPR)", description: content?.admin?.help?.sections?.newsletter?.items?.unsub?.desc || "Automated opt-out system" },
-                { label: content?.admin?.help?.sections?.newsletter?.items?.safety?.label || "Safety", description: content?.admin?.help?.sections?.newsletter?.items?.safety?.desc || "Protection against duplicate sending" }
+                { label: content?.admin?.help?.sections?.orders?.items?.filtering?.label || "Filtrování", description: content?.admin?.help?.sections?.orders?.items?.filtering?.desc || "Rychlé řazení podle stavu (nové, odeslané atd.)." },
+                { label: content?.admin?.help?.sections?.orders?.items?.detail?.label || "Detail objednávky", description: content?.admin?.help?.sections?.orders?.items?.detail?.desc || "Kompletní rozpis včetně fakturačních a dodacích údajů." },
+                { label: content?.admin?.help?.sections?.orders?.items?.status?.label || "Změna stavu", description: content?.admin?.help?.sections?.orders?.items?.status?.desc || "Posun objednávky do další fáze." },
+                { label: content?.admin?.help?.sections?.orders?.items?.packeta?.label || "Zásilkovna (Packeta)", description: content?.admin?.help?.sections?.orders?.items?.packeta?.desc || "Integrované odesílání do sítě Zásilkovny." }
+            ]
+        },
+        {
+            icon: Package,
+            title: content?.admin?.help?.sections?.inventory?.title || "Skladové zásoby",
+            description: content?.admin?.help?.sections?.inventory?.description || "Evidování dostupnosti produktů",
+            image: "/admin-guide/inventory.png",
+            path: "/admin/inventory",
+            items: [
+                { label: content?.admin?.help?.sections?.inventory?.items?.add?.label || "Naskladnění", description: content?.admin?.help?.sections?.inventory?.items?.add?.desc || "Navýšení nebo snížení množství jednotlivých příchutí." },
+                { label: content?.admin?.help?.sections?.inventory?.items?.minimum?.label || "Upozornění na limit", description: content?.admin?.help?.sections?.inventory?.items?.minimum?.desc || "Automatická indikace vyprodaných položek." }
+            ]
+        },
+        {
+            icon: Factory,
+            title: content?.admin?.help?.sections?.manufacture?.title || "Výroba",
+            description: content?.admin?.help?.sections?.manufacture?.description || "Suroviny potřebné pro výrobu",
+            image: "/admin-guide/manufacture.png",
+            path: "/admin/manufacture",
+            items: [
+                { label: content?.admin?.help?.sections?.manufacture?.items?.alert?.label || "Stav surovin", description: content?.admin?.help?.sections?.manufacture?.items?.alert?.desc || "Monitorování plechovek, víček, etiket a samotného nápoje." },
+                { label: content?.admin?.help?.sections?.manufacture?.items?.edit?.label || "Odpis surovin", description: content?.admin?.help?.sections?.manufacture?.items?.edit?.desc || "Správa množství po výrobním procesu." }
+            ]
+        },
+        {
+            icon: BarChart,
+            title: content?.admin?.help?.sections?.pricing?.title || "Cenotvorba a Statistiky",
+            description: content?.admin?.help?.sections?.pricing?.description || "Finanční přehledy a nastavení cen",
+            image: "/admin-guide/pricing.png",
+            path: "/admin/pricing",
+            items: [
+                { label: content?.admin?.help?.sections?.pricing?.items?.global?.label || "Základní cena", description: content?.admin?.help?.sections?.pricing?.items?.global?.desc || "Centrální úprava prodejní ceny pro všechny produkty." },
+                { label: content?.admin?.help?.sections?.pricing?.items?.stats?.label || "Grafy", description: content?.admin?.help?.sections?.pricing?.items?.stats?.desc || "Vizualizace celkových tržeb a úspěšnosti." }
+            ]
+        },
+        {
+            icon: Gift,
+            title: content?.admin?.help?.sections?.promos?.title || "Slevové kódy",
+            description: content?.admin?.help?.sections?.promos?.description || "Marketingové a slevové kampaně",
+            image: "/admin-guide/promo-codes.png",
+            path: "/admin/promo-codes",
+            items: [
+                { label: content?.admin?.help?.sections?.promos?.items?.creation?.label || "Vytvoření kódu", description: content?.admin?.help?.sections?.promos?.items?.creation?.desc || "Nastavení unikátního textového kódu a výše slevy." },
+                { label: content?.admin?.help?.sections?.promos?.items?.rules?.label || "Pravidla čerpání", description: content?.admin?.help?.sections?.promos?.items?.rules?.desc || "Limit použití kódu (např. platnost do data, aktivní/neaktivní)." }
+            ]
+        },
+        {
+            icon: Users,
+            title: "Uživatelé a Práva",
+            description: "Správa přístupů a zákazníků",
+            image: "/admin-guide/users.png",
+            path: "/admin/users",
+            items: [
+                { label: "Seznam uživatelů", description: "Přehled všech registrovaných osob na platformě." },
+                { label: "Změna role", description: "Možnost přidělit jinému uživateli práva typu Admin, čímž získá přístup k tomuto rozhraní." },
+                { label: "Historie nákupů", description: "Pohled na minulé transakce konkrétní osoby." }
             ]
         }
     ];
@@ -228,14 +207,27 @@ const AdminHelp = () => {
                                 </Accordion>
                             </div>
 
-                            {section.image && (
-                                <div className="rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden bg-olive-dark/5 p-4 sm:p-6 shadow-canvas border border-white relative group">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                    <img 
-                                        src={section.image} 
-                                        alt={section.title} 
-                                        className="w-full h-auto rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl relative z-10 grayscale hover:grayscale-0 transition-all duration-1000"
-                                    />
+                            {(section.image || section.path) && (
+                                <div className="rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden bg-olive-dark/5 p-4 sm:p-6 shadow-canvas border border-white relative group flex flex-col justify-center h-full">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                                    {section.image && (
+                                        <img 
+                                            src={section.image} 
+                                            alt={section.title} 
+                                            className="w-full h-auto rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl relative z-10 transition-all duration-1000 object-cover border border-white/20 mb-6 group-hover:scale-[1.02]"
+                                        />
+                                    )}
+                                    {section.path && (
+                                        <div className="text-center relative z-10 mt-auto">
+                                            <Button 
+                                                onClick={() => navigate(section.path!)}
+                                                className="bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase tracking-widest text-[10px] sm:text-xs rounded-xl px-8 h-12 shadow-xl hover:-translate-y-1 transition-all gap-2"
+                                            >
+                                                Přejít do této sekce
+                                                <ChevronRight className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
