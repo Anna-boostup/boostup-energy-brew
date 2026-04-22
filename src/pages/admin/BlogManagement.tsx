@@ -136,7 +136,12 @@ export default function BlogManagement() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-20 text-olive-dark/40 font-black uppercase tracking-widest">Načítám články...</TableCell>
+                <TableCell colSpan={5} className="text-center py-20 text-olive-dark/40 font-black uppercase tracking-widest">
+                  <div className="flex items-center justify-center gap-3">
+                    <Loader2 data-testid="admin-loader" className="w-5 h-5 animate-spin" />
+                    Načítám články...
+                  </div>
+                </TableCell>
               </TableRow>
             ) : filteredPosts.length === 0 ? (
               <TableRow>

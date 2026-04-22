@@ -424,7 +424,7 @@ const AdminLayout = () => {
                                 </div>
                             }>
                                 {content ? <Outlet /> : (
-                                    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-pulse">
+                                    <div data-testid="admin-loader" className="flex flex-col items-center justify-center min-h-[60vh] animate-pulse">
                                         <div className="w-12 h-12 bg-olive-dark/5 rounded-2xl flex items-center justify-center mb-6">
                                             <Sparkles className="w-6 h-6 text-olive-dark/10" />
                                         </div>
