@@ -54,22 +54,32 @@ for (const role of roles) {
       await expect(submitBtn).toBeEnabled({ timeout: 10000 });
       await submitBtn.click();
 
-      // Check for potential error toast immediately after click
-      const errorToast = page.locator('.sonner-toast[data-type="error"], .toast-destructive');
-      const isErrorVisible = await errorToast.isVisible({ timeout: 5000 }).catch(() => false);
+      // Check for ANY toast or error message
+      const errorToast = page.locator('[role="status"], [role="alert"], .sonner-toast, .toast');
+      const isErrorVisible = await errorToast.isVisible({ timeout: 10000 }).catch(() => false);
       if (isErrorVisible) {
-          const errorMsg = await errorToast.textContent();
-          console.error(`Setup (${role.name}): Login failed with UI error: ${errorMsg}`);
+          const texts = await errorToast.allInnerTexts();
+          console.error(`Setup (${role.name}): Detected potential UI message(s):`, texts.join(' | '));
       }
 
       // Verify successful login (wait for redirection)
-      if (role.name === 'admin') {
-        await expect(page).toHaveURL(/.*admin/, { timeout: 60000 });
-      } else if (role.name === 'company') {
-        // Company account might go to /company-account or /account depending on profile
-        await expect(page).toHaveURL(/.*account/, { timeout: 60000 });
-      } else {
-        await expect(page).toHaveURL(/.*account/, { timeout: 60000 });
+      try {
+        if (role.name === 'admin') {
+          await expect(page).toHaveURL(/.*admin/, { timeout: 30000 });
+        } else {
+          // Check for ANY account-related URL
+          await expect(page).toHaveURL(/.*account|.*company-account/, { timeout: 30000 });
+        }
+      } catch (err) {
+          console.error(`Setup (${role.name}): Redirection check failed. Current URL: ${page.url()}`);
+          // Log visible errors again
+          const bodyText = await page.innerText('body');
+          if (bodyText.includes('Neplatný') || bodyText.includes('heslo') || bodyText.includes('Chyba')) {
+              console.error(`Setup (${role.name}): Found error-like text in body!`);
+              const visibleError = await page.locator('text=/Neplatný|heslo|Chyba/i').first().innerText().catch(() => 'N/A');
+              console.error(`Setup (${role.name}): Specific error found: ${visibleError}`);
+          }
+          throw err;
       }
 
       await page.context().storageState({ path: path.join(authDir, role.file) });
@@ -78,16 +88,13 @@ for (const role of roles) {
       console.error(`Setup FAILED for ${role.name}:`, error.message);
       console.log('DIAGNOSTIC - CURRENT URL:', page.url());
       
-      // Try to take a screenshot if it's a browser error
       try {
           const html = await page.content();
           console.log('DIAGNOSTIC - HTML Snippet (first 1000 chars):', html.substring(0, 1000));
           
-          // Check for any visible text that looks like an error
-          const bodyText = await page.innerText('body');
-          if (bodyText.includes('Neplatný e-mail') || bodyText.includes('heslo')) {
-              console.error('DIAGNOSTIC: Detected invalid credentials error text in body');
-          }
+          // Log all visible buttons/inputs to see if we are on the right page
+          const inputs = await page.locator('input').all();
+          console.log(`DIAGNOSTIC: Found ${inputs.length} inputs on page`);
       } catch (e) {}
       
       throw error;
