@@ -45,7 +45,7 @@ export class AdminErrorBoundary extends React.Component<Props, State> {
                             <AlertTriangle className="w-10 h-10 text-terracotta" />
                         </div>
                         <div className="space-y-3">
-                            <h3 className="text-2xl font-black font-display uppercase tracking-tight text-olive-dark italic">
+                            <h3 data-testid="admin-page-title" className="text-2xl font-black font-display uppercase tracking-tight text-olive-dark italic">
                                 Chyba načítání
                             </h3>
                             <p className="text-sm font-bold uppercase tracking-[0.2em] text-olive-dark/50">

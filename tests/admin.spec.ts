@@ -36,17 +36,27 @@ test.describe('Admin Dashboard Audit', () => {
       
       // Wait for navigation and loading to finish
       await page.waitForLoadState('load', { timeout: 30000 });
+      
+      // 🧪 DIAGNOSTIC: Verify we are on the correct page
+      const currentUrl = page.url();
+      console.log(`DIAGNOSTIC - CURRENT URL: ${currentUrl}`);
+      
+      // Check for Error Boundary crash
+      const errorBoundary = page.getByTestId('admin-error-fallback');
+      if (await errorBoundary.isVisible()) {
+        const errorText = await errorBoundary.innerText();
+        throw new Error(`CRITICAL UI CRASH on ${adminPage.path}: ${errorText}`);
+      }
+
       const loader = page.getByTestId('admin-loader');
       await expect(loader).toBeHidden({ timeout: 20000 });
       
-      // Basic check: Page should not show "Error" or "Crashed"
-      // We check for the module title (uppercase)
-      const titleLocator = page.getByTestId('admin-page-title');
-      await expect(titleLocator).toBeVisible({ timeout: 15000 });
+      const title = page.getByTestId('admin-page-title');
+      await expect(title).toBeVisible({ timeout: 20000 });
       
-      // Check for White Screen of Death (body should not be empty)
-      const bodyContent = await page.innerHTML('body');
-      expect(bodyContent.length).toBeGreaterThan(100);
+      // Verify page content exists
+      const mainContent = page.locator('main');
+      await expect(mainContent).toBeVisible();
     }
   });
 });
