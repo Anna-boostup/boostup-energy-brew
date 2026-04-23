@@ -95,7 +95,7 @@ const AdminUsers = () => {
         <div className="space-y-8 sm:space-y-12 pb-20 animate-in fade-in duration-700">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 flex-wrap">
                 <div className="space-y-2 sm:space-y-3">
-                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
+                    <h2 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black tracking-tighter text-olive-dark font-display uppercase italic leading-none">
                         Zákazníci
                     </h2>
                     <div className="flex items-center gap-3">
@@ -129,7 +129,7 @@ const AdminUsers = () => {
                 <CardContent className="p-0">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center p-24 gap-6">
-                            <Loader2 className="h-12 w-12 animate-spin text-olive-dark" />
+                            <Loader2 data-testid="admin-loader" className="h-12 w-12 animate-spin text-olive-dark" />
                             <p className="text-olive-dark font-black uppercase text-xs tracking-widest">Načítání uživatelů...</p>
                         </div>
                     ) : filteredProfiles.length > 0 ? (

@@ -22,13 +22,38 @@
 
 .rich-text-editor .ql-editor {
   min-height: 400px;
-  padding: 24px;
-  line-height: 1.7;
+  padding: 32px;
+  line-height: 1.8;
+}
+
+.rich-text-editor .ql-editor p {
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-editor .ql-editor h1,
+.rich-text-editor .ql-editor h2,
+.rich-text-editor .ql-editor h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 900;
+  color: #3d4015;
+  line-height: 1.2;
+}
+
+.rich-text-editor .ql-editor ul,
+.rich-text-editor .ql-editor ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.rich-text-editor .ql-editor li {
+  margin-bottom: 0.5rem;
 }
 
 .rich-text-editor .ql-editor.ql-blank::before {
   color: rgba(61, 64, 21, 0.3);
   font-style: normal;
+  left: 32px;
 }
 
 /* Toolbar Icons and Buttons */

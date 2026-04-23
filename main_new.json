@@ -1,0 +1,985 @@
+{
+  "cta": {
+    "badge": "Buď první, kdo to zkusí",
+    "button": "Přihlásit se",
+    "headline": {
+      "part1": "PŘIPRAV SE NA",
+      "highlight": "NOVOU ÉRU ENERGIE"
+    },
+    "description": "Přihlaš se k odběru a získej exkluzivní přístup k testerům, slevám a novinkám. Buď součástí komunity BoostUp.",
+    "placeholder": "vas@email.cz",
+    "socialProof": {
+      "launch": "Launch Q1 2025",
+      "natural": "100% přírodní",
+      "waiting": "+500 čeká na launch"
+    }
+  },
+  "hero": {
+    "cta": {
+      "primary": "Chci koupit",
+      "concept3b": "Koncept 3B",
+      "secondary": "Chci objevit více"
+    },
+    "tags": [
+      {
+        "label": "SOUSTŘEDĚNÍ",
+        "dotColor": "#3d5a2f",
+        "colorClass": "bg-olive",
+        "ingredientId": "vitamins"
+      },
+      {
+        "label": "STIMULACE",
+        "dotColor": "#dfdf57",
+        "colorClass": "bg-lime",
+        "ingredientId": "stimulants"
+      },
+      {
+        "label": "ODOLNOST",
+        "dotColor": "#f29739",
+        "colorClass": "bg-orange",
+        "ingredientId": "adaptogens"
+      },
+      {
+        "label": "ROVNOVÁHA",
+        "dotColor": "#aa263e",
+        "colorClass": "bg-terracotta",
+        "ingredientId": "electrolytes"
+      }
+    ],
+    "benefits": [
+      {
+        "bold": "Až 6 hodin energie",
+        "text": "bez pádu na konci"
+      },
+      {
+        "bold": "Přírodní extrakty",
+        "text": "bez cukru, bez umělých sladidel"
+      },
+      {
+        "bold": "Klid pod tlakem",
+        "text": "výkon bez chaosu"
+      },
+      {
+        "bold": "Vyvinuto s odborníky",
+        "text": "na Mendelově univerzitě"
+      }
+    ],
+    "headline": {
+      "part1": "OBJEVTE NOVÝ STANDARD",
+      "part2": "",
+      "gradient": " STABILNÍHO SOUSTŘEDĚNÍ"
+    },
+    "description": "6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata.",
+    "testimonial": "Testováno mezi profesionály pracujícími pod vysokým tlakem.",
+    "trustBadges": [
+      "Přírodní stimulanty",
+      "Elektrolyty",
+      "Adaptogeny",
+      "Vitamíny"
+    ],
+    "announcement": "NOVINKA: PŘÍRODNÍ ENERGIE BRZY NA TRHU",
+    "badgeVisible": {
+      "cta": true,
+      "hero": true,
+      "contact": true,
+      "mission": true
+    },
+    "discountCode": "BOOST10",
+    "showDiscountPopup": false
+  },
+  "footer": {
+    "brand": {
+      "description": "6 hodin soustředění a čisté energie ze stimulantů. Síla 2,5 espressa bez nervozity. Žádná umělá sladidla a aromata."
+    },
+    "links": [
+      {
+        "items": [
+          {
+            "href": "/#mise",
+            "label": "O nás"
+          },
+          {
+            "href": "/#produkty",
+            "label": "Produkty"
+          },
+          {
+            "href": "/#3b",
+            "label": "3B Koncept"
+          },
+          {
+            "href": "/blog",
+            "label": "Blog"
+          },
+          {
+            "href": "/#kontakt",
+            "label": "Kontakt"
+          }
+        ],
+        "title": "NAVIGACE"
+      },
+      {
+        "items": [
+          {
+            "href": "/obchodni-podminky",
+            "label": "VOP"
+          },
+          {
+            "href": "/ochrana-osobnich-udaju",
+            "label": "Ochrana soukromí"
+          },
+          {
+            "href": "/cookies",
+            "label": "Cookies"
+          },
+          {
+            "href": "/doprava-a-platba",
+            "label": "Doprava a platba"
+          }
+        ],
+        "title": "PODPORA"
+      }
+    ],
+    "bottom": {
+      "legal": [
+        {
+          "href": "/obchodni-podminky",
+          "label": "Obchodní podmínky"
+        },
+        {
+          "href": "/ochrana-osobnich-udaju",
+          "label": "Ochrana osobních údajů"
+        }
+      ],
+      "copyright": "© 2024 BOOSTUP SUPPLEMENTS S.R.O. VŠECHNA PRÁVA VYHRAZENA."
+    },
+    "contact": {
+      "email": "info@drinkboostup.cz",
+      "phone": "+420 775 222 037",
+      "title": "KONTAKT",
+      "address": {
+        "line1": "Chaloupkova 3002/1a, Královo Pole",
+        "line2": "612 00 Brno, Czech Republic"
+      }
+    }
+  },
+  "social": {
+    "facebook": "https://www.facebook.com/profile.php?id=61567084724538",
+    "linkedin": "https://www.linkedin.com/company/boost-up-czech/",
+    "instagram": "https://www.instagram.com/boost_up_czech/"
+  },
+  "contact": {
+    "form": {
+      "name": {
+        "label": "Jméno",
+        "placeholder": "Jan Novák"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "jan@email.cz"
+      },
+      "submit": "Odeslat zprávu",
+      "message": {
+        "label": "Zpráva",
+        "placeholder": "S čím vám můžeme pomoci?"
+      }
+    },
+    "info": {
+      "email": {
+        "label": "Email",
+        "value": "info@drinkboostup.cz"
+      },
+      "phone": {
+        "label": "Telefon",
+        "value": "775 222 037"
+      },
+      "address": {
+        "label": "Adresa",
+        "value": {
+          "line1": "Chaloupkova 3002/1a, Královo Pole",
+          "line2": "612 00 Brno, Czech Republic"
+        }
+      }
+    },
+    "title": "KONTAKT",
+    "toast": {
+      "success": {
+        "title": "Zpráva odeslána",
+        "description": "Děkujeme za váš zájem, brzy se vám ozveme."
+      }
+    },
+    "headline": "MÁTE DOTAZ?",
+    "description": "Zajímá vás něco ohledně našich produktů, partnerství nebo jen chcete pozdravit? Napište nám nebo zavolejte, rádi se s vámi spojíme."
+  },
+  "flavors": {
+    "red": {
+      "name": "RED RUSH ",
+      "labels": [
+        "Vitamíny",
+        "Rychlý nástup",
+        "Výkon"
+      ],
+      "fullSpecs": {
+        "vitamins": [
+          {
+            "rhp": "130 % RHP*",
+            "label": "Vitamin B1",
+            "per100": "2,4 mg",
+            "perPortion": "1,4 mg"
+          },
+          {
+            "rhp": "91,2 % RHP*",
+            "label": "Vitamin B2",
+            "per100": "2,1 mg",
+            "perPortion": "1,3 mg"
+          },
+          {
+            "rhp": "29,5 % RHP*",
+            "label": "Vitamin B3",
+            "per100": "7,9 mg NE",
+            "perPortion": "4,7 mg"
+          },
+          {
+            "rhp": "35,7 % RHP*",
+            "label": "Vitamin B5",
+            "per100": "3,6 mg",
+            "perPortion": "2,1 mg"
+          },
+          {
+            "rhp": "107,4 % RHP*",
+            "label": "Vitamin B6",
+            "per100": "2,5 mg",
+            "perPortion": "1,5 mg"
+          },
+          {
+            "rhp": "33,8 % RHP*",
+            "label": "Vitamin B9",
+            "per100": "112,7 µg",
+            "perPortion": "67,6 µg"
+          },
+          {
+            "rhp": "93,5 % RHP*",
+            "label": "Vitamin B12",
+            "per100": "3,9 µg",
+            "perPortion": "2,3 µg"
+          },
+          {
+            "rhp": "375 % RHP*",
+            "label": "Vitamin C",
+            "per100": "500,0 mg",
+            "perPortion": "300,0 mg"
+          },
+          {
+            "rhp": "8,6 % RHP*",
+            "label": "Hořčík",
+            "per100": "50,0 mg",
+            "perPortion": "30,0 mg"
+          },
+          {
+            "rhp": "1,6 % RHP*",
+            "label": "Draslík",
+            "per100": "53,3 mg",
+            "perPortion": "32,0 mg"
+          }
+        ],
+        "basicInfo": [
+          {
+            "label": "Produkt",
+            "value": "RED RUSH"
+          },
+          {
+            "label": "Popis",
+            "value": "tekutý vitamínový doplněk stravy s povzbuzujícím účinkem obohacený o minerální látky se sladidly"
+          },
+          {
+            "label": "Složení (přesně z etikety)",
+            "value": "Voda, vodný výluh ze směsi čajů a bylin (sencha, rooibos, jablko plod, mrkev, květ ibišku, verbena citronová, šípek, plod rakytníku, list ostružiny, plod rybízu, plod brusinky, slunečnicový květ, list klikvy, přírodní aroma), sladidlá: erythritol, taurin, sladidlo: xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a rozmarýnu, kyselina jablečná, kyselina citronová, citronan draselný, konzervant: sorban draselný, koenzym Q10, kofein, sůl, steviol-glykosidy, vitamíny B1, B2, B3, B5, B6, B9, B12."
+          },
+          {
+            "label": "Alergeny / přesný text",
+            "value": "Neobsahuje alergeny."
+          },
+          {
+            "label": "Doporučené dávkování",
+            "value": "Doporučené denní dávkování: až 2 porce / den. 1 porce je 60 ml."
+          },
+          {
+            "label": "Upozornění",
+            "value": "Tento doplněk stravy nenahrazuje pestrou stravu. Obsahuje vysoké množství kofeinu (283 mg/100 ml). Výrobek není vhodný pro děti, těhotné a kojící ženy, pro osoby trpící srdečními onemocněními. V případě užívání léků na předpis se poraďte se svým lékařem. Uchovávejte mimo dosah dětí. Nepřekračujte doporučenou denní dávku. Spotřebujte ihned po otevření lahve."
+          },
+          {
+            "label": "Skladování",
+            "value": "Skladujte na tmavém místě do 21 °C."
+          },
+          {
+            "label": "Vyrobeno",
+            "value": "Vyrobeno v České republice."
+          },
+          {
+            "label": "Distributor",
+            "value": "Distributor: BoostUp Supplements s.r.o., Chaloupkova 3002/1A 612 00 Brno."
+          },
+          {
+            "label": "Minimální trvanlivost / číslo šarže",
+            "value": "Minimální trvanlivost do, číslo šarže:"
+          }
+        ],
+        "nutrition": [
+          {
+            "rhp": "<1 % RHP*",
+            "label": "Energetická hodnota",
+            "per100": "32,0 kJ / 7,6 kcal",
+            "perPortion": "19,3 kJ / 4,6 kcal"
+          },
+          {
+            "rhp": "",
+            "label": "Tuky",
+            "per100": "<1 g",
+            "perPortion": "<1 g"
+          },
+          {
+            "rhp": "",
+            "label": "z toho nasycené mastné kyseliny",
+            "per100": "0,0 g",
+            "perPortion": "0,0 g"
+          },
+          {
+            "rhp": "",
+            "label": "Sacharidy",
+            "per100": "1,4 g",
+            "perPortion": "0,9 g"
+          },
+          {
+            "rhp": "",
+            "label": "z toho cukry",
+            "per100": "0,5 g",
+            "perPortion": "0,3 g"
+          },
+          {
+            "rhp": "",
+            "label": "Bílkoviny",
+            "per100": "<1 g",
+            "perPortion": "<1 g"
+          },
+          {
+            "rhp": "",
+            "label": "Vláknina",
+            "per100": "0,0 g",
+            "perPortion": "0,0 g"
+          },
+          {
+            "rhp": "",
+            "label": "Sůl",
+            "per100": "0,1 g",
+            "perPortion": "0,0 g"
+          }
+        ],
+        "activeSubstances": [
+          {
+            "label": "Kofein bezvodý",
+            "per100": "141,7 mg",
+            "perPortion": "85,0 mg"
+          },
+          {
+            "label": "Taurin",
+            "per100": "833,3 mg",
+            "perPortion": "500,0 mg"
+          },
+          {
+            "label": "Koenzym Q10",
+            "per100": "66,7 mg",
+            "perPortion": "40,0 mg"
+          },
+          {
+            "label": "Guarana",
+            "per100": "644,0 mg",
+            "perPortion": "386,4 mg"
+          },
+          {
+            "label": "z toho kofein",
+            "per100": "141,7 mg",
+            "perPortion": "85,0 mg"
+          },
+          {
+            "label": "Celkový kofein",
+            "per100": "283,3 mg",
+            "perPortion": "170,0 mg"
+          }
+        ]
+      },
+      "description": "Sladký, ovocný s plody rakytníku a doplněný o rozmarýn",
+      "ingredients": "Voda, vodný výluh ze směsi čajů a bylin (sencha, rooibos, jablko plod, mrkev, květ ibišku, verbena citronová, šípek...), kofein (170mg/60ml porce), guarana, vitamíny...",
+      "nutritionalFacts": "Energie: 32,0 kJ / 7,6 kcal\nTuky: <1 g\nSacharidy: 1,4 g\nCukry: 0,5 g\nBílkoviny: <1 g\nSůl: 0,1 g"
+    },
+    "lemon": {
+      "name": "LEMON BLAST",
+      "labels": [
+        "Bez cukru",
+        "Vegan",
+        "Energie",
+        "NOVINKA"
+      ],
+      "fullSpecs": {
+        "vitamins": [
+          {
+            "rhp": "130 % RHP*",
+            "label": "Vitamin B1",
+            "per100": "2,4 mg",
+            "perPortion": "1,4 mg"
+          },
+          {
+            "rhp": "91,2 % RHP*",
+            "label": "Vitamin B2",
+            "per100": "2,1 mg",
+            "perPortion": "1,3 mg"
+          },
+          {
+            "rhp": "29,5 % RHP*",
+            "label": "Vitamin B3",
+            "per100": "7,9 mg NE",
+            "perPortion": "4,7 mg"
+          },
+          {
+            "rhp": "35,7 % RHP*",
+            "label": "Vitamin B5",
+            "per100": "3,6 mg",
+            "perPortion": "2,1 mg"
+          },
+          {
+            "rhp": "107,4 % RHP*",
+            "label": "Vitamin B6",
+            "per100": "2,5 mg",
+            "perPortion": "1,5 mg"
+          },
+          {
+            "rhp": "33,8 % RHP*",
+            "label": "Vitamin B9",
+            "per100": "112,7 µg",
+            "perPortion": "67,6 µg"
+          },
+          {
+            "rhp": "93,5 % RHP*",
+            "label": "Vitamin B12",
+            "per100": "3,9 µg",
+            "perPortion": "2,3 µg"
+          },
+          {
+            "rhp": "375 % RHP*",
+            "label": "Vitamin C",
+            "per100": "500,0 mg",
+            "perPortion": "300,0 mg"
+          },
+          {
+            "rhp": "8,6 % RHP*",
+            "label": "Hořčík",
+            "per100": "50,0 mg",
+            "perPortion": "30,0 mg"
+          },
+          {
+            "rhp": "1,6 % RHP*",
+            "label": "Draslík",
+            "per100": "53,3 mg",
+            "perPortion": "32,0 mg"
+          }
+        ],
+        "basicInfo": [
+          {
+            "label": "Produkt",
+            "value": "LEMON BLAST"
+          },
+          {
+            "label": "Popis",
+            "value": "tekutý vitamínový doplněk stravy s povzbuzujícím účinkem obohacený o minerální látky se sladidly"
+          },
+          {
+            "label": "Složení (přesně z etikety)",
+            "value": "Voda, vodný výluh ze směsi čajů a bylin (sencha, yerba maté, černý čaj, pomeranč, aroma), sladidlá: erythritol, taurin, sladidlo: xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a tymiánu, kyselina jablečná, kyselina citronová, citronan draselný, konzervant: sorban draselný, koenzym Q10, kofein, sůl, steviol-glykosidy, vitamíny B1, B2, B3, B5, B6, B9, B12."
+          },
+          {
+            "label": "Alergeny / přesný text",
+            "value": "Neobsahuje alergeny."
+          },
+          {
+            "label": "Doporučené dávkování",
+            "value": "Doporučené denní dávkování: až 2 porce / den. 1 porce je 60 ml."
+          },
+          {
+            "label": "Upozornění",
+            "value": "Tento doplněk stravy nenahrazuje pestrou stravu. Obsahuje vysoké množství kofeinu (283 mg/100 ml). Výrobek není vhodný pro děti, těhotné a kojící ženy, pro osoby trpící srdečními onemocněními. V případě užívání léků na předpis se poraďte se svým lékařem. Uchovávejte mimo dosah dětí. Nepřekračujte doporučenou denní dávku. Spotřebujte ihned po otevření lahve."
+          },
+          {
+            "label": "Skladování",
+            "value": "Skladujte na tmavém místě do 21 °C."
+          },
+          {
+            "label": "Vyrobeno",
+            "value": "Vyrobeno v České republice."
+          },
+          {
+            "label": "Distributor",
+            "value": "Distributor: BoostUp Supplements s.r.o., Chaloupkova 3002/1A 612 00 Brno."
+          },
+          {
+            "label": "Minimální trvanlivost / číslo šarže",
+            "value": "Minimální trvanlivost do, číslo šarže:"
+          }
+        ],
+        "nutrition": [
+          {
+            "rhp": "<1 % RHP*",
+            "label": "Energetická hodnota",
+            "per100": "32,0 kJ / 7,6 kcal",
+            "perPortion": "19,3 kJ / 4,6 kcal"
+          },
+          {
+            "rhp": "",
+            "label": "Tuky",
+            "per100": "<1 g",
+            "perPortion": "<1 g"
+          },
+          {
+            "rhp": "",
+            "label": "z toho nasycené mastné kyseliny",
+            "per100": "0,0 g",
+            "perPortion": "0,0 g"
+          },
+          {
+            "rhp": "",
+            "label": "Sacharidy",
+            "per100": "1,4 g",
+            "perPortion": "0,9 g"
+          },
+          {
+            "rhp": "",
+            "label": "z toho cukry",
+            "per100": "0,5 g",
+            "perPortion": "0,3 g"
+          },
+          {
+            "rhp": "",
+            "label": "Bílkoviny",
+            "per100": "<1 g",
+            "perPortion": "<1 g"
+          },
+          {
+            "rhp": "",
+            "label": "Vláknina",
+            "per100": "0,0 g",
+            "perPortion": "0,0 g"
+          },
+          {
+            "rhp": "",
+            "label": "Sůl",
+            "per100": "0,1 g",
+            "perPortion": "0,0 g"
+          }
+        ],
+        "activeSubstances": [
+          {
+            "label": "Kofein bezvodý",
+            "per100": "141,7 mg",
+            "perPortion": "85,0 mg"
+          },
+          {
+            "label": "Taurin",
+            "per100": "833,3 mg",
+            "perPortion": "500,0 mg"
+          },
+          {
+            "label": "Koenzym Q10",
+            "per100": "66,7 mg",
+            "perPortion": "40,0 mg"
+          },
+          {
+            "label": "Guarana",
+            "per100": "644,0 mg",
+            "perPortion": "386,4 mg"
+          },
+          {
+            "label": "z toho kofein",
+            "per100": "141,7 mg",
+            "perPortion": "85,0 mg"
+          },
+          {
+            "label": "Celkový kofein",
+            "per100": "283,3 mg",
+            "perPortion": "170,0 mg"
+          }
+        ]
+      },
+      "description": "Kyselá svěžest s jemnými tóny citrusů a tymiánu",
+      "ingredients": "Voda, vodný výluh ze směsi čajů a bylin (sencha, yerba maté, černý čaj, pomeranč, aroma), sladidlá: erythritol, taurin, xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a tymiánu...",
+      "nutritionalFacts": "Energie: 32 kcal / 7.6 kcal\nTuky: <1 g\nSacharidy: 1.4 g\nCukry: 0.5 g\nBílkoviny: <1 g\nSůl: 0.1 g"
+    },
+    "silky": {
+      "name": "SILKY LEAF",
+      "labels": [
+        "Antioxidanty",
+        "Klidná síla",
+        "Soustředění"
+      ],
+      "fullSpecs": {
+        "vitamins": [
+          {
+            "rhp": "130 % RHP*",
+            "label": "Vitamin B1",
+            "per100": "2,4 mg",
+            "perPortion": "1,4 mg"
+          },
+          {
+            "rhp": "91,2 % RHP*",
+            "label": "Vitamin B2",
+            "per100": "2,1 mg",
+            "perPortion": "1,3 mg"
+          },
+          {
+            "rhp": "29,5 % RHP*",
+            "label": "Vitamin B3",
+            "per100": "7,9 mg NE",
+            "perPortion": "4,7 mg"
+          },
+          {
+            "rhp": "35,7 % RHP*",
+            "label": "Vitamin B5",
+            "per100": "3,6 mg",
+            "perPortion": "2,1 mg"
+          },
+          {
+            "rhp": "107,4 % RHP*",
+            "label": "Vitamin B6",
+            "per100": "2,5 mg",
+            "perPortion": "1,5 mg"
+          },
+          {
+            "rhp": "33,8 % RHP*",
+            "label": "Vitamin B9",
+            "per100": "112,7 µg",
+            "perPortion": "67,6 µg"
+          },
+          {
+            "rhp": "93,5 % RHP*",
+            "label": "Vitamin B12",
+            "per100": "3,9 µg",
+            "perPortion": "2,3 µg"
+          },
+          {
+            "rhp": "375 % RHP*",
+            "label": "Vitamin C",
+            "per100": "500,0 mg",
+            "perPortion": "300,0 mg"
+          },
+          {
+            "rhp": "8,6 % RHP*",
+            "label": "Hořčík",
+            "per100": "50,0 mg",
+            "perPortion": "30,0 mg"
+          },
+          {
+            "rhp": "1,6 % RHP*",
+            "label": "Draslík",
+            "per100": "53,3 mg",
+            "perPortion": "32,0 mg"
+          }
+        ],
+        "basicInfo": [
+          {
+            "label": "Produkt",
+            "value": "SILKY LEAF"
+          },
+          {
+            "label": "Popis",
+            "value": "tekutý vitamínový doplněk stravy s povzbuzujícím účinkem obohacený o minerální látky se sladidly"
+          },
+          {
+            "label": "Složení (přesně z etikety)",
+            "value": "Voda, vodný výluh ze směsi čajů (sencha, oolong), sladidlá: erythritol, taurin, sladidlo: xylitol, vitamín C, guarana, bisglycinát hořečnatý, výluhy z: kořene ashwagandhy, kořene rozchodnice růžové a bazalky, kyselina jablečná, kyselina citronová, citronan draselný, konzervant: sorban draselný, koenzym Q10, kofein, sůl, steviol-glykosidy, vitamíny B1, B2, B3, B5, B6, B9, B12."
+          },
+          {
+            "label": "Alergeny / přesný text",
+            "value": "Neobsahuje alergeny."
+          },
+          {
+            "label": "Doporučené dávkování",
+            "value": "Doporučené denní dávkování: až 2 porce / den. 1 porce je 60 ml."
+          },
+          {
+            "label": "Upozornění",
+            "value": "Tento doplněk stravy nenahrazuje pestrou stravu. Obsahuje vysoké množství kofeinu (283 mg/100 ml). Výrobek není vhodný pro děti, těhotné a kojící ženy, pro osoby trpící srdečními onemocněními. V případě užívání léků na předpis se poraďte se svým lékařem. Uchovávejte mimo dosah dětí. Nepřekračujte doporučenou denní dávku. Spotřebujte ihned po otevření lahve."
+          },
+          {
+            "label": "Skladování",
+            "value": "Skladujte na tmavém místě do 21 °C."
+          },
+          {
+            "label": "Vyrobeno",
+            "value": "Vyrobeno v České republice."
+          },
+          {
+            "label": "Distributor",
+            "value": "Distributor: BoostUp Supplements s.r.o., Chaloupkova 3002/1A 612 00 Brno."
+          },
+          {
+            "label": "Minimální trvanlivost / číslo šarže",
+            "value": "Minimální trvanlivost do, číslo šarže:"
+          }
+        ],
+        "nutrition": [
+          {
+            "rhp": "",
+            "label": "Sacharidy",
+            "per100": "1,4 g",
+            "perPortion": "0,9 g"
+          },
+          {
+            "rhp": "",
+            "label": "z toho cukry",
+            "per100": "0,5 g",
+            "perPortion": "0,53 g"
+          },
+          {
+            "rhp": "",
+            "label": "Bílkoviny",
+            "per100": "<1 g",
+            "perPortion": "<1 g"
+          },
+          {
+            "rhp": "",
+            "label": "Vláknina",
+            "per100": "0,0 g",
+            "perPortion": "0,0 g"
+          },
+          {
+            "rhp": "",
+            "label": "Sůl",
+            "per100": "0,1 g",
+            "perPortion": "0,0 g"
+          }
+        ],
+        "activeSubstances": [
+          {
+            "label": "Kofein bezvodý",
+            "per100": "141,7 mg",
+            "perPortion": "85,0 mg"
+          },
+          {
+            "label": "Taurin",
+            "per100": "833,3 mg",
+            "perPortion": "500,0 mg"
+          },
+          {
+            "label": "Koenzym Q10",
+            "per100": "66,7 mg",
+            "perPortion": "40,0 mg"
+          },
+          {
+            "label": "Guarana",
+            "per100": "644,0 mg",
+            "perPortion": "386,4 mg"
+          },
+          {
+            "label": "z toho kofein",
+            "per100": "141,7 mg",
+            "perPortion": "85,0 mg"
+          },
+          {
+            "label": "Celkový kofein",
+            "per100": "283,3 mg",
+            "perPortion": "170,0 mg"
+          }
+        ]
+      },
+      "description": "Mléčný, jemný, zelený čaj s tóny bazalky",
+      "ingredients": "Voda, vodný výluh ze směsi čajů (sencha, oolong), sladidlá: erythritol, taurin, xylitol, vitamín C, guarana, bisglycinát hořečnatý...",
+      "nutritionalFacts": "Energie: 32,0 kJ / 7,6 kcal\nTuky: <1 g\nSacharidy: 1,4 g\nCukry: 0,5 g\nBílkoviny: <1 g\nSůl: 0,1 g"
+    }
+  },
+  "mission": {
+    "badge": "O NÁS",
+    "features": [
+      {
+        "stat": "2.5x",
+        "color": "bg-lime",
+        "title": "Čistá energie",
+        "description": "Síla 2,5 espressa v jednom shotu"
+      },
+      {
+        "stat": "6h+",
+        "color": "bg-terracotta",
+        "title": "Dlouhotrvající",
+        "description": "Dlouhotrvající soustředění bez crash efektu"
+      },
+      {
+        "stat": "100%",
+        "color": "bg-olive",
+        "title": "Přírodní složení",
+        "description": "Čajový extrakt, adaptogeny a vitamíny"
+      },
+      {
+        "stat": "0%",
+        "color": "bg-orange",
+        "title": "Bez kompromisů",
+        "description": "Žádná umělá sladidla ani konzervanty"
+      }
+    ],
+    "headline": {
+      "part1": "NAŠE",
+      "highlight": "MISE"
+    },
+    "paragraphs": [
+      "Znáte ten pocit. Další seminárka. Další úkol v práci. Další kafe. Jenom se mi roztřásly ruce. Pak jsem si uvědomil, že nejde o víc kofeinu, ale o jeho průběh v čase. Začal jsem kombinovat stimulanty, adaptogeny a vitamíny. Mým cílem byl stabilní výkon pod tlakem. A tak vznikl BoostUp. Každý profesionál by ho měl zkusit a poznat ten rozdíl.",
+      "Vojta, CEO",
+      ""
+    ]
+  },
+  "pricing": {
+    "pack3": 229,
+    "pack12": 849,
+    "pack21": 1399
+  },
+  "bankInfo": {
+    "iban": "CZ4755000000006654376004",
+    "bankCode": "5500",
+    "bankName": "Raiffeisenbank",
+    "currency": "CZK",
+    "qrMessage": "Objednávka",
+    "accountName": "BOOSTUP SUPPLEMENTS S.R.O.",
+    "accountNumber": "6654376004"
+  },
+  "concept3b": {
+    "cta": "Objevit sílu 3B",
+    "badge": "NÁŠ PŘÍSTUP",
+    "concepts": [
+      {
+        "id": "brain",
+        "stats": "Focus +85%",
+        "title": "BRAIN",
+        "subtitle": "Kognitivní fokus",
+        "description": "Maximální mentální výkon a soustředění po celý pracovní den",
+        "fullDescription": "\n          BRAIN představuje první pilíř našeho konceptu 3B zaměřený na optimalizaci kognitivních funkcí.\n          \n          **Co obsahuje:**\n          • L-Theanin pro klidnou koncentraci bez nervozity\n          • Guarana s postupným uvolňováním energie\n          • B-vitamíny pro zdravou funkci nervové soustavy\n          \n          **Přínosy:**\n          • Zvýšená mentální ostrost a jasnost myšlení\n          • Lepší schopnost soustředění na náročné úkoly\n          • Podpora paměti a rychlosti zpracování informací\n          • Žádný \"brain fog\" ani únava po odeznění účinku\n          \n          Ideální pro studenty, profesionály a každého, kdo potřebuje maximální mentální výkon.\n        "
+      },
+      {
+        "id": "body",
+        "stats": "Energy +6h",
+        "title": "BODY",
+        "subtitle": "Fyzická energie",
+        "description": "Trvalá fyzická energie bez nervozity a crash efektu",
+        "fullDescription": "\n          BODY je druhým pilířem zaměřeným na udržitelnou fyzickou energii po celý den.\n          \n          **Co obsahuje:**\n          • Přírodní kofein v optimální dávce\n          • Taurin pro podporu svalové výkonnosti\n          • Elektrolyty pro správnou hydrataci\n          \n          **Přínosy:**\n          • Stabilní energie po dobu 6+ hodin\n          • Žádný prudký nástup ani následný \"crash\"\n          • Podpora fyzické výkonnosti a vytrvalosti\n          • Rychlejší regenerace po námaze\n          \n          Perfektní pro sportovce, aktivní lidi i ty, kdo potřebují energii na dlouhé pracovní dny.\n        "
+      },
+      {
+        "id": "balance",
+        "stats": "Stability 100%",
+        "title": "BALANCE",
+        "subtitle": "Harmonie",
+        "description": "Vyvážené složení pro optimální fungování těla i mysli",
+        "fullDescription": "\n          BALANCE je třetím pilířem, který spojuje BRAIN a BODY do harmonického celku.\n          \n          **Co obsahuje:**\n          • Adaptogeny pro odolnost vůči stresu\n          • Antioxidanty pro ochranu buněk\n          • Přírodní ingredience bez umělých přísad\n          \n          **Přínosy:**\n          • Synergie mezi mentální a fyzickou složkou\n          • Podpora přirozené rovnováhy organismu\n          • Snížení negativních účinků stresu\n          • Dlouhodobá podpora zdraví a vitality\n          \n          Klíč k udržitelnému životnímu stylu bez extrémů a kompromisů.\n        "
+      }
+    ],
+    "headline": "KONCEPT 3B",
+    "description": "Na český trh přinášíme unikátní přístup k energii. Tři pilíře, které na trhu chybí."
+  },
+  "navigation": [
+    {
+      "href": "/#mise",
+      "label": "Naše mise"
+    },
+    {
+      "href": "/#produkty",
+      "label": "Produkty"
+    },
+    {
+      "href": "/#3b",
+      "label": "3B Koncept"
+    },
+    {
+      "href": "/blog",
+      "label": "Blog"
+    },
+    {
+      "href": "/#kontakt",
+      "label": "Kontakt"
+    }
+  ],
+  "textStyles": {
+    "hero.headline.part1": {
+      "fontFamily": "Bebas Neue"
+    },
+    "hero.headline.gradient": {
+      "fontFamily": "Bebas Neue"
+    }
+  },
+  "typography": {
+    "bodyFont": "Poppins",
+    "bodyWeight": "400",
+    "headingFont": "Poppins",
+    "baseFontSize": "16",
+    "headingWeight": "800",
+    "bodyLineHeight": "1.6",
+    "bodyLetterSpacing": "0em",
+    "headingLineHeight": "1.1",
+    "headingLetterSpacing": "0.05em"
+  },
+  "badgeVisible": {},
+  "isSalesEnabled": true,
+  "ingredientDetails": {
+    "vitamins": {
+      "title": "Vitamíny",
+      "benefits": [
+        "Podpora energetického metabolismu",
+        "Snížení míry únavy a vyčerpání",
+        "Ochrana DNA a buněk"
+      ],
+      "subtitle": "Palivo pro váš metabolismus",
+      "description": "Komplex vitamínů skupiny B a C, které jsou klíčové pro transformaci potravy na energii a ochranu před oxidativním stresem.",
+      "ingredients": [
+        "Vitamín B6",
+        "Vitamín B12",
+        "Vitamín C"
+      ]
+    },
+    "adaptogens": {
+      "title": "Adaptogeny",
+      "benefits": [
+        "Snížení hladiny kortizolu",
+        "Podpora imunitního systému",
+        "Zlepšení nálady a regenerace"
+      ],
+      "subtitle": "Odolnost vůči stresu",
+      "description": "Byliny a houby, které pomáhají organismu adaptovat se na fyzický a psychický stres a udržovat vnitřní rovnováhu.",
+      "ingredients": [
+        "Ashwagandha",
+        "Rhodiola Rosea",
+        "Meduňka"
+      ]
+    },
+    "stimulants": {
+      "title": "Přírodní stimulanty",
+      "benefits": [
+        "Zvýšení bdělosti a pozornosti",
+        "Podpora mentálního výkonu",
+        "Postupné uvolňování bez nervozity"
+      ],
+      "subtitle": "Čistá energie z přírody",
+      "description": "Využíváme sílu ověřených přírodních látek, které dodávají energii postupně, bez prudkých výkyvů a následné vyčerpanosti.",
+      "ingredients": [
+        "Přírodní kofein",
+        "Guarana",
+        "L-Theanin"
+      ]
+    },
+    "electrolytes": {
+      "title": "Elektrolyty",
+      "benefits": [
+        "Prevence svalových křečí",
+        "Lepší přenos nervových vzruchů",
+        "Udržení energie v buňkách"
+      ],
+      "subtitle": "Optimální hydratace buněk",
+      "description": "Zásadní minerály pro správnou funkci svalů, nervové soustavy a udržení hloubkové hydratace během celého dne.",
+      "ingredients": [
+        "Hořčík",
+        "Draslík",
+        "Sodík",
+        "Vápník"
+      ]
+    }
+  }
+}

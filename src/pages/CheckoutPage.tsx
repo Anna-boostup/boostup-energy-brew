@@ -8,7 +8,7 @@ import { useInventory, Order } from '@/context/InventoryContext';
 import {
   ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
   Loader2, Package, FileText, ChevronLeft, MapPin,
-  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle
+  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle, X
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -559,16 +559,32 @@ const CheckoutPage = () => {
   return (
     <main className="min-h-screen bg-secondary/30 py-6 sm:py-12">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mb-12">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-primary hover:text-primary transition-colors font-bold mb-6 group"
-          >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
-              <ArrowLeft size={16} />
-            </div>
-            <span className="uppercase tracking-widest text-[10px] font-black">{content.checkout.backToCart}</span>
-          </button>
+        <div className="mb-12 flex flex-wrap items-center justify-between gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-8">
+            <button
+              onClick={() => navigate('/', { replace: true, state: { openCart: true } })}
+              className="flex items-center gap-2 text-primary hover:text-primary transition-colors font-bold group"
+            >
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
+                <ArrowLeft size={16} />
+              </div>
+              <span className="uppercase tracking-widest text-[10px] font-black">{content.checkout.backToCart}</span>
+            </button>
+
+            <div className="w-px h-4 bg-border hidden sm:block" />
+
+            <button
+              onClick={() => {
+                clearCart();
+                navigate('/', { replace: true });
+              }}
+              className="flex items-center gap-2 text-destructive hover:scale-105 transition-all font-bold group"
+            >
+              <X size={14} className="text-destructive" />
+              <span className="uppercase tracking-widest text-[10px] font-black">{content.checkout.cancelOrder}</span>
+            </button>
+          </div>
+        </div>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
@@ -593,7 +609,6 @@ const CheckoutPage = () => {
                 <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">{content.checkout.steps.stepCount}</div>
                 <div className="text-xs font-black uppercase tracking-tight">{content.checkout.steps.confirmation}</div>
               </div>
-            </div>
           </div>
         </div>
 
@@ -1092,7 +1107,6 @@ const CheckoutPage = () => {
               </p>
             </div>
           </div>
-        </div>
 
       <StripePaymentModal
         clientSecret={clientSecret || ""}
@@ -1104,6 +1118,7 @@ const CheckoutPage = () => {
         orderNumber={pendingOrder?.id || ""}
         amount={pendingOrder?.total || 0}
       />
+      </div>
     </main>
   );
 };

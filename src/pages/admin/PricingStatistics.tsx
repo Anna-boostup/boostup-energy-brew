@@ -16,8 +16,8 @@ import { format, parseISO, subDays } from 'date-fns';
 import { cs } from 'date-fns/locale';
 
 const PricingStatistics = () => {
-    const { orders } = useInventory();
-    const { content, refreshContent } = useContent();
+    const { orders, loading: inventoryLoading } = useInventory();
+    const { content, loading: contentLoading, refreshContent } = useContent();
     const { toast } = useToast();
     const [isSaving, setIsSaving] = useState(false);
 
@@ -152,6 +152,17 @@ const PricingStatistics = () => {
 
         return Array.from(dataMap.values());
     }, [orders, content]);
+
+    const isLoading = inventoryLoading || contentLoading;
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám statistiky..."}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 sm:space-y-12 pb-32 animate-in fade-in duration-1000">

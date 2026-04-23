@@ -21,7 +21,7 @@ const ManufactureInventory = () => {
 
     if (loading) return <div className="p-8 flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-lime/20 border-t-lime rounded-full animate-spin" />
+            <div data-testid="admin-loader" className="w-12 h-12 border-4 border-lime/20 border-t-lime rounded-full animate-spin" />
             <p className="text-olive-dark font-black uppercase text-xs tracking-widest">{content?.admin?.inventory?.manufacture?.loading || "Loading..."}</p>
         </div>
     </div>;

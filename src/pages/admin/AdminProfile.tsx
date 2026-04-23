@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint, MapPin, CreditCard, Phone } from "lucide-react";
+import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint, MapPin, CreditCard, Phone, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountOrders from "@/pages/account/Orders";
 import Subscriptions from "@/pages/account/Subscriptions";
@@ -16,9 +16,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
 const AdminProfile = () => {
-    const { user, profile } = useAuth();
-    const { content } = useContent();
+    const { user, profile, loading: authLoading } = useAuth();
+    const { content, loading: contentLoading } = useContent();
     const { toast } = useToast();
+
+    if (authLoading || contentLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám profil..."}</p>
+            </div>
+        );
+    }
 
     // Profile info state
     const [fullName, setFullName] = useState(profile?.full_name || "");

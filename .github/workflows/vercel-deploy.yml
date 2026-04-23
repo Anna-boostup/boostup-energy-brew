@@ -21,10 +21,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # 1. TEST & PROMOTE (Development -> Preview)
-  Test-and-Promote:
-    name: "🧪 Test & Promote"
+  # 1. DEPLOY TO TEST (test.drinkboostup.cz)
+  Deploy-to-Test:
+    name: "🧪 Deploy to Test"
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.49.1-noble
     if: github.ref == 'refs/heads/development'
     steps:
       - name: Checkout Repository
@@ -54,19 +55,21 @@ jobs:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           
-      - name: Deploy to Preview
+      - name: Deploy to Test
         id: deploy
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
-          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
-          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          vercel alias set $DEPLOYMENT_URL test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
+          echo "DEPLOYMENT_URL=https://test.drinkboostup.cz" >> $GITHUB_ENV
+          echo "url=https://test.drinkboostup.cz" >> $GITHUB_OUTPUT
 
       - name: Wait for 200 OK
         run: |
           timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
           
-      - name: Install Playwright Browsers & Deps
-        run: npx playwright install --with-deps chromium webkit
+      # Browsers are pre-installed in the container, but we ensure chromium for our tests
+      - name: Ensure Browsers
+        run: npx playwright install chromium
 
       - name: Run E2E Tests
         run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
@@ -75,31 +78,27 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
 
-      - name: Promote to Preview Branch
+      - name: Notify on Success (Slack)
         if: success()
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git restore .
-          git checkout preview
-          git merge development --no-ff -m "chore: auto-promote to preview"
-          git push origin preview
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"✅ *TEST DEPLOYED SUCCESSFULLY!*\nUrl: https://test.drinkboostup.cz\nTests passed. Ready for promote to preview.\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Notify on Failure (Slack)
         if: failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *CI/CD PIPELINE FAILED!* (Test & Promote)\nBranch: ${{ github.ref }}\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *CI/CD PIPELINE FAILED!* (Deploy to Test)\nBranch: ${{ github.ref }}\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
   # 2. DEPLOY PREVIEW (preview.drinkboostup.cz)
   Deploy-Preview:
     name: "🌐 Deploy Preview"
     runs-on: ubuntu-latest
-    needs: [Test-and-Promote]
-    if: |
-      always() && 
-      (github.ref == 'refs/heads/preview' || 
-       (github.ref == 'refs/heads/development' && needs.Test-and-Promote.result == 'success'))
+    container: mcr.microsoft.com/playwright:v1.49.1-noble
+    if: github.ref == 'refs/heads/preview'
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js 22
@@ -121,6 +120,31 @@ jobs:
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
           vercel alias set $DEPLOYMENT_URL preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
+
+      - name: Wait for 200 OK
+        run: |
+          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "https://preview.drinkboostup.cz" | grep "200" > /dev/null; do sleep 5; done'
+          
+      # Browsers are pre-installed in the container
+      - name: Ensure Browsers
+        run: npx playwright install chromium
+
+      - name: Run E2E Tests
+        run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: https://preview.drinkboostup.cz
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+          TEST_BASIC_EMAIL: ${{ secrets.TEST_BASIC_EMAIL }}
+          TEST_BASIC_PASSWORD: ${{ secrets.TEST_BASIC_PASSWORD }}
+          TEST_COMPANY_EMAIL: ${{ secrets.TEST_COMPANY_EMAIL }}
+          TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
+
+      - name: Notify on Success (Slack)
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"✅ *PREVIEW DEPLOYED & TESTED SUCCESSFULLY!*\nUrl: https://preview.drinkboostup.cz\nAll E2E tests passed.\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Notify on Failure (Slack)
         if: failure()
