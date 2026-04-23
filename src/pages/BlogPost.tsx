@@ -22,6 +22,8 @@ interface Post {
   published_at: string;
   status: string;
   template: "modern" | "centered" | "minimal";
+  author_name: string | null;
+  author_role: string | null;
 }
 
 const BlogPost = () => {
@@ -109,7 +111,15 @@ const BlogPost = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   className="rounded-[3.5rem] overflow-hidden shadow-2xl aspect-[21/9]"
                 >
-                  <img src={post.featured_image_url} alt={post.title} className="w-full h-full object-cover" />
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title} 
+                    className={`w-full h-full object-cover ${
+                      post.featured_image_position === 'top' ? 'object-top' : 
+                      post.featured_image_position === 'bottom' ? 'object-bottom' : 
+                      'object-center'
+                    }`} 
+                  />
                 </motion.div>
               </div>
             )}
@@ -151,6 +161,26 @@ const BlogPost = () => {
               </motion.div>
             </div>
 
+            {post.featured_image_url && (
+              <div className="max-w-3xl mx-auto mb-16">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-3xl overflow-hidden shadow-lg aspect-video"
+                >
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title} 
+                    className={`w-full h-full object-cover ${
+                      post.featured_image_position === 'top' ? 'object-top' : 
+                      post.featured_image_position === 'bottom' ? 'object-bottom' : 
+                      'object-center'
+                    }`} 
+                  />
+                </motion.div>
+              </div>
+            )}
+
             <div className="max-w-3xl mx-auto">
               <motion.div 
                 initial={{ opacity: 0 }}
@@ -170,7 +200,15 @@ const BlogPost = () => {
             <div className="relative h-[60vh] min-h-[500px] w-full mb-16 px-4 md:px-8">
               <div className="container mx-auto h-full p-0 flex flex-col gap-8 rounded-[3.5rem] overflow-hidden relative shadow-2xl">
                 {post.featured_image_url ? (
-                  <img src={post.featured_image_url} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title} 
+                    className={`absolute inset-0 w-full h-full object-cover ${
+                      post.featured_image_position === 'top' ? 'object-top' : 
+                      post.featured_image_position === 'bottom' ? 'object-bottom' : 
+                      'object-center'
+                    }`} 
+                  />
                 ) : (
                   <div className="absolute inset-0 bg-olive-dark"></div>
                 )}
@@ -229,10 +267,12 @@ const BlogPost = () => {
         <div className="container mx-auto px-4 pb-20">
           <div className="max-w-3xl mx-auto border-t border-olive-dark/10 pt-10 flex flex-col md:flex-row items-center justify-between gap-6">
              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-olive-dark flex items-center justify-center text-lime font-display font-black">BU</div>
+                <div className="w-12 h-12 rounded-full bg-olive-dark flex items-center justify-center text-lime font-display font-black">
+                  {(post.author_name || "BU").substring(0, 2).toUpperCase()}
+                </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-olive-dark">Redakce BoostUp</p>
-                  <p className="text-[10px] font-bold text-olive-dark/40 uppercase tracking-widest">Kvalita & Energie</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-olive-dark">{post.author_name || "Redakce BoostUp"}</p>
+                  <p className="text-[10px] font-bold text-olive-dark/40 uppercase tracking-widest">{post.author_role || "Kvalita & Energie"}</p>
                 </div>
              </div>
              <div className="flex items-center gap-3">

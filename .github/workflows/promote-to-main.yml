@@ -1,4 +1,4 @@
-name: Promote to Production (Main)
+name: "🚀 Promote to Production (Main)"
 
 on:
   workflow_dispatch:
