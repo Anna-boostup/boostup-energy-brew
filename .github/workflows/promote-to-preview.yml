@@ -1,4 +1,4 @@
-name: Promote to Preview (Staging)
+name: "🔄 Promote to Preview (Staging)"
 
 on:
   workflow_dispatch:

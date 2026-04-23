@@ -1,4 +1,4 @@
-name: "🧪 BoostUp Test Pipeline"
+name: "🌐 BoostUp Preview Pipeline"
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -8,7 +8,7 @@ env:
 on:
   push:
     branches:
-      - development
+      - preview
   workflow_dispatch:
 
 permissions:
@@ -19,31 +19,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # 1. DEPLOY TO TEST (test.drinkboostup.cz)
-  Deploy-to-Test:
-    name: "🧪 Deploy to Test"
+  Deploy-Preview:
+    name: "🌐 Deploy Preview"
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.49.1-noble
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
+      - uses: actions/checkout@v4
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-          
-      - name: Install Dependencies
-        run: |
-          npm ci
-          npm install --global vercel@latest
-        
-      - name: Pull Vercel Env
-        run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
-        
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
         env:
@@ -51,27 +40,22 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          
-      - name: Deploy to Test
-        id: deploy
+      - name: Deploy & Alias
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
-          vercel alias set $DEPLOYMENT_URL test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
-          echo "DEPLOYMENT_URL=https://test.drinkboostup.cz" >> $GITHUB_ENV
-          echo "url=https://test.drinkboostup.cz" >> $GITHUB_OUTPUT
+          vercel alias set $DEPLOYMENT_URL preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
 
       - name: Wait for 200 OK
         run: |
-          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
+          timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "https://preview.drinkboostup.cz" | grep "200" > /dev/null; do sleep 5; done'
           
-      # Browsers are pre-installed in the container, but we ensure chromium for our tests
       - name: Ensure Browsers
         run: npx playwright install chromium
 
       - name: Run E2E Tests
         run: npx playwright test tests/smoke.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
+          PLAYWRIGHT_TEST_BASE_URL: https://preview.drinkboostup.cz
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
           TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
@@ -83,10 +67,28 @@ jobs:
       - name: Notify on Success (Slack)
         if: success()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"✅ *TEST DEPLOYED SUCCESSFULLY!*\nUrl: https://test.drinkboostup.cz\nTests passed. Ready for promote to preview.\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"✅ *PREVIEW DEPLOYED & TESTED SUCCESSFULLY!*\nUrl: https://preview.drinkboostup.cz\nAll E2E tests passed.\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Notify on Failure (Slack)
         if: failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *CI/CD PIPELINE FAILED!* (Deploy to Test)\nBranch: ${{ github.ref }}\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *PREVIEW DEPLOY FAILED!*\nUrl: https://preview.drinkboostup.cz\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  Performance-Audit:
+    name: "📊 Performance Audit (Preview)"
+    runs-on: ubuntu-latest
+    needs: [Deploy-Preview]
+    if: success()
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit Preview URL
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://preview.drinkboostup.cz/
+          configPath: .github/lighthouse/lighthouserc.cjs
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          budgetPath: ./lighthouse-budget.json
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
