@@ -116,6 +116,7 @@ const EmailManagement = () => {
     const [sendingTest, setSendingTest] = useState(false);
     const [searchParams] = useSearchParams();
     const [useMasterFrame, setUseMasterFrame] = useState(true);
+    const [isRawMode, setIsRawMode] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('all');
 
@@ -801,7 +802,7 @@ const EmailManagement = () => {
                                 <div className="flex items-center justify-between">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 pl-1">{content?.admin?.emailManager?.editor?.content || "HTML Content"}</Label>
                                 </div>
-                                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-center justify-between mb-4">
+                                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-wrap items-center justify-between mb-4 gap-4">
                                     <div className="flex items-center gap-3">
                                         <Switch 
                                             checked={useMasterFrame} 
@@ -813,7 +814,45 @@ const EmailManagement = () => {
                                             <span className="text-[8px] text-olive-dark/50 uppercase font-black tracking-widest">Zabalit obsah do značkového layoutu BoostUp</span>
                                         </div>
                                     </div>
-                                    <Badge variant="outline" className="bg-lime/10 text-lime border-lime/20 text-[8px] font-black">ACTIVE</Badge>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setIsRawMode(!isRawMode)}
+                                            className={`h-9 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center gap-2 ${isRawMode ? 'bg-lime text-olive-dark border-lime' : 'bg-transparent text-olive-dark border-olive-dark/20'}`}
+                                        >
+                                            <Code className="w-3 h-3" />
+                                            RAW HTML
+                                        </Button>
+                                        <div className="relative">
+                                            <input 
+                                                type="file" 
+                                                accept=".html,.htm"
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = (event) => {
+                                                            if (event.target?.result) {
+                                                                setCurrentContent(event.target.result as string);
+                                                                setIsRawMode(true);
+                                                                toast.success("HTML šablona byla úspěšně nahrána.");
+                                                            }
+                                                        };
+                                                        reader.readAsText(file);
+                                                    }
+                                                }}
+                                            />
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-9 rounded-xl bg-transparent border-olive-dark/20 text-olive-dark font-black text-[9px] uppercase tracking-widest transition-all flex items-center gap-2 hover:bg-olive-dark hover:text-white pointer-events-none"
+                                            >
+                                                Nahrát HTML
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1 -mx-2 px-2">
@@ -830,12 +869,22 @@ const EmailManagement = () => {
                                         </Button>
                                     ))}
                                 </div>
-                                <RichTextEditor
-                                    ref={quillRef}
-                                    value={currentContent}
-                                    onChange={setCurrentContent}
-                                    placeholder="Zadejte obsah newsletteru..."
-                                />
+                                
+                                {isRawMode ? (
+                                    <textarea
+                                        value={currentContent}
+                                        onChange={(e) => setCurrentContent(e.target.value)}
+                                        className="w-full min-h-[400px] p-6 rounded-2xl bg-black/5 border border-olive-dark/10 font-mono text-[11px] text-olive-dark/80 focus:outline-none focus:ring-2 focus:ring-lime"
+                                        placeholder="Vložte RAW HTML kód zde..."
+                                    />
+                                ) : (
+                                    <RichTextEditor
+                                        ref={quillRef}
+                                        value={currentContent}
+                                        onChange={setCurrentContent}
+                                        placeholder="Zadejte obsah newsletteru..."
+                                    />
+                                )}
                             </div>
 
                             <div className="bg-olive-dark/5 p-4 rounded-xl space-y-4">

@@ -108,6 +108,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         trackingNumber,
         message, // For contact auto-reply
         subscription_id, // For unsubscribe link
+        content_html: reqContentHtml,
     } = req.body;
 
     if (!to) {
@@ -264,7 +265,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             break;
 
         case 'order_confirmation': {
-            subject = `✅ Potvrzení objednávky ${orderNumber} | BoostUp`;
+            subject = \`✅ Potvrzení objednávky \${orderNumber} | BoostUp\`;
             itemsHtml = items.map((i: any) => {
                 let details = '';
                 let displayName = i.name;
@@ -273,21 +274,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     const flavors = [];
                     let totalBottles = 0;
                     if (i.mixConfiguration.lemon) {
-                        flavors.push(`Lemon: ${i.mixConfiguration.lemon} ks`);
+                        flavors.push(\`Lemon: \${i.mixConfiguration.lemon} ks\`);
                         totalBottles += i.mixConfiguration.lemon;
                     }
                     if (i.mixConfiguration.red) {
-                        flavors.push(`Red: ${i.mixConfiguration.red} ks`);
+                        flavors.push(\`Red: \${i.mixConfiguration.red} ks\`);
                         totalBottles += i.mixConfiguration.red;
                     }
                     if (i.mixConfiguration.silky) {
-                        flavors.push(`Silky: ${i.mixConfiguration.silky} ks`);
+                        flavors.push(\`Silky: \${i.mixConfiguration.silky} ks\`);
                         totalBottles += i.mixConfiguration.silky;
                     }
-                    details = `<div style="font-size:12px;color:${COLORS.secondary};margin-top:4px">— ${flavors.join(', ')} (${totalBottles} ks celkem)</div>`;
-                    displayName = displayName.replace('(MIX)', `(MIX-${totalBottles})`);
+                    details = \`<div style="font-size:12px;color:\${COLORS.secondary};margin-top:4px">— \${flavors.join(', ')} (\${totalBottles} ks celkem)</div>\`;
+                    displayName = displayName.replace('(MIX)', \`(MIX-\${totalBottles})\`);
                 }
-                return `<tr><td style="padding:12px 0;border-bottom:1px solid #f3f4f6"><div style="font-weight:500">${displayName} × ${i.quantity}</div>${details}</td><td style="padding:12px 0;text-align:right;border-bottom:1px solid #f3f4f6;vertical-align:top;font-weight:600">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`;
+                return \`<tr><td style="padding:12px 0;border-bottom:1px solid #f3f4f6"><div style="font-weight:500">\${displayName} × \${i.quantity}</div>\${details}</td><td style="padding:12px 0;text-align:right;border-bottom:1px solid #f3f4f6;vertical-align:top;font-weight:600">\${(i.price * i.quantity).toFixed(0)} Kč</td></tr>\`;
             }).join('');
 
             contentHtml = `
@@ -305,7 +306,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             // Store order confirmation in the messages table
             try {
-                const messageBody = `Nová objednávka ${orderNumber}.\nZákazník: ${customerName} (${to})\nCelkem: ${total} Kč\nPoložky:\n${items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n')}`;
+                const messageBody = \`Nová objednávka \${orderNumber}.\nZákazník: \${customerName} (\${to})\nCelkem: \${total} Kč\nPoložky:\n\${items.map((i: any) => \`- \${i.name} x\${i.quantity}\`).join('\\n')}\`;
                 
                 await supabaseAdmin.from('messages').insert({
                     from_email: to,
@@ -323,10 +324,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         case 'shipping': {
-            subject = `🚚 Tvoje zásilka ${orderNumber} je na cestě! | BoostUp`;
-            heroImageUrl = `${BASE_URL}/email-shipping.png?v=3`;
+            subject = \`🚚 Tvoje zásilka \${orderNumber} je na cestě! | BoostUp\`;
+            heroImageUrl = \`\${BASE_URL}/email-shipping.png?v=3\`;
             heroCid = 'shipping';
-            const trackingUrl = `https://tracking.packeta.com/cs/?id=${trackingNumber}`;
+            const trackingUrl = \`https://tracking.packeta.com/cs/?id=\${trackingNumber}\`;
             contentHtml = `
                 <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Tvůj BoostUp je na cestě! 🚀</h2>
                 <p style="margin:0 0 24px 0;font-size:16px;color:${COLORS.secondary}">Tvůj balíček k objednávce <strong>${orderNumber}</strong> jsme právě předali Zásilkovně.</p>
@@ -393,85 +394,112 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             break;
     }
 
-    // Apply DB Template override if available
-    if (dbTemplate) {
-        const templateData = {
-            ...req.body,
-            customerName,
-            orderNumber,
-            total: total ? Number(total).toFixed(0) : '',
-            itemsHtml,
-            trackingNumber,
-            message,
-            confirmationLink: req.body.confirmationLink, // Will be replaced by code if missing
-            resetLink: req.body.resetLink,
-            magicLink: req.body.magicLink,
-            subscriberEmail: req.body.subscriberEmail,
-            unsubscribe_url: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
-            BASE_URL
-        };
+    const templateData = {
+        ...req.body,
+        customerName,
+        orderNumber,
+        total: total ? Number(total).toFixed(0) : '',
+        itemsHtml,
+        trackingNumber,
+        message,
+        confirmationLink: req.body.confirmationLink, // Will be replaced by code if missing
+        resetLink: req.body.resetLink,
+        magicLink: req.body.magicLink,
+        subscriberEmail: req.body.subscriberEmail,
+        unsubscribe_url: subscription_id ? \`\${BASE_URL}/unsubscribe?id=\${subscription_id}\` : '',
+        BASE_URL
+    };
 
-        subject = replacePlaceholders(dbTemplate.subject, templateData);
-        contentHtml = replacePlaceholders(dbTemplate.content_html, templateData);
+    // Use requested content HTML if provided (from Admin UI Test/Campaign), otherwise fallback to DB template
+    let baseContentHtml = reqContentHtml || (dbTemplate ? dbTemplate.content_html : contentHtml);
+
+    if (baseContentHtml) {
+        // If DB template exists, we also override subject
+        if (!reqContentHtml && dbTemplate) {
+            subject = replacePlaceholders(dbTemplate.subject, templateData);
+        } else if (reqContentHtml) {
+            // For campaigns, subject comes from req.body
+            subject = replacePlaceholders(req.body.subject || subject, templateData);
+        }
+        contentHtml = replacePlaceholders(baseContentHtml, templateData);
     }
 
-    const emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${subject}</title>
-        </head>
-        <body style="margin:0;padding:0;background-color:#f8f9fa;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:${COLORS.text}">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td align="center" style="padding:40px 20px">
-                        <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color:white;border-radius:32px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.03)">
-                            <!-- Header / Logo -->
-                            <tr>
-                                <td align="center" style="padding:48px 40px 24px 40px;">
-                                    <img src="cid:logo" alt="BoostUp" width="200" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
-                                </td>
-                            </tr>
-                            
-                            ${heroImageUrl ? `
-                            <tr>
-                                <td align="center" style="padding: 0 40px;">
-                                    <img src="cid:hero" alt="" width="520" border="0" style="width:520px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none;border-radius:16px;">
-                                </td>
-                            </tr>
-                            ` : ''}
+    let emailHtml = '';
 
-                            <!-- Body Content -->
-                            <tr>
-                                <td align="center" style="padding:32px 40px 48px 40px;line-height:1.6;font-size:16px;text-align:center;">
-                                    <div style="color:${COLORS.text};">
-                                        ${contentHtml}
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        
-                        <!-- Footer outside the card -->
-                        <table width="600" border="0" cellspacing="0" cellpadding="0">
-                            <tr>
-                                <td align="center" style="padding:32px 40px;font-size:13px;color:${COLORS.secondary}">
-                                    <p style="margin:0 0 8px 0;font-weight:500">BoostUp &middot; Chaloupkova 3002/1a &middot; 612 00 Brno</p>
-                                    <p style="margin:0">
-                                        <a href="${BASE_URL}" style="color:${COLORS.primary};text-decoration:none;font-weight:700">${BASE_URL.replace('https://', '')}</a>
-                                        &nbsp;&nbsp;&middot;&nbsp;&nbsp;
-                                        <a href="mailto:info@drinkboostup.cz" style="color:${COLORS.primary};text-decoration:none;font-weight:500">info@drinkboostup.cz</a>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-    `;
+    // If the content is already a full HTML document (e.g., Master Frame), send it directly
+    if (contentHtml.includes('<!DOCTYPE html>')) {
+        emailHtml = contentHtml;
+    } else {
+        // Otherwise, wrap it in the standard BoostUp layout
+        emailHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${subject}</title>
+                <style>
+                    /* Basic styles to ensure Quill Editor paragraphs render well in email clients */
+                    .email-body-content p { margin-top: 0; margin-bottom: 16px; }
+                    .email-body-content p:last-child { margin-bottom: 0; }
+                    .email-body-content ul, .email-body-content ol { margin-top: 0; margin-bottom: 16px; padding-left: 24px; }
+                    .email-body-content li { margin-bottom: 8px; }
+                    .email-body-content .ql-align-center { text-align: center; }
+                    .email-body-content .ql-align-right { text-align: right; }
+                    .email-body-content .ql-align-justify { text-align: justify; }
+                    .email-body-content img { max-width: 100%; height: auto; border-radius: 8px; }
+                </style>
+            </head>
+            <body style="margin:0;padding:0;background-color:#f8f9fa;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:${COLORS.text}">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td align="center" style="padding:40px 20px">
+                            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color:white;border-radius:32px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.03)">
+                                <!-- Header / Logo -->
+                                <tr>
+                                    <td align="center" style="padding:48px 40px 24px 40px;">
+                                        <img src="cid:logo" alt="BoostUp" width="200" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
+                                    </td>
+                                </tr>
+                                
+                                ${heroImageUrl ? `
+                                <tr>
+                                    <td align="center" style="padding: 0 40px;">
+                                        <img src="cid:hero" alt="" width="520" border="0" style="width:520px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none;border-radius:16px;">
+                                    </td>
+                                </tr>
+                                ` : ''}
+
+                                <!-- Body Content -->
+                                <tr>
+                                    <td align="left" style="padding:32px 40px 48px 40px;line-height:1.6;font-size:16px;text-align:left;">
+                                        <div class="email-body-content" style="color:${COLORS.text};text-align:left;">
+                                            ${contentHtml}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Footer outside the card -->
+                            <table width="600" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center" style="padding:32px 40px;font-size:13px;color:${COLORS.secondary}">
+                                        <p style="margin:0 0 8px 0;font-weight:500">BoostUp &middot; Chaloupkova 3002/1a &middot; 612 00 Brno</p>
+                                        <p style="margin:0">
+                                            <a href="${BASE_URL}" style="color:${COLORS.primary};text-decoration:none;font-weight:700">${BASE_URL.replace('https://', '')}</a>
+                                            &nbsp;&nbsp;&middot;&nbsp;&nbsp;
+                                            <a href="mailto:info@drinkboostup.cz" style="color:${COLORS.primary};text-decoration:none;font-weight:500">info@drinkboostup.cz</a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        `;
+    }
 
     try {
         const attachments: any[] = [
