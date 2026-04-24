@@ -256,7 +256,6 @@ const EmailManagement = () => {
                     id: sanitizedId,
                     subject: content?.admin?.emailManager?.editor?.newSubject || "New Subject",
                     content_html: content?.admin?.emailManager?.editor?.newContent || "<p>Content</p>",
-                    category: 'custom',
                     updated_at: new Date().toISOString()
                 });
 
