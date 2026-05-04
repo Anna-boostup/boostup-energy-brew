@@ -79,7 +79,7 @@ const AccountOrders = () => {
                             ) : (
                                 orders.map((order) => (
                                     <TableRow key={order.id}>
-                                        <TableCell className="font-mono">{order.id.slice(0, 8)}...</TableCell>
+                                        <TableCell className="font-mono">{order.id.slice(0, 12)}...</TableCell>
                                         <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                                         <TableCell className="font-bold">{formatPrice(order.total)}</TableCell>
                                         <TableCell>
@@ -123,7 +123,7 @@ const AccountOrders = () => {
                             <div key={order.id} className="border rounded-lg p-4 space-y-3">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <div className="font-mono text-sm text-muted-foreground">#{order.id.slice(0, 8)}</div>
+                                        <div className="font-mono text-sm text-muted-foreground">#{order.id.slice(0, 12)}</div>
                                         <div className="text-sm font-medium">{new Date(order.date).toLocaleDateString()}</div>
                                     </div>
                                     <Badge variant={

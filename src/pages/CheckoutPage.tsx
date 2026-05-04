@@ -327,7 +327,7 @@ const CheckoutPage = () => {
         }
       }
 
-      const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`;
+      const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
 
       // 2. Decrement Stock
       for (const [flavor, amount] of Object.entries(requiredStock)) {
