@@ -534,6 +534,67 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         let bccRecipient = undefined;
         if (type === 'order_confirmation') {
             bccRecipient = ADMIN_EMAIL;
+
+            // Send to Slack
+            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL || process.env.SLACK_WEBHOOK_URL;
+            if (slackWebhookUrl) {
+                try {
+                    const slackMessage = {
+                        blocks: [
+                            {
+                                type: "header",
+                                text: { type: "plain_text", text: `🚀 Nová objednávka: ${orderNumber}` }
+                            },
+                            {
+                                type: "section",
+                                fields: [
+                                    { type: "mrkdwn", text: `*Zákazník:*\n${customerName} (${to})` },
+                                    { type: "mrkdwn", text: `*Celkem:*\n${total} Kč` }
+                                ]
+                            }
+                        ]
+                    };
+                    
+                    if (items && items.length > 0) {
+                        const itemsText = items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n');
+                        (slackMessage.blocks as any).push({
+                            type: "section",
+                            text: { type: "mrkdwn", text: `*Položky:*\n${itemsText}` }
+                        });
+                    }
+
+                    fetch(slackWebhookUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(slackMessage),
+                    }).catch(err => console.error('Slack HTTP error:', err));
+                } catch (slackErr) {
+                    console.error('Failed to prepare Slack notification:', slackErr);
+                }
+            }
+
+            // Send to Pushover (iPhone / Mac Push Notifications)
+            const pushoverAppToken = process.env.PUSHOVER_APP_TOKEN;
+            const pushoverUserKey = process.env.PUSHOVER_USER_KEY;
+            
+            if (pushoverAppToken && pushoverUserKey) {
+                try {
+                    const pushoverMessage = `Zákazník: ${customerName}\nCelkem: ${total} Kč`;
+                    const formData = new URLSearchParams();
+                    formData.append('token', pushoverAppToken);
+                    formData.append('user', pushoverUserKey);
+                    formData.append('title', `🚀 Nová objednávka: ${orderNumber}`);
+                    formData.append('message', pushoverMessage);
+                    formData.append('sound', 'cashregister'); // Zvuk pokladny pro novou objednávku
+
+                    fetch('https://api.pushover.net/1/messages.json', {
+                        method: 'POST',
+                        body: formData,
+                    }).catch(err => console.error('Pushover HTTP error:', err));
+                } catch (pushErr) {
+                    console.error('Failed to prepare Pushover notification:', pushErr);
+                }
+            }
         } else if (['contact_inquiry', 'newsletter_signup'].includes(type)) {
             bccRecipient = INFO_EMAIL;
         }

@@ -514,6 +514,10 @@ const EmailManagement = () => {
                     fetchSubscribers();
                 }
             }}>
+                <TabsList className="grid w-full grid-cols-2 mb-8 bg-olive-dark/5 p-1 rounded-2xl">
+                    <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-olive-dark data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] py-3">Šablony e-mailů</TabsTrigger>
+                    <TabsTrigger value="campaigns" className="rounded-xl data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase tracking-widest text-[10px] py-3">Rozesílka (Newsletter)</TabsTrigger>
+                </TabsList>
 
             <TabsContent value="templates" className="mt-0">
 
