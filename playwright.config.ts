@@ -80,6 +80,16 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
+    // Payment E2E — runs on Preview only (IS_TEST_MODE=true bypasses real gateway)
+    {
+      name: 'payment-e2e',
+      testMatch: 'tests/payment_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      dependencies: ['setup'],
+    },
+
     // Guest / General Smoke Tests
     {
       name: 'smoke-desktop',
