@@ -90,6 +90,19 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
+    // Full Stripe E2E — goes through real Stripe hosted checkout page
+    // Requires: STRIPE_FULL_E2E=true, IS_TEST_MODE=false, STRIPE_SECRET_KEY=sk_test_...
+    {
+      name: 'payment-stripe-e2e',
+      testMatch: 'tests/payment_stripe_full_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow navigation to stripe.com
+        bypassCSP: true,
+      },
+      dependencies: ['setup'],
+    },
+
     // Guest / General Smoke Tests
     {
       name: 'smoke-desktop',
