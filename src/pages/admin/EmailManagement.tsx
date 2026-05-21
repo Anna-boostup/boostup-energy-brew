@@ -256,6 +256,7 @@ const EmailManagement = () => {
                     id: sanitizedId,
                     subject: content?.admin?.emailManager?.editor?.newSubject || "New Subject",
                     content_html: content?.admin?.emailManager?.editor?.newContent || "<p>Content</p>",
+                    category: 'custom',
                     updated_at: new Date().toISOString()
                 });
 
@@ -288,6 +289,8 @@ const EmailManagement = () => {
                     id: selectedTypeId,
                     subject: currentSubject,
                     content_html: currentContent,
+                    trigger: currentTrigger || null,
+                    description: currentDescription || null,
                     updated_at: new Date().toISOString()
                 });
 

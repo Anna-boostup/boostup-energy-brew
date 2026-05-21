@@ -302,7 +302,11 @@ CREATE TABLE IF NOT EXISTS public.email_templates (
     id TEXT PRIMARY KEY,
     subject TEXT NOT NULL,
     content_html TEXT NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    category TEXT,
+    trigger TEXT,
+    description TEXT,
+    placeholders TEXT[]
 );
 
 ALTER TABLE public.email_templates ENABLE ROW LEVEL SECURITY;
