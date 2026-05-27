@@ -265,7 +265,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             break;
 
         case 'order_confirmation': {
-            subject = \`✅ Potvrzení objednávky \${orderNumber} | BoostUp\`;
+            subject = `✅ Potvrzení objednávky ${orderNumber} | BoostUp`;
             itemsHtml = items.map((i: any) => {
                 let details = '';
                 let displayName = i.name;
@@ -274,21 +274,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     const flavors = [];
                     let totalBottles = 0;
                     if (i.mixConfiguration.lemon) {
-                        flavors.push(\`Lemon: \${i.mixConfiguration.lemon} ks\`);
+                        flavors.push(`Lemon: ${i.mixConfiguration.lemon} ks`);
                         totalBottles += i.mixConfiguration.lemon;
                     }
                     if (i.mixConfiguration.red) {
-                        flavors.push(\`Red: \${i.mixConfiguration.red} ks\`);
+                        flavors.push(`Red: ${i.mixConfiguration.red} ks`);
                         totalBottles += i.mixConfiguration.red;
                     }
                     if (i.mixConfiguration.silky) {
-                        flavors.push(\`Silky: \${i.mixConfiguration.silky} ks\`);
+                        flavors.push(`Silky: ${i.mixConfiguration.silky} ks`);
                         totalBottles += i.mixConfiguration.silky;
                     }
-                    details = \`<div style="font-size:12px;color:\${COLORS.secondary};margin-top:4px">— \${flavors.join(', ')} (\${totalBottles} ks celkem)</div>\`;
-                    displayName = displayName.replace('(MIX)', \`(MIX-\${totalBottles})\`);
+                    details = `<div style="font-size:12px;color:${COLORS.secondary};margin-top:4px">— ${flavors.join(', ')} (${totalBottles} ks celkem)</div>`;
+                    displayName = displayName.replace('(MIX)', `(MIX-${totalBottles})`);
                 }
-                return \`<tr><td style="padding:12px 0;border-bottom:1px solid #f3f4f6"><div style="font-weight:500">\${displayName} × \${i.quantity}</div>\${details}</td><td style="padding:12px 0;text-align:right;border-bottom:1px solid #f3f4f6;vertical-align:top;font-weight:600">\${(i.price * i.quantity).toFixed(0)} Kč</td></tr>\`;
+                return `<tr><td style="padding:12px 0;border-bottom:1px solid #f3f4f6"><div style="font-weight:500">${displayName} × ${i.quantity}</div>${details}</td><td style="padding:12px 0;text-align:right;border-bottom:1px solid #f3f4f6;vertical-align:top;font-weight:600">${(i.price * i.quantity).toFixed(0)} Kč</td></tr>`;
             }).join('');
 
             contentHtml = `
@@ -306,7 +306,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             // Store order confirmation in the messages table
             try {
-                const messageBody = \`Nová objednávka \${orderNumber}.\nZákazník: \${customerName} (\${to})\nCelkem: \${total} Kč\nPoložky:\n\${items.map((i: any) => \`- \${i.name} x\${i.quantity}\`).join('\\n')}\`;
+                const messageBody = `Nová objednávka ${orderNumber}.\nZákazník: ${customerName} (${to})\nCelkem: ${total} Kč\nPoložky:\n${items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n')}`;
                 
                 await supabaseAdmin.from('messages').insert({
                     from_email: to,
@@ -324,10 +324,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         case 'shipping': {
-            subject = \`🚚 Tvoje zásilka \${orderNumber} je na cestě! | BoostUp\`;
-            heroImageUrl = \`\${BASE_URL}/email-shipping.png?v=3\`;
+            subject = `🚚 Tvoje zásilka ${orderNumber} je na cestě! | BoostUp`;
+            heroImageUrl = `${BASE_URL}/email-shipping.png?v=3`;
             heroCid = 'shipping';
-            const trackingUrl = \`https://tracking.packeta.com/cs/?id=\${trackingNumber}\`;
+            const trackingUrl = `https://tracking.packeta.com/cs/?id=${trackingNumber}`;
             contentHtml = `
                 <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Tvůj BoostUp je na cestě! 🚀</h2>
                 <p style="margin:0 0 24px 0;font-size:16px;color:${COLORS.secondary}">Tvůj balíček k objednávce <strong>${orderNumber}</strong> jsme právě předali Zásilkovně.</p>
@@ -406,7 +406,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         resetLink: req.body.resetLink,
         magicLink: req.body.magicLink,
         subscriberEmail: req.body.subscriberEmail,
-        unsubscribe_url: subscription_id ? \`\${BASE_URL}/unsubscribe?id=\${subscription_id}\` : '',
+        unsubscribe_url: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
         BASE_URL
     };
 
