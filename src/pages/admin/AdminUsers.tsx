@@ -15,7 +15,8 @@ interface Profile {
     email: string;
     full_name: string | null;
     role: string;
-    created_at: string;
+    created_at?: string;
+    updated_at?: string;
     assigned_promo_code: string | null;
 }
 
@@ -39,8 +40,7 @@ const AdminUsers = () => {
             // Fetch profiles
             const { data: profilesData, error: profilesError } = await supabase
                 .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
+                .select('*');
 
             if (profilesError) throw profilesError;
 
@@ -52,7 +52,13 @@ const AdminUsers = () => {
 
             if (codesError) throw codesError;
 
-            setProfiles(profilesData || []);
+            const sortedProfiles = [...(profilesData || [])].sort((a, b) => {
+                const dateA = new Date(a.created_at || a.updated_at || 0).getTime();
+                const dateB = new Date(b.created_at || b.updated_at || 0).getTime();
+                return dateB - dateA;
+            });
+
+            setProfiles(sortedProfiles);
             setPromoCodes(codesData || []);
         } catch (error: any) {
             console.error("Error fetching admin users data:", error);
@@ -144,53 +150,57 @@ const AdminUsers = () => {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredProfiles.map((user) => (
-                                        <TableRow key={user.id} className="hover:bg-admin-canvas transition-colors border-b border-olive/8 group">
-                                            <TableCell className="py-6 px-10">
-                                                <div className="flex flex-col">
-                                                    <span className="font-black text-olive-dark uppercase text-sm tracking-tight">{user.full_name || "Host"}</span>
-                                                    <span className="text-[10px] font-bold text-olive-dark/50">{user.email}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    {user.role === 'admin' ? (
-                                                        <Badge className="bg-olive-dark text-white border-none rounded-lg text-[8px] uppercase font-black px-2">Admin</Badge>
-                                                    ) : (
-                                                        <Badge className="bg-olive-dark/5 text-olive-dark border-none rounded-lg text-[8px] uppercase font-black px-2">User</Badge>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2 text-[10px] font-bold text-olive-dark/60 uppercase">
-                                                    <Calendar className="w-3 h-3" />
-                                                    {format(new Date(user.created_at), "d. MMMM yyyy", { locale: cs })}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="pr-10">
-                                                <div className="flex items-center gap-3">
-                                                    <Select
-                                                        disabled={updatingId === user.id}
-                                                        value={user.assigned_promo_code || "none"}
-                                                        onValueChange={(val) => handleUpdatePersonalCode(user.id, val)}
-                                                    >
-                                                        <SelectTrigger className="w-48 h-10 bg-white/50 border-olive-dark/10 text-olive-dark font-black uppercase text-[10px] rounded-xl focus:ring-lime">
-                                                            <SelectValue placeholder="Bez slevy" />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark font-bold uppercase text-[10px] rounded-xl">
-                                                            <SelectItem value="none">Bez slevy</SelectItem>
-                                                            {promoCodes.map(code => (
-                                                                <SelectItem key={code.id} value={code.code}>
-                                                                    {code.code} (-{code.discount_percent}%)
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    {updatingId === user.id && <Loader2 className="w-4 h-4 animate-spin text-olive-dark" />}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {filteredProfiles.map((user) => {
+                                        const registeredAt = user.created_at || user.updated_at;
+
+                                        return (
+                                            <TableRow key={user.id} className="hover:bg-admin-canvas transition-colors border-b border-olive/8 group">
+                                                <TableCell className="py-6 px-10">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-black text-olive-dark uppercase text-sm tracking-tight">{user.full_name || "Host"}</span>
+                                                        <span className="text-[10px] font-bold text-olive-dark/50">{user.email}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-2">
+                                                        {user.role === 'admin' ? (
+                                                            <Badge className="bg-olive-dark text-white border-none rounded-lg text-[8px] uppercase font-black px-2">Admin</Badge>
+                                                        ) : (
+                                                            <Badge className="bg-olive-dark/5 text-olive-dark border-none rounded-lg text-[8px] uppercase font-black px-2">User</Badge>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-2 text-[10px] font-bold text-olive-dark/60 uppercase">
+                                                        <Calendar className="w-3 h-3" />
+                                                        {registeredAt ? format(new Date(registeredAt), "d. MMMM yyyy", { locale: cs }) : "-"}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="pr-10">
+                                                    <div className="flex items-center gap-3">
+                                                        <Select
+                                                            disabled={updatingId === user.id}
+                                                            value={user.assigned_promo_code || "none"}
+                                                            onValueChange={(val) => handleUpdatePersonalCode(user.id, val)}
+                                                        >
+                                                            <SelectTrigger className="w-48 h-10 bg-white/50 border-olive-dark/10 text-olive-dark font-black uppercase text-[10px] rounded-xl focus:ring-lime">
+                                                                <SelectValue placeholder="Bez slevy" />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark font-bold uppercase text-[10px] rounded-xl">
+                                                                <SelectItem value="none">Bez slevy</SelectItem>
+                                                                {promoCodes.map(code => (
+                                                                    <SelectItem key={code.id} value={code.code}>
+                                                                        {code.code} (-{code.discount_percent}%)
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                        {updatingId === user.id && <Loader2 className="w-4 h-4 animate-spin text-olive-dark" />}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </div>

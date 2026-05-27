@@ -532,7 +532,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             bccRecipient = ADMIN_EMAIL;
 
             // Send to Slack
-            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL || process.env.SLACK_WEBHOOK_URL;
+            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL;
             if (slackWebhookUrl) {
                 try {
                     const slackMessage = {
@@ -567,6 +567,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 } catch (slackErr) {
                     console.error('Failed to prepare Slack notification:', slackErr);
                 }
+            } else {
+                console.warn('SLACK_ORDERS_WEBHOOK_URL is not set; skipping order Slack notification.');
             }
 
             // Send to Pushover (iPhone / Mac Push Notifications)
