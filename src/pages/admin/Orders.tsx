@@ -49,7 +49,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
             <div className="flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="font-mono font-black text-xs text-white bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 8)}</span>
+                        <span className="font-mono font-black text-xs text-white bg-olive-dark px-3 py-1.5 rounded-xl">#{order.id.slice(0, 12)}</span>
                         <Button 
                             variant="ghost" 
                             size="icon" 
@@ -227,7 +227,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 </TableCell>
                                 <TableCell className="py-3">
                                     <div className="flex items-center gap-1.5">
-                                        <span className="font-mono font-black text-[9px] text-white bg-olive-dark px-2 py-1 rounded-lg">#{order.id.slice(0, 8)}</span>
+                                        <span className="font-mono font-black text-[9px] text-white bg-olive-dark px-2 py-1 rounded-lg">#{order.id.slice(0, 12)}</span>
                                         <Button 
                                             variant="ghost" 
                                             size="icon" 
@@ -362,7 +362,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                         <div className="pt-6 space-y-4">
                                                             <div className="text-sm font-black text-olive-dark uppercase tracking-tight">{content.admin.orders.cancelDialog.question}</div>
                                                             <div className="p-5 bg-olive-dark/5 rounded-[1.5rem] border border-olive/5">
-                                                                <div className="font-mono text-xs font-black text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 8)}</div>
+                                                                <div className="font-mono text-xs font-black text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 12)}</div>
                                                                 <div className="text-xs font-black text-olive-dark uppercase tracking-tight">{order.customer.name}</div>
                                                             </div>
                                                             <p className="text-xs text-olive-dark/70 font-bold leading-relaxed px-1">

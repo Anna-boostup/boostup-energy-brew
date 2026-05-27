@@ -101,6 +101,14 @@ export const newsletterTemplateService = {
     padding: 56px 48px;
     background: var(--white);
   }
+  .content-section p { margin-bottom: 16px; }
+  .content-section p:last-child { margin-bottom: 0; }
+  .content-section ul, .content-section ol { margin-bottom: 16px; padding-left: 24px; }
+  .content-section li { margin-bottom: 8px; }
+  .content-section .ql-align-center { text-align: center; }
+  .content-section .ql-align-right { text-align: right; }
+  .content-section .ql-align-justify { text-align: justify; }
+  
   .content-section h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 44px;
