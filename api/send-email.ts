@@ -406,6 +406,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         resetLink: req.body.resetLink,
         magicLink: req.body.magicLink,
         subscriberEmail: req.body.subscriberEmail,
+        unsubscribeLink: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
         unsubscribe_url: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
         BASE_URL
     };
