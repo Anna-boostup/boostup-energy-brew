@@ -20,7 +20,7 @@ export const FLAVORS: FlavorConfig[] = [
         color: "from-lime to-lime-dark",
         bgColor: "bg-lime",
         borderColor: "border-lime",
-        textColor: "text-foreground",
+        textColor: "text-primary",
         description: "Citrusová svěžest a energie pro jasnou a soustředěnou mysl",
         ingredients: "Voda, citronová šťáva (15%), kofein (150mg/shot), L-theanin, vitamín B6, B12, stévie, přírodní aroma.",
         labels: ["Bez cukru", "Vegan", "Energie"]
@@ -49,5 +49,4 @@ export const FLAVORS: FlavorConfig[] = [
     }
 ];
 
-export const PACK_PRICES = { 3: 229, 12: 849, 21: 1399 };
 export const PACK_SIZES = [3, 12, 21] as const;

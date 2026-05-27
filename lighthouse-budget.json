@@ -1,0 +1,32 @@
+[
+    {
+      "path": "/*",
+      "timings": [
+        {
+          "metric": "interactive",
+          "budget": 3500
+        },
+        {
+          "metric": "first-contentful-paint",
+          "budget": 1500
+        }
+      ],
+      "resourceSizes": [
+        {
+          "resourceType": "script",
+          "budget": 300
+        },
+        {
+          "resourceType": "image",
+          "budget": 800
+        }
+      ],
+      "resourceCounts": [
+        {
+          "resourceType": "third-party",
+          "budget": 5
+        }
+      ]
+    }
+  ]
+ stone

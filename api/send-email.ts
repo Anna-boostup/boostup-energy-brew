@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import * as Sentry from '@sentry/node';
 import fs from 'fs';
 import path from 'path';
 
@@ -16,7 +17,52 @@ const COLORS = {
 };
 
 const ADMIN_EMAIL = 'objednavky@drinkboostup.cz';
-const BASE_URL = process.env.VITE_SITE_URL || 'https://test.drinkboostup.cz';
+const INFO_EMAIL = 'info@drinkboostup.cz';
+const BILLING_EMAIL = 'fakturace@drinkboostup.cz';
+
+// Initialize Sentry for Backend
+if (process.env.VITE_SENTRY_DSN) {
+    Sentry.init({
+        dsn: process.env.VITE_SENTRY_DSN,
+        environment: process.env.NODE_ENV || 'production',
+        tracesSampleRate: 1.0,
+    });
+}
+
+// Hardened BASE_URL detection
+const getBaseUrl = (req: VercelRequest) => {
+    // 1. Check x-forwarded-host (most reliable on Vercel)
+    const host = req.headers['x-forwarded-host'] || req.headers.host || '';
+    const origin = req.headers.origin || '';
+    const protocol = req.headers['x-forwarded-proto'] || 'https';
+
+    // 2. Explicit mapping for our environments to avoid any ambiguity
+    if (host.includes('test.drinkboostup.cz') || origin.includes('test.drinkboostup.cz')) {
+        return 'https://test.drinkboostup.cz';
+    }
+    if ((host.includes('drinkboostup.cz') && !host.includes('test.')) || 
+        (origin.includes('drinkboostup.cz') && !origin.includes('test.'))) {
+        return 'https://drinkboostup.cz';
+    }
+
+    // 3. Detected host from headers (if not our main domains)
+    if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
+        return `${protocol}://${host}`.replace(/\/$/, "");
+    }
+
+    // 4. Explicit site URL from environment
+    if (process.env.VITE_SITE_URL && !process.env.VITE_SITE_URL.includes('localhost')) {
+        return process.env.VITE_SITE_URL.replace(/\/$/, "");
+    }
+
+    // 5. Fallback for localhost development
+    if (host.includes('localhost') || host.includes('127.0.0.1')) {
+        return `${protocol}://${host}`.replace(/\/$/, "");
+    }
+
+    // 6. Final fallback
+    return 'https://drinkboostup.cz';
+};
 
 // Initialize Supabase Admin
 const supabaseAdmin = createClient(
@@ -30,11 +76,42 @@ const supabaseAdmin = createClient(
     }
 );
 
+// Helper to replace {{tags}} with data
+const replacePlaceholders = (template: string, data: any) => {
+    return template.replace(/\{\{(.*?)\}\}/g, (match, tag) => {
+        const key = tag.trim();
+        return data[key] !== undefined ? data[key] : match;
+    });
+};
+
+// Helper to convert Quill classes into inline styles for email client compatibility
+const inlineQuillStyles = (html: string): string => {
+    if (!html) return '';
+    return html
+        // Handle paragraphs with alignment classes
+        .replace(/<p class="ql-align-center">/g, '<p style="margin-top:0;margin-bottom:16px;text-align:center;">')
+        .replace(/<p class="ql-align-right">/g, '<p style="margin-top:0;margin-bottom:16px;text-align:right;">')
+        .replace(/<p class="ql-align-justify">/g, '<p style="margin-top:0;margin-bottom:16px;text-align:justify;">')
+        // Handle generic headings with alignment classes
+        .replace(/<h2 class="ql-align-center">/g, '<h2 style="margin-top:0;margin-bottom:16px;text-align:center;">')
+        .replace(/<h2 class="ql-align-right">/g, '<h2 style="margin-top:0;margin-bottom:16px;text-align:right;">')
+        .replace(/<h2 class="ql-align-justify">/g, '<h2 style="margin-top:0;margin-bottom:16px;text-align:justify;">')
+        // Handle other elements (h1, h3, div) with alignment
+        .replace(/class="ql-align-center"/g, 'style="text-align:center;"')
+        .replace(/class="ql-align-right"/g, 'style="text-align:right;"')
+        .replace(/class="ql-align-justify"/g, 'style="text-align:justify;"')
+        // Standard paragraphs
+        .replace(/<p>/g, '<p style="margin-top:0;margin-bottom:16px;">')
+        // Standard list items
+        .replace(/<li>/g, '<li style="margin-bottom:8px;">');
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    const BASE_URL = getBaseUrl(req);
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
         console.error('RESEND_API_KEY not set');
@@ -52,6 +129,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         total,
         trackingNumber,
         message, // For contact auto-reply
+        subscription_id, // For unsubscribe link
+        content_html: reqContentHtml,
     } = req.body;
 
     if (!to) {
@@ -62,6 +141,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let contentHtml = '';
     let heroImageUrl = '';
     let heroCid = '';
+    let itemsHtml = ''; // For order confirmation CMS
+
+    // Try to fetch template from DB
+    let dbTemplate = null;
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('email_templates')
+            .select('*')
+            .eq('id', type)
+            .single();
+        
+        if (!error && data) {
+            dbTemplate = data;
+        }
+    } catch (err) {
+        console.error('Error fetching DB template:', err);
+    }
 
     switch (type) {
         case 'confirm_signup': {
@@ -69,17 +165,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             let confirmationLink = req.body.confirmationLink;
 
             if (!confirmationLink && to) {
-                const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-                    type: 'signup',
-                    email: to,
-                    options: { redirectTo: `${BASE_URL}/login` }
-                });
-                if (linkError) throw linkError;
-                confirmationLink = linkData.properties.action_link;
+                try {
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: 'signup',
+                        email: to as string,
+                        options: { redirectTo: `${BASE_URL}/login` }
+                    } as any);
+                    if (linkError) {
+                        console.error('Supabase generateLink error (signup):', linkError);
+                        throw linkError;
+                    }
+                    confirmationLink = linkData.properties.action_link;
+                } catch (err: any) {
+                    console.error('Failed to generate signup link:', err);
+                    return res.status(500).json({ 
+                        error: 'Failed to generate signup link',
+                        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                    });
+                }
             }
 
             contentHtml = `
-                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Vítej v týmu! 🚀 Ontěříme se?</h2>
+                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Vítej v týmu! 🚀 Prověříme se?</h2>
                 <p style="margin:0 0 24px 0;font-size:16px;color:${COLORS.secondary}">Děkujeme za registraci na BoostUp Energy. Pro aktivaci tvého účtu prosím klikni na tlačítko níže.</p>
                 <div style="margin:32px 0;text-align:center">
                     <a href="${confirmationLink}" style="background:${COLORS.primary};color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px">Potvrdit e-mail</a>
@@ -94,13 +201,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             let resetLink = req.body.resetLink;
 
             if (!resetLink && to) {
-                const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-                    type: 'recovery',
-                    email: to,
-                    options: { redirectTo: `${BASE_URL}/reset-password` }
-                });
-                if (linkError) throw linkError;
-                resetLink = linkData.properties.action_link;
+                try {
+                    const redirectTo = `${BASE_URL}/reset-password`;
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: 'recovery',
+                        email: to,
+                        options: { redirectTo }
+                    });
+                    
+                    if (linkError) {
+                        console.error('Supabase generateLink error (recovery):', linkError);
+                        // If linkError is specifically "User not found", we might want to mask it or handle it
+                        throw linkError;
+                    }
+                    resetLink = linkData.properties.action_link;
+                } catch (err: any) {
+                    console.error('Failed to generate reset link:', err);
+                    return res.status(500).json({ 
+                        error: 'Failed to generate reset link',
+                        details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+                    });
+                }
             }
 
             contentHtml = `
@@ -119,13 +240,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             let magicLink = req.body.magicLink;
 
             if (!magicLink && to) {
-                const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-                    type: 'magiclink',
-                    email: to,
-                    options: { redirectTo: BASE_URL }
-                });
-                if (linkError) throw linkError;
-                magicLink = linkData.properties.action_link;
+                try {
+                    const redirectTo = `${BASE_URL}/account/profile`;
+                    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                        type: 'magiclink',
+                        email: to,
+                        options: { redirectTo }
+                    });
+                    if (linkError) {
+                        console.error('Supabase generateLink error (magiclink):', linkError);
+                        throw linkError;
+                    }
+                    magicLink = linkData.properties.action_link;
+                } catch (err: any) {
+                    console.error('Failed to generate magic link:', err);
+                    return res.status(500).json({ 
+                        error: 'Failed to generate magic link',
+                        details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                    });
+                }
             }
 
             contentHtml = `
@@ -155,7 +288,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         case 'order_confirmation': {
             subject = `✅ Potvrzení objednávky ${orderNumber} | BoostUp`;
-            const itemsHtml = items.map((i: any) => {
+            itemsHtml = items.map((i: any) => {
                 let details = '';
                 let displayName = i.name;
 
@@ -192,6 +325,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 </table>
                 <p style="margin:0;font-size:14px;color:${COLORS.secondary}">Hned jak zásilku předáme dopravci, pošleme ti e-mail se sledovacím číslem.</p>
             `;
+
+            // Store order confirmation in the messages table
+            try {
+                const messageBody = `Nová objednávka ${orderNumber}.\nZákazník: ${customerName} (${to})\nCelkem: ${total} Kč\nPoložky:\n${items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n')}`;
+                
+                await supabaseAdmin.from('messages').insert({
+                    from_email: to,
+                    from_name: customerName,
+                    subject: subject,
+                    body_text: messageBody,
+                    body_html: contentHtml,
+                    is_read: false,
+                    metadata: { type: 'order_confirmation', orderNumber, total }
+                });
+            } catch (err) {
+                console.error('Failed to store order message:', err);
+            }
             break;
         }
 
@@ -249,103 +399,206 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     </p>
                 </div>
             `;
+            
+            // Store inquiry in the messages table
+            try {
+                await supabaseAdmin.from('messages').insert({
+                    from_email: req.body.customerEmail,
+                    from_name: customerName,
+                    subject: subject,
+                    body_text: message,
+                    body_html: contentHtml,
+                    is_read: false
+                });
+            } catch (err) {
+                console.error('Failed to store message inquiry:', err);
+            }
             break;
     }
 
-    const emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${subject}</title>
-        </head>
-        <body style="margin:0;padding:0;background-color:#f8f9fa;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:${COLORS.text}">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td align="center" style="padding:40px 20px">
-                        <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color:white;border-radius:32px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.03)">
-                            <!-- Header / Logo -->
-                            <tr>
-                                <td align="center" style="padding:48px 40px 24px 40px;">
-                                    <img src="cid:logo" alt="BoostUp" width="200" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
-                                </td>
-                            </tr>
-                            
-                            ${heroImageUrl ? `
-                            <tr>
-                                <td align="center" style="padding: 0 40px;">
-                                    <img src="cid:hero" alt="" width="520" border="0" style="width:520px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none;border-radius:16px;">
-                                </td>
-                            </tr>
-                            ` : ''}
+    const templateData = {
+        ...req.body,
+        customerName,
+        orderNumber,
+        total: total ? Number(total).toFixed(0) : '',
+        itemsHtml,
+        trackingNumber,
+        message,
+        confirmationLink: req.body.confirmationLink, // Will be replaced by code if missing
+        resetLink: req.body.resetLink,
+        magicLink: req.body.magicLink,
+        subscriberEmail: req.body.subscriberEmail,
+        unsubscribeLink: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
+        unsubscribe_url: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
+        BASE_URL
+    };
 
-                            <!-- Body Content -->
-                            <tr>
-                                <td align="center" style="padding:32px 40px 48px 40px;line-height:1.6;font-size:16px;text-align:center;">
-                                    <div style="color:${COLORS.text};">
-                                        ${contentHtml}
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        
-                        <!-- Footer outside the card -->
-                        <table width="600" border="0" cellspacing="0" cellpadding="0">
-                            <tr>
-                                <td align="center" style="padding:32px 40px;font-size:13px;color:${COLORS.secondary}">
-                                    <p style="margin:0 0 8px 0;font-weight:500">BoostUp &middot; Chaloupkova 3002/1a &middot; 612 00 Brno</p>
-                                    <p style="margin:0">
-                                        <a href="${BASE_URL}" style="color:${COLORS.primary};text-decoration:none;font-weight:700">${BASE_URL.replace('https://', '')}</a>
-                                        &nbsp;&nbsp;&middot;&nbsp;&nbsp;
-                                        <a href="mailto:info@drinkboostup.cz" style="color:${COLORS.primary};text-decoration:none;font-weight:500">info@drinkboostup.cz</a>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-    `;
+    // Use requested content HTML if provided (from Admin UI Test/Campaign), otherwise fallback to DB template
+    let baseContentHtml = reqContentHtml || (dbTemplate ? dbTemplate.content_html : contentHtml);
+
+    if (baseContentHtml) {
+        // If DB template exists, we also override subject
+        if (!reqContentHtml && dbTemplate) {
+            subject = replacePlaceholders(dbTemplate.subject, templateData);
+        } else if (reqContentHtml) {
+            // For campaigns, subject comes from req.body
+            subject = replacePlaceholders(req.body.subject || subject, templateData);
+        }
+        contentHtml = inlineQuillStyles(replacePlaceholders(baseContentHtml, templateData));
+    }
+
+    let emailHtml = '';
+
+    // If the content is already a full HTML document (e.g., Master Frame), send it directly
+    if (contentHtml.includes('<!DOCTYPE html>')) {
+        emailHtml = contentHtml;
+    } else {
+        // Otherwise, wrap it in the standard BoostUp layout
+        emailHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${subject}</title>
+                <style>
+                    /* Basic styles to ensure Quill Editor paragraphs render well in email clients */
+                    .email-body-content p { margin-top: 0; margin-bottom: 16px; }
+                    .email-body-content p:last-child { margin-bottom: 0; }
+                    .email-body-content ul, .email-body-content ol { margin-top: 0; margin-bottom: 16px; padding-left: 24px; }
+                    .email-body-content li { margin-bottom: 8px; }
+                    .email-body-content .ql-align-center { text-align: center; }
+                    .email-body-content .ql-align-right { text-align: right; }
+                    .email-body-content .ql-align-justify { text-align: justify; }
+                    .email-body-content img { max-width: 100%; height: auto; border-radius: 8px; }
+                </style>
+            </head>
+            <body style="margin:0;padding:0;background-color:#f8f9fa;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:${COLORS.text}">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td align="center" style="padding:40px 20px">
+                            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color:white;border-radius:32px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.03)">
+                                <!-- Header / Logo -->
+                                <tr>
+                                    <td align="center" style="padding:48px 40px 24px 40px;">
+                                        <img src="${BASE_URL}/logo-green.png" alt="BoostUp" width="200" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
+                                    </td>
+                                </tr>
+                                
+                                ${heroImageUrl ? `
+                                <tr>
+                                    <td align="center" style="padding: 0 40px;">
+                                        <img src="${heroImageUrl}" alt="" width="520" border="0" style="width:520px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none;border-radius:16px;">
+                                    </td>
+                                </tr>
+                                ` : ''}
+
+                                <!-- Body Content -->
+                                <tr>
+                                    <td align="left" style="padding:32px 40px 48px 40px;line-height:1.6;font-size:16px;text-align:left;">
+                                        <div class="email-body-content" style="color:${COLORS.text};text-align:left;">
+                                            ${contentHtml}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Footer outside the card -->
+                            <table width="600" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td align="center" style="padding:32px 40px;font-size:13px;color:${COLORS.secondary}">
+                                        <p style="margin:0 0 8px 0;font-weight:500">BoostUp &middot; Chaloupkova 3002/1a &middot; 612 00 Brno</p>
+                                        <p style="margin:0">
+                                            <a href="${BASE_URL}" style="color:${COLORS.primary};text-decoration:none;font-weight:700">${BASE_URL.replace('https://', '')}</a>
+                                            &nbsp;&nbsp;&middot;&nbsp;&nbsp;
+                                            <a href="mailto:info@drinkboostup.cz" style="color:${COLORS.primary};text-decoration:none;font-weight:500">info@drinkboostup.cz</a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        `;
+    }
 
     try {
-        const attachments: any[] = [
-            {
-                content: LOGO_BASE64,
-                filename: 'logo.png',
-                contentId: 'logo',
-                disposition: 'inline'
-            }
-        ];
+        const attachments: any[] = [];
 
-        if (heroImageUrl) {
-            try {
-                const imageName = heroImageUrl.split('/').pop()?.split('?')[0];
-                if (imageName) {
-                    const heroPath = path.join(process.cwd(), 'public', imageName);
-                    if (fs.existsSync(heroPath)) {
-                        const heroContent = fs.readFileSync(heroPath).toString('base64');
-                        attachments.push({
-                            content: heroContent,
-                            filename: `${heroCid}.png`,
-                            contentId: 'hero',
-                            disposition: 'inline'
+        let bccRecipient = undefined;
+        if (type === 'order_confirmation') {
+            bccRecipient = ADMIN_EMAIL;
+
+            // Send to Slack
+            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL || process.env.SLACK_WEBHOOK_URL;
+            if (slackWebhookUrl) {
+                try {
+                    const slackMessage = {
+                        blocks: [
+                            {
+                                type: "header",
+                                text: { type: "plain_text", text: `🚀 Nová objednávka: ${orderNumber}` }
+                            },
+                            {
+                                type: "section",
+                                fields: [
+                                    { type: "mrkdwn", text: `*Zákazník:*\n${customerName} (${to})` },
+                                    { type: "mrkdwn", text: `*Celkem:*\n${total} Kč` }
+                                ]
+                            }
+                        ]
+                    };
+                    
+                    if (items && items.length > 0) {
+                        const itemsText = items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n');
+                        (slackMessage.blocks as any).push({
+                            type: "section",
+                            text: { type: "mrkdwn", text: `*Položky:*\n${itemsText}` }
                         });
                     }
-                }
-            } catch (e) {
-                console.error('Failed to read hero image file:', e);
-            }
-        }
 
-        const shouldBccAdmin = ['order_confirmation', 'contact_inquiry', 'newsletter_signup'].includes(type);
+                    fetch(slackWebhookUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(slackMessage),
+                    }).catch(err => console.error('Slack HTTP error:', err));
+                } catch (slackErr) {
+                    console.error('Failed to prepare Slack notification:', slackErr);
+                }
+            }
+
+            // Send to Pushover (iPhone / Mac Push Notifications)
+            const pushoverAppToken = process.env.PUSHOVER_APP_TOKEN;
+            const pushoverUserKey = process.env.PUSHOVER_USER_KEY;
+            
+            if (pushoverAppToken && pushoverUserKey) {
+                try {
+                    const pushoverMessage = `Zákazník: ${customerName}\nCelkem: ${total} Kč`;
+                    const formData = new URLSearchParams();
+                    formData.append('token', pushoverAppToken);
+                    formData.append('user', pushoverUserKey);
+                    formData.append('title', `🚀 Nová objednávka: ${orderNumber}`);
+                    formData.append('message', pushoverMessage);
+                    formData.append('sound', 'cashregister'); // Zvuk pokladny pro novou objednávku
+
+                    fetch('https://api.pushover.net/1/messages.json', {
+                        method: 'POST',
+                        body: formData,
+                    }).catch(err => console.error('Pushover HTTP error:', err));
+                } catch (pushErr) {
+                    console.error('Failed to prepare Pushover notification:', pushErr);
+                }
+            }
+        } else if (['contact_inquiry', 'newsletter_signup'].includes(type)) {
+            bccRecipient = INFO_EMAIL;
+        }
 
         const { data, error } = await resend.emails.send({
             from: 'BoostUp <objednavky@drinkboostup.cz>',
             to: [to],
-            bcc: shouldBccAdmin ? [ADMIN_EMAIL] : undefined,
+            bcc: bccRecipient ? [bccRecipient] : undefined,
             subject: subject,
             html: emailHtml,
             attachments: attachments
@@ -359,6 +612,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json({ success: true, id: data?.id });
     } catch (err) {
         console.error('Email send error:', err);
+        if (process.env.VITE_SENTRY_DSN) {
+            Sentry.captureException(err);
+            await Sentry.flush(2000);
+        }
         return res.status(500).json({ error: 'Failed to send email' });
     }
 }

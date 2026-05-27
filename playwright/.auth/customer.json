@@ -1,0 +1,62 @@
+{
+  "cookies": [
+    {
+      "name": "_fbp",
+      "value": "fb.1.1776857576919.409283929801416475",
+      "domain": ".drinkboostup.cz",
+      "path": "/",
+      "expires": 1784633576,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://test.drinkboostup.cz",
+      "localStorage": [
+        {
+          "name": "lastExternalReferrer",
+          "value": "empty"
+        },
+        {
+          "name": "sb-gmbxcqqmnlsjvqghaxmu-auth-token",
+          "value": "{\"access_token\":\"eyJhbGciOiJFUzI1NiIsImtpZCI6IjUzMTE3NDAyLTBhNWYtNDhiNC1iNTdkLWE0OTE2Zjc3MDFkMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2dtYnhjcXFtbmxzanZxZ2hheG11LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJmZWFhMzRkZS0zNGI3LTQ4NzYtODI0OC0xYjlhNzBjYWYxNjAiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzc2ODYxMTc3LCJpYXQiOjE3NzY4NTc1NzcsImVtYWlsIjoiYmFzaWMtdGVzdEBkcmlua2Jvb3N0dXAuY3oiLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsX3ZlcmlmaWVkIjp0cnVlfSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc3Njg1NzU3N31dLCJzZXNzaW9uX2lkIjoiYTk4MWU4YzYtMjU2Zi00ZDMyLTk3N2ItYWQ4OWM0NDY2MDZlIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.4vKJXBMG6mFeCQFpzKoZYps10q6nxdEgmZElSuXjBRQDYy9Y_bytOo_pAHuWoIpsO3IHYIWtznxaXyOM5HArSA\",\"token_type\":\"bearer\",\"expires_in\":3600,\"expires_at\":1776861177,\"refresh_token\":\"4s2wj7rixp2q\",\"user\":{\"id\":\"feaa34de-34b7-4876-8248-1b9a70caf160\",\"aud\":\"authenticated\",\"role\":\"authenticated\",\"email\":\"basic-test@drinkboostup.cz\",\"email_confirmed_at\":\"2026-04-11T12:41:31.016942Z\",\"phone\":\"\",\"confirmed_at\":\"2026-04-11T12:41:31.016942Z\",\"last_sign_in_at\":\"2026-04-22T11:32:57.526171547Z\",\"app_metadata\":{\"provider\":\"email\",\"providers\":[\"email\"]},\"user_metadata\":{\"email_verified\":true},\"identities\":[{\"identity_id\":\"84138968-74a0-4a84-984d-75f6fb8cec37\",\"id\":\"feaa34de-34b7-4876-8248-1b9a70caf160\",\"user_id\":\"feaa34de-34b7-4876-8248-1b9a70caf160\",\"identity_data\":{\"email\":\"basic-test@drinkboostup.cz\",\"email_verified\":false,\"phone_verified\":false,\"sub\":\"feaa34de-34b7-4876-8248-1b9a70caf160\"},\"provider\":\"email\",\"last_sign_in_at\":\"2026-04-11T12:41:31.015565Z\",\"created_at\":\"2026-04-11T12:41:31.015637Z\",\"updated_at\":\"2026-04-11T12:41:31.015637Z\",\"email\":\"basic-test@drinkboostup.cz\"}],\"created_at\":\"2026-04-11T12:41:31.01447Z\",\"updated_at\":\"2026-04-22T11:32:57.557575Z\",\"is_anonymous\":false},\"weak_password\":null}"
+        },
+        {
+          "name": "lastExternalReferrerTime",
+          "value": "1776857576915"
+        },
+        {
+          "name": "boostup_session_id",
+          "value": "61553581-4322-4c09-8ba7-01cf1c181ddc"
+        },
+        {
+          "name": "boostup_cart",
+          "value": "[]"
+        },
+        {
+          "name": "boostup_discount_dismissed",
+          "value": "true"
+        },
+        {
+          "name": "boostup_cookie_consent",
+          "value": "{\"necessary\":true,\"analytics\":true,\"marketing\":true,\"preferences\":true}"
+        }
+      ]
+    },
+    {
+      "origin": "https://js.stripe.com",
+      "localStorage": [
+        {
+          "name": "boostup_discount_dismissed",
+          "value": "true"
+        },
+        {
+          "name": "boostup_cookie_consent",
+          "value": "{\"necessary\":true,\"analytics\":true,\"marketing\":true,\"preferences\":true}"
+        }
+      ]
+    }
+  ]
+}

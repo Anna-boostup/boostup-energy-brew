@@ -16,6 +16,9 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Logout = lazy(() => import("./pages/Logout"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 
 // Account pages
 const AccountLayout = lazy(() => import("./pages/account/AccountLayout"));
@@ -34,7 +37,14 @@ const AdminProfile = lazy(() => import("./pages/admin/AdminProfile"));
 const Orders = lazy(() => import("./pages/admin/Orders"));
 const ContentManagement = lazy(() => import("./pages/admin/ContentManagement"));
 const PricingStatistics = lazy(() => import("./pages/admin/PricingStatistics"));
+const PromoCodes = lazy(() => import("./pages/admin/PromoCodes"));
+const Messages = lazy(() => import("./pages/admin/Messages"));
+const EmailManagement = lazy(() => import("./pages/admin/EmailManagement"));
+const BlogManagement = lazy(() => import("./pages/admin/BlogManagement"));
+const BlogEditor = lazy(() => import("./pages/admin/BlogEditor"));
 const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
+const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 
 // Legal pages
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -53,7 +63,7 @@ import { Loader2 } from "lucide-react";
 const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allowedType: 'personal' | 'company' }) => {
   const { profile, loading } = useAuth();
 
-  if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>;
+  if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 data-testid="admin-loader" className="animate-spin text-primary" /></div>;
 
   if (!profile) return <Navigate to="/login" replace />;
 
@@ -84,16 +94,33 @@ import { CookieBanner } from "./components/CookieBanner";
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
 import { useDynamicFonts } from './hooks/useDynamicFonts';
+import { useAnalytics } from './hooks/useAnalytics';
+import { useMetaPixel } from './hooks/useMetaPixel';
 import { Analytics } from "@vercel/analytics/react";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Applies typography CSS variables from the CMS content
 const FontLoader = () => { useDynamicFonts(); return null; };
 
-const queryClient = new QueryClient();
+// Tracks page views for internal insights
+const AnalyticsTracker = () => { useAnalytics(); return null; };
+
+// Tracks page views for Meta Pixel (Facebook)
+const MetaPixelTracker = () => { useMetaPixel(); return null; };
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
@@ -107,9 +134,15 @@ const App = () => (
                     <Sonner />
                     <Analytics />
                     <BrowserRouter>
+                      <AnalyticsTracker />
+                      <MetaPixelTracker />
                       <ScrollToTop />
                       <CookieBanner />
-                      <Suspense fallback={<div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>}>
+                      <Suspense fallback={
+                        <div className="h-screen w-full flex items-center justify-center bg-background">
+                          <Loader2 data-testid="admin-loader" className="animate-spin text-primary w-8 h-8" />
+                        </div>
+                      }>
                         <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/login" element={<Login />} />
@@ -159,6 +192,14 @@ const App = () => (
                             <Route path="manufacture" element={<ManufactureInventory />} />
                             <Route path="content" element={<ContentManagement />} />
                             <Route path="pricing" element={<PricingStatistics />} />
+                            <Route path="promo-codes" element={<PromoCodes />} />
+                            <Route path="insights" element={<AdminInsights />} />
+                            <Route path="messages" element={<Messages />} />
+                            <Route path="users" element={<AdminUsers />} />
+                            <Route path="emails" element={<EmailManagement />} />
+                            <Route path="blog" element={<BlogManagement />} />
+                            <Route path="blog/new" element={<BlogEditor />} />
+                            <Route path="blog/edit/:id" element={<BlogEditor />} />
                             <Route path="profile" element={<AdminProfile />} />
                             <Route path="help" element={<AdminHelp />} />
                           </Route>
@@ -170,12 +211,17 @@ const App = () => (
                           <Route path="/doprava-a-platba" element={<ShippingAndPayment />} />
                           <Route path="/reklamace" element={<Returns />} />
                           <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
+                          <Route path="/unsubscribe" element={<Unsubscribe />} />
+
+                          {/* Blog Routes */}
+                          <Route path="/blog" element={<Blog />} />
+                          <Route path="/blog/:slug" element={<BlogPost />} />
 
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </Suspense>
-                    </BrowserRouter>
+                      </BrowserRouter>
                   </CartProvider>
                 </ManufactureProvider>
               </InventoryProvider>
@@ -185,7 +231,8 @@ const App = () => (
         </AuthProvider>
       </HelmetProvider>
     </TooltipProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

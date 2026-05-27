@@ -9,6 +9,7 @@ interface Profile {
     role: 'admin' | 'user';
     account_type: 'personal' | 'company' | 'admin';
     address: any;
+    assigned_promo_code: string | null;
 }
 
 interface AuthContextType {
@@ -29,6 +30,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!supabase) {
+            console.error("AuthContext: Supabase client is not initialized. Skipping auth checks.");
+            setLoading(false);
+            return;
+        }
+
         // 1. Check active session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -38,6 +45,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } else {
                 setLoading(false);
             }
+        }).catch(err => {
+            console.error("AuthContext: Error getting session:", err);
+            setLoading(false);
         });
 
         // 2. Listen for auth changes
@@ -46,6 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(session?.user ?? null);
 
             if (session?.user) {
+                // Fetch profile in background without triggering global loading 
+                // if we are already past the initial load
                 fetchProfile(session.user.id);
             } else {
                 setProfile(null);
@@ -95,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return (
         <AuthContext.Provider value={value}>
             {loading ? (
-                <div className="h-screen w-full flex items-center justify-center bg-background">
+                <div data-testid="admin-loader" className="h-screen w-full flex items-center justify-center bg-background">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
             ) : children}

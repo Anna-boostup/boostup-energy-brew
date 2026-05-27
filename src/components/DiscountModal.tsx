@@ -1,14 +1,18 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Gift } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useContent } from "@/context/ContentContext";
 
 const DiscountModal = () => {
+    const { content } = useContent();
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
+        // Only show if enabled in admin
+        if (content?.hero?.showDiscountPopup === false) return;
+        
         // Check if user has already seen the popup or is logged in (simplified check for now)
         const hasSeenPopup = localStorage.getItem("hasSeenDiscountPopup");
         const isLoggedIn = false; // logic to check auth state if accessible, or just rely on local storage for now
@@ -20,7 +24,7 @@ const DiscountModal = () => {
 
             return () => clearTimeout(timer);
         }
-    }, []);
+    }, [content?.hero?.showDiscountPopup]);
 
     const handleClose = () => {
         setIsOpen(false);
@@ -48,7 +52,7 @@ const DiscountModal = () => {
                 <div className="flex flex-col gap-4 py-4">
                     <div className="bg-background/50 p-4 rounded-xl text-center border border-border/50">
                         <p className="text-sm font-bold text-muted-foreground mb-1">Váš kód po registraci:</p>
-                        <div className="text-xl font-mono font-bold text-primary tracking-widest">BOOST10</div>
+                        <div className="text-xl font-mono font-bold text-primary tracking-widest">{content?.hero?.discountCode || "BOOST10"}</div>
                     </div>
 
                     <Link to="/register" onClick={handleClose}>

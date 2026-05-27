@@ -34,15 +34,33 @@ interface ProductSpecs {
 interface ProductSpecsDialogProps {
   flavorName: string;
   specs: ProductSpecs;
+  isSelected?: boolean;
+  flavorId?: string;
 }
 
-const ProductSpecsDialog = ({ flavorName, specs }: ProductSpecsDialogProps) => {
+const ProductSpecsDialog = ({ flavorName, specs, isSelected, flavorId }: ProductSpecsDialogProps) => {
   if (!specs) return null;
+
+  const getTriggerStyles = () => {
+    if (!isSelected) {
+      return "text-primary bg-primary/5 border-primary/10 hover:border-primary/30";
+    }
+
+    switch (flavorId) {
+      case 'lemon':
+        return "text-primary bg-white/40 border-primary/20 hover:bg-white/60";
+      case 'red':
+      case 'silky':
+        return "text-white bg-white/10 border-white/30 hover:bg-white/20";
+      default:
+        return "text-primary bg-primary/5 border-primary/10";
+    }
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-1.5 text-[10px] font-black text-primary hover:text-primary/80 transition-colors uppercase tracking-widest py-1.5 px-2 bg-primary/5 rounded-lg border border-primary/10 hover:border-primary/30">
+        <button className={`flex items-center gap-1.5 text-[10px] font-black transition-all uppercase tracking-widest py-1.5 px-2 rounded-lg border ${getTriggerStyles()}`}>
           <FileText className="w-3 h-3" />
           Složení a nutriční fakta
         </button>

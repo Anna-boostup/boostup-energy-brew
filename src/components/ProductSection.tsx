@@ -42,10 +42,6 @@ const ProductSection = () => {
   return (
     <TooltipProvider>
       <section id="produkty" className="py-16 md:py-32 bg-secondary/30 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary/5 blur-3xl rounded-full -translate-x-1/2 translate-y-1/2" />
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
             
@@ -66,14 +62,14 @@ const ProductSection = () => {
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4 animate-fade-in">
                   <Sparkles className="w-3 h-3" />
-                  Konfigurátor balení
+                  {content.configurator?.badge || "Konfigurátor balení"}
                 </div>
                 <h2 className="text-4xl md:text-6xl font-display font-black text-foreground leading-[0.9] tracking-tighter uppercase whitespace-nowrap">
-                  VYTVOŘTE SI SVOU <br />
-                  <span className="text-gradient-energy italic pr-4">ENERGII</span>
+                  {content.configurator?.headline?.split(' ').slice(0, 2).join(' ') || "VYTVOŘTE SI SVOU"} <br />
+                  <span className="text-gradient-energy italic pr-4">{content.configurator?.headline?.split(' ').slice(2).join(' ') || "ENERGII"}</span>
                 </h2>
                 <p className="text-lg text-foreground/60 max-w-xl font-medium">
-                  Vyberte si velikost balení, příchuť a způsob doručení. Vše čerstvě připravené pro špičkový výkon.
+                  {content.configurator?.description || "Vyberte si velikost balení, příchuť a způsob doručení. Vše čerstvě připravené pro špičkový výkon."}
                 </p>
               </div>
 
@@ -109,6 +105,7 @@ const ProductSection = () => {
                         content={content}
                         getEffectiveProduct={getEffectiveProduct}
                         cleanName={cleanName}
+                        products={products}
                       />
                     )}
 
@@ -133,24 +130,29 @@ const ProductSection = () => {
                   </div>
                   
                   <div className="w-full sm:w-2/3">
-                    <Button 
-                      size="lg"
-                      onClick={handleAddToCart}
-                      disabled={!isValid || isOutOfStock}
-                      className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
-                        isOutOfStock 
-                          ? "bg-muted grayscale border-border text-muted-foreground opacity-70"
-                          : "bg-primary text-black font-black border-none"
-                      } shadow-2xl hover:shadow-primary/40`}
-                    >
+                        <Button 
+                          data-testid="add-to-cart-hero-btn"
+                          size="lg"
+                          onClick={handleAddToCart}
+                          disabled={!isValid || isOutOfStock || content?.isSalesEnabled === false}
+                          className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
+                            isOutOfStock || content?.isSalesEnabled === false
+                              ? "bg-muted grayscale border-border text-muted-foreground opacity-70 cursor-not-allowed"
+                              : "bg-[#3d5a2f] text-[#dfdf57] font-black border-2 border-[#dfdf57]/20 transition-all hover:opacity-90 shadow-xl shadow-black/20"
+                          }`}
+                        >
                       <div className="relative z-10 flex flex-col items-center">
-                        <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight">
+                        <div className="flex items-center gap-2 font-display text-xl font-black italic tracking-tight uppercase">
                           <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                          {isOutOfStock ? "VYPRODÁNO" : "PŘIDAT DO KOŠÍKU"}
+                          {content?.isSalesEnabled === false 
+                            ? (content?.admin?.dashboard?.salesPaused || "PRODEJ POZASTAVEN") 
+                            : isOutOfStock 
+                              ? (content.configurator?.outOfStock || "VYPRODÁNO") 
+                              : (content.configurator?.cta || "PŘIDAT DO KOŠÍKU")}
                         </div>
-                        {!isOutOfStock && (
-                          <div className="flex items-center gap-2 text-[10px] font-bold opacity-90 tracking-widest uppercase">
-                            <span>Celkem {price} Kč</span>
+                        {!isOutOfStock && content?.isSalesEnabled !== false && (
+                          <div className="flex items-center gap-2 text-[10px] font-bold opacity-90 tracking-widest uppercase mt-1">
+                            <span>{content.configurator?.total || "Celkem"} {price} Kč</span>
                             <Sparkles className="w-3 h-3 text-lime" />
                           </div>
                         )}

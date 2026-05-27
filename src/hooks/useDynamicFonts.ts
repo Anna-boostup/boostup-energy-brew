@@ -39,8 +39,10 @@ function buildGoogleFontsUrl(fonts: string[]): string {
         .map((name) => {
             const spec = AVAILABLE_FONTS.find((f) => f.name === name);
             if (!spec) return `family=${encodeURIComponent(name)}`;
-            const weightsParam = spec.weights.join(';');
-            return `family=${encodeURIComponent(name)}:ital,wght@0,${weightsParam.split(';').join(';0,')};1,${weightsParam}`;
+            const weights = spec.weights;
+            const ital0 = weights.map(w => `0,${w}`).join(';');
+            const ital1 = weights.map(w => `1,${w}`).join(';');
+            return `family=${encodeURIComponent(name)}:ital,wght@${ital0};${ital1}`;
         })
         .join('&');
     return `https://fonts.googleapis.com/css2?${families}&display=swap`;

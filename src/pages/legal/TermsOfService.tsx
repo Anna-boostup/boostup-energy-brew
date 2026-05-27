@@ -45,7 +45,7 @@ const TermsOfService = () => {
             <h2>6. Odstoupení od kupní smlouvy</h2>
             <p>
                 Kupující má právo odstoupit od kupní smlouvy ve lhůtě 14 dnů od převzetí zboží. Odstoupení od kupní smlouvy
-                musí být prodávajícímu odesláno ve výše uvedené lhůtě e-mailem na <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a>.
+                musí být prodávajícímu odesláno ve výše uvedené lhůtě e-mailem na <a href="mailto:info@drinkboostup.cz">info@drinkboostup.cz</a> (v kopii na <a href="mailto:fakturace@drinkboostup.cz">fakturace@drinkboostup.cz</a>).
                 Zboží musí být vráceno nepoužité a v původním neporušeném obalu (vzhledem k povaze doplňků stravy).
             </p>
 

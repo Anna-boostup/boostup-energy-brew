@@ -49,6 +49,7 @@ export const CartFooter: React.FC<CartFooterProps> = ({
                     Vyprázdnit
                 </Button>
                 <Button
+                    data-testid="cart-drawer-checkout-btn"
                     onClick={handleCheckout}
                     className="rounded-2xl h-14 font-bold shadow-button animate-energy-pulse"
                 >

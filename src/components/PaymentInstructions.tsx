@@ -58,7 +58,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
 
                     <div className="space-y-1">
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Variabilní symbol</p>
-                        <div className="flex items-center justify-between bg-secondary/20 p-3 rounded-xl border border-border/50">
+                        <div className="flex items-center justify-between bg-secondary/20 p-3 rounded-xl border border-border/50" data-sentry-mask>
                             <span className="font-mono font-bold text-lg">{vs}</span>
                             <Button
                                 variant="ghost"
@@ -73,7 +73,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
 
                     <div className="space-y-1">
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Částka k úhradě</p>
-                        <div className="flex items-center justify-between bg-primary/5 p-3 rounded-xl border border-primary/20">
+                        <div className="flex items-center justify-between bg-primary/5 p-3 rounded-xl border border-primary/20" data-sentry-mask>
                             <span className="font-mono font-bold text-lg text-primary">{amount}.00 Kč</span>
                             <Button
                                 variant="ghost"
@@ -87,7 +87,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center justify-center p-6 bg-white rounded-3xl border-2 border-primary/20 shadow-inner group">
+                <div className="flex flex-col items-center justify-center p-6 bg-white rounded-3xl border-2 border-primary/20 shadow-inner group" data-sentry-block>
                     <div className="p-2 bg-white rounded-lg transition-transform duration-300 group-hover:scale-105">
                         <QRCodeSVG
                             value={qrValue}
@@ -107,7 +107,7 @@ const PaymentInstructions = ({ orderNumber, amount }: PaymentInstructionsProps) 
                     <CheckCircle2 className="w-5 h-5 text-lime" />
                 </div>
                 <p className="text-xs leading-relaxed text-foreground/80 flex items-center">
-                    Objednávku začneme zpracovávat ihned po připsání platby na náš účet. O odeslání balíčku vás budeme informovat e-mailem.
+                    Objednávku začneme zpracovávat ihned po připsání platby na náš účet. V případě dotazů k platbě nás kontaktujte na <a href="mailto:fakturace@drinkboostup.cz" className="font-bold underline">fakturace@drinkboostup.cz</a>.
                 </p>
             </div>
         </div>

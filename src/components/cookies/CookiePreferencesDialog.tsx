@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, BarChart3, Settings2, Info } from 'lucide-react';
+import { ShieldCheck, BarChart, Settings2, Info } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import {
@@ -68,7 +68,7 @@ export const CookiePreferencesDialog: React.FC<CookiePreferencesDialogProps> = (
                     <div className="flex flex-col gap-2 p-4 rounded-xl border border-border/50 transition-colors hover:border-border">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <BarChart3 className="w-5 h-5 text-foreground" />
+                                <BarChart className="w-5 h-5 text-foreground" />
                                 <h4 className="font-bold text-lg text-foreground">Analytické cookies</h4>
                             </div>
                             <Switch

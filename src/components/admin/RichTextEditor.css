@@ -1,0 +1,89 @@
+
+/* Custom styles for React Quill to match BoostUp Admin */
+
+.rich-text-editor .ql-toolbar.ql-snow {
+  background: rgba(61, 64, 21, 0.03);
+  border: 1px solid rgba(61, 64, 21, 0.1);
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  padding: 12px;
+}
+
+.rich-text-editor .ql-container.ql-snow {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(61, 64, 21, 0.1);
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  min-height: 400px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #3d4015; /* olive-dark */
+}
+
+.rich-text-editor .ql-editor {
+  min-height: 400px;
+  padding: 32px;
+  line-height: 1.8;
+}
+
+.rich-text-editor .ql-editor p {
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-editor .ql-editor h1,
+.rich-text-editor .ql-editor h2,
+.rich-text-editor .ql-editor h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 900;
+  color: #3d4015;
+  line-height: 1.2;
+}
+
+.rich-text-editor .ql-editor ul,
+.rich-text-editor .ql-editor ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.rich-text-editor .ql-editor li {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  color: rgba(61, 64, 21, 0.3);
+  font-style: normal;
+  left: 32px;
+}
+
+/* Toolbar Icons and Buttons */
+.rich-text-editor .ql-snow .ql-stroke {
+  stroke: rgba(61, 64, 21, 0.7);
+}
+
+.rich-text-editor .ql-snow .ql-fill {
+  fill: rgba(61, 64, 21, 0.7);
+}
+
+.rich-text-editor .ql-snow .ql-picker {
+  color: rgba(61, 64, 21, 0.7);
+}
+
+.rich-text-editor .ql-snow.ql-toolbar button:hover .ql-stroke,
+.rich-text-editor .ql-snow.ql-toolbar button:hover .ql-fill,
+.rich-text-editor .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.rich-text-editor .ql-snow.ql-toolbar button.ql-active .ql-fill {
+  stroke: #a2b006; /* lime-dark for better contrast on cream */
+  fill: #a2b006;
+}
+
+.rich-text-editor .ql-snow.ql-toolbar .ql-picker-label:hover,
+.rich-text-editor .ql-snow.ql-toolbar .ql-picker-label.ql-active {
+  color: #a2b006;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options {
+  background-color: #f8f8f0;
+  border: 1px solid rgba(61, 64, 21, 0.1);
+  border-radius: 8px;
+}

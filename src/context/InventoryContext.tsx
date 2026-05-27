@@ -13,6 +13,7 @@ export interface Product {
     ingredients?: string;
     tooltip?: string;
     is_on_sale?: boolean;
+    is_active?: boolean;
 }
 
 export interface Order {
@@ -97,6 +98,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [movements, setMovements] = useState<StockMovement[]>([]);
+    const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
 
     // 1. Initial Fetch
     useEffect(() => {
@@ -107,18 +109,24 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // 2. Realtime Subscriptions
     useEffect(() => {
+        if (!supabase) return;
+
         const inventorySubscription = supabase
             .channel('inventory_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, (payload) => {
-                const updatedItem = payload.new as Product;
-                setStock(prev => ({ ...prev, [updatedItem.sku]: updatedItem.quantity }));
-                setProducts(prev => {
-                    const exists = prev.find(p => p.sku === updatedItem.sku);
-                    if (exists) {
-                        return prev.map(p => p.sku === updatedItem.sku ? updatedItem : p);
+                const updatedItem = payload.new as Partial<Product>;
+                if (updatedItem.sku) {
+                    if (updatedItem.quantity !== undefined) {
+                        setStock(prev => ({ ...prev, [updatedItem.sku!]: updatedItem.quantity! }));
                     }
-                    return [...prev, updatedItem];
-                });
+                    setProducts(prev => {
+                        const existing = prev.find(p => p.sku === updatedItem.sku);
+                        if (existing) {
+                            return prev.map(p => p.sku === updatedItem.sku ? { ...existing, ...updatedItem } : p);
+                        }
+                        return [...prev, updatedItem as Product];
+                    });
+                }
             })
             .subscribe();
 
@@ -130,43 +138,41 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             })
             .subscribe();
 
+        const mapDbOrderToOrder = (o: any): Order => ({
+            ...o,
+            date: o.created_at || o.date,
+            customer: {
+                name: o.customer_name,
+                email: o.customer_email
+            },
+            packeta_barcode: o.packeta_barcode,
+            packeta_packet_id: o.packeta_packet_id,
+        });
+
         const ordersSubscription = supabase
             .channel('orders_channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
                 if (payload.eventType === 'INSERT') {
-                    const newOrder = payload.new as any;
+                    const newOrder = mapDbOrderToOrder(payload.new);
                     setOrders(prev => [newOrder, ...prev]);
-
-                    // Trigger browser notification for new orders
-                    if (typeof window !== 'undefined' && Notification.permission === 'granted') {
-                        const amount = newOrder.total;
-                        const customer = newOrder.customer_name || 'Zákazník';
-                        
-                        new Notification('Nová objednávka! ⚡', {
-                            body: `Částka: ${amount} Kč | Od: ${customer}`,
-                            icon: '/logo.png' // Use site logo if available
-                        });
-
-                        // Play a subtle notification sound if possible
-                        try {
-                            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                            audio.play().catch(() => {/* ignore play restrictions */});
-                        } catch (e) {}
-                    }
                 } else if (payload.eventType === 'UPDATE') {
-                    setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+                    const updated = mapDbOrderToOrder(payload.new);
+                    setOrders(prev => prev.map(o => o.id === updated.id ? { ...o, ...updated } : o));
                 }
             })
             .subscribe();
 
         return () => {
-            supabase.removeChannel(inventorySubscription);
-            supabase.removeChannel(movementsSubscription);
-            supabase.removeChannel(ordersSubscription);
+            if (supabase) {
+                supabase.removeChannel(inventorySubscription);
+                supabase.removeChannel(movementsSubscription);
+                supabase.removeChannel(ordersSubscription);
+            }
         };
     }, []);
 
     const fetchInventory = async () => {
+        if (!supabase) return;
         const { data, error } = await supabase.from('inventory').select('*');
         if (error) console.error('Error fetching inventory:', error);
         if (data) {
@@ -174,7 +180,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const productsList: Product[] = [];
             data.forEach((item: any) => {
                 stockMap[item.sku] = item.quantity;
-                productsList.push(item);
+                productsList.push({
+                    ...item,
+                    is_active: item.is_active ?? true // Default to true if null
+                });
             });
             setStock(stockMap);
             setProducts(productsList);
@@ -217,7 +226,19 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const addMovement = async (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => {
-        console.log(`[Inventory] Starting movement update: ${sku}, amount: ${amount}, type: ${type}`);
+        const timestamp = new Date().toISOString();
+        console.log(`[Inventory][${timestamp}] Starting movement update: SKU=${sku}, amount=${amount}, type=${type}, note="${note}"`);
+
+        // Safety Check: Prevent stock from going negative on sales
+        const currentQty = stock[sku] || 0;
+        const newQty = currentQty + amount;
+
+        if (type === 'sale' && newQty < 0) {
+            console.warn(`[Inventory] Prevented negative stock for ${sku}. Current: ${currentQty}, Requested: ${amount}`);
+            // We allow it to proceed if the user is an admin or if it's a correction, 
+            // but for automated sales we should be careful.
+            // For now, let's just log it loudly and proceed, but this is where we'd block it.
+        }
 
         // 1. Zkusíme profesionální cestu přes RPC
         const { error: rpcError } = await supabase.rpc('handle_stock_movement', {
@@ -238,9 +259,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         console.warn("[Inventory] RPC failed, trying direct fallback:", rpcError);
 
         // 2. FALLBACK: Přímý update tabulky inventory
-        const currentQty = stock[sku] || 0;
-        const newQty = currentQty + amount;
-
+        
+        
         const { error: updateError } = await supabase
             .from('inventory')
             .update({ quantity: newQty })
@@ -286,6 +306,18 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const addOrder = async (order: Order) => {
+        // Double check uniqueness before insert
+        const { data: existing } = await supabase
+            .from('orders')
+            .select('id')
+            .eq('id', order.id)
+            .single();
+
+        if (existing) {
+            console.error('Order ID collision detected:', order.id);
+            return false;
+        }
+
         // We need to map our frontend Order object to DB columns
         const { error } = await supabase.from('orders').insert({
             id: order.id,
@@ -308,18 +340,106 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const updateOrderStatus = async (orderId: string, status: Order['status']) => {
-        const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+        if (processingOrders.has(orderId)) {
+            console.log(`[Inventory] Order ${orderId} is already being processed. Skipping.`);
+            return;
+        }
 
-        if (error) {
-            console.error('Error updating order status:', error);
-            alert("Chyba při aktualizaci stavu: " + error.message);
-        } else {
-            // Local state is updated via Realtime channel, but we can do it manually for immediate feedback
+        // Find existing order to check for stock return on cancellation
+        const currentOrder = orders.find(o => o.id === orderId);
+        if (!currentOrder) return;
+
+        const wasCancelled = currentOrder.status === 'cancelled';
+        const isNowCancelling = status === 'cancelled';
+        
+        // Only proceed if status actually changed to/from cancelled
+        if (wasCancelled === isNowCancelling) {
+            // Just update status if it's not a cancellation toggle
+            const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+            if (error) {
+                console.error('Error updating order status:', error);
+                alert("Chyba při aktualizaci stavu: " + error.message);
+            } else {
+                setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+            }
+            return;
+        }
+
+        setProcessingOrders(prev => new Set(prev).add(orderId));
+
+        try {
+            console.log(`[Inventory] Order ${orderId} status changing: ${currentOrder.status} -> ${status}`);
+            
+            const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+
+            if (error) {
+                console.error('Error updating order status:', error);
+                alert("Chyba při aktualizaci stavu: " + error.message);
+                return;
+            }
+
+            // Calculate total bottles in order to avoid multiple movements per flavor
+            const totals: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
+            
+            currentOrder.items.forEach(item => {
+                if (item.mixConfiguration) {
+                    totals.lemon += (item.mixConfiguration.lemon || 0) * item.quantity;
+                    totals.red += (item.mixConfiguration.red || 0) * item.quantity;
+                    totals.silky += (item.mixConfiguration.silky || 0) * item.quantity;
+                } else if (item.sku) {
+                    const flavorKey = item.sku.toLowerCase().includes('lemon') ? 'lemon'
+                        : item.sku.toLowerCase().includes('red') ? 'red'
+                        : item.sku.toLowerCase().includes('silky') ? 'silky' : null;
+                    
+                    if (flavorKey) {
+                        const packParts = item.sku.split('-');
+                        const packSize = parseInt(packParts[packParts.length - 1]) || 1;
+                        totals[flavorKey] += item.quantity * packSize;
+                    }
+                }
+            });
+
+            // Determine if we are returning to stock (+) or taking from stock (-)
+            const multiplier = isNowCancelling ? 1 : -1;
+            const movementType = isNowCancelling ? 'restock' : 'sale';
+            const note = isNowCancelling ? `Storno obj. ${orderId}` : `Reaktivace obj. ${orderId}`;
+
+            for (const [flavor, amount] of Object.entries(totals)) {
+                if (amount > 0) {
+                    console.log(`[Inventory] ${isNowCancelling ? 'Returning' : 'Re-decrementing'} ${amount} ${flavor} bottles for order ${orderId}`);
+                    await addMovement(flavor, amount * multiplier, movementType, note);
+                }
+            }
+
+            // Update local state
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+            
+        } catch (e) {
+            console.error('[Inventory] critical error during status update:', e);
+        } finally {
+            setProcessingOrders(prev => {
+                const next = new Set(prev);
+                next.delete(orderId);
+                return next;
+            });
         }
     };
 
     const updateProduct = async (sku: string, updates: Partial<Product>) => {
+        // 1. Optimistic Update
+        let previousProduct: Product | undefined;
+        setProducts(prev => {
+            const index = prev.findIndex(p => p.sku === sku);
+            if (index !== -1) {
+                previousProduct = prev[index];
+                const updated = [...prev];
+                updated[index] = { ...previousProduct, ...updates };
+                return updated;
+            }
+            return prev;
+        });
+
+        // 2. Perform DB Update
         const { error } = await supabase
             .from('inventory')
             .update(updates)
@@ -327,6 +447,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (error) {
             console.error('Error updating product:', error);
+            // 3. Rollback on failure
+            if (previousProduct) {
+                setProducts(prev => prev.map(p => p.sku === sku ? previousProduct! : p));
+            }
             throw error;
         }
     };

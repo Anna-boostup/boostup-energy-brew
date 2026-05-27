@@ -1,5 +1,5 @@
 // Force redeploy - Final Merged Production Version (Loveble Design + Development Logic)
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -8,7 +8,7 @@ import { useInventory, Order } from '@/context/InventoryContext';
 import {
   ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
   Loader2, Package, FileText, ChevronLeft, MapPin,
-  Minus, Plus, Trash2, Lock, Sparkles
+  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle, X
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -56,13 +56,19 @@ const sendOrderConfirmationEmail = async (
   }
 };
 
+import { useContent } from '@/context/ContentContext';
+
 const CheckoutPage = () => {
-  const { cart, cartTotal, clearCart } = useCart();
+  const { content } = useContent();
+  const isSalesEnabled = content.isSalesEnabled !== false;
+  const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode, clearCart } = useCart();
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [promoInput, setPromoInput] = useState("");
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
 
@@ -71,6 +77,7 @@ const CheckoutPage = () => {
   const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Billing Address State
   const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
@@ -104,9 +111,23 @@ const CheckoutPage = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Dynamically set checkout page title to look cleaner in Google Pay/Apple Pay sheet
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = 'BoostUp Energy';
+    return () => {
+      document.title = prevTitle;
+    };
+  }, []);
+
   // Pre-fill data from profile
   useEffect(() => {
     if (!user) return;
+
+    // Immediately pre-fill guaranteed email to prevent UI race conditions
+    if (user.email && !formData.email) {
+      setFormData(prev => ({ ...prev, email: user.email || '' }));
+    }
 
     const fetchProfile = async () => {
       const { data, error } = await supabase
@@ -129,7 +150,7 @@ const CheckoutPage = () => {
           ...prev,
           firstName: firstName,
           lastName: lastName,
-          email: data.email || prev.email,
+          email: data.email || user.email || prev.email,
           phone: delivery.phone || prev.phone,
           street: delivery.street || '',
           houseNumber: delivery.houseNumber || '',
@@ -160,7 +181,7 @@ const CheckoutPage = () => {
 
     // 0. Field Validation
     const requiredFields: (keyof typeof formData)[] = [
-      'firstName', 'lastName', 'email', 'phone', 'houseNumber', 'city', 'zip'
+      'firstName', 'lastName', 'email', 'phone', 'street', 'houseNumber', 'city', 'zip'
     ];
 
     const fieldLabels: Record<string, string> = {
@@ -171,6 +192,7 @@ const CheckoutPage = () => {
       houseNumber: 'Číslo popisné',
       city: 'Město',
       zip: 'PSČ',
+      street: 'Ulice',
       paymentMethod: 'Způsob platby'
     };
 
@@ -229,7 +251,7 @@ const CheckoutPage = () => {
     if (Object.keys(newErrors).length > 0) {
       toast({
         title: "Chybějící údaje",
-        description: `Prosím opravte chyby ve formuláři.`,
+        description: `Prosím vyplňte: ${missingFields.join(', ')}`,
         variant: "destructive"
       });
       return;
@@ -267,7 +289,9 @@ const CheckoutPage = () => {
       }
     }
 
-    setIsProcessing(true);
+    startTransition(() => {
+      setIsProcessing(true);
+    });
     let currentUser = user;
 
     try {
@@ -312,12 +336,14 @@ const CheckoutPage = () => {
         }
       }
 
-      const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`;
+      const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
 
       // 2. Decrement Stock
-      Object.entries(requiredStock).forEach(([flavor, amount]) => {
-        if (amount > 0) decrementStock(flavor, amount);
-      });
+      for (const [flavor, amount] of Object.entries(requiredStock)) {
+        if (amount > 0) {
+          await decrementStock(flavor, amount);
+        }
+      }
 
       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
       const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
@@ -327,7 +353,7 @@ const CheckoutPage = () => {
         id: orderNumber,
         date: new Date().toISOString(),
         customer: {
-          name: `${formData.firstName} ${formData.lastName}`,
+          name: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || formData.email,
           email: formData.email,
         },
         delivery_info: {
@@ -400,7 +426,9 @@ const CheckoutPage = () => {
           description: "Nepodařilo se uložit objednávku. Zkuste to prosím znovu.",
           variant: "destructive"
         });
-        setIsProcessing(false);
+        startTransition(() => {
+          setIsProcessing(false);
+        });
         return;
       }
 
@@ -439,6 +467,7 @@ const CheckoutPage = () => {
 
           const stripeData = await stripeRes.json();
           if (stripeRes.ok && stripeData.url) {
+            clearCart();
             window.location.href = stripeData.url;
             return;
           } else {
@@ -450,8 +479,10 @@ const CheckoutPage = () => {
             description: stripeError.message || "Nepodařilo se inicializovat Stripe Checkout.",
             variant: "destructive"
           });
-          setIsProcessing(false);
-          setIsRedirecting(false);
+          startTransition(() => {
+            setIsProcessing(false);
+            setIsRedirecting(false);
+          });
           return;
         }
       }
@@ -476,7 +507,17 @@ const CheckoutPage = () => {
         });
 
         const gopayData = await gopayRes.json();
-        if (gopayRes.ok && gopayData.gw_url) {
+        if (gopayRes.ok && gopayData.gw_url && gopayData.id) {
+          // Store GoPay payment ID in the order metadata for sync
+          const { supabase } = await import('@/lib/supabase');
+          await supabase.from('orders').update({
+            delivery_info: {
+              ...newOrder.delivery_info,
+              gopayPaymentId: gopayData.id
+            }
+          }).eq('id', newOrder.id);
+          
+          clearCart();
           window.location.href = gopayData.gw_url;
           return;
         } else {
@@ -488,8 +529,10 @@ const CheckoutPage = () => {
           description: gopayError.message || "Nepodařilo se inicializovat platební bránu GoPay.",
           variant: "destructive"
         });
-        setIsProcessing(false);
-        setIsRedirecting(false);
+        startTransition(() => {
+          setIsProcessing(false);
+          setIsRedirecting(false);
+        });
       }
 
     } catch (error) {
@@ -499,7 +542,9 @@ const CheckoutPage = () => {
         description: "Při zpracování objednávky došlo k chybě.",
         variant: "destructive"
       });
-      setIsProcessing(false);
+      startTransition(() => {
+        setIsProcessing(false);
+      });
     }
   };
 
@@ -523,25 +568,41 @@ const CheckoutPage = () => {
   return (
     <main className="min-h-screen bg-secondary/30 py-6 sm:py-12">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mb-12">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-primary hover:text-primary transition-colors font-bold mb-6 group"
-          >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
-              <ArrowLeft size={16} />
-            </div>
-            <span className="uppercase tracking-widest text-[10px] font-black">Zpět k výběru balení</span>
-          </button>
+        <div className="mb-12 flex flex-wrap items-center justify-between gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-8">
+            <button
+              onClick={() => navigate('/', { replace: true, state: { openCart: true } })}
+              className="flex items-center gap-2 text-primary hover:text-primary transition-colors font-bold group"
+            >
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
+                <ArrowLeft size={16} />
+              </div>
+              <span className="uppercase tracking-widest text-[10px] font-black">{content.checkout.backToCart}</span>
+            </button>
+
+            <div className="w-px h-4 bg-border hidden sm:block" />
+
+            <button
+              onClick={() => {
+                clearCart();
+                navigate('/', { replace: true });
+              }}
+              className="flex items-center gap-2 text-destructive hover:scale-105 transition-all font-bold group"
+            >
+              <X size={14} className="text-destructive" />
+              <span className="uppercase tracking-widest text-[10px] font-black">{content.checkout.cancelOrder}</span>
+            </button>
+          </div>
+        </div>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h1 className="text-4xl md:text-7xl font-display font-black text-foreground leading-none tracking-tighter uppercase">
-                DOKONČENÍ <br />
-                <span className="text-gradient-energy italic pr-4 inline-block pb-2">NÁKUPU</span>
+                {content.checkout.titleLine1} <br />
+                <span className="text-gradient-energy italic pr-4 inline-block pb-2">{content.checkout.titleLine2}</span>
               </h1>
               <p className="text-foreground/60 mt-4 font-medium uppercase tracking-[0.2em] text-[10px]">
-                Zabezpečená pokladna / Doručení do 48 hodin
+                {content.checkout.subTitle}
               </p>
             </div>
             
@@ -554,16 +615,20 @@ const CheckoutPage = () => {
                 ))}
               </div>
               <div className="text-left">
-                <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">Krok 3 ze 3</div>
-                <div className="text-xs font-black uppercase tracking-tight">Potvrzení objednávky</div>
+                <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">{content.checkout.steps.stepCount}</div>
+                <div className="text-xs font-black uppercase tracking-tight">{content.checkout.steps.confirmation}</div>
               </div>
-            </div>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form Side */}
           <div className="lg:col-span-8 space-y-6">
+            {/* Express Checkout Section */}
+            <Elements stripe={stripePromise}>
+              <StripeExpressButtons />
+            </Elements>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* 1. Personal Info */}
@@ -574,9 +639,9 @@ const CheckoutPage = () => {
                   <div className="space-y-1">
                     <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight">
                       <Truck className="w-7 h-7 text-primary" />
-                      Doprava a kontakt
+                      {content.checkout.personalInfo.title}
                     </h2>
-                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest ml-10">Zadejte své doručovací údaje</p>
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest ml-10">{content.checkout.personalInfo.description}</p>
                   </div>
 
                   <div className="flex bg-secondary/30 p-1 rounded-2xl border border-border/50 backdrop-blur-sm">
@@ -585,14 +650,14 @@ const CheckoutPage = () => {
                       onClick={() => setFormData(prev => ({ ...prev, isCompany: false }))}
                       className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!formData.isCompany ? 'bg-primary text-black shadow-lg shadow-primary/20 scale-105' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                      Osobní
+                      {content.checkout.personalInfo.mode_personal}
                     </button>
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, isCompany: true }))}
                       className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.isCompany ? 'bg-primary text-black shadow-lg shadow-primary/20 scale-105' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                      Firemní
+                      {content.checkout.personalInfo.mode_company}
                     </button>
                   </div>
                 </div>
@@ -601,10 +666,10 @@ const CheckoutPage = () => {
                   {formData.isCompany && (
                     <motion.div 
                       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                      className="md:col-span-2 grid md:grid-cols-3 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
+                      className="md:col-span-2 grid md:grid-cols-4 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
                     >
                       <div className="md:col-span-2 space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">Název společnosti *</label>
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.companyName} *</label>
                         <input
                           name="companyName"
                           value={formData.companyName}
@@ -614,7 +679,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">IČO *</label>
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.ico} *</label>
                         <input
                           name="ico"
                           value={formData.ico}
@@ -623,11 +688,21 @@ const CheckoutPage = () => {
                           className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.ico ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm'}`}
                         />
                       </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.dic}</label>
+                        <input
+                          name="dic"
+                          value={formData.dic}
+                          onChange={handleChange}
+                          placeholder="CZ12345678"
+                          className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold shadow-sm"
+                        />
+                      </div>
                     </motion.div>
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Jméno *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.firstName} *</label>
                     <input
                       name="firstName"
                       autoComplete="given-name"
@@ -638,7 +713,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Příjmení *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.lastName} *</label>
                     <input
                       name="lastName"
                       autoComplete="family-name"
@@ -649,7 +724,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Emailová adresa *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.email} *</label>
                     <input
                       type="email"
                       name="email"
@@ -661,7 +736,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Telefonní kontakt *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.phone} *</label>
                     <input
                       type="tel"
                       name="phone"
@@ -681,11 +756,11 @@ const CheckoutPage = () => {
                         value={formData.street}
                         onChange={handleChange}
                         placeholder="Vodní"
-                        className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold shadow-sm"
+                        className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.street ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm hover:border-border/80'}`}
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
-                      <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Č. popisné *</label>
+                      <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
                       <input
                         name="houseNumber"
                         autoComplete="address-line2"
@@ -698,7 +773,7 @@ const CheckoutPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Město / Obec *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
                     <input
                       name="city"
                       autoComplete="address-level2"
@@ -709,7 +784,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Poštovní směrovací č. *</label>
+                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
                     <input
                       name="zip"
                       autoComplete="postal-code"
@@ -728,7 +803,7 @@ const CheckoutPage = () => {
                   <div className="space-y-1">
                     <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight">
                       <FileText className="w-7 h-7 text-primary" />
-                      Fakturační údaje
+                      {content.checkout.address.title}
                     </h2>
                   </div>
 
@@ -739,7 +814,7 @@ const CheckoutPage = () => {
                       onCheckedChange={(checked) => setBillingSameAsDelivery(checked as boolean)}
                       className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
-                    <Label htmlFor="billingSame" className="font-bold cursor-pointer text-xs uppercase tracking-widest">Stejné jako doručovací</Label>
+                    <Label htmlFor="billingSame" className="font-bold cursor-pointer text-xs uppercase tracking-widest">{content.checkout.address.billingSame}</Label>
                   </div>
                 </div>
 
@@ -748,7 +823,7 @@ const CheckoutPage = () => {
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="md:col-span-2 grid grid-cols-6 gap-6">
                         <div className="col-span-4 space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Ulice</label>
+                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.street}</label>
                           <input
                             name="billingStreet"
                             value={formData.billingStreet}
@@ -757,7 +832,7 @@ const CheckoutPage = () => {
                           />
                         </div>
                         <div className="col-span-2 space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Č.p. *</label>
+                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
                           <input
                             name="billingHouseNumber"
                             value={formData.billingHouseNumber}
@@ -767,7 +842,7 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Město *</label>
+                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
                         <input
                           name="billingCity"
                           value={formData.billingCity}
@@ -776,7 +851,7 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">PSČ *</label>
+                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
                         <input
                           name="billingZip"
                           value={formData.billingZip}
@@ -793,7 +868,7 @@ const CheckoutPage = () => {
               <div className="bg-card rounded-[2.5rem] p-6 sm:p-10 border border-border shadow-2xl">
                 <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight mb-8">
                   <MapPin className="w-7 h-7 text-primary" />
-                  Způsob dopravy
+                  {content.checkout.delivery.title}
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -803,6 +878,7 @@ const CheckoutPage = () => {
                   ].map((method) => (
                     <button
                       key={method.id}
+                      data-testid={`checkout-shipping-${method.id}`}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, deliveryMethod: method.id }))}
                       className={`relative p-6 rounded-[2rem] border-2 text-center flex flex-col items-center justify-center transition-all group min-h-[140px] ${formData.deliveryMethod === method.id ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}
@@ -825,7 +901,7 @@ const CheckoutPage = () => {
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
                     {!selectedPoint ? (
                       <PacketaWidget 
-                        onSelect={(point: any) => { 
+                        onPointSelected={(point: any) => { 
                           setSelectedPoint(point); 
                           setFormData(prev => ({ ...prev, packetaPointId: point.id })); 
                         }} 
@@ -836,8 +912,8 @@ const CheckoutPage = () => {
                           <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-black">
                             <MapPin size={24} />
                           </div>
-                          <div>
-                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Vybrané výdejní místo</p>
+                          <div data-sentry-mask>
+                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{content.checkout.delivery.pickupPoint}</p>
                             <p className="font-black text-lg leading-tight">{selectedPoint.name}</p>
                             <p className="text-xs font-bold text-muted-foreground">{selectedPoint.street}, {selectedPoint.city}</p>
                           </div>
@@ -848,7 +924,7 @@ const CheckoutPage = () => {
                           onClick={() => { setSelectedPoint(null); setFormData(prev => ({ ...prev, packetaPointId: '' })); }}
                           className="rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-destructive/10 hover:text-destructive"
                         >
-                          Změnit
+                          {content.checkout.delivery.changePoint}
                         </Button>
                       </div>
                     )}
@@ -860,23 +936,23 @@ const CheckoutPage = () => {
               <div className="bg-card rounded-[2.5rem] p-6 sm:p-10 border border-border shadow-2xl">
                 <h2 className="text-2xl md:text-3xl font-display font-black flex items-center gap-3 uppercase tracking-tight mb-8">
                   <CreditCard className="w-7 h-7 text-primary" />
-                  Způsob platby
+                  {content.checkout.payment.title}
                 </h2>
 
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <PaymentMethodCard 
                       id="card" 
-                      name="Platební karta" 
-                      sub={hasSubscription ? 'Stripe Checkout' : 'GoPay brána'}
+                      name={content.checkout.payment.method_card} 
+                      sub={hasSubscription ? 'Stripe Checkout' : content.checkout.payment.method_card_sub}
                       active={formData.paymentMethod === 'card'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'card' }))}
                       icon={<CreditCard size={24} />}
                     />
                     <PaymentMethodCard 
                       id="transfer_manual" 
-                      name="Bankovní převod" 
-                      sub="Tradiční proforma"
+                      name={content.checkout.payment.method_bank} 
+                      sub={content.checkout.payment.method_bank_sub}
                       active={formData.paymentMethod === 'transfer_manual'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'transfer_manual' }))}
                       icon={<FileText size={24} />}
@@ -886,8 +962,8 @@ const CheckoutPage = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <PaymentMethodCard 
                       id="applepay" 
-                      name="Apple Pay" 
-                      sub="Rychlá platba"
+                      name={content.checkout.payment.method_apple} 
+                      sub={content.checkout.payment.method_apple_sub}
                       active={formData.paymentMethod === 'applepay'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'applepay' }))}
                       icon={
@@ -898,8 +974,8 @@ const CheckoutPage = () => {
                     />
                     <PaymentMethodCard 
                       id="googlepay" 
-                      name="Google Pay" 
-                      sub="Rychlá platba"
+                      name={content.checkout.payment.method_google} 
+                      sub={content.checkout.payment.method_google_sub}
                       active={formData.paymentMethod === 'googlepay'} 
                       onClick={() => setFormData(prev => ({ ...prev, paymentMethod: 'googlepay' }))}
                       icon={
@@ -923,7 +999,7 @@ const CheckoutPage = () => {
               <div className="relative z-10">
                 <h2 className="text-2xl font-display font-black flex items-center gap-3 uppercase italic tracking-tight mb-8 border-b border-white/10 pb-4">
                   <ShoppingBag className="w-6 h-6 text-primary" />
-                  Shrnutí
+                  {content.checkout.summaryTitle}
                 </h2>
 
                 <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -946,24 +1022,41 @@ const CheckoutPage = () => {
                   ))}
                 </div>
 
+                <div className="pt-6 border-t border-white/10 mt-6">
+                   {/* Promo code moved to Express section */}
+                   {cart.some(item => item.subscriptionInterval) && !appliedPromoCode && (
+                    <p className="text-[9px] text-white/40 mt-2 font-bold px-1 italic">
+                      Pozn: Slevové kódy nelze kombinovat se slevou na předplatné.
+                    </p>
+                  )}
+                </div>
+
                 <div className="pt-8 space-y-4 border-t border-white/10 mt-8">
-                  <div className="flex justify-between items-center">
-                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Balení</span>
-                    <span className="font-bold">{cartTotal} Kč</span>
+                  <div className="flex justify-between items-center opacity-70">
+                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.subtotal}</span>
+                    <span className="font-bold">{(cartTotal + discountAmount).toFixed(2)} Kč</span>
                   </div>
+                  
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between items-center text-primary">
+                      <span className="uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.discount}</span>
+                      <span className="font-bold italic">-{discountAmount.toFixed(2)} Kč</span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">Doprava</span>
+                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.shipping}</span>
                     {(() => {
                       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
                       const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
-                      return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? 'ZDARMA' : `${shippingCost} Kč`}</span>;
+                      return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? content.checkout.delivery.free : `${shippingCost} Kč`}</span>;
                     })()}
                   </div>
                   
                   <div className="pt-6 border-t-2 border-primary-foreground/20 flex justify-between items-end">
                     <div>
-                      <span className="font-display font-black text-4xl uppercase italic leading-none block">CELKEM</span>
-                      <span className="text-[10px] text-primary-foreground/60 font-bold uppercase tracking-[0.3em]">včetně DPH</span>
+                      <span className="font-display font-black text-4xl uppercase italic leading-none block">{content.checkout.summary.totalLabel}</span>
+                      <span className="text-[10px] text-primary-foreground/60 font-bold uppercase tracking-[0.3em]">{content.checkout.summary.totalWithVat}</span>
                     </div>
                     <div className="text-right flex items-baseline">
                       <span className="text-4xl font-display font-black leading-none">
@@ -979,37 +1072,50 @@ const CheckoutPage = () => {
                 </div>
 
                 <Button
+                  data-testid="checkout-submit-btn"
                   onClick={handleSubmit}
-                  disabled={isProcessing || cart.length === 0}
-                  className="w-full h-20 rounded-[1.5rem] mt-10 bg-[#bef264] text-black hover:bg-[#a3e635] font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                  disabled={isProcessing || cart.length === 0 || !isSalesEnabled}
+                  className={`w-full h-20 rounded-[1.5rem] mt-10 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
+                    !isSalesEnabled ? 'bg-slate-200 text-slate-500 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
+                  }`}
                 >
                   {isProcessing ? (
                     <Loader2 className="animate-spin w-8 h-8" />
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="leading-none">Závazně objednat</span>
-                      <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">SSL Zabezpečená platba</span>
+                      <span className="leading-none">{!isSalesEnabled ? content.checkout.summary.salesDisabled : content.checkout.summary.submitButton}</span>
+                      <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">
+                        {!isSalesEnabled ? content.checkout.summary.salesDisabledSub : content.checkout.summary.submitButtonSub}
+                      </span>
                     </div>
                   )}
                 </Button>
+
+                {!isSalesEnabled && (
+                  <div className="mt-4 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
+                    <div className="space-y-1 text-left">
+                      <p className="text-sm font-bold text-red-800">{content.checkout.summary.salesDisabledAlert}</p>
+                      <p className="text-xs text-red-700">{content.checkout.summary.salesDisabledDesc}</p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="mt-8 flex items-center justify-center gap-6 opacity-30 grayscale hover:opacity-60 hover:grayscale-0 transition-all cursor-default">
                     <span className="text-[9px] font-black uppercase tracking-[0.3em]">Encrypted Connection</span>
                   </div>
 
-                  {/* Express Checkout Section */}
-                  <Elements stripe={stripePromise}>
-                    <StripeExpressButtons />
-                  </Elements>
+                  {/* Express Checkout Section moved to top */}
                 </div>
               </div>
             </div>
             
-            <p className="mt-6 text-[10px] text-center text-muted-foreground leading-relaxed px-4">
-              Odesláním objednávky souhlasíte s <a href="/obchodni-podminky" className="underline font-bold">obchodními podmínkami</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">zásadami soukromí</a>.
-            </p>
+            <div className="lg:col-span-12">
+              <p className="mt-12 text-[10px] text-center text-muted-foreground leading-relaxed px-4 max-w-2xl mx-auto">
+                {content.checkout.summary.legalConsent} <a href="/obchodni-podminky" className="underline font-bold">{content.checkout.summary.terms}</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">{content.checkout.summary.privacy}</a>.
+              </p>
+            </div>
           </div>
-        </div>
 
       <StripePaymentModal
         clientSecret={clientSecret || ""}
@@ -1021,6 +1127,7 @@ const CheckoutPage = () => {
         orderNumber={pendingOrder?.id || ""}
         amount={pendingOrder?.total || 0}
       />
+      </div>
     </main>
   );
 };
@@ -1036,6 +1143,7 @@ const Box = ({ className }: { className?: string }) => (
 
 const PaymentMethodCard = ({ id, name, sub, active, onClick, icon }: any) => (
   <button
+    data-testid={`checkout-payment-${id}`}
     type="button"
     onClick={onClick}
     className={`relative p-6 rounded-[2rem] border-2 text-center transition-all group h-[140px] flex flex-col items-center justify-center gap-3 ${active ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-border bg-background/50 hover:border-primary/30'}`}

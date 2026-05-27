@@ -3,7 +3,7 @@ import { useContent } from "@/context/ContentContext";
 import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
-import { FLAVORS, PACK_PRICES, PACK_SIZES, type FlavorType } from "@/config/product-data";
+import { FLAVORS, PACK_SIZES, type FlavorType } from "@/config/product-data";
 
 // Assets
 const bottlesHero = "/hero-vse.webp";
@@ -50,16 +50,17 @@ export const useProductLogic = () => {
     };
 
     const getEffectiveProduct = (sku: string) => {
-        if (sku.startsWith('mix-')) {
-            const packSize = parseInt(sku.split('-')[1]) as Pack;
+        if (sku.startsWith('mix-') || sku.endsWith('-3') || sku.endsWith('-12') || sku.endsWith('-21')) {
+            const packSize = parseInt(sku.split('-').pop() || "0") as Pack;
+            const fallbackName = sku.startsWith('mix-') ? `BoostUp ${packSize}x Pack (MIX)` : `BoostUp ${packSize}x Pack`;
             return {
                 sku,
-                name: `BoostUp ${packSize}x Pack (MIX)`,
-                price: PACK_PRICES[packSize] || 0,
-                description: getMixDescription(packSize),
-                tooltip: "Ochutnejte všechny příchutě v jednom balení",
-                is_on_sale: false,
-                image_url: null,
+                name: products.find(p => p.sku === sku)?.name || fallbackName,
+                price: content.pricing?.[`pack${packSize}` as keyof typeof content.pricing] || 0,
+                description: sku.startsWith('mix-') ? getMixDescription(packSize) : "",
+                tooltip: sku.startsWith('mix-') ? "Ochutnejte všechny příchutě v jednom balení" : "",
+                is_on_sale: products.find(p => p.sku === sku)?.is_on_sale || false,
+                image_url: products.find(p => p.sku === sku)?.image_url || null,
             };
         }
 
@@ -107,12 +108,8 @@ export const useProductLogic = () => {
 
     const getDynamicPrice = () => {
         if (!selectedPack) return 0;
-        if (flavorMode === "single" && selectedFlavor) {
-            const sku = `${selectedFlavor}-${selectedPack}`;
-            const product = products.find(p => p.sku === sku);
-            if (product) return product.price * quantity;
-        }
-        return PACK_PRICES[selectedPack as keyof typeof PACK_PRICES] * quantity;
+        const packPrice = content.pricing?.[`pack${selectedPack}` as keyof typeof content.pricing] || 0;
+        return packPrice * quantity;
     };
 
     const handleMixChange = (flavorId: string, change: number) => {
@@ -156,7 +153,7 @@ export const useProductLogic = () => {
         const sku = flavorMode === "mix" ? `mix-${selectedPack}` : `${selectedFlavor}-${selectedPack}`;
         const effProduct = getEffectiveProduct(sku);
         const displayName = effProduct?.name || (flavorMode === "mix" ? `BoostUp ${selectedPack}x Pack (MIX)` : `BoostUp ${selectedPack}x Pack (${currentFlavor.name})`);
-        const displayPrice = effProduct?.price || PACK_PRICES[selectedPack as keyof typeof PACK_PRICES];
+        const displayPrice = effProduct?.price || content.pricing?.[`pack${selectedPack}` as keyof typeof content.pricing] || 0;
 
         addToCart({
             id: flavorMode === "mix" ? `mix-${selectedPack}${mixIdSuffix}` : `${selectedFlavor}-${selectedPack}`,
@@ -185,14 +182,19 @@ export const useProductLogic = () => {
         }
 
         if (flavorMode === 'mix') {
+            const lemonProduct = products.find(p => p.sku === 'lemon');
+            const redProduct = products.find(p => p.sku === 'red');
+            const silkyProduct = products.find(p => p.sku === 'silky');
+
             if (
-                (mixCounts.lemon * quantity > 0 && getStock('lemon') < mixCounts.lemon * quantity) ||
-                (mixCounts.red * quantity > 0 && getStock('red') < mixCounts.red * quantity) ||
-                (mixCounts.silky * quantity > 0 && getStock('silky') < mixCounts.silky * quantity)
+                (mixCounts.lemon > 0 && (getStock('lemon') < mixCounts.lemon * quantity || lemonProduct?.is_active === false)) ||
+                (mixCounts.red > 0 && (getStock('red') < mixCounts.red * quantity || redProduct?.is_active === false)) ||
+                (mixCounts.silky > 0 && (getStock('silky') < mixCounts.silky * quantity || silkyProduct?.is_active === false))
             ) return true;
         } else {
-            // Stock is tracked at bottle level; check if we have enough bottles
-            if (selectedFlavor && selectedPack && getStock(selectedFlavor) < quantity * selectedPack) return true;
+            const product = products.find(p => p.sku === selectedFlavor);
+            // Stock is tracked at bottle level; check if we have enough bottles OR if product is inactive
+            if (selectedFlavor && selectedPack && (getStock(selectedFlavor) < quantity * selectedPack || product?.is_active === false)) return true;
         }
         return false;
     };

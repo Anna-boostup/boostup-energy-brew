@@ -1,0 +1,128 @@
+import { test, expect } from './fixtures';
+
+const identities = [
+  { 
+    name: 'Guest', 
+    type: 'guest',
+    email: '',
+    password: '',
+    enabled: true
+  },
+  { 
+    name: 'Basic User', 
+    type: 'personal',
+    email: process.env.TEST_BASIC_EMAIL,
+    password: process.env.TEST_BASIC_PASSWORD,
+    enabled: !!process.env.TEST_BASIC_EMAIL
+  },
+  { 
+    name: 'Company User', 
+    type: 'company',
+    email: process.env.TEST_COMPANY_EMAIL,
+    password: process.env.TEST_COMPANY_PASSWORD,
+    enabled: !!process.env.TEST_COMPANY_EMAIL
+  },
+  { 
+    name: 'Admin User', 
+    type: 'admin',
+    email: process.env.TEST_ADMIN_EMAIL,
+    password: process.env.TEST_ADMIN_PASSWORD,
+    enabled: !!process.env.TEST_ADMIN_EMAIL
+  }
+];
+
+test.describe('Multi-Identity Checkout Scenarios', () => {
+  for (const identity of identities) {
+    if (!identity.enabled) {
+        console.log(`Skipping checkout scenarios for ${identity.name} (Credentials missing)`);
+        continue;
+    }
+
+    test.describe(`Purchase as ${identity.name}`, () => {
+      // Apply storage state for logged-in users
+      if (identity.type !== 'guest') {
+        const stateFile = identity.type === 'personal' ? 'customer.json' : 
+                         identity.type === 'company' ? 'company.json' : 'admin.json';
+        test.use({ storageState: `playwright/.auth/${stateFile}` });
+      }
+
+      test(`Purchase flow`, async ({ page }, testInfo) => {
+        const workerId = testInfo.workerIndex;
+        
+        // 1. Add product to cart (Starts already logged in if not guest)
+        // Use domcontentloaded then follow with load check to be resilient to interruptions
+        try {
+          await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+        } catch (e: any) {
+          if (e.message.includes('interrupted')) {
+            console.log('Navigation interrupted by internal redirect, retrying...');
+            await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+          } else {
+            throw e;
+          }
+        }
+      const addToCartButton = page.getByTestId('add-to-cart-hero-btn');
+      await addToCartButton.waitFor({ state: 'visible', timeout: 60000 });
+      await addToCartButton.click();
+
+      // 3. Open the Cart Drawer
+      // The drawer does not automatically open upon adding an item; we must manually click the header cart icon.
+      const headerCartButton = page.getByTestId('header-cart-btn').filter({ visible: true }).first();
+      // Small stabilization wait for cart animation
+      await page.waitForTimeout(1000); 
+      await headerCartButton.click({ force: true });
+
+      // 4. Go to checkout
+      const checkoutBtn = page.getByTestId('cart-drawer-checkout-btn');
+      await checkoutBtn.waitFor({ state: 'visible', timeout: 15000 });
+      await checkoutBtn.click();
+      await expect(page).toHaveURL(/.*checkout/, { timeout: 30000 });
+
+      // 4. Identity-specific checks on Checkout Page
+      if (identity.type !== 'guest') {
+        // Verify email is correct
+        await expect(page.locator('input[name="email"]')).toHaveValue(identity.email);
+        
+        // --- ADDRESS UPDATE TEST ---
+        // Change address with worker-specific suffix to avoid collision
+        const newStreet = `Testovaci W${workerId} ${Math.floor(Math.random() * 1000)}`;
+        await page.fill('input[name="street"]', newStreet);
+        await page.fill('input[name="city"]', 'Brno');
+        await page.fill('input[name="zip"]', '602 00');
+        await page.fill('input[name="houseNumber"]', '123/A');
+      } else {
+        // Guest: Fill everything
+        await page.fill('input[name="firstName"]', `GhostW${workerId}`);
+        await page.fill('input[name="lastName"]', 'Rider');
+        await page.fill('input[name="email"]', `guest-${workerId}-${Date.now()}@example.com`);
+        await page.fill('input[name="phone"]', '+420 777123456');
+        await page.fill('input[name="street"]', 'Hlavni');
+        await page.fill('input[name="houseNumber"]', '1');
+        await page.fill('input[name="city"]', 'Praha');
+        await page.fill('input[name="zip"]', '110 00');
+      }
+
+      if (identity.type === 'company') {
+        // Verify B2B fields
+        await expect(page.locator('input[name="companyName"]')).toBeVisible();
+        await expect(page.locator('input[name="ico"]')).toBeVisible();
+        await expect(page.locator('input[name="dic"]')).toBeVisible();
+      }
+
+      // 5. Delivery & Payment
+      await page.getByTestId('checkout-shipping-zasilkovna').click();
+      // Packeta Widget is usually an iframe, for smoke test we just ensure payment methods show up
+      
+      const gopayButton = page.getByTestId('checkout-payment-card');
+      await gopayButton.click();
+
+      // 6. Submit
+      const submitButton = page.getByTestId('checkout-submit-btn');
+      await expect(submitButton).toBeEnabled();
+      
+      // We don't actually submit to avoid creating junk orders unless it's a dry run
+      // await submitButton.click();
+      });
+    });
+  }
+});

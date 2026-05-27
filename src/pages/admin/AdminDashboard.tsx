@@ -1,161 +1,326 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingBag, Package, Users, Printer, Eye, FileText } from "lucide-react";
 import { useInventory, Order } from "@/context/InventoryContext";
+import { useContent } from "@/context/ContentContext";
+import { Switch } from "@/components/ui/switch";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
+import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
+import { useState } from "react";
 
 const AdminDashboard = () => {
-    const { stock, orders } = useInventory();
-    const totalStock = Object.values(stock).reduce((a, b) => a + b, 0);
-    const lowStockItems = Object.entries(stock).filter(([_, qty]) => qty < 10).length;
+    const { orders = [], stock = {}, loading: inventoryLoading } = useInventory() || { orders: [], stock: {}, loading: true };
+    const { content, loading: contentLoading, refreshContent } = useContent();
+    const { toast } = useToast();
+    const [isUpdating, setIsUpdating] = useState(false);
 
-    const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-    const todayOrders = orders.filter(o => new Date(o.date).toDateString() === new Date().toDateString()).length;
+    const isLoading = inventoryLoading || contentLoading || !content;
 
-    // Status groups
-    const newOrdersCount = orders.filter(o => o.status === 'pending' || o.status === 'paid').length;
-    const processingCount = orders.filter(o => o.status === 'processing').length;
-    const shippedCount = orders.filter(o => o.status === 'shipped').length;
-    const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
+    // Calculate stats
+    const totalRevenue = (orders || []).reduce((sum, order) => (order && order.status !== 'cancelled') ? sum + (Number(order.total) || 0) : sum, 0);
+    const newOrdersCount = (orders || []).filter(o => o && (o.status === 'pending' || o.status === 'paid')).length;
+    const processingCount = (orders || []).filter(o => o && o.status === 'processing').length;
+    const shippedCount = (orders || []).filter(o => o && o.status === 'shipped').length;
+    const cancelledCount = (orders || []).filter(o => o && o.status === 'cancelled').length;
+    
+    const today = new Date().toISOString().split('T')[0];
+    const todayOrders = (orders || []).filter(o => o && o.date?.startsWith(today)).length;
+
+    const toggleSales = async (enabled: boolean) => {
+        setIsUpdating(true);
+        try {
+            const newContent = {
+                ...content,
+                isSalesEnabled: enabled
+            };
+
+            const { error } = await supabase
+                .from('site_content')
+                .upsert({ 
+                    id: 'main', 
+                    content: newContent,
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+
+            await refreshContent();
+            toast({
+                title: enabled ? content?.admin?.dashboard?.salesActive : content?.admin?.dashboard?.salesPaused,
+                description: enabled ? content?.admin?.dashboard?.salesActiveDesc : content?.admin?.dashboard?.salesPausedDesc,
+            });
+        } catch (error: any) {
+            toast({
+                title: content?.admin?.dashboard?.updateError || "Error",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
+                <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
+            </div>
+        );
+    }
+
+    const isSalesEnabled = content?.isSalesEnabled !== false; // Default to true
 
     return (
-        <div className="space-y-8">
-            <h2 className="text-3xl font-bold tracking-tight">Přehled</h2>
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-1000">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+                <div>
+                    <h2 data-testid="admin-page-title" className="text-4xl sm:text-6xl font-black tracking-tighter text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.title}</h2>
+                    <div className="flex items-center gap-3 mt-2">
+                        <div className="flex -space-x-1">
+                            <div className="w-2 h-2 rounded-full bg-lime" />
+                            <div className="w-2 h-2 rounded-full bg-lime/40" />
+                        </div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-olive-dark/60 leading-none">{content?.admin?.dashboard?.welcome}</p>
+                    </div>
+                </div>
+                
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="bg-lime/5 border-lime/10">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Celkové tržby</CardTitle>
-                        <span className="font-bold text-muted-foreground">Kč</span>
+                {/* Sales Toggle Control — conspicuous shop status */}
+                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    isSalesEnabled
+                    ? 'bg-lime border-lime shadow-xl shadow-lime/20'
+                    : 'bg-terracotta border-terracotta shadow-xl shadow-terracotta/20'
+                }`}>
+                    <div className="flex flex-col">
+                        <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
+                            isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
+                        }`}>{content?.admin?.dashboard?.salesStatus}</span>
+                        <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
+                            isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                        }`}>
+                            {isSalesEnabled ? content?.admin?.dashboard?.salesActive : content?.admin?.dashboard?.salesPaused}
+                        </span>
+                    </div>
+                    <div className={`flex items-center p-1.5 rounded-[1.5rem] shadow-inner ${
+                        isSalesEnabled ? 'bg-olive-dark/20' : 'bg-cream/20'
+                    }`}>
+                        {isUpdating ? (
+                            <div className="px-5 py-2">
+                                <Loader2 className={`w-5 h-5 animate-spin ${
+                                    isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                                }`} />
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3 px-3 py-2">
+                                <Switch
+                                    id="sales-toggle"
+                                    checked={isSalesEnabled}
+                                    onCheckedChange={toggleSales}
+                                    disabled={isUpdating}
+                                    className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-cream/30 h-7 w-12"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <Card className="glass-dark rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group border-white/5">
+                    <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                        <DollarSign className="w-48 h-48 text-white" />
+                    </div>
+                    <CardHeader className="p-0 relative z-10">
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">{content?.admin?.dashboard?.revenue}</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{totalRevenue.toLocaleString('cs-CZ')} Kč</div>
-                        <p className="text-xs text-foreground/70">Lokální data</p>
+                    <CardContent className="relative z-10 pt-4 p-0">
+                        <div className="text-3xl sm:text-5xl font-black text-white font-display tracking-tighter mb-1">
+                            {(totalRevenue || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-white text-lg sm:text-2xl ml-1">{content?.bankInfo?.currency}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-[2px] bg-lime/30" />
+                            <p className="text-[9px] text-white/50 font-black uppercase tracking-[0.2em]">{content?.admin?.dashboard?.revenueDesc}</p>
+                        </div>
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-1 md:col-span-3">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Stav objednávek (Celkem: {orders.length})</CardTitle>
-                        <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                <Card className="col-span-1 md:col-span-3 rounded-[2.5rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                    <CardHeader className="pb-4 pt-6 sm:pt-10 px-6 sm:px-10">
+                        <div className="flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-olive-dark" />
+                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-muted">{content?.admin?.dashboard?.workflow}</CardTitle>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-orange-dark">Nové / Zaplacené</p>
-                                <div className="text-xl font-bold">{newOrdersCount}</div>
-                                <p className="text-[10px] text-foreground/70">+{todayOrders} dnes</p>
+                    <CardContent className="px-6 sm:px-10 pb-6 sm:pb-10">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
+                            <div className="relative group/stat">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.newOrders}</p>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
+                                <div className="mt-4 inline-flex items-center px-4 py-1.5 rounded-full bg-lime text-olive-dark text-[9px] font-black shadow-lg shadow-lime/20">
+                                    +{todayOrders} {content?.admin?.dashboard?.todayLabel}
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-olive">Rozpracované</p>
-                                <div className="text-xl font-bold">{processingCount}</div>
+                            <div className="group/stat">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.processing}</p>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{processingCount}</div>
+                                <div className="w-6 h-1 bg-olive/10 mt-5 rounded-full" />
                             </div>
-                            <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-lime-dark">Vyřízené</p>
-                                <div className="text-xl font-bold">{shippedCount}</div>
+                            <div className="group/stat">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.shipped}</p>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{shippedCount}</div>
+                                <div className="w-6 h-1 bg-lime mt-5 rounded-full" />
                             </div>
-                            <div>
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">Stornované</p>
-                                <div className="text-xl font-bold">{cancelledCount}</div>
+                            <div className="group/stat opacity-60">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/80 mb-3 ml-1">{content?.admin?.dashboard?.cancelled}</p>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none">{cancelledCount}</div>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-1 md:col-span-4">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Skladové zásoby (Kusy)</CardTitle>
-                        <Package className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-3 gap-4">
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Lemon Blast</p>
-                                <div className="text-xl font-bold">{stock['lemon'] || 0}</div>
+                <Card className="col-span-1 md:col-span-4 rounded-[2.5rem] glass-card border-none overflow-hidden shadow-2xl">
+                    <CardContent className="p-0">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+                            <div className="p-6 sm:p-10 border-b sm:border-b-0 sm:border-r border-olive/5 bg-olive-dark text-white flex flex-col justify-center">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-white flex items-center gap-3 mb-4">
+                                    <Package className="w-4 h-4" /> {content?.admin?.dashboard?.inventory}
+                                </Label>
+                                <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-widest">{content?.admin?.inventory?.description}</p>
                             </div>
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Red Rush</p>
-                                <div className="text-xl font-bold">{stock['red'] || 0}</div>
+                            <div className="p-6 sm:p-10 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive-dark/60 mb-3">{content?.admin?.inventory?.lemon}</span>
+                                <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                                    <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
+                                    <span className="text-[11px] font-black text-olive-dark/40 mb-1">{content?.admin?.dashboard?.unitKs}</span>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-xs font-medium text-muted-foreground">Silky Leaf</p>
-                                <div className="text-xl font-bold">{stock['silky'] || 0}</div>
+                            <div className="p-6 sm:p-10 flex flex-col justify-center border-b md:border-b-0 md:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3 text-red-700">{content?.admin?.inventory?.red}</span>
+                                <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                                    <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['red'] || 0}</span>
+                                    <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
+                                </div>
+                            </div>
+                            <div className="p-6 sm:p-10 flex flex-col justify-center hover:bg-olive-dark/5 transition-all group">
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">{content?.admin?.inventory?.silky}</span>
+                                <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                                    <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['silky'] || 0}</span>
+                                    <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
+                                </div>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Recent Orders */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-7">
-                    <CardHeader>
-                        <CardTitle>Nedávné objednávky</CardTitle>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+                <Card className="col-span-7 overflow-hidden rounded-[2.5rem] sm:rounded-[4rem] glass-card border-none shadow-2xl">
+                    <CardHeader className="bg-admin-canvas/40 backdrop-blur-md py-6 sm:py-10 px-6 sm:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-olive/5 gap-6">
+                        <div>
+                            <CardTitle className="text-xl sm:text-2xl font-black text-olive-dark font-display leading-tight">{content?.admin?.dashboard?.recentOrders}</CardTitle>
+                            <CardDescription className="text-[10px] font-black text-olive-dark/70 mt-2 uppercase tracking-[0.2em]">{content?.admin?.dashboard?.recentOrdersDesc}</CardDescription>
+                        </div>
+                        <Button variant="outline" className="rounded-2xl font-black text-[10px] uppercase tracking-widest border-olive/10 h-12 sm:h-14 px-6 sm:px-8 hover:bg-olive-dark hover:text-white transition-all duration-300 shadow-xl shadow-olive/5 w-full sm:w-auto" onClick={() => window.location.hash = '/admin/orders'}>
+                            {content?.admin?.dashboard?.viewAll}
+                        </Button>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {orders.length === 0 ? (
-                            <p className="text-foreground/70">Zatím žádné objednávky.</p>
+                            <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
+                                <ShoppingBag className="w-12 h-12 text-olive-dark/10" />
+                                <p className="text-olive-dark/60 font-black uppercase text-[10px] tracking-[0.2em]">{content?.admin?.dashboard?.noOrders}</p>
+                            </div>
                         ) : (
-                            <div className="space-y-4">
-                                {orders.slice(0, 10).map((order) => (
-                                    <div key={order.id} className="flex flex-col md:flex-row md:items-center justify-between border-b pb-4 last:border-0 last:pb-0 gap-4">
-                                        <div className="grid gap-1">
-                                            <p className="font-bold text-sm">#{order.id}</p>
-                                            <p className="text-xs text-foreground/70">{order.customer.name} ({order.customer.email})</p>
-                                            <p className="text-xs text-foreground/70">{new Date(order.date).toLocaleString('cs-CZ')}</p>
-                                        </div>
-                                        <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4">
-                                            <div className="flex flex-col gap-1 items-end">
-                                                <Badge
-                                                    variant={order.status === 'pending' ? 'outline' : 'secondary'}
-                                                    className={order.status !== 'pending' ? 'bg-lime/10 text-lime-dark hover:bg-lime/20 border-none' : 'border-orange/20 text-orange-dark'}
-                                                >
-                                                    {order.status === 'pending' ? 'Platba: Čeká' : 'Platba: Zaplaceno'}
-                                                </Badge>
-                                                <Badge
-                                                    variant={order.status === 'shipped' ? 'default' : 'outline'}
-                                                    className={
-                                                        order.status === 'shipped' ? 'bg-olive text-white border-none' :
-                                                            order.status === 'processing' ? 'border-olive/20 text-olive bg-olive/5' :
-                                                                order.status === 'cancelled' ? 'border-border text-muted-foreground bg-muted/30' :
-                                                                    'border-orange/30 text-orange-dark bg-orange/5'
-                                                    }
-                                                >
-                                                    {order.status === 'shipped' ? 'Stav: Vyřízena' :
-                                                        order.status === 'processing' ? 'Stav: Rozpracováno' :
-                                                            order.status === 'cancelled' ? 'Stav: Stornováno' :
-                                                                'Stav: Čeká k vyřízení'}
-                                                </Badge>
+                            <div className="divide-y-2 divide-olive/8">
+                                {orders.slice(0, 10).map((order, index) => (
+                                    <div
+                                        key={order.id}
+                                        className={`flex flex-col xl:flex-row xl:items-center justify-between p-6 sm:p-10 transition-all duration-300 gap-8 group hover:bg-admin-canvas/80 ${
+                                            index % 2 === 0 ? 'bg-admin-canvas/30' : 'bg-cream/40'
+                                        }`}
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <span className="font-mono font-black text-[11px] text-white bg-olive-dark px-3 py-1.5 rounded-xl tracking-tighter uppercase whitespace-nowrap shadow-xl shadow-olive-dark/10">
+                                                    #{order.id.slice(0, 8)}
+                                                </span>
+                                                <span className="text-[10px] font-black text-olive-dark/50 uppercase tracking-[0.3em] flex items-center gap-2">
+                                                    <div className="w-1 h-1 rounded-full bg-lime" />
+                                                    {new Date(order.date).toLocaleDateString(content?.lang === 'en' ? 'en-US' : 'cs-CZ', { day: 'numeric', month: 'long' })}
+                                                </span>
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex flex-col">
+                                                <h4 className="text-xl sm:text-2xl font-black text-olive-dark group-hover:scale-105 origin-left transition-transform duration-500">{order.customer.name}</h4>
+                                                <span className="text-[10px] sm:text-xs font-bold text-olive-dark/70 mt-1 group-hover:text-olive-dark transition-colors">{order.customer.email}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center justify-between xl:justify-end gap-x-12 gap-y-6 shrink-0">
+                                            <div className="flex flex-col items-start xl:items-end gap-3">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50">{content?.admin?.dashboard?.paymentLabel}</span>
+                                                    <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
+                                                        order.status === 'pending' 
+                                                            ? 'bg-orange/10 text-orange' 
+                                                            : 'bg-lime text-olive-dark shadow-lime/20'
+                                                    }`}>
+                                                        {order.status === 'pending' ? content?.admin?.dashboard?.paymentPending : content?.admin?.dashboard?.paymentPaid}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50">{content?.admin?.dashboard?.statusLabel}</span>
+                                                    <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
+                                                        order.status === 'shipped' ? 'bg-olive-dark text-white' :
+                                                        order.status === 'processing' ? 'bg-olive-light text-white' :
+                                                        order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/50' :
+                                                        'bg-lime/20 text-olive-dark'
+                                                    }`}>
+                                                        {order.status === 'shipped' ? content?.admin?.dashboard?.statusShipped :
+                                                            order.status === 'processing' ? content?.admin?.dashboard?.statusProcessing :
+                                                                order.status === 'cancelled' ? content?.admin?.dashboard?.statusCancelled :
+                                                                    content?.admin?.dashboard?.statusReceived}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col items-start xl:items-end">
+                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/70 leading-none mb-2">{content?.admin?.dashboard?.amountLabel}</span>
+                                                <span className="text-3xl font-black text-olive-dark font-display leading-none">{(order.total || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-sm font-bold text-olive-dark/40 tracking-normal ml-1">{content?.bankInfo?.currency}</span></span>
+                                            </div>
+
+                                            <div className="flex items-center gap-3">
                                                 <Dialog>
                                                     <DialogTrigger asChild>
-                                                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0" aria-label={`Zobrazit detail objednávky ${order.id}`}>
-                                                            <Eye className="h-4 w-4" />
+                                                        <Button variant="outline" className="h-16 w-16 rounded-[1.5rem] border-olive/10 hover:bg-olive-dark hover:text-white transition-all duration-500 shadow-lg shadow-olive/5">
+                                                            <Eye className="h-6 w-6" />
                                                         </Button>
                                                     </DialogTrigger>
                                                     <OrderDetailDialog order={order} />
                                                 </Dialog>
-                                                {order.packeta_barcode && (
-                                                    <Button
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        className="h-8 w-8 p-0 text-olive hover:text-olive-dark hover:bg-olive/5"
-                                                        onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
-                                                        aria-label={`Tisk štítku Zásilkovny pro objednávku ${order.id}`}
-                                                        title="Tisk štítku Zásilkovny"
-                                                    >
-                                                        <Printer className="h-4 w-4" />
-                                                    </Button>
-                                                )}
+                                                
                                                 <InvoiceModal order={order}>
-                                                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-muted" aria-label={`Zobrazit fakturu pro objednávku ${order.id}`}>
-                                                        <FileText className="h-4 w-4" />
+                                                    <Button variant="outline" className="h-16 w-16 rounded-[1.5rem] border-olive/10 hover:bg-admin-canvas text-olive-dark/60 hover:text-olive-dark transition-all duration-500 shadow-lg shadow-olive/5">
+                                                        <FileText className="h-6 w-6" />
                                                     </Button>
                                                 </InvoiceModal>
+
+                                                {order.packeta_barcode && (
+                                                    <Button
+                                                        variant="outline"
+                                                        className="h-16 w-16 rounded-[1.5rem] bg-lime text-olive-dark border-none hover:bg-lime/80 transition-all duration-500 shadow-xl shadow-lime/20"
+                                                        onClick={() => window.open(`/api/get-packeta-label?packetId=${order.packeta_packet_id}`, '_blank')}
+                                                        title={content?.admin?.orders?.packetaLabel}
+                                                    >
+                                                        <Printer className="h-6 w-6" />
+                                                    </Button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

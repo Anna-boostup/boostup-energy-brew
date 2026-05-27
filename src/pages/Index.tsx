@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+// Version 1.0.2 - CI/CD Test Push
 import { lazy, Suspense } from "react";
-import { LazySection } from "@/components/LazySection";
 
 const MissionSection = lazy(() => import("@/components/MissionSection"));
 const ProductSection = lazy(() => import("@/components/ProductSection"));
@@ -14,6 +14,10 @@ const DiscountModal = lazy(() => import("@/components/DiscountModal"));
 
 import { SEO } from "@/components/SEO";
 
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -25,35 +29,35 @@ const Index = () => {
       <main>
         <HeroSection />
         
-        <LazySection id="mise" minHeight="600px">
+        <div id="mise">
           <Suspense fallback={<div className="h-[600px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <MissionSection />
           </Suspense>
-        </LazySection>
+        </div>
 
-        <LazySection id="produkty" minHeight="1200px">
+        <div id="produkty">
           <Suspense fallback={<div className="h-[1200px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <ProductSection />
           </Suspense>
-        </LazySection>
+        </div>
         
-        <LazySection id="3b" minHeight="800px">
+        <div id="3b">
           <Suspense fallback={<div className="h-[800px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <ConceptSection />
           </Suspense>
-        </LazySection>
+        </div>
 
-        <LazySection minHeight="300px">
+        <div>
           <Suspense fallback={<div className="h-[300px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <CTASection />
           </Suspense>
-        </LazySection>
+        </div>
 
-        <LazySection id="kontakt" minHeight="500px">
+        <div id="kontakt">
           <Suspense fallback={<div className="h-[500px] bg-secondary/5 animate-pulse rounded-3xl" />}>
             <ContactSection />
           </Suspense>
-        </LazySection>
+        </div>
       </main>
       
       <Suspense fallback={null}>

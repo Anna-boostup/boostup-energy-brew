@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPrice(price: number) {
-  return price.toLocaleString('cs-CZ', {
+  return (price || 0).toLocaleString('cs-CZ', {
     style: 'currency',
     currency: 'CZK',
     minimumFractionDigits: 0,

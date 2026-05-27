@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     if (loading) {
-        return <div className="h-screen flex items-center justify-center">Načítání...</div>;
+        return <div data-testid="admin-loader" className="h-screen flex items-center justify-center">Načítání...</div>;
     }
 
     if (!user) {

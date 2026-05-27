@@ -1,11 +1,14 @@
 import { 
   Menu, 
-  X
+  X,
+  Mail
 } from "lucide-react";
-import { useState, lazy, Suspense } from "react";
+import { supabase } from "@/lib/supabase";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Sub-components
 import Logo from "./header/Logo";
@@ -15,6 +18,7 @@ import AuthButton from "./header/AuthButton";
 import CartButton from "./header/CartButton";
 import MobileMenu from "./header/MobileMenu";
 import LanguageToggle from "./LanguageToggle";
+import { Badge } from "./ui/badge";
 
 const CartModal = lazy(() => import("./CartModal"));
 
@@ -28,9 +32,73 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   const { cartCount } = useCart();
   const { user, profile } = useAuth();
   const { content: SITE_CONTENT } = useContent();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
+
+  // Fetch unread messages count if admin
+  useEffect(() => {
+    if (!profile || profile.role !== 'admin') {
+        setUnreadCount(0);
+        return;
+    }
+
+    const fetchUnreadCount = async () => {
+        try {
+            const { count, error } = await supabase
+                .from('messages')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_read', false);
+            
+            if (error) throw error;
+            
+            const newCount = count || 0;
+            
+            // Trigger notification if count increased
+            if (newCount > unreadCount && typeof window !== 'undefined' && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+                new Notification('Nová zpráva! 📧', {
+                    body: `Máte ${newCount} nepřečtených zpráv od zákazníků.`,
+                    icon: '/favicon.png'
+                });
+                
+                try {
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                    audio.play().catch(() => {});
+                } catch (e) {}
+            }
+            
+            setUnreadCount(newCount);
+        } catch (err) {
+            console.error('Error fetching unread count:', err);
+        }
+    };
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [profile, unreadCount]);
+
+  // Handle openCart state from navigation (e.g. back from checkout)
+  useEffect(() => {
+    if (location.state && (location.state as any).openCart) {
+      setIsCartOpen(true);
+      // Clear the state to prevent accidental re-opening on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
+    <header className={`fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300 ${
+      isMenuOpen 
+        ? 'bg-background border-border h-[100dvh] overflow-y-auto' 
+        : 'bg-background/95 backdrop-blur-sm border-border/50'
+    }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Logo />
@@ -47,6 +115,21 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <LanguageToggle />
 
             <AuthButton user={user} profile={profile} />
+
+            {profile?.role === 'admin' && (
+              <a 
+                href="/#/admin/messages" 
+                className="p-2 relative group hover:scale-110 transition-all"
+                title="Zprávy"
+              >
+                <Mail className="w-5 h-5 text-olive-dark" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-terracotta text-white font-black border-2 border-background animate-in zoom-in duration-300">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </a>
+            )}
 
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
           </div>

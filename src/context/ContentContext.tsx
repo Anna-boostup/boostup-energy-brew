@@ -19,14 +19,44 @@ const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
 const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null): SiteContent => {
     if (!dbContent) return base;
+
+    // Helper to ensure Blog exists in a navigation array
+    const ensureBlogInNav = (nav: any[], contactLabel: string = "Kontakt") => {
+        if (!nav) return nav;
+        if (nav.some(item => item.label === "Blog")) return nav;
+        const contactIndex = nav.findIndex(item => item.label === contactLabel);
+        if (contactIndex === -1) return [...nav, { label: "Blog", href: "/blog" }];
+        
+        const newNav = [...nav];
+        newNav.splice(contactIndex, 0, { label: "Blog", href: "/blog" });
+        return newNav;
+    };
+
+    const navigation = ensureBlogInNav(dbContent.navigation || base.navigation, "Kontakt");
+    
+    const footer = { ...base.footer, ...(dbContent.footer || {}) };
+    if (footer.links) {
+        footer.links = footer.links.map(group => {
+            if (group.title === "NAVIGACE") {
+                return {
+                    ...group,
+                    items: ensureBlogInNav(group.items, "Kontakt")
+                };
+            }
+            return group;
+        });
+    }
+
     return {
         ...base,
         ...dbContent,
+        navigation,
+        footer,
         hero: { ...base.hero, ...(dbContent.hero || {}) },
         mission: { ...base.mission, ...(dbContent.mission || {}) },
+        social: base.social,
         cta: { ...base.cta, ...(dbContent.cta || {}) },
         contact: { ...base.contact, ...(dbContent.contact || {}) },
-        footer: { ...base.footer, ...(dbContent.footer || {}) },
         flavors: (() => {
             const merged = { ...base.flavors };
             if (dbContent.flavors) {
@@ -44,6 +74,27 @@ const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null)
         textStyles: { ...base.textStyles, ...(dbContent.textStyles || {}) },
         badgeVisible: { ...base.badgeVisible, ...(dbContent.badgeVisible || {}) },
         pricing: { ...base.pricing, ...(dbContent.pricing || {}) },
+        admin: {
+            ...base.admin,
+            ...(dbContent.admin || {}),
+            auth: { ...base.admin.auth, ...(dbContent.admin?.auth || {}) },
+            navigation: { ...base.admin.navigation, ...(dbContent.admin?.navigation || {}) },
+            dashboard: { ...base.admin.dashboard, ...(dbContent.admin?.dashboard || {}) },
+            inventory: { 
+                ...base.admin.inventory, 
+                ...(dbContent.admin?.inventory || {}),
+                manufacture: { ...base.admin.inventory.manufacture, ...(dbContent.admin?.inventory?.manufacture || {}) }
+            },
+            invoices: { ...base.admin.invoices, ...(dbContent.admin?.invoices || {}) },
+            orders: { 
+                ...base.admin.orders, 
+                ...(dbContent.admin?.orders || {}),
+                cancelDialog: { ...base.admin.orders.cancelDialog, ...(dbContent.admin?.orders?.cancelDialog || {}) },
+                detail: { ...base.admin.orders.detail, ...(dbContent.admin?.orders?.detail || {}) }
+            },
+            contentManager: { ...base.admin.contentManager, ...(dbContent.admin?.contentManager || {}) },
+            emailManager: { ...base.admin.emailManager, ...(dbContent.admin?.emailManager || {}) }
+        }
     };
 };
 
@@ -52,6 +103,25 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [dbContentCZ, setDbContentCZ] = useState<Partial<SiteContent> | null>(null);
     const [dbContentEN, setDbContentEN] = useState<Partial<SiteContent> | null>(null);
     const [loading, setLoading] = useState(true);
+    const [previewContent, setPreviewContent] = useState<Partial<SiteContent> | null>(null);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('preview') === 'true') {
+                const lang = urlParams.get('lang') || 'cs';
+                try {
+                    const item = localStorage.getItem(`boostup_preview_content_${lang}`);
+                    if (item) {
+                        setPreviewContent(JSON.parse(item));
+                        console.log("Preview mode activated with local draft");
+                    }
+                } catch (e) {
+                    console.error("Preview content parse error:", e);
+                }
+            }
+        }
+    }, []);
 
     const baseCZ = SITE_CONTENT;
     const baseEN = { ...SITE_CONTENT, ...SITE_CONTENT_EN } as SiteContent;
@@ -59,11 +129,18 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const contentCZ = React.useMemo(() => mergeContent(baseCZ, dbContentCZ), [baseCZ, dbContentCZ]);
     const contentEN = React.useMemo(() => mergeContent(baseEN, dbContentEN), [baseEN, dbContentEN]);
 
-    const content = language === 'en' ? contentEN : contentCZ;
+    const activeContentBase = language === 'en' ? contentEN : contentCZ;
+    const content = previewContent ? (previewContent as SiteContent) : activeContentBase;
 
     const fetchContent = async () => {
         try {
             setLoading(true);
+
+            if (!supabase) {
+                console.warn('ContentContext: Supabase client not initialized. Falling back to static content.');
+                return;
+            }
+
             const { data, error } = await supabase
                 .from('site_content')
                 .select('id, content')
@@ -101,7 +178,11 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     return (
         <ContentContext.Provider value={value}>
-            {children}
+            {loading ? (
+                <div data-testid="admin-loader" className="h-screen w-full flex items-center justify-center bg-background">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                </div>
+            ) : children}
         </ContentContext.Provider>
     );
 };

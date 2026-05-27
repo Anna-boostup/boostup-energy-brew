@@ -25,9 +25,10 @@ const CartButton = ({ cartCount, setIsCartOpen, mobile = false }: CartButtonProp
   if (mobile) {
     return (
       <Button
+        data-testid="header-cart-btn"
         variant="ghost"
         size="icon"
-        className="relative rounded-full"
+        className="relative rounded-full flex-shrink-0 min-w-[40px] min-h-[40px]"
         onClick={handleClick}
       >
         <ShoppingCart className="w-6 h-6" />
@@ -42,6 +43,7 @@ const CartButton = ({ cartCount, setIsCartOpen, mobile = false }: CartButtonProp
 
   return (
     <button
+      data-testid="header-cart-btn"
       className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground h-9 px-3 gap-2 relative rounded-full"
       onClick={handleClick}
     >

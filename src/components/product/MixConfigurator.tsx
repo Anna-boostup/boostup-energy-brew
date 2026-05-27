@@ -13,6 +13,7 @@ interface MixConfiguratorProps {
   content: any;
   getEffectiveProduct: (sku: string) => any;
   cleanName: (name: string) => string;
+  products: any[];
 }
 
 const MixConfigurator = ({
@@ -22,7 +23,8 @@ const MixConfigurator = ({
   isMixValid,
   content,
   getEffectiveProduct,
-  cleanName
+  cleanName,
+  products
 }: MixConfiguratorProps) => {
   const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
 
@@ -35,7 +37,10 @@ const MixConfigurator = ({
         </div>
       </div>
       <div className="space-y-3">
-        {FLAVORS.map((flavor, index) => (
+        {FLAVORS.filter(f => {
+          const product = products.find(p => p.sku === f.id);
+          return product?.is_active !== false;
+        }).map((flavor, index) => (
           <div
             key={flavor.id}
             className={`w-full p-4 rounded-2xl flex items-center justify-between gap-4 transition-all duration-300 border-2 ${mixCounts[flavor.id] > 0 ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} shadow-md border-transparent` : 'border-dashed border-border bg-secondary/30'}`}
@@ -44,14 +49,14 @@ const MixConfigurator = ({
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <div className="text-left min-w-0 flex-1 pr-10">
                 <div className="font-bold text-base leading-tight">
-                  {content.flavors[flavor.id]?.name || (getEffectiveProduct(flavor.id) ? cleanName(getEffectiveProduct(flavor.id)!.name) : flavor.name)}
+                  {(getEffectiveProduct(flavor.id) ? cleanName(getEffectiveProduct(flavor.id)!.name) : content.flavors[flavor.id]?.name) || flavor.name}
                   {flavor.labels && (content.flavors[flavor.id]?.labels || flavor.labels).map(label => (
                     <span key={label} className="ml-2 text-[8px] uppercase font-bold px-1 py-0.5 rounded-full bg-white/10 border border-white/5 inline-block align-middle">
                       {label}
                     </span>
                   ))}
                 </div>
-                <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? 'text-white' : 'text-foreground/90 font-medium'}`}>
+                <div className={`text-xs leading-snug mt-0.5 text-balance min-h-[2.5em] flex items-center ${mixCounts[flavor.id] > 0 ? (flavor.id === 'lemon' ? 'text-primary' : 'text-white') : 'text-foreground/90 font-medium'}`}>
                   {getEffectiveProduct(flavor.id)?.description || content.flavors[flavor.id]?.description || flavor.description}
                 </div>
               </div>

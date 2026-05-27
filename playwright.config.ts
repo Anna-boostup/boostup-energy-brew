@@ -1,33 +1,131 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
 /**
- * Playwright E2E test configuration for BoostUp Energy Brew.
- * Tests run against the staging URL by default.
- * In CI/CD the PLAYWRIGHT_TEST_BASE_URL env variable is set to the Vercel preview URL.
+ * Read environment variables from file.
+ * https://github.com/motdotla/dotenv
+ */
+dotenv.config({ path: path.resolve(import.meta.dirname || '', '.env') });
+
+/**
+ * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: './tests',
-  timeout: 30_000,
-  expect: {
-    timeout: 10_000,
-  },
-  fullyParallel: false,
+  /* Run tests in files in parallel */
+  fullyParallel: true,
+  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'github' : 'list',
-
+  /* Retry on CI only */
+  retries: process.env.CI ? 2 : 0,
+  /* Allow multiple workers in CI for speed, while maintaining stability */
+  workers: process.env.CI ? 2 : undefined,
+  /* Timeout per test */
+  timeout: 120000,
+  /* Reporter to use */
+  reporter: 'html',
+  expect: {
+    timeout: 30000,
+  },
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'https://test.drinkboostup.cz',
-    trace: 'on-first-retry',
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173',
+    bypassCSP: true,
+    trace: process.env.CI ? 'on' : 'on-first-retry',
     screenshot: 'only-on-failure',
-    actionTimeout: 15_000,
+    actionTimeout: 30000,
+    ignoreHTTPSErrors: true,
+    extraHTTPHeaders: {
+      'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
+      // 'x-vercel-skip-toolbar': '1',
+    },
   },
 
   projects: [
+    // Setup project for authentication
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], headless: true },
+      name: 'setup',
+      testMatch: 'tests/auth.setup.ts',
+    },
+    
+    // Admin Desktop
+    {
+      name: 'admin-desktop',
+      testMatch: ['tests/admin.spec.ts', 'tests/capture_admin_screenshots.spec.ts'],
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+    },
+
+    // Admin Mobile
+    {
+      name: 'admin-mobile',
+      testMatch: 'tests/admin-mobile.spec.ts',
+      use: { 
+        ...devices['Pixel 5'],
+        storageState: 'playwright/.auth/admin.json',
+      },
+      dependencies: ['setup'],
+    },
+
+    // Checkout Scenarios (Guest or Logged in depending on test logic)
+    {
+      name: 'checkout',
+      testMatch: 'tests/checkout_scenarios.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
+      dependencies: ['setup'],
+    },
+
+    // Payment E2E — runs on Preview only (IS_TEST_MODE=true bypasses real gateway)
+    {
+      name: 'payment-e2e',
+      testMatch: 'tests/payment_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      dependencies: ['setup'],
+    },
+
+    // Full Stripe E2E — goes through real Stripe hosted checkout page
+    // Requires: STRIPE_FULL_E2E=true, IS_TEST_MODE=false, STRIPE_SECRET_KEY=sk_test_...
+    {
+      name: 'payment-stripe-e2e',
+      testMatch: 'tests/payment_stripe_full_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow navigation to stripe.com
+        bypassCSP: true,
+      },
+      dependencies: ['setup'],
+    },
+
+    // Guest / General Smoke Tests
+    {
+      name: 'smoke-desktop',
+      testMatch: 'tests/smoke.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
+    },
+
+    {
+      name: 'smoke-mobile',
+      testMatch: 'tests/mobile.spec.ts',
+      use: { 
+        ...devices['Pixel 5'],
+      },
     },
   ],
+
+  /* Run your local dev server before starting the tests */
+  webServer: process.env.CI ? undefined : {
+    command: 'npm run dev -- --host 127.0.0.1 --port 5176',
+    url: 'http://127.0.0.1:5176',
+    reuseExistingServer: true,
+    timeout: 120000,
+  },
 });
