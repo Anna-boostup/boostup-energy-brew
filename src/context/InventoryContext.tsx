@@ -306,6 +306,18 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     const addOrder = async (order: Order) => {
+        // Double check uniqueness before insert
+        const { data: existing } = await supabase
+            .from('orders')
+            .select('id')
+            .eq('id', order.id)
+            .single();
+
+        if (existing) {
+            console.error('Order ID collision detected:', order.id);
+            return false;
+        }
+
         // We need to map our frontend Order object to DB columns
         const { error } = await supabase.from('orders').insert({
             id: order.id,

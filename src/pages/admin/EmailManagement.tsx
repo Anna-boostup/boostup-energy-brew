@@ -256,6 +256,7 @@ const EmailManagement = () => {
                     id: sanitizedId,
                     subject: content?.admin?.emailManager?.editor?.newSubject || "New Subject",
                     content_html: content?.admin?.emailManager?.editor?.newContent || "<p>Content</p>",
+                    category: 'custom',
                     updated_at: new Date().toISOString()
                 });
 
@@ -288,6 +289,8 @@ const EmailManagement = () => {
                     id: selectedTypeId,
                     subject: currentSubject,
                     content_html: currentContent,
+                    trigger: currentTrigger || null,
+                    description: currentDescription || null,
                     updated_at: new Date().toISOString()
                 });
 
@@ -514,34 +517,44 @@ const EmailManagement = () => {
                     fetchSubscribers();
                 }
             }}>
+                <TabsList className="grid w-full grid-cols-2 mb-8 bg-olive-dark/5 p-1 rounded-2xl">
+                    <TabsTrigger value="templates" className="rounded-xl data-[state=active]:bg-olive-dark data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] py-3">Šablony e-mailů</TabsTrigger>
+                    <TabsTrigger value="campaigns" className="rounded-xl data-[state=active]:bg-lime data-[state=active]:text-olive-dark font-black uppercase tracking-widest text-[10px] py-3">Rozesílka (Newsletter)</TabsTrigger>
+                </TabsList>
 
             <TabsContent value="templates" className="mt-0">
 
             <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-right">
-                <div className="flex gap-3">
-                    {templateTypes.map((type) => (
-                        <Button
-                            key={type.id}
-                            variant={selectedTypeId === type.id ? "default" : "outline"}
-                            onClick={() => setSelectedTypeId(type.id)}
-                            className={`h-auto py-3 px-4 rounded-2xl flex flex-col items-center gap-2 min-w-[100px] transition-all border-none ${
-                                selectedTypeId === type.id 
-                                ? 'bg-olive-dark text-white ring-4 ring-olive/5' 
-                                : 'bg-white text-olive-dark/60 hover:bg-white hover:text-olive-dark'
-                            }`}
-                        >
-                            <type.icon className={`h-5 w-5 ${selectedTypeId === type.id ? 'text-lime' : 'text-olive-dark/20'}`} />
-                            <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{type.label}</span>
-                        </Button>
-                    ))}
-                    <Button
-                        variant="ghost"
+                <div className="flex gap-2">
+                    {templateTypes.map((type) => {
+                        const isActive = selectedTypeId === type.id;
+                        const shortLabel = type.id.replace(/_/g, ' ').split(' ').slice(0, 2).join(' ');
+                        return (
+                            <button
+                                key={type.id}
+                                onClick={() => setSelectedTypeId(type.id)}
+                                className={`flex-shrink-0 flex flex-col items-center gap-1.5 py-3 px-3 rounded-2xl transition-all border ${
+                                    isActive
+                                    ? 'bg-olive-dark text-white border-transparent shadow-lg'
+                                    : 'bg-white text-olive-dark/50 border-olive/10 hover:border-olive/30'
+                                }`}
+                                style={{ minWidth: '72px', maxWidth: '88px' }}
+                            >
+                                <type.icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-lime' : 'text-olive-dark/30'}`} />
+                                <span className="text-[8px] font-black uppercase leading-tight text-center" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>
+                                    {shortLabel}
+                                </span>
+                            </button>
+                        );
+                    })}
+                    <button
                         onClick={() => setIsCreateOpen(true)}
-                        className="h-auto py-3 px-6 rounded-2xl border-2 border-dashed border-olive/10 flex flex-col items-center gap-2 min-w-[100px] text-olive-dark/30 hover:bg-white transition-all"
+                        className="flex-shrink-0 flex flex-col items-center gap-1.5 py-3 px-3 rounded-2xl border-2 border-dashed border-olive/10 text-olive-dark/30 hover:bg-white transition-all"
+                        style={{ minWidth: '72px' }}
                     >
                         <Plus className="h-5 w-5" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">{content?.admin?.emailManager?.buttons?.new || "NEW"}</span>
-                    </Button>
+                        <span className="text-[8px] font-black uppercase tracking-wider">{content?.admin?.emailManager?.buttons?.new || "NEW"}</span>
+                    </button>
                 </div>
             </div>
 

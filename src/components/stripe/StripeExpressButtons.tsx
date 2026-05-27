@@ -84,7 +84,7 @@ const StripeExpressButtons = () => {
         const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'Customer';
 
         // Consistent order ID generation
-        const orderNumber = `BUP${Math.floor(Date.now() / 1000)}`;
+        const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
 
         const newOrder: Order = {
           id: orderNumber,

@@ -137,14 +137,14 @@ const PaymentSuccess = () => {
                         />
                     )}
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50" data-sentry-mask>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left sm:text-center">
+                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50 overflow-hidden" data-sentry-mask>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Číslo objednávky</p>
-                            <p className="text-xl font-display font-bold">#{orderNumber}</p>
+                            <p className="text-lg sm:text-xl font-display font-bold break-all">#{orderNumber}</p>
                         </div>
-                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50" data-sentry-mask>
+                        <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50 overflow-hidden" data-sentry-mask>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Celková částka</p>
-                            <p className="text-xl font-display font-bold text-primary">{amount} Kč</p>
+                            <p className="text-lg sm:text-xl font-display font-bold text-primary break-all">{amount} Kč</p>
                         </div>
                     </div>
 
