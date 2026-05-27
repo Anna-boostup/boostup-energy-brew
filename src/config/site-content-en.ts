@@ -939,6 +939,15 @@ export const SITE_CONTENT_EN = {
                 security: { title: "Security", desc: "Your data is protected by Auth." }
             },
             sections: {
+                dashboard: {
+                    title: "Dashboard",
+                    description: "Main administrative dashboard and store status. Path: Admin → Dashboard",
+                    items: {
+                        salesToggle: { label: "Sales Switch", desc: "Main toggle to immediately pause or resume ordering capabilities on the shop in case of downtime." },
+                        workflow: { label: "Order Workflow", desc: "Quick overview of the count of new, processing, shipped, and cancelled orders." },
+                        stockQuick: { label: "Quick Stock Status", desc: "Real-time stock level in bottles for each flavor directly on the dashboard home." }
+                    }
+                },
                 content: {
                     title: "Web Content",
                     description: "Manage texts and visual content across all site sections. Path: Admin → Web Content",
@@ -946,10 +955,9 @@ export const SITE_CONTENT_EN = {
                         hero: { label: "Hero (Intro)", desc: "Main headings, product description, buttons, and testimonial. Also includes visibility toggle for the COMING SOON badge." },
                         mission: { label: "Mission", desc: "Texts in 'About Us' section – badges, headings, and paragraphs. Badge visibility can be toggled on/off." },
                         ingredients: { label: "Ingredients", desc: "Names and descriptions of ingredients displayed on the site." },
-                        concept: { label: "3B Concept", desc: "Card content – subheadings, stats, and short descriptions for each card." },
-                        cta: { label: "CTA (Subscription)", desc: "Newsletter section – badges, headings, description, and email form texts." },
-                        contact: { label: "Contact", desc: "Email, phone, and address displayed in the contact section." },
-                        flavors: { label: "Flavors", desc: "Names, descriptions, and labels for individual BoostUp variants." },
+                        concept: { label: "3B Concept", desc: "Card content for the core pillars (Brain, Body, Balance) and their detail popup definitions including bullet points." },
+                        settings: { label: "Global Settings", desc: "Enable/disable the welcome discount pop-up on first visit." },
+                        flavors: { label: "Flavors", desc: "Names, descriptions, and nutritional tables for individual BoostUp variants." },
                         footer: { label: "Footer", desc: "Brand description and copyright text at the bottom of the site." }
                     }
                 },
@@ -973,16 +981,43 @@ export const SITE_CONTENT_EN = {
                         location: { label: "Toggle Locations", desc: "Hero – COMING SOON badge, Mission – ABOUT US badge, CTA – badge, Contact – CONTACT badge." }
                     }
                 },
+                blog: {
+                    title: "Blog & Articles",
+                    description: "Publishing system for creating content. Path: Admin → Blog",
+                    items: {
+                        editor: { label: "Visual Text Editor", desc: "Tool for writing and formatting articles with support for inserting images and links." },
+                        templates: { label: "Layouts (Templates)", desc: "Choose between three visual layout styles for article details (Modern, Centered, Minimal)." },
+                        seo: { label: "SEO Metadata", desc: "Configure description and keywords for proper indexing on search engines like Google." }
+                    }
+                },
+                emails: {
+                    title: "Email Templates & Campaigns",
+                    description: "Manage transactional emails and newsletter campaigns. Path: Admin → Emails",
+                    items: {
+                        transactional: { label: "Transactional Emails", desc: "Edit automated system notifications (e.g., order confirmations, shipping status, magic login links)." },
+                        placeholders: { label: "Dynamic Placeholders", desc: "Tags like {{customerName}} or {{unsubscribeLink}} that are replaced automatically with actual customer data during sending." },
+                        customTemplates: { label: "Custom Templates", desc: "Create your own email templates using the '+' button (ideal for seasonal marketing campaigns)." },
+                        masterFrame: { label: "Master Template Frame", desc: "Toggle to automatically wrap your email content in the BoostUp brand layout (with logo, Bebas Neue fonts, and opt-out link)." },
+                        campaigns: { label: "Newsletter Campaigns", desc: "Send campaigns to all active subscribers from the list in batches with real-time progress tracking." },
+                        testing: { label: "Test Email Preview", desc: "Send yourself a preview copy of the template to your administrator address before launching a live campaign." }
+                    }
+                },
+                messages: {
+                    title: "Inbound Messages",
+                    description: "Review and respond to contact inquiries. Path: Admin → Inbound Inquiries",
+                    items: {
+                        inbox: { label: "Messages Inbox", desc: "List of all customer inquiries from the contact form. Unread messages highlight in orange." },
+                        reply: { label: "Reply directly", desc: "Compose and send email responses directly to customers from the message panel." }
+                    }
+                },
                 orders: {
                     title: "Orders",
                     description: "Overview and management of all customer orders. Path: Admin → Orders",
                     items: {
                         filtering: { label: "Order Filtering", desc: "Filter orders by status (pending, confirmed, shipped, delivered, cancelled)." },
                         detail: { label: "Order Detail", desc: "Click an order to view details – customer, products, address, payment method." },
-                        copy: { label: "Copy ID", desc: "The 'Copy' icon next to the Order ID saves the code to your clipboard immediately." },
-                        status: { label: "Status Change", desc: "Customers receive an automatic email when the status changes to 'Shipped'." },
-                        packeta: { label: "Packeta Labels", desc: "Generate and print Zasilkovna labels directly from the order detail." },
-                        notifications: { label: "Browser Notifications", desc: "Enable sound and visual alerts for new orders." }
+                        bulk: { label: "Bulk Actions", desc: "Bulk cancel orders, change statuses, or generate bulk printing sheets for labels (A4 combined for paper savings)." },
+                        packeta: { label: "Packeta Shipping API", desc: "Directly create shipments and print labels. The 'Synchronize' button pulls current tracking statuses from Zasilkovna." }
                     }
                 },
                 pricing: {
@@ -997,12 +1032,9 @@ export const SITE_CONTENT_EN = {
                 promos: {
                     title: "Promo Codes",
                     description: "Manage promo coupons and welcome pop-ups. Path: Admin → Promo Codes",
-                    codeLabel: "Unique code (e.g. BOOST20)",
-                    discountLabel: "Discount amount in %",
-                    syncing: "Syncing with database...",
                     items: {
                         creation: { label: "Code Creation", desc: "Create unlimited codes with percentage-based discounts." },
-                        popup: { label: "Welcome Pop-up", desc: "Automatic discount offer for new site visitors." },
+                        popup: { label: "Gift Gate visibility", desc: "Configure and toggle the welcome pop-up discount window displayed to new visitors." },
                         rules: { label: "Discount Rules", desc: "Promo codes do not stack with subscription discounts." }
                     }
                 },
@@ -1010,17 +1042,34 @@ export const SITE_CONTENT_EN = {
                     title: "Product Inventory",
                     description: "Manage stock levels for finished products. Path: Admin → Product Inventory",
                     items: {
-                        add: { label: "Add Stock", desc: "Click a product and enter the quantity to add." },
-                        minimum: { label: "Minimum Stock", desc: "Receive alerts when stock levels fall below the set threshold." }
+                        add: { label: "Edit stock", desc: "Manually adjust the bottle counts for individual flavor items in the warehouse." },
+                        minimum: { label: "Safety alerts", desc: "Configurable alert threshold triggering indicators when stock falls too low." },
+                        history: { label: "Movement Logs", desc: "Detailed movement history for stock additions, sales, and corrections showing user, notes, and timestamp." }
                     }
                 },
                 manufacture: {
                     title: "Manufacture Inventory",
                     description: "Manage raw materials and production supplies. Path: Admin → Manufacture Inventory",
                     items: {
-                        alert: { label: "Alert (Red Dot)", desc: "Indicates an item is below minimum or warning levels." },
-                        edit: { label: "Edit Supply", desc: "Manually adjust raw material quantities in the detail view." },
-                        notifications: { label: "Notifications", desc: "Option to enable/disable alerts for each specific material." }
+                        alert: { label: "Threshold Monitoring", desc: "Visual alerts for raw components (cans, lids, liquid) running below warning limits." },
+                        history: { label: "Material History", desc: "Log history tracking consumption and restocking events of raw materials." }
+                    }
+                },
+                users: {
+                    title: "Users & Roles",
+                    description: "Administer profiles and permissions. Path: Admin → Users",
+                    items: {
+                        list: { label: "User Profiles", desc: "List of all registered profiles with account type classifications (Personal/Company)." },
+                        roles: { label: "Role Management", desc: "Elevate selected users to Admin role to grant them access to this panel." },
+                        history: { label: "Purchase History", desc: "View historical order transactions and life-time value (LTV) stats of any specific user." }
+                    }
+                },
+                accounting: {
+                    title: "Accounting & Exports",
+                    description: "Generate file exports for billing systems. Path: Admin → Orders",
+                    items: {
+                        csv: { label: "CSV Export", desc: "Download order exports in CSV format (UTF-8, semicolon separator) compatible with Pohoda and iDoklad bookkeeping systems." },
+                        filter: { label: "Date range filter", desc: "Filter and export data for specific months, years, or custom selected durations." }
                     }
                 },
                 saving: {

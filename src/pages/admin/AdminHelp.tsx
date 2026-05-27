@@ -44,6 +44,18 @@ const AdminHelp = () => {
 
     const sections: Section[] = [
         {
+            icon: Zap,
+            title: content?.admin?.help?.sections?.dashboard?.title || "Přehled (Dashboard)",
+            description: content?.admin?.help?.sections?.dashboard?.description || "Hlavní řídicí panel a stav prodeje",
+            image: "/admin-guide/dashboard.png",
+            path: "/admin",
+            items: [
+                { label: content?.admin?.help?.sections?.dashboard?.items?.salesToggle?.label || "Vypínač prodeje", description: content?.admin?.help?.sections?.dashboard?.items?.salesToggle?.desc || "Hlavní přepínač pro okamžité pozastavení nebo spuštění možnosti nakupovat na e-shopu." },
+                { label: content?.admin?.help?.sections?.dashboard?.items?.workflow?.label || "Pracovní tok (Workflow)", description: content?.admin?.help?.sections?.dashboard?.items?.workflow?.desc || "Rychlý přehled počtu nových, připravovaných, expedovaných a stornovaných objednávek." },
+                { label: content?.admin?.help?.sections?.dashboard?.items?.stockQuick?.label || "Rychlý stav skladu", description: content?.admin?.help?.sections?.dashboard?.items?.stockQuick?.desc || "Okamžitý náhled na počet dostupných lahví jednotlivých příchutí přímo na hlavní ploše." }
+            ]
+        },
+        {
             icon: Globe,
             title: content?.admin?.help?.sections?.content?.title || "Obsah webu",
             description: content?.admin?.help?.sections?.content?.description || "Správa textů, ingrediencí a domovské stránky",
@@ -53,43 +65,48 @@ const AdminHelp = () => {
                 { label: content?.admin?.help?.sections?.content?.items?.hero?.label || "Hlavní sekce", description: content?.admin?.help?.sections?.content?.items?.hero?.desc || "Správa úvodního banneru a textů." },
                 { label: content?.admin?.help?.sections?.content?.items?.mission?.label || "Mise", description: content?.admin?.help?.sections?.content?.items?.mission?.desc || "Úprava vizí a filosofie značky." },
                 { label: content?.admin?.help?.sections?.content?.items?.ingredients?.label || "Ingredience", description: content?.admin?.help?.sections?.content?.items?.ingredients?.desc || "Editace popisu klíčových složek." },
+                { label: content?.admin?.help?.sections?.content?.items?.concept?.label || "3B Koncept", description: content?.admin?.help?.sections?.content?.items?.concept?.desc || "Obsah karet pilířů (Brain, Body, Balance) a jejich detailních vyskakovacích (popup) vysvětlení." },
+                { label: content?.admin?.help?.sections?.content?.items?.settings?.label || "Globální nastavení", description: content?.admin?.help?.sections?.content?.items?.settings?.desc || "Zapnutí/vypnutí vyskakovacího slevového pop-upu." },
                 { label: content?.admin?.help?.sections?.content?.items?.flavors?.label || "Příchutě", description: content?.admin?.help?.sections?.content?.items?.flavors?.desc || "Správa produktové sekce příchutí." },
                 { label: content?.admin?.help?.sections?.content?.items?.footer?.label || "Patička", description: content?.admin?.help?.sections?.content?.items?.footer?.desc || "Správa odkazů a informací dole na webu." }
             ]
         },
         {
             icon: FileText,
-            title: "Blog a Články",
-            description: "Publikační systém pro tvorbu obsahu",
+            title: content?.admin?.help?.sections?.blog?.title || "Blog a články",
+            description: content?.admin?.help?.sections?.blog?.description || "Publikační systém pro tvorbu obsahu",
             image: "/admin-guide/blog.png",
             path: "/admin/blog",
             items: [
-                { label: "Vytvoření článku", description: "Použijte textový editor pro napsání formátovaného obsahu s možností vkládat obrázky." },
-                { label: "Designové šablony", description: "Při tvorbě článku můžete vybrat rozložení: Modern, Centered, nebo Minimal." },
-                { label: "SEO Metada", description: "Před publikací vyplňte název, perex a klíčová slova pro lepší dohledatelnost na Googlu." }
+                { label: content?.admin?.help?.sections?.blog?.items?.editor?.label || "Vytvoření článku", description: content?.admin?.help?.sections?.blog?.items?.editor?.desc || "Použijte textový editor pro napsání formátovaného obsahu s možností vkládat obrázky." },
+                { label: content?.admin?.help?.sections?.blog?.items?.templates?.label || "Designové šablony", description: content?.admin?.help?.sections?.blog?.items?.templates?.desc || "Při tvorbě článku můžete vybrat rozložení: Modern, Centered, nebo Minimal." },
+                { label: content?.admin?.help?.sections?.blog?.items?.seo?.label || "SEO Metadata", description: content?.admin?.help?.sections?.blog?.items?.seo?.desc || "Před publikací vyplňte název, perex a klíčová slova pro lepší dohledatelnost na Googlu." }
             ]
         },
         {
             icon: Send,
-            title: "E-mailové šablony",
-            description: "Komunikace se zákazníky a automatizace",
+            title: content?.admin?.help?.sections?.emails?.title || "E-mailové šablony a kampaně",
+            description: content?.admin?.help?.sections?.emails?.description || "Správa transakčních e-mailů a hromadného marketingu",
             image: "/admin-guide/emails.png",
             path: "/admin/emails",
             items: [
-                { label: "Transakční e-maily", description: "Úprava zpráv, které se odesílají automaticky (např. potvrzení objednávky, expedice)." },
-                { label: "Dynamické značky", description: "V editoru můžete kliknout na speciální proměnné (např. {{customerName}}), které se při odeslání nahradí skutečnými daty." },
-                { label: "Vlastní kampaně", description: "Záložka Newslettery umožňuje odesílat hromadná sdělení a prohlížet dřívější komunikaci." }
+                { label: content?.admin?.help?.sections?.emails?.items?.transactional?.label || "Transakční e-maily", description: content?.admin?.help?.sections?.emails?.items?.transactional?.desc || "Úprava zpráv, které se odesílají automaticky (např. potvrzení objednávky, expedice)." },
+                { label: content?.admin?.help?.sections?.emails?.items?.placeholders?.label || "Dynamické značky", description: content?.admin?.help?.sections?.emails?.items?.placeholders?.desc || "V editoru můžete kliknout na speciální proměnné (např. {{customerName}}), které se při odeslání nahradí skutečnými daty." },
+                { label: content?.admin?.help?.sections?.emails?.items?.customTemplates?.label || "Vlastní šablony", description: content?.admin?.help?.sections?.emails?.items?.customTemplates?.desc || "Kliknutím na tlačítko '+' v seznamu šablon vytvoříte nový e-mail (např. pro letní akci)." },
+                { label: content?.admin?.help?.sections?.emails?.items?.masterFrame?.label || "Master Šablona", description: content?.admin?.help?.sections?.emails?.items?.masterFrame?.desc || "Přepínač pro automatické zabalení e-mailu do značkového BoostUp layoutu (s logem a odhlašovacím odkazem)." },
+                { label: content?.admin?.help?.sections?.emails?.items?.campaigns?.label || "Newsletter Kampaně", description: content?.admin?.help?.sections?.emails?.items?.campaigns?.desc || "Záložka Rozesílka umožňuje rozeslat šablonu všem odběratelům newsletteru v dávkách se sledováním průběhu." },
+                { label: content?.admin?.help?.sections?.emails?.items?.testing?.label || "Zkušební e-mail", description: content?.admin?.help?.sections?.emails?.items?.testing?.desc || "Možnost nechat si před spuštěním ostré kampaně poslat testovací e-mail na vlastní administrátorskou adresu." }
             ]
         },
         {
             icon: Mail,
-            title: "Příchozí zprávy",
-            description: "Zpracování dotazů od zákazníků",
+            title: content?.admin?.help?.sections?.messages?.title || "Příchozí zprávy",
+            description: content?.admin?.help?.sections?.messages?.description || "Zpracování dotazů od zákazníků",
             image: "/admin-guide/messages.png",
             path: "/admin/messages",
             items: [
-                { label: "Nový dotaz", description: "Všechny zprávy z kontaktního formuláře se řadí sem. Neoznačené zprávy ukáží upozornění." },
-                { label: "Odpovědi", description: "Ze sekce můžete rovnou odesílat odpovědi zákazníkům e-mailem přes integrovaný systém." }
+                { label: content?.admin?.help?.sections?.messages?.items?.inbox?.label || "Nový dotaz", description: content?.admin?.help?.sections?.messages?.items?.inbox?.desc || "Všechny zprávy z kontaktního formuláře se řadí sem. Neoznačené zprávy ukáží upozornění." },
+                { label: content?.admin?.help?.sections?.messages?.items?.reply?.label || "Odpovědi", description: content?.admin?.help?.sections?.messages?.items?.reply?.desc || "Ze sekce můžete rovnou odesílat odpovědi zákazníkům e-mailem přes integrovaný systém." }
             ]
         },
         {
@@ -101,8 +118,8 @@ const AdminHelp = () => {
             items: [
                 { label: content?.admin?.help?.sections?.orders?.items?.filtering?.label || "Filtrování", description: content?.admin?.help?.sections?.orders?.items?.filtering?.desc || "Rychlé řazení podle stavu (nové, odeslané atd.)." },
                 { label: content?.admin?.help?.sections?.orders?.items?.detail?.label || "Detail objednávky", description: content?.admin?.help?.sections?.orders?.items?.detail?.desc || "Kompletní rozpis včetně fakturačních a dodacích údajů." },
-                { label: content?.admin?.help?.sections?.orders?.items?.status?.label || "Změna stavu", description: content?.admin?.help?.sections?.orders?.items?.status?.desc || "Posun objednávky do další fáze." },
-                { label: content?.admin?.help?.sections?.orders?.items?.packeta?.label || "Zásilkovna (Packeta)", description: content?.admin?.help?.sections?.orders?.items?.packeta?.desc || "Integrované odesílání do sítě Zásilkovny." }
+                { label: content?.admin?.help?.sections?.orders?.items?.bulk?.label || "Hromadné akce", description: content?.admin?.help?.sections?.orders?.items?.bulk?.desc || "Hromadná stornování, změny stavů nebo hromadný tisk štítků Zásilkovny (A4 combined pro úsporu papíru)." },
+                { label: content?.admin?.help?.sections?.orders?.items?.packeta?.label || "Zásilkovna (Packeta API)", description: content?.admin?.help?.sections?.orders?.items?.packeta?.desc || "Přímé vygenerování a tisk štítků. Tlačítko 'Synchronizovat' stáhne aktuální stavy přepravy." }
             ]
         },
         {
@@ -113,7 +130,8 @@ const AdminHelp = () => {
             path: "/admin/inventory",
             items: [
                 { label: content?.admin?.help?.sections?.inventory?.items?.add?.label || "Naskladnění", description: content?.admin?.help?.sections?.inventory?.items?.add?.desc || "Navýšení nebo snížení množství jednotlivých příchutí." },
-                { label: content?.admin?.help?.sections?.inventory?.items?.minimum?.label || "Upozornění na limit", description: content?.admin?.help?.sections?.inventory?.items?.minimum?.desc || "Automatická indikace vyprodaných položek." }
+                { label: content?.admin?.help?.sections?.inventory?.items?.minimum?.label || "Upozornění na limit", description: content?.admin?.help?.sections?.inventory?.items?.minimum?.desc || "Automatická indikace vyprodaných položek." },
+                { label: content?.admin?.help?.sections?.inventory?.items?.history?.label || "Historie pohybů", description: content?.admin?.help?.sections?.inventory?.items?.history?.desc || "Kompletní log všech změn na skladě s označením uživatele, který změnu provedl, a poznámkou." }
             ]
         },
         {
@@ -124,7 +142,7 @@ const AdminHelp = () => {
             path: "/admin/manufacture",
             items: [
                 { label: content?.admin?.help?.sections?.manufacture?.items?.alert?.label || "Stav surovin", description: content?.admin?.help?.sections?.manufacture?.items?.alert?.desc || "Monitorování plechovek, víček, etiket a samotného nápoje." },
-                { label: content?.admin?.help?.sections?.manufacture?.items?.edit?.label || "Odpis surovin", description: content?.admin?.help?.sections?.manufacture?.items?.edit?.desc || "Správa množství po výrobním procesu." }
+                { label: content?.admin?.help?.sections?.manufacture?.items?.history?.label || "Historie surovin", description: content?.admin?.help?.sections?.manufacture?.items?.history?.desc || "Kompletní log spotřeby a doskladňování výrobních materiálů s datem a poznámkou." }
             ]
         },
         {
@@ -146,43 +164,31 @@ const AdminHelp = () => {
             path: "/admin/promo-codes",
             items: [
                 { label: content?.admin?.help?.sections?.promos?.items?.creation?.label || "Vytvoření kódu", description: content?.admin?.help?.sections?.promos?.items?.creation?.desc || "Nastavení unikátního textového kódu a výše slevy." },
+                { label: content?.admin?.help?.sections?.promos?.items?.popup?.label || "Dárková brána", description: content?.admin?.help?.sections?.promos?.items?.popup?.desc || "Správa a nastavení kódu, který se zobrazí v uvítacím slevovém popup okně na e-shopu." },
                 { label: content?.admin?.help?.sections?.promos?.items?.rules?.label || "Pravidla čerpání", description: content?.admin?.help?.sections?.promos?.items?.rules?.desc || "Limit použití kódu (např. platnost do data, aktivní/neaktivní)." }
             ]
         },
         {
             icon: Users,
-            title: "Uživatelé a Práva",
-            description: "Správa přístupů a zákazníků",
+            title: content?.admin?.help?.sections?.users?.title || "Uživatelé a Práva",
+            description: content?.admin?.help?.sections?.users?.description || "Správa přístupů a zákazníků",
             image: "/admin-guide/users.png",
             path: "/admin/users",
             items: [
-                { label: "Seznam uživatelů", description: "Přehled všech registrovaných osob na platformě." },
-                { label: "Změna role", description: "Možnost přidělit jinému uživateli práva typu Admin, čímž získá přístup k tomuto rozhraní." },
-                { label: "Historie nákupů", description: "Pohled na minulé transakce konkrétní osoby." }
-            ]
-        },
-        {
-            icon: Mail,
-            title: "Email Marketing",
-            description: "Hromadné rozesílání a správa šablon",
-            image: "/admin-guide/emails.png",
-            path: "/admin/emails",
-            items: [
-                { label: "Placeholdery", description: "Při tvorbě šablon používejte značky jako {{customerName}} nebo {{orderNumber}}. Tyto budou automaticky nahrazeny reálnými daty." },
-                { label: "Kampaně", description: "Můžete odeslat newsletter všem odběratelům najednou s vizuálním sledováním průběhu odesílání." },
-                { label: "Zkušební e-mail", description: "Vždy si nejdříve odešlete testovací e-mail na svou adresu, abyste viděli reálný vzhled šablony." }
+                { label: content?.admin?.help?.sections?.users?.items?.list?.label || "Seznam uživatelů", description: content?.admin?.help?.sections?.users?.items?.list?.desc || "Přehled všech registrovaných osob na platformě." },
+                { label: content?.admin?.help?.sections?.users?.items?.roles?.label || "Změna role", description: content?.admin?.help?.sections?.users?.items?.roles?.desc || "Možnost přidělit jinému uživateli práva typu Admin, čímž získá přístup k tomuto rozhraní." },
+                { label: content?.admin?.help?.sections?.users?.items?.history?.label || "Historie nákupů", description: content?.admin?.help?.sections?.users?.items?.history?.desc || "Pohled na minulé transakce konkrétní osoby." }
             ]
         },
         {
             icon: Download,
-            title: "Účetnictví a Exporty",
-            description: "Generování podkladů pro účetní systémy",
+            title: content?.admin?.help?.sections?.accounting?.title || "Účetnictví a Exporty",
+            description: content?.admin?.help?.sections?.accounting?.description || "Generování podkladů pro účetní systémy",
             image: "/admin-guide/accounting-export.png",
             path: "/admin/orders",
             items: [
-                { label: "Export do CSV", description: "V horní části správy objednávek naleznete tlačítko pro stažení všech dat ve formátu CSV pro systémy jako Pohoda nebo iDoklad." },
-                { label: "Časová období", description: "Data můžete exportovat za konkrétní měsíc, čtvrtletí, rok nebo si zvolit libovolné vlastní rozmezí." },
-                { label: "Formát dat", description: "Soubor používá středník jako oddělovač a kódování UTF-8 s BOM pro bezproblémové otevření v Excelu." }
+                { label: content?.admin?.help?.sections?.accounting?.items?.csv?.label || "Export do CSV", description: content?.admin?.help?.sections?.accounting?.items?.csv?.desc || "V horní části správy objednávek naleznete tlačítko pro stažení všech dat ve formátu CSV pro systémy jako Pohoda nebo iDoklad." },
+                { label: content?.admin?.help?.sections?.accounting?.items?.filter?.label || "Časová období", description: content?.admin?.help?.sections?.accounting?.items?.filter?.desc || "Data můžete exportovat za konkrétní měsíc, čtvrtletí, rok nebo si zvolit libovolné vlastní rozmezí." }
             ]
         }
     ];
