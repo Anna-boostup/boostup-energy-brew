@@ -142,10 +142,19 @@ test.describe('Payment Gateway — End-to-End Flow', () => {
     console.log(`✅ Bank transfer order created, status: pending, URL: ${page.url()}`);
   });
 
-  // ─── Logged-in user: Card payment ────────────────────────────────────────────
-  test('Logged-in user — complete order via card payment', async ({ page }) => {
-    test.use({ storageState: 'playwright/.auth/customer.json' });
+});
 
+// ─── Logged-in user: Card payment (separate describe so test.use() is valid) ──
+test.describe('Payment Gateway — Logged-in User', () => {
+  test.use({ storageState: 'playwright/.auth/customer.json' });
+
+  test.beforeEach(async () => {
+    if (!PREVIEW_ONLY) {
+      test.skip(true, 'Skipping payment test on production to avoid real charges.');
+    }
+  });
+
+  test('Logged-in user — complete order via card payment', async ({ page }) => {
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
 
     const addToCartBtn = page.getByTestId('add-to-cart-hero-btn');
