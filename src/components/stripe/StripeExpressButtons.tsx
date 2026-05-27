@@ -37,7 +37,7 @@ const StripeExpressButtons = () => {
       country: 'CZ',
       currency: 'czk',
       total: {
-        label: 'BoostUp Energy Order',
+        label: 'BoostUp Energy',
         amount: Math.round(finalTotalAmount * 100),
       },
       requestPayerName: true,
@@ -47,7 +47,7 @@ const StripeExpressButtons = () => {
         {
           id: 'courier-shipping',
           label: 'Doručení kurýrem',
-          detail: 'Doručení do 48 hodin',
+          detail: 'Doručení do 48h',
           amount: Math.round(shippingCost * 100),
         },
       ],
