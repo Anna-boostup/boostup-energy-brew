@@ -111,6 +111,15 @@ const CheckoutPage = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Dynamically set checkout page title to look cleaner in Google Pay/Apple Pay sheet
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = 'BoostUp Energy';
+    return () => {
+      document.title = prevTitle;
+    };
+  }, []);
+
   // Pre-fill data from profile
   useEffect(() => {
     if (!user) return;
