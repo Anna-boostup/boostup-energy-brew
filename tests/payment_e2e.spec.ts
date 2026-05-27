@@ -174,13 +174,31 @@ test.describe('Payment Gateway — Logged-in User', () => {
     const emailInput = page.locator('input[name="email"]');
     await expect(emailInput).not.toBeEmpty({ timeout: 10000 });
 
-    // Ensure address fields have data (may be pre-filled from profile)
-    const cityInput = page.locator('input[name="city"]');
-    if (await cityInput.inputValue() === '') {
-      await page.fill('input[name="street"]', 'Uživatelská');
-      await page.fill('input[name="houseNumber"]', '5');
-      await page.fill('input[name="city"]', 'Praha');
-      await page.fill('input[name="zip"]', '110 00');
+    // Ensure every required checkout field has data. The test account profile
+    // can be partially filled in Supabase, so checking only one address field
+    // makes this flow flaky and leaves the user on /checkout after submit.
+    const fillIfEmpty = async (selector: string, value: string) => {
+      const input = page.locator(selector);
+      const currentValue = (await input.inputValue()).trim();
+      if (!currentValue || currentValue === '+420') {
+        await input.fill(value);
+      }
+    };
+
+    await fillIfEmpty('input[name="firstName"]', 'Testovací');
+    await fillIfEmpty('input[name="lastName"]', 'Uživatel');
+    await fillIfEmpty('input[name="phone"]', '+420 777 000 003');
+    await fillIfEmpty('input[name="street"]', 'Uživatelská');
+    await fillIfEmpty('input[name="houseNumber"]', '5');
+    await fillIfEmpty('input[name="city"]', 'Praha');
+    await fillIfEmpty('input[name="zip"]', '110 00');
+
+    const billingSameCheckbox = page.locator('#billingSame');
+    if (await billingSameCheckbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+      const isBillingSame = await billingSameCheckbox.getAttribute('aria-checked');
+      if (isBillingSame !== 'true') {
+        await billingSameCheckbox.click();
+      }
     }
 
     const cardPayment = page.getByTestId('checkout-payment-card');
