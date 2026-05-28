@@ -12,6 +12,7 @@ export interface NewsletterData {
   heroCtaText?: string;
   heroCtaUrl?: string;
   bodyContent?: string;
+  unsubscribeUrl?: string;
 }
 
 const DEFAULT_DATA: NewsletterData = {
@@ -21,7 +22,8 @@ const DEFAULT_DATA: NewsletterData = {
   heroSubtitle: "Dnes je BoostUP Pure Shot na trhu — a vy jste mezi prvními, kdo to ví.",
   heroCtaText: "Objednat první shot →",
   heroCtaUrl: "https://www.drinkboostup.cz",
-  bodyContent: "<p>Vítejte v našem newsletteru.</p>"
+  bodyContent: "<p>Vítejte v našem newsletteru.</p>",
+  unsubscribeUrl: ""
 };
 
 export const newsletterTemplateService = {
@@ -154,6 +156,11 @@ export const newsletterTemplateService = {
       <a href="https://www.drinkboostup.cz/obchod">Obchod</a>
       <a href="mailto:info@drinkboostup.cz">Kontakt</a>
     </div>
+    ${merged.unsubscribeUrl ? `
+    <p style="margin-bottom: 20px; font-size: 11px; color: rgba(255,255,255,0.25);">
+      Pokud si již nepřejete dostávat tyto e-maily, můžete se <a href="${merged.unsubscribeUrl}" style="color: var(--green-light); text-decoration: underline;">odhlásit</a>.
+    </p>
+    ` : ''}
     <p class="footer-copy">&copy; ${new Date().getFullYear()} BoostUp Energy. Všechna práva vyhrazena.</p>
   </footer>
 

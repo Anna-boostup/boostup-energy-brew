@@ -37,7 +37,7 @@ const StripeExpressButtons = () => {
       country: 'CZ',
       currency: 'czk',
       total: {
-        label: 'BoostUp Energy Order',
+        label: 'BoostUp Energy',
         amount: Math.round(finalTotalAmount * 100),
       },
       requestPayerName: true,
@@ -47,7 +47,7 @@ const StripeExpressButtons = () => {
         {
           id: 'courier-shipping',
           label: 'Doručení kurýrem',
-          detail: 'Doručení do 48 hodin',
+          detail: 'Doručení do 48h',
           amount: Math.round(shippingCost * 100),
         },
       ],
@@ -187,7 +187,18 @@ const StripeExpressButtons = () => {
 
   return (
     <div className="relative">
-      <PaymentRequestButtonElement options={{ paymentRequest }} />
+      <PaymentRequestButtonElement 
+        options={{ 
+          paymentRequest,
+          style: {
+            paymentRequestButton: {
+              theme: 'dark',
+              height: '54px',
+              type: 'buy'
+            }
+          }
+        }} 
+      />
       {isProcessing && (
         <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center rounded-xl z-10 pointer-events-none">
           <Loader2 className="w-6 h-6 animate-spin text-white" />

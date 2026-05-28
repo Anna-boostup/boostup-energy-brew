@@ -84,6 +84,28 @@ const replacePlaceholders = (template: string, data: any) => {
     });
 };
 
+// Helper to convert Quill classes into inline styles for email client compatibility
+const inlineQuillStyles = (html: string): string => {
+    if (!html) return '';
+    return html
+        // Handle paragraphs with alignment classes
+        .replace(/<p class="ql-align-center">/g, '<p style="margin-top:0;margin-bottom:16px;text-align:center;">')
+        .replace(/<p class="ql-align-right">/g, '<p style="margin-top:0;margin-bottom:16px;text-align:right;">')
+        .replace(/<p class="ql-align-justify">/g, '<p style="margin-top:0;margin-bottom:16px;text-align:justify;">')
+        // Handle generic headings with alignment classes
+        .replace(/<h2 class="ql-align-center">/g, '<h2 style="margin-top:0;margin-bottom:16px;text-align:center;">')
+        .replace(/<h2 class="ql-align-right">/g, '<h2 style="margin-top:0;margin-bottom:16px;text-align:right;">')
+        .replace(/<h2 class="ql-align-justify">/g, '<h2 style="margin-top:0;margin-bottom:16px;text-align:justify;">')
+        // Handle other elements (h1, h3, div) with alignment
+        .replace(/class="ql-align-center"/g, 'style="text-align:center;"')
+        .replace(/class="ql-align-right"/g, 'style="text-align:right;"')
+        .replace(/class="ql-align-justify"/g, 'style="text-align:justify;"')
+        // Standard paragraphs
+        .replace(/<p>/g, '<p style="margin-top:0;margin-bottom:16px;">')
+        // Standard list items
+        .replace(/<li>/g, '<li style="margin-bottom:8px;">');
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -406,6 +428,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         resetLink: req.body.resetLink,
         magicLink: req.body.magicLink,
         subscriberEmail: req.body.subscriberEmail,
+        unsubscribeLink: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
         unsubscribe_url: subscription_id ? `${BASE_URL}/unsubscribe?id=${subscription_id}` : '',
         BASE_URL
     };
@@ -421,7 +444,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             // For campaigns, subject comes from req.body
             subject = replacePlaceholders(req.body.subject || subject, templateData);
         }
-        contentHtml = replacePlaceholders(baseContentHtml, templateData);
+        contentHtml = inlineQuillStyles(replacePlaceholders(baseContentHtml, templateData));
     }
 
     let emailHtml = '';
@@ -458,14 +481,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                                 <!-- Header / Logo -->
                                 <tr>
                                     <td align="center" style="padding:48px 40px 24px 40px;">
-                                        <img src="cid:logo" alt="BoostUp" width="200" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
+                                        <img src="${BASE_URL}/logo-green.png" alt="BoostUp" width="200" border="0" style="display:block;height:auto;border:none;outline:none;text-decoration:none">
                                     </td>
                                 </tr>
                                 
                                 ${heroImageUrl ? `
                                 <tr>
                                     <td align="center" style="padding: 0 40px;">
-                                        <img src="cid:hero" alt="" width="520" border="0" style="width:520px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none;border-radius:16px;">
+                                        <img src="${heroImageUrl}" alt="" width="520" border="0" style="width:520px;max-width:100%;height:auto;display:block;border:none;outline:none;text-decoration:none;border-radius:16px;">
                                     </td>
                                 </tr>
                                 ` : ''}
@@ -502,41 +525,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        const attachments: any[] = [
-            {
-                content: LOGO_BASE64,
-                filename: 'logo.png',
-                contentId: 'logo',
-                disposition: 'inline'
-            }
-        ];
-
-        if (heroImageUrl) {
-            try {
-                const imageName = heroImageUrl.split('/').pop()?.split('?')[0];
-                if (imageName) {
-                    const heroPath = path.join(process.cwd(), 'public', imageName);
-                    if (fs.existsSync(heroPath)) {
-                        const heroContent = fs.readFileSync(heroPath).toString('base64');
-                        attachments.push({
-                            content: heroContent,
-                            filename: `${heroCid}.png`,
-                            contentId: 'hero',
-                            disposition: 'inline'
-                        });
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to read hero image file:', e);
-            }
-        }
+        const attachments: any[] = [];
 
         let bccRecipient = undefined;
         if (type === 'order_confirmation') {
             bccRecipient = ADMIN_EMAIL;
 
             // Send to Slack
-            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL || process.env.SLACK_WEBHOOK_URL;
+            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL;
             if (slackWebhookUrl) {
                 try {
                     const slackMessage = {
@@ -571,6 +567,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 } catch (slackErr) {
                     console.error('Failed to prepare Slack notification:', slackErr);
                 }
+            } else {
+                console.warn('SLACK_ORDERS_WEBHOOK_URL is not set; skipping order Slack notification.');
             }
 
             // Send to Pushover (iPhone / Mac Push Notifications)

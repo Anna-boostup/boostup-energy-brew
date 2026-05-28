@@ -26,12 +26,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
         const { error } = await supabaseAdmin
             .from('newsletter_subscriptions')
-            .update({ is_active: false })
+            .delete()
             .eq('id', id);
 
         if (error) {
             console.error('Database error during unsubscription:', error);
-            return res.status(500).json({ error: 'Failed to update subscription' });
+            return res.status(500).json({ error: 'Failed to delete subscription' });
         }
 
         return res.status(200).json({ success: true, message: 'Unsubscribed successfully' });

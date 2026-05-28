@@ -321,7 +321,8 @@ const EmailManagement = () => {
                     content_html: useMasterFrame 
                         ? newsletterTemplateService.render({ 
                             heroTitle: currentSubject, 
-                            bodyContent: currentContent 
+                            bodyContent: currentContent,
+                            unsubscribeUrl: `${window.location.origin}/unsubscribe?id=test-subscriber-id`
                         }) 
                         : currentContent,
                     customerName: content?.admin?.emailManager?.testData?.customerName || "Test Customer",
@@ -399,7 +400,8 @@ const EmailManagement = () => {
                             content_html: useMasterFrame 
                                 ? newsletterTemplateService.render({ 
                                     heroTitle: currentSubject, 
-                                    bodyContent: currentContent 
+                                    bodyContent: currentContent,
+                                    unsubscribeUrl: `${window.location.origin}/unsubscribe?id=${sub.id}`
                                 }) 
                                 : currentContent,
                             subscription_id: sub.id

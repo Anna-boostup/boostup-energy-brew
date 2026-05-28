@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { TrendingUp, Users, MousePointer2, Target, ArrowUpRight, ArrowDownRight, Activity, Calendar, Zap, Loader2 } from "lucide-react";
+import { TrendingUp, Users, MousePointer2, Target, ArrowUpRight, ArrowDownRight, Activity, Calendar, Zap, Loader2, Smartphone, Monitor, Shield, Globe } from "lucide-react";
 import { useInventory } from "@/context/InventoryContext";
 import { useContent } from "@/context/ContentContext";
 import { supabase } from "@/lib/supabase";
@@ -10,15 +10,81 @@ import {
 } from 'recharts';
 import { format, subDays, parseISO, isSameDay } from "date-fns";
 import { cs } from "date-fns/locale";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+const getPageName = (path: string): { name: string; icon: string } => {
+    if (path === '/') return { name: 'Hlavní stránka', icon: '🏠' };
+    if (path === '/checkout') return { name: 'Pokladna', icon: '💳' };
+    if (path === '/cart') return { name: 'Košík', icon: '🛒' };
+    if (path === '/obchod' || path === '/shop') return { name: 'E-shop', icon: '🛍️' };
+    if (path === '/blog') return { name: 'Blog', icon: '📖' };
+    if (path.startsWith('/blog/')) return { name: 'Článek na blogu', icon: '📄' };
+    if (path.startsWith('/unsubscribe')) return { name: 'Odhlášení z newsletteru', icon: '📭' };
+    
+    // Admin routes
+    if (path.startsWith('/admin/insights')) return { name: 'Statistiky (Insights)', icon: '📊' };
+    if (path.startsWith('/admin/help')) return { name: 'Nápověda', icon: '❓' };
+    if (path.startsWith('/admin/profile')) return { name: 'Profil admina', icon: '👤' };
+    if (path.startsWith('/admin/emails')) return { name: 'E-mailové šablony', icon: '✉️' };
+    if (path.startsWith('/admin/inventory')) return { name: 'Sklad produktů', icon: '📦' };
+    if (path.startsWith('/admin/manufacture')) return { name: 'Sklad výroby', icon: '🏭' };
+    if (path.startsWith('/admin/orders')) return { name: 'Objednávky', icon: '🛒' };
+    if (path.startsWith('/admin/promo-codes')) return { name: 'Slevové kódy', icon: '🏷️' };
+    if (path.startsWith('/admin/users')) return { name: 'Uživatelé a role', icon: '👥' };
+    if (path.startsWith('/admin/blog')) return { name: 'Správa blogu', icon: '✍️' };
+    if (path.startsWith('/admin/messages')) return { name: 'Zprávy od zákazníků', icon: '💬' };
+    if (path.startsWith('/admin')) return { name: 'Administrace', icon: '🔒' };
+    
+    return { name: path, icon: '🌐' };
+};
+
+const getDeviceInfo = (userAgent: string = ''): { device: 'mobile' | 'desktop'; browser: string; os: string } => {
+    const ua = userAgent.toLowerCase();
+    const isMobile = /mobile|android|iphone|ipad|phone/i.test(ua);
+    
+    let browser = 'Prohlížeč';
+    if (ua.includes('chrome') || ua.includes('chromium')) browser = 'Chrome';
+    else if (ua.includes('safari') && !ua.includes('chrome') && !ua.includes('android')) browser = 'Safari';
+    else if (ua.includes('firefox')) browser = 'Firefox';
+    else if (ua.includes('edge') || ua.includes('edg')) browser = 'Edge';
+    else if (ua.includes('opera') || ua.includes('opr')) browser = 'Opera';
+    
+    let os = 'OS';
+    if (ua.includes('windows')) os = 'Windows';
+    else if (ua.includes('macintosh') || ua.includes('mac os')) os = 'macOS';
+    else if (ua.includes('iphone') || ua.includes('ipad')) os = 'iOS';
+    else if (ua.includes('android')) os = 'Android';
+    else if (ua.includes('linux')) os = 'Linux';
+
+    return {
+        device: isMobile ? 'mobile' : 'desktop',
+        browser,
+        os
+    };
+};
+
+const getReferrerName = (referrerUrl: string = ''): string => {
+    if (!referrerUrl) return 'Přímá návštěva';
+    try {
+        const url = new URL(referrerUrl);
+        if (url.hostname.includes('google')) return 'Google vyhledávač';
+        if (url.hostname.includes('facebook') || url.hostname.includes('fb.com')) return 'Facebook';
+        if (url.hostname.includes('instagram')) return 'Instagram';
+        if (url.hostname.includes('seznam')) return 'Seznam.cz';
+        return url.hostname;
+    } catch {
+        return 'Odkaz';
+    }
+};
 
 const AdminInsights = () => {
     const { orders = [] } = useInventory() || { orders: [] };
     const { content } = useContent();
     const [trafficData, setTrafficData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [filterType, setFilterType] = useState<'all' | 'customers' | 'admins'>('all');
 
-    // Fetch analytics data from Supabase
+    // Fetch analytics data from Supabase and listen to realtime updates
     useEffect(() => {
         const fetchAnalytics = async () => {
             try {
@@ -39,7 +105,38 @@ const AdminInsights = () => {
         };
 
         fetchAnalytics();
+
+        // Realtime Subscription
+        const channel = supabase
+            .channel("realtime-analytics")
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "analytics_events"
+                },
+                (payload) => {
+                    setTrafficData((prev) => [...prev, payload.new]);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
+
+    const filteredEvents = useMemo(() => {
+        const sorted = [...trafficData].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        
+        return sorted.filter(event => {
+            const isAdminPath = event.page_path?.startsWith('/admin');
+            if (filterType === 'customers') return !isAdminPath;
+            if (filterType === 'admins') return isAdminPath;
+            return true;
+        }).slice(0, 15);
+    }, [trafficData, filterType]);
 
     // --- Data Processing ---
     const processedStats = useMemo(() => {
@@ -257,24 +354,128 @@ const AdminInsights = () => {
                 </Card>
             </div>
 
-            {/* Live Events Stream - Mock concept */}
+            {/* Live Events Stream */}
             <Card className="rounded-[3rem] glass-card border-none shadow-2xl overflow-hidden p-8 sm:p-12">
-                <div className="flex items-center gap-4 mb-10">
-                    <div className="w-2 h-2 rounded-full bg-lime animate-pulse" />
-                    <CardTitle className="text-xl font-black text-olive-dark uppercase italic tracking-widest">Živý proud událostí</CardTitle>
-                </div>
-                <div className="space-y-4 font-mono">
-                    {trafficData.slice(-5).reverse().map((event, i) => (
-                        <div key={i} className="flex flex-wrap items-center gap-4 p-4 rounded-2xl bg-white/30 border border-white/5 text-[10px] sm:text-xs">
-                            <span className="font-black text-olive-dark/60">{format(parseISO(event.created_at), 'HH:mm:ss')}</span>
-                            <span className="px-2 py-0.5 rounded-lg bg-olive-dark text-white text-[10px] uppercase font-bold">{event.event_type}</span>
-                            <span className="text-olive-dark font-black tracking-tighter truncate max-w-[200px]">{event.page_path}</span>
-                            <span className="ml-auto text-olive-dark/40 text-[9px] hidden sm:block">SID: {event.session_id.slice(0, 8)}...</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-lime"></span>
                         </div>
-                    ))}
-                    {trafficData.length === 0 && (
-                        <div className="text-center py-12 text-olive/20 uppercase font-black tracking-[0.5em]">
-                            Čekám na první signály z webu...
+                        <div>
+                            <CardTitle className="text-xl font-black text-olive-dark uppercase italic tracking-widest">Živý proud událostí</CardTitle>
+                            <p className="text-[10px] font-black text-olive-dark/40 uppercase tracking-widest mt-1">Real-time přehled zobrazení stránek</p>
+                        </div>
+                    </div>
+                    
+                    {/* Event Filter */}
+                    <div className="flex items-center bg-black/5 p-1 rounded-xl self-start sm:self-auto">
+                        {[
+                            { id: 'all', label: 'Všechny' },
+                            { id: 'customers', label: 'Zákazníci' },
+                            { id: 'admins', label: 'Admini' }
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setFilterType(tab.id as any)}
+                                className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${
+                                    filterType === tab.id
+                                        ? 'bg-olive-dark text-white shadow-md'
+                                        : 'text-olive-dark/50 hover:text-olive-dark'
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 font-mono scrollbar-thin scrollbar-thumb-olive/20 scrollbar-track-transparent">
+                    <AnimatePresence initial={false}>
+                        {filteredEvents.map((event) => {
+                            const { name, icon } = getPageName(event.page_path || '');
+                            const { device, browser, os } = getDeviceInfo(event.metadata?.userAgent || '');
+                            const referrer = getReferrerName(event.metadata?.referrer || '');
+                            const isAdmin = event.page_path?.startsWith('/admin');
+                            
+                            return (
+                                <motion.div 
+                                    key={event.id || event.created_at}
+                                    initial={{ opacity: 0, y: -20, height: 0 }}
+                                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.3 }}
+                                    className={`flex flex-col lg:flex-row lg:items-center gap-4 p-4 rounded-2xl border text-xs transition-all ${
+                                        isAdmin 
+                                            ? 'bg-olive/5 border-olive/10 hover:bg-olive/10' 
+                                            : 'bg-white/40 border-white/40 hover:bg-white/60 shadow-sm'
+                                    }`}
+                                >
+                                    {/* Time and Type */}
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-bold text-olive-dark/60">
+                                            {format(parseISO(event.created_at), 'HH:mm:ss')}
+                                        </span>
+                                        <span className={`px-2 py-0.5 rounded text-[9px] uppercase font-black ${
+                                            isAdmin 
+                                                ? 'bg-olive-dark/20 text-olive-dark' 
+                                                : 'bg-lime/20 text-lime-dark'
+                                        }`}>
+                                            {event.event_type}
+                                        </span>
+                                    </div>
+
+                                    {/* Page Info */}
+                                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                                        <span className="text-base">{icon}</span>
+                                        <div className="truncate">
+                                            <span className="font-black text-olive-dark block sm:inline">
+                                                {name}
+                                            </span>
+                                            <span className="text-[10px] text-olive-dark/40 ml-0 sm:ml-2 font-medium">
+                                                {event.page_path}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Badges / Meta Info */}
+                                    <div className="flex flex-wrap items-center gap-2 lg:ml-auto">
+                                        {/* Admin Badge */}
+                                        {isAdmin && (
+                                            <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-terracotta/10 text-terracotta text-[9px] font-black uppercase">
+                                                <Shield className="w-2.5 h-2.5" />
+                                                Admin
+                                            </span>
+                                        )}
+
+                                        {/* Referrer Badge */}
+                                        <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-black/5 text-olive-dark/60 text-[9px] font-bold">
+                                            <Globe className="w-2.5 h-2.5" />
+                                            {referrer}
+                                        </span>
+
+                                        {/* Browser Badge */}
+                                        <span className="px-2 py-0.5 rounded bg-black/5 text-olive-dark/60 text-[9px] font-bold">
+                                            {browser} ({os})
+                                        </span>
+
+                                        {/* Device Icon */}
+                                        <span className="p-1 rounded bg-black/5 text-olive-dark/60">
+                                            {device === 'mobile' ? <Smartphone className="w-3.5 h-3.5" /> : <Monitor className="w-3.5 h-3.5" />}
+                                        </span>
+
+                                        <span className="text-[9px] text-olive-dark/30 hidden xl:inline font-mono">
+                                            SID: {event.session_id ? `${event.session_id.slice(0, 6)}...` : 'N/A'}
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
+
+                    {filteredEvents.length === 0 && (
+                        <div className="text-center py-16 text-olive/20 uppercase font-black tracking-[0.5em] bg-white/20 rounded-3xl border border-white/20">
+                            Žádné události neodpovídají filtru...
                         </div>
                     )}
                 </div>

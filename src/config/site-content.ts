@@ -1028,6 +1028,15 @@ export const SITE_CONTENT = {
                 security: { title: "Zabezpečení", desc: "Vaše data jsou pod ochranou Auth." }
             },
             sections: {
+                dashboard: {
+                    title: "Přehled (Dashboard)",
+                    description: "Hlavní řídicí panel a stav prodeje. Cesta: Admin → Přehled",
+                    items: {
+                        salesToggle: { label: "Vypínač prodeje", desc: "Hlavní přepínač pro okamžité pozastavení nebo spuštění možnosti nakupovat na e-shopu v případě výpadků." },
+                        workflow: { label: "Pracovní tok (Workflow)", desc: "Rychlý přehled počtu nových, připravovaných, expedovaných a stornovaných objednávek." },
+                        stockQuick: { label: "Rychlý stav skladu", desc: "Okamžitý náhled na počet dostupných lahví jednotlivých příchutí přímo na hlavní ploše." }
+                    }
+                },
                 content: {
                     title: "Obsah webu",
                     description: "Správa textů a vizuálního obsahu na všech sekcích webu. Cesta: Admin → Obsah webu",
@@ -1035,10 +1044,9 @@ export const SITE_CONTENT = {
                         hero: { label: "Hero (Úvod)", desc: "Hlavní nadpisy, popis produktu, tlačítka a testimonial. Obsahuje také přepínač viditelnosti badge BRZY NA TRHU." },
                         mission: { label: "Mise", desc: "Texty v sekci 'O nás' – badge, nadpisy a odstavce. Badge viditelnost lze zapnout nebo vypnout přepínačem." },
                         ingredients: { label: "Ingredience", desc: "Název a popis ingrediencií zobrazených na webu." },
-                        concept: { label: "3B Koncept", desc: "Obsah karet – podnadpis, statistiky a krátký popis pro každou kartu." },
-                        cta: { label: "CTA (Odběr)", desc: "Newsletter sekce – badge, nadpisy, popis a texty emailového formuláře." },
-                        contact: { label: "Kontakt", desc: "Email, telefon a adresa zobrazené v kontaktní sekci." },
-                        flavors: { label: "Příchutě", desc: "Názvy, popisy a štítky pro jednotlivé varianty BoostUp." },
+                        concept: { label: "3B Koncept", desc: "Obsah karet pilířů (Brain, Body, Balance) a jejich detailních vyskakovacích (popup) vysvětlení včetně formátovaných odrážek." },
+                        settings: { label: "Globální nastavení", desc: "Zapnutí/vypnutí vyskakovacího okna s uvítací slevou (discount popup) při první návštěvě uživatele." },
+                        flavors: { label: "Příchutě", desc: "Názvy, popisy a nutriční tabulky pro jednotlivé varianty BoostUp." },
                         footer: { label: "Patička", desc: "Brand popis a copyright text v dolní části webu." }
                     }
                 },
@@ -1062,16 +1070,43 @@ export const SITE_CONTENT = {
                         location: { label: "Kde se přepínač nachází", desc: "Hero – badge BRZY NA TRHU, Mise – badge O NÁS, CTA – badge, Kontakt – badge KONTAKT." }
                     }
                 },
+                blog: {
+                    title: "Blog a články",
+                    description: "Publikační systém pro tvorbu článků. Cesta: Admin → Blog",
+                    items: {
+                        editor: { label: "Textový editor", desc: "Nástroj pro psaní a formátování obsahu článků, s podporou vkládání obrázků a odkazů." },
+                        templates: { label: "Rozložení (Šablony)", desc: "Možnost zvolit si jeden ze tří vizuálních stylů zobrazení článku (Modern, Centered, Minimal)." },
+                        seo: { label: "SEO Metadata", desc: "Nastavení perexu a klíčových slov pro správnou dohledatelnost na vyhledávačích Google a Seznam." }
+                    }
+                },
+                emails: {
+                    title: "E-mailové šablony a kampaně",
+                    description: "Správa transakčních e-mailů a rozesílání newsletterů. Cesta: Admin → E-maily",
+                    items: {
+                        transactional: { label: "Transakční šablony", desc: "Úprava zpráv, které systém odesílá automaticky (např. potvrzení objednávky, stav dopravy, magic odkaz)." },
+                        placeholders: { label: "Dynamické značky", desc: "Značky jako {{customerName}} nebo {{unsubscribeLink}}, které se při odeslání automaticky nahradí skutečnými údaji." },
+                        customTemplates: { label: "Vlastní šablony", desc: "Možnost vytvořit si vlastní e-mail pomocí tlačítka '+' (např. pro speciální sezónní rozesílky)." },
+                        masterFrame: { label: "Master Šablona", desc: "Přepínač pro automatické zabalení e-mailu do značkového BoostUp layoutu (s logem, Bebas Neue nadpisy a odhlašovacím odkazem)." },
+                        campaigns: { label: "Newsletter Kampaně", desc: "Záložka Rozesílka umožňuje vybrat šablonu a odeslat ji všem aktivním odběratelům newsletteru v dávkách se sledováním průběhu." },
+                        testing: { label: "Zkušební e-mail", desc: "Možnost nechat si před spuštěním ostré kampaně poslat testovací e-mail na vlastní administrátorskou adresu." }
+                    }
+                },
+                messages: {
+                    title: "Příchozí zprávy",
+                    description: "Správa a vyřizování dotazů z kontaktního formuláře. Cesta: Admin → Zprávy",
+                    items: {
+                        inbox: { label: "Schránka zpráv", desc: "Všechny zprávy odeslané z kontaktního formuláře na webu. Nepřečtené zprávy svítí oranžově." },
+                        reply: { label: "Odeslání odpovědi", desc: "Na dotaz lze odpovědět přímo z rozhraní administrace, systém odešle e-mail přímo zákazníkovi." }
+                    }
+                },
                 orders: {
                     title: "Objednávky",
                     description: "Přehled a správa všech zákaznických objednávek. Cesta: Admin → Objednávky",
                     items: {
                         filtering: { label: "Filtrování objednávek", desc: "Objednávky lze filtrovat podle stavu (čekající, potvrzená, odeslaná, doručená, zrušená)." },
                         detail: { label: "Detail objednávky", desc: "Kliknutím na objednávku zobrazíš detail – zákazník, produkty, adresa, způsob platby." },
-                        copy: { label: "Kopírování ID", desc: "Ikona 'Copy' u ID objednávky okamžitě zkopíruje kód do schránky." },
-                        status: { label: "Změna stavu", desc: "Zákazník obdrží automatický email při změně stavu na 'Odeslaná'." },
-                        packeta: { label: "Packeta štítky", desc: "Generování a tisk štítků pro zásilkovnu přímo z detailu." },
-                        notifications: { label: "Oznámení v prohlížeči", desc: "Zapni upozornění pro zvukové a vizuální hlášení nových objednávek." }
+                        bulk: { label: "Hromadné akce", desc: "Hromadné stornování objednávek, změna stavů nebo hromadný tisk štítků Zásilkovny (s možností poskládat štítky na A4 pro úsporu papíru)." },
+                        packeta: { label: "Zásilkovna (Packeta API)", desc: "Přímé vygenerování a tisk štítků pro Zásilkovnu. Tlačítko 'Synchronizovat' stáhne aktuální stavy přepravy." }
                     }
                 },
                 pricing: {
@@ -1086,12 +1121,9 @@ export const SITE_CONTENT = {
                 promos: {
                     title: "Slevové kódy",
                     description: "Správa slevových kupónů a uvítacího pop-upu. Cesta: Admin → Slevové kódy",
-                    codeLabel: "Unikátní kód (např. BOOST20)",
-                    discountLabel: "Výše slevy v %",
-                    syncing: "Synchronizace s databází...",
                     items: {
                         creation: { label: "Tvorba kódů", desc: "Vytváření neomezeného množství kódů s procentuální slevou." },
-                        popup: { label: "Uvítací pop-up", desc: "Automatická nabídka slevy pro nové návštěvníky webu." },
+                        popup: { label: "Dárková brána", desc: "Správa a nastavení kódu, který se zobrazí v uvítacím slevovém popup okně na e-shopu." },
                         rules: { label: "Pravidla slev", desc: "Slevové kódy se nesčítají se slevou na předplatné." }
                     }
                 },
@@ -1099,17 +1131,34 @@ export const SITE_CONTENT = {
                     title: "Sklad produktů",
                     description: "Správa skladových zásob hotových výrobků. Cesta: Admin → Sklad produktů",
                     items: {
-                        add: { label: "Přidání zásoby", desc: "Klikni na produkt a zadej přidávané množství." },
-                        minimum: { label: "Minimální zásoby", desc: "Upozornění při poklesu pod nastavenou hranici." }
+                        add: { label: "Úprava zásob", desc: "Zvýšení nebo snížení množství jednotlivých příchutí na skladě." },
+                        minimum: { label: "Minimální zásoby", desc: "Upozornění při poklesu stavu lahví pod nastavenou bezpečnou hranici." },
+                        history: { label: "Historie pohybů", desc: "Kompletní log všech změn na skladě s označením uživatele, který změnu provedl, a poznámkou." }
                     }
                 },
                 manufacture: {
                     title: "Sklad výroby",
                     description: "Správa surovin a výrobních materiálů. Cesta: Admin → Sklad výroby",
                     items: {
-                        alert: { label: "Upozornění (červená tečka)", desc: "Signalizuje surovinu pod minimální nebo varovnou zásobou." },
-                        edit: { label: "Úprava zásob", desc: "Ruční úprava množství surovin v detailu." },
-                        notifications: { label: "Notifikace", desc: "Možnost zapnout/vypnout upozornění pro každou surovinu." }
+                        alert: { label: "Monitorování limitů", desc: "Barevná indikace surovin (plechovky, víčka, nápoj), které klesly pod varovnou úroveň." },
+                        history: { label: "Historie surovin", desc: "Kompletní log spotřeby a doskladňování výrobních materiálů s datem a poznámkou." }
+                    }
+                },
+                users: {
+                    title: "Uživatelé a práva",
+                    description: "Správa uživatelských účtů a administrátorů. Cesta: Admin → Uživatelé",
+                    items: {
+                        list: { label: "Profily uživatelů", desc: "Seznam všech registrovaných profilů s rozlišením typu účtu (Osobní/Firemní)." },
+                        roles: { label: "Správa rolí", desc: "Možnost udělit vybranému uživateli práva Admina pro přístup do administrace." },
+                        history: { label: "Nákupní historie", desc: "Náhled na historii objednávek a celkovou útratu konkrétního uživatele." }
+                    }
+                },
+                accounting: {
+                    title: "Účetnictví a exporty",
+                    description: "Příprava podkladů pro fakturační systémy. Cesta: Admin → Objednávky",
+                    items: {
+                        csv: { label: "Export do CSV", desc: "Export dat objednávek do CSV souboru (kódování UTF-8, oddělovač středník) kompatibilního s účetními programy Pohoda a iDoklad." },
+                        filter: { label: "Časová období", desc: "Možnost filtrovat a stahovat data za konkrétní rok, měsíc nebo libovolné nastavené rozmezí." }
                     }
                 },
                 saving: {
@@ -1137,24 +1186,6 @@ export const SITE_CONTENT = {
                         palette: { label: "Barevná paleta", desc: "Oficiální barvy BoostUp: Olive, Lime a Terracotta." },
                         charts: { label: "Barvy grafů", desc: "Barevné kódování odpovídá jednotlivým příchutím produktu." },
                         readability: { label: "Čitelnost", desc: "Automaticky aplikovaný vysoký kontrast pro maximální přístupnost." }
-                    }
-                },
-                marketing: {
-                    title: "Email Marketing (Kampaně)",
-                    description: "Hromadné rozesílání newsletterů. Cesta: Admin → Email CMS",
-                    items: {
-                        campaigns: { label: "Marketingové Kampaně", desc: "Rozesílání vybrané šablony všem odběratelům v dávkách." },
-                        progress: { label: "Progress Bar", desc: "Sledování průběhu odesílání v reálném čase." }
-                    }
-                },
-                newsletter: {
-                    title: "Newsletter & Opt-out",
-                    description: "Správa odběratelů a odhlášení",
-                    items: {
-                        subscribers: { label: "Odběratelé", desc: "Správa databáze aktivních kontaktů a stavu přihlášení." },
-                        campaigns: { label: "Tvorba kampaní", desc: "Hromadné rozesílání s automatickou personalizací odkazů." },
-                        unsub: { label: "Odhlášení (GDPR)", desc: "Automatický systém odhlášení přes personalizovaný odkaz v patičce e-mailu." },
-                        safety: { label: "Bezpečnost", desc: "Ochrana proti duplicitnímu odeslání a filtrace pouze aktivních kontaktů." }
                     }
                 }
             }
