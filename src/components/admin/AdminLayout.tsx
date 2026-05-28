@@ -76,7 +76,15 @@ const AdminLayout = () => {
         fetchData();
         const interval = setInterval(fetchData, 60000); // Check every minute
 
-        return () => clearInterval(interval);
+        const handleMessageRead = () => {
+            setUnreadCount(prev => Math.max(0, prev - 1));
+        };
+        window.addEventListener('message-read', handleMessageRead);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('message-read', handleMessageRead);
+        };
     }, [user, profile, orders.length]);
 
     // No full-screen loading guard here to prevent flicker
