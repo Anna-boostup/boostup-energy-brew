@@ -99,12 +99,14 @@ const Messages = () => {
 
             if (error) throw error;
             setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: true } : m));
+            window.dispatchEvent(new Event('message-read'));
         } catch (error) {
             console.error('Error marking as read:', error);
         }
     };
 
     const deleteMessage = async (id: string) => {
+        const messageToDelete = messages.find(m => m.id === id);
         try {
             const { error } = await supabase
                 .from('messages')
@@ -113,6 +115,9 @@ const Messages = () => {
 
             if (error) throw error;
             setMessages(prev => prev.filter(m => m.id !== id));
+            if (messageToDelete && !messageToDelete.is_read) {
+                window.dispatchEvent(new Event('message-read'));
+            }
             if (selectedMessageId === id) setSelectedMessageId(null);
             toast({
                 title: content?.admin?.messages?.actions?.confirmDelete || "Deleted",
