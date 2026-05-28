@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
 
 interface Profile {
     id: string;
