@@ -319,7 +319,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 <table style="width:100%;margin:24px 0;border-collapse:collapse;text-align:left">
                     ${itemsHtml}
                     <tr>
-                        <td style="padding:20px 0 0 0;font-size:18px;font-weight:bold;color:${COLORS.text}">Celkem</td>
+                        <td style="padding:20px 0 0 0;font-size:18px;font-weight:bold;color:${COLORS.text}">Celkem:</td>
                         <td style="padding:20px 0 0 0;text-align:right;font-size:22px;font-weight:bold;color:${COLORS.primary}">${Number(total).toFixed(0)} Kč</td>
                     </tr>
                 </table>
