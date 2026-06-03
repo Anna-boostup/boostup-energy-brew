@@ -56,7 +56,7 @@ export const EMAIL_DEFAULTS: Record<string, EmailTemplateDefault> = {
 <table style="width:100%;margin:24px 0;border-collapse:collapse;text-align:left">
     {{itemsHtml}}
     <tr>
-        <td style="padding:20px 0 0 0;font-size:18px;font-weight:bold;color:#1f2937">Celkem</td>
+        <td style="padding:20px 0 0 0;font-size:18px;font-weight:bold;color:#1f2937">Celkem:</td>
         <td style="padding:20px 0 0 0;text-align:right;font-size:22px;font-weight:bold;color:#3a572c">{{total}} Kč</td>
     </tr>
 </table>

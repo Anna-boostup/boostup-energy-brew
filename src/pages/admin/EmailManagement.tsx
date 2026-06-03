@@ -222,6 +222,10 @@ const EmailManagement = () => {
             setCurrentTrigger('');
             setCurrentDescription('');
         }
+
+        // Automatically disable Master Frame for system templates (e.g. order confirmation, magic link)
+        const isSystem = SYSTEM_TEMPLATES.some(t => t.id === selectedTypeId && t.category === 'system');
+        setUseMasterFrame(!isSystem);
     }, [selectedTypeId, templates]);
 
     const handleResetToDefault = () => {
