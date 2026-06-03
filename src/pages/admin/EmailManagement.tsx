@@ -969,12 +969,12 @@ const EmailManagement = () => {
                                 <p className="text-olive-dark/60 text-[10px] font-bold uppercase tracking-widest mt-1">{content?.admin?.emailManager?.editor?.previewCtaDesc}</p>
                             </div>
                         </div>
-                        <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full relative z-10">
+                        <div className="flex-1 min-w-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full relative z-10">
                             <Input 
                                 value={testEmails}
                                 onChange={(e) => setTestEmails(e.target.value)}
                                 placeholder="Testovací e-maily oddělené čárkou..."
-                                className="bg-white/90 border-transparent text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-olive-dark"
+                                className="w-full bg-white/90 border-transparent text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-olive-dark"
                             />
                             <Button 
                                 variant="ghost" 
@@ -1154,12 +1154,12 @@ const EmailManagement = () => {
                                 Modul: {selectedTypeId}
                                 {useMasterFrame && <Badge className="bg-lime/10 text-lime border-none ml-2">Master Frame</Badge>}
                             </div>
-                            <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+                            <div className="flex-1 min-w-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
                                 <Input 
                                     value={testEmails}
                                     onChange={(e) => setTestEmails(e.target.value)}
                                     placeholder="Testovací e-maily oddělené čárkou..."
-                                    className="bg-background border-olive-dark/20 text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-lime"
+                                    className="w-full bg-background border-olive-dark/20 text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-lime"
                                 />
                                 <Button 
                                     onClick={handleSendTest} 
