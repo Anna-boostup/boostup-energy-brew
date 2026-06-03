@@ -82,9 +82,9 @@ export const newsletterTemplateService = {
     color: var(--green-light); font-weight: 600; margin-bottom: 28px;
   }
   .hero h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 88px; line-height: 0.9; color: var(--white);
-    letter-spacing: 2px; margin-bottom: 24px;
+    font-family: 'Bebas Neue', 'Arial Black', Impact, sans-serif;
+    font-size: 52px; line-height: 1.0; color: var(--white);
+    letter-spacing: 1px; margin-bottom: 24px;
   }
   .hero h1 span { color: var(--green-light); display: block; }
   .hero-sub {
