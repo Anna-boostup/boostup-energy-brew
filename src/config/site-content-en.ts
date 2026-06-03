@@ -1167,7 +1167,8 @@ export const SITE_CONTENT_EN = {
                 reset_password: "Password Reset",
                 magic_link: "Magic Link Login",
                 contact_inquiry: "New Inquiry (for Admin)",
-                newsletter_signup: "Newsletter Signup"
+                newsletter_signup: "Newsletter Signup",
+                newsletter_welcome: "Newsletter Welcome Email"
             },
             campaign: {
                 title: "Email Campaigns",
