@@ -975,39 +975,39 @@ const EmailManagement = () => {
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Quick Preview Card */}
-                    <Card className="bg-lime p-8 rounded-[2rem] border-none shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 group overflow-hidden relative">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-[80px] -translate-y-1/2 translate-x-1/2 rounded-full group-hover:scale-150 transition-transform duration-1000" />
-                        <div className="flex items-center gap-6 relative z-10 shrink-0">
-                            <div className="w-14 h-14 bg-olive-dark rounded-2xl flex items-center justify-center text-white shadow-xl">
-                                <Eye className="w-7 h-7" />
-                            </div>
-                            <div>
-                                <h4 className="text-olive-dark font-black uppercase text-sm tracking-tight">{content?.admin?.emailManager?.editor?.previewCtaTitle}</h4>
-                                <p className="text-olive-dark/60 text-[10px] font-bold uppercase tracking-widest mt-1">{content?.admin?.emailManager?.editor?.previewCtaDesc}</p>
-                            </div>
-                        </div>
-                        <div className="flex-1 min-w-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full relative z-10">
-                            <Input 
-                                value={testEmails}
-                                onChange={(e) => setTestEmails(e.target.value)}
-                                placeholder="Testovací e-maily oddělené čárkou..."
-                                className="w-full bg-white/90 border-transparent text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-olive-dark"
-                            />
-                            <Button 
-                                variant="ghost" 
-                                disabled={sendingTest || saving || !testEmails.trim()}
-                                onClick={handleSendTest}
-                                className="bg-olive-dark text-white rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all shrink-0"
-                            >
-                                {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                                {content?.admin?.emailManager?.form?.test || "Test"}
-                            </Button>
-                        </div>
-                    </Card>
                 </div>
             </div>
+
+            {/* Quick Preview Card */}
+            <Card className="bg-lime p-8 rounded-[2rem] border-none shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 group overflow-hidden relative mt-8">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-[80px] -translate-y-1/2 translate-x-1/2 rounded-full group-hover:scale-150 transition-transform duration-1000" />
+                <div className="flex items-center gap-6 relative z-10 shrink-0">
+                    <div className="w-14 h-14 bg-olive-dark rounded-2xl flex items-center justify-center text-white shadow-xl">
+                        <Eye className="w-7 h-7" />
+                    </div>
+                    <div>
+                        <h4 className="text-olive-dark font-black uppercase text-sm tracking-tight">{content?.admin?.emailManager?.editor?.previewCtaTitle}</h4>
+                        <p className="text-olive-dark/60 text-[10px] font-bold uppercase tracking-widest mt-1">{content?.admin?.emailManager?.editor?.previewCtaDesc}</p>
+                    </div>
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full relative z-10">
+                    <Input 
+                        value={testEmails}
+                        onChange={(e) => setTestEmails(e.target.value)}
+                        placeholder="Testovací e-maily oddělené čárkou..."
+                        className="w-full bg-white/90 border-transparent text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-olive-dark"
+                    />
+                    <Button 
+                        variant="ghost" 
+                        disabled={sendingTest || saving || !testEmails.trim()}
+                        onClick={handleSendTest}
+                        className="bg-olive-dark text-white rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all shrink-0"
+                    >
+                        {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                        {content?.admin?.emailManager?.form?.test || "Test"}
+                    </Button>
+                </div>
+            </Card>
             </TabsContent>
 
             <TabsContent value="campaigns" className="mt-0">
