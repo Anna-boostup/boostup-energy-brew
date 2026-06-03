@@ -95,7 +95,7 @@ const BlogPost = () => {
                   </span>
                   <div className="flex items-center gap-2 text-olive-dark/40 text-[10px] font-bold uppercase tracking-widest">
                     <Calendar className="w-4 h-4" />
-                    {format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs })}
+                    {post.published_at ? format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs }) : 'Doposud nepublikováno'}
                   </div>
                 </div>
                 <h1 className="text-4xl md:text-6xl font-display font-black text-olive-dark tracking-tighter leading-tight">
@@ -152,7 +152,7 @@ const BlogPost = () => {
                   </span>
                   <span className="text-olive-dark/20 text-[10px] font-black">•</span>
                   <div className="text-olive-dark/40 text-[10px] font-bold uppercase tracking-widest">
-                    {format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs })}
+                    {post.published_at ? format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs }) : 'Doposud nepublikováno'}
                   </div>
                 </div>
                 <h1 className="text-3xl md:text-5xl font-display font-black text-olive-dark tracking-tighter">
@@ -226,7 +226,7 @@ const BlogPost = () => {
                       </span>
                       <div className="flex items-center gap-2 text-white/60 text-[10px] font-bold uppercase tracking-widest">
                         <Calendar className="w-4 h-4" />
-                        {format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs })}
+                        {post.published_at ? format(new Date(post.published_at), 'd. MMMM yyyy', { locale: cs }) : 'Doposud nepublikováno'}
                       </div>
                     </div>
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-white tracking-tighter leading-tight mb-8">

@@ -138,6 +138,13 @@ const EmailManagement = () => {
     const [totalToSend, setTotalToSend] = useState(0);
     const [sentCount, setSentCount] = useState(0);
     const [selectedCampaignTemplate, setSelectedCampaignTemplate] = useState<string>('');
+    const [testEmails, setTestEmails] = useState<string>('');
+
+    useEffect(() => {
+        if (user?.email && !testEmails) {
+            setTestEmails(user.email);
+        }
+    }, [user]);
 
     useEffect(() => {
         fetchTemplates();
@@ -222,7 +229,18 @@ const EmailManagement = () => {
             setCurrentTrigger('');
             setCurrentDescription('');
         }
+
+        // Automatically disable Master Frame for system templates (e.g. order confirmation, magic link)
+        const isSystem = SYSTEM_TEMPLATES.some(t => t.id === selectedTypeId && t.category === 'system');
+        setUseMasterFrame(!isSystem);
     }, [selectedTypeId, templates]);
+
+    // Sync campaign template selection with editing template selection
+    useEffect(() => {
+        if (selectedTypeId) {
+            setSelectedCampaignTemplate(selectedTypeId);
+        }
+    }, [selectedTypeId]);
 
     const handleResetToDefault = () => {
         if (!EMAIL_DEFAULTS[selectedTypeId]) {
@@ -307,7 +325,10 @@ const EmailManagement = () => {
     };
 
     const handleSendTest = async () => {
-        if (!user?.email) return;
+        if (!testEmails.trim()) {
+            toast.error("Zadejte alespoň jednu e-mailovou adresu.");
+            return;
+        }
 
         try {
             setSendingTest(true);
@@ -315,7 +336,7 @@ const EmailManagement = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    to: user.email,
+                    to: testEmails,
                     type: selectedTypeId,
                     subject: currentSubject,
                     content_html: useMasterFrame 
@@ -339,7 +360,7 @@ const EmailManagement = () => {
 
             if (!response.ok) throw new Error('Failed to send email');
             
-            toast.success((content?.admin?.emailManager?.success?.testSent || "Test sent to {email}").replace('{email}', user.email));
+            toast.success((content?.admin?.emailManager?.success?.testSent || "Test sent to {email}").replace('{email}', testEmails));
         } catch (err) {
             console.error('Test email error:', err);
             toast.error(content?.admin?.emailManager?.errors?.test || "Error sending test email");
@@ -937,9 +958,9 @@ const EmailManagement = () => {
                     </Card>
 
                     {/* Quick Preview Card */}
-                    <Card className="bg-lime p-8 rounded-[2rem] border-none shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 group overflow-hidden relative">
+                    <Card className="bg-lime p-8 rounded-[2rem] border-none shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 group overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-[80px] -translate-y-1/2 translate-x-1/2 rounded-full group-hover:scale-150 transition-transform duration-1000" />
-                        <div className="flex items-center gap-6 relative z-10">
+                        <div className="flex items-center gap-6 relative z-10 shrink-0">
                             <div className="w-14 h-14 bg-olive-dark rounded-2xl flex items-center justify-center text-white shadow-xl">
                                 <Eye className="w-7 h-7" />
                             </div>
@@ -948,15 +969,23 @@ const EmailManagement = () => {
                                 <p className="text-olive-dark/60 text-[10px] font-bold uppercase tracking-widest mt-1">{content?.admin?.emailManager?.editor?.previewCtaDesc}</p>
                             </div>
                         </div>
-                        <Button 
-                            variant="ghost" 
-                            disabled={sendingTest || saving}
-                            onClick={handleSendTest}
-                            className="bg-olive-dark text-white rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest hover:bg-black hover:scale-105 transition-all w-full sm:w-auto relative z-10"
-                        >
-                            {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                            {content?.admin?.emailManager?.form?.test || "Test"}
-                        </Button>
+                        <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full relative z-10">
+                            <Input 
+                                value={testEmails}
+                                onChange={(e) => setTestEmails(e.target.value)}
+                                placeholder="Testovací e-maily oddělené čárkou..."
+                                className="bg-white/90 border-transparent text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-olive-dark"
+                            />
+                            <Button 
+                                variant="ghost" 
+                                disabled={sendingTest || saving || !testEmails.trim()}
+                                onClick={handleSendTest}
+                                className="bg-olive-dark text-white rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all shrink-0"
+                            >
+                                {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                                {content?.admin?.emailManager?.form?.test || "Test"}
+                            </Button>
+                        </div>
                     </Card>
                 </div>
             </div>
@@ -1025,7 +1054,10 @@ const EmailManagement = () => {
                                             {templateTypes.map((type) => (
                                                 <button
                                                     key={type.id}
-                                                    onClick={() => setSelectedCampaignTemplate(type.id)}
+                                                    onClick={() => {
+                                                        setSelectedCampaignTemplate(type.id);
+                                                        setSelectedTypeId(type.id);
+                                                    }}
                                                     className={`p-6 rounded-2xl border-2 transition-all flex items-center justify-between group ${
                                                         selectedCampaignTemplate === type.id
                                                         ? 'border-lime bg-lime/5 text-olive-dark'
@@ -1116,20 +1148,28 @@ const EmailManagement = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white border-t border-olive/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div className="flex items-center gap-4 text-[10px] font-black uppercase text-olive-dark/40 tracking-[0.2em]">
+                        <div className="bg-white border-t border-olive/5 p-6 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4 text-[10px] font-black uppercase text-olive-dark/40 tracking-[0.2em] shrink-0">
                                 <Mail className="w-4 h-4" />
                                 Modul: {selectedTypeId}
                                 {useMasterFrame && <Badge className="bg-lime/10 text-lime border-none ml-2">Master Frame</Badge>}
                             </div>
-                            <Button 
-                                onClick={handleSendTest} 
-                                disabled={sendingTest}
-                                className="w-full sm:w-auto bg-olive-dark text-white font-black uppercase text-[10px] tracking-widest px-8 h-12 rounded-xl"
-                            >
-                                {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                                Odeslat testovací email
-                            </Button>
+                            <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+                                <Input 
+                                    value={testEmails}
+                                    onChange={(e) => setTestEmails(e.target.value)}
+                                    placeholder="Testovací e-maily oddělené čárkou..."
+                                    className="bg-background border-olive-dark/20 text-olive-dark font-bold placeholder:text-olive-dark/40 h-12 rounded-xl focus-visible:ring-lime"
+                                />
+                                <Button 
+                                    onClick={handleSendTest} 
+                                    disabled={sendingTest || !testEmails.trim()}
+                                    className="bg-olive-dark text-white font-black uppercase text-[10px] tracking-widest px-8 h-12 rounded-xl shrink-0"
+                                >
+                                    {sendingTest ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                                    Odeslat testovací email
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </DialogContent>
