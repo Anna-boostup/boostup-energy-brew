@@ -597,9 +597,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             bccRecipient = INFO_EMAIL;
         }
 
+        const recipients = typeof to === 'string'
+            ? to.split(',').map(email => email.trim()).filter(Boolean)
+            : Array.isArray(to)
+                ? to
+                : [];
+
         const { data, error } = await resend.emails.send({
             from: 'BoostUp <objednavky@drinkboostup.cz>',
-            to: [to],
+            to: recipients,
             bcc: bccRecipient ? [bccRecipient] : undefined,
             subject: subject,
             html: emailHtml,
