@@ -36,8 +36,16 @@ const CTASection = () => {
         .insert([{ email }]);
 
       if (dbError) {
+        if (dbError.code === '23505') {
+          toast({
+            title: "Již odebíráte",
+            description: "Tento e-mail je již k odběru newsletteru přihlášen.",
+          });
+          setEmail("");
+          return;
+        }
         console.error('Supabase DB error:', dbError);
-        // Note: Even if DB save fails, we continue with the email notification as fallback
+        // Note: Even if DB save fails (other than unique violation), we continue with the email notification as fallback
       }
 
       // 2. Send email notification to the team
