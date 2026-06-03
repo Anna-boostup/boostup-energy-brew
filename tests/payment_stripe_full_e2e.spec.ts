@@ -26,7 +26,7 @@ import { test as boostupTest } from './fixtures';
 const RUN = process.env.STRIPE_FULL_E2E === 'true';
 
 // ─── Helper: fill Stripe hosted checkout card form ────────────────────────────
-async function fillStripeCheckout(page: Page, email: string) {
+async function fillStripeCheckout(page: Page, email: string, cardNumber: string = '4242424242424242') {
   // Wait for Stripe checkout page to fully load
   await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
 
@@ -50,7 +50,7 @@ async function fillStripeCheckout(page: Page, email: string) {
     const frame = page.frameLocator(sel);
     const input = frame.locator('input[name="cardnumber"], input[autocomplete="cc-number"], input[data-elements-stable-field-name="cardNumber"]');
     if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await input.fill('4242424242424242');
+      await input.fill(cardNumber);
       cardFilled = true;
       break;
     }
@@ -60,7 +60,7 @@ async function fillStripeCheckout(page: Page, email: string) {
   if (!cardFilled) {
     const directCardInput = page.locator('[data-testid="card-number-input"], input[name="cardNumber"]');
     if (await directCardInput.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await directCardInput.fill('4242424242424242');
+      await directCardInput.fill(cardNumber);
       cardFilled = true;
     }
   }
@@ -193,8 +193,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     await expect(stripePayBtn).toBeEnabled({ timeout: 15000 });
     await stripePayBtn.click();
 
-    // 9. Počkat na přesměrování zpět na náš web
-    await page.waitForURL(/drinkboostup\.cz.*payment\/success/, { timeout: 60000 });
+    // 9. Počkat na přesměrování zpět na náš web (matches any environment success url)
+    await page.waitForURL(/.*payment\/success/, { timeout: 60000 });
     console.log(`✅ Platba úspěšná, URL: ${page.url()}`);
 
     // 10. Ověřit obsah success stránky
@@ -245,22 +245,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
       submitBtn.click(),
     ]);
 
-    // Vyplnit zamítnutou kartu
-    await fillStripeCheckout(page, testEmail);
-
-    // Přepsat číslo karty zamítnutou kartou
-    const cardFrameSelectors = [
-      'iframe[title="Secure card number input frame"]',
-      'iframe[name="__privateStripeFrame5"]',
-    ];
-    for (const sel of cardFrameSelectors) {
-      const frame = page.frameLocator(sel);
-      const input = frame.locator('input[name="cardnumber"], input[autocomplete="cc-number"]');
-      if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await input.fill('4000000000000002'); // Vždy zamítnutá karta
-        break;
-      }
-    }
+    // Vyplnit zamítnutou kartu přímo přes naši upravenou helper funkci
+    await fillStripeCheckout(page, testEmail, '4000000000000002');
 
     const stripePayBtn = page.locator(
       'button[type="submit"]:has-text("Pay"), ' +
