@@ -112,6 +112,25 @@ const EmailManagement = () => {
     const [templateTypes, setTemplateTypes] = useState(SYSTEM_TEMPLATES);
     const [selectedTypeId, setSelectedTypeId] = useState<string>(SYSTEM_TEMPLATES[0].id);
     const [loading, setLoading] = useState(true);
+    const [readTemplateIds, setReadTemplateIds] = useState<string[]>(() => {
+        try {
+            const saved = localStorage.getItem("read_template_ids");
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    useEffect(() => {
+        if (selectedTypeId) {
+            setReadTemplateIds(prev => {
+                if (prev.includes(selectedTypeId)) return prev;
+                const updated = [...prev, selectedTypeId];
+                localStorage.setItem("read_template_ids", JSON.stringify(updated));
+                return updated;
+            });
+        }
+    }, [selectedTypeId]);
     const [saving, setSaving] = useState(false);
     const [sendingTest, setSendingTest] = useState(false);
     const [searchParams] = useSearchParams();
@@ -588,7 +607,7 @@ const EmailManagement = () => {
                             <CardTitle className="text-xl font-black uppercase italic tracking-tight text-white/90">{content?.admin?.emailManager?.templatesTitle || "Templates"}</CardTitle>
                             <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{content?.admin?.emailManager?.templatesDesc}</CardDescription>
                             
-                            <div className="flex gap-1 bg-white/5 p-1 rounded-xl mt-6">
+                            <div className="flex gap-1 bg-white/5 p-1 rounded-xl mt-6 overflow-x-auto no-scrollbar">
                                 {[
                                     { id: 'all', label: 'Vše' },
                                     { id: 'system', label: 'Systém' },
@@ -598,7 +617,7 @@ const EmailManagement = () => {
                                     <button
                                         key={cat.id}
                                         onClick={() => setActiveCategory(cat.id)}
-                                        className={`flex-1 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+                                        className={`flex-1 flex-shrink-0 min-w-[80px] py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
                                             activeCategory === cat.id 
                                             ? 'bg-lime text-olive-dark shadow-lg shadow-lime/10' 
                                             : 'text-white/40 hover:text-white hover:bg-white/5'
@@ -688,7 +707,7 @@ const EmailManagement = () => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                {isStored && (
+                                                {isStored && !readTemplateIds.includes(type.id) && (
                                                     <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-olive-dark' : 'bg-lime'}`} />
                                                 )}
                                             </button>
