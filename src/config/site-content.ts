@@ -1244,7 +1244,8 @@ export const SITE_CONTENT = {
                 reset_password: "Reset hesla",
                 magic_link: "Rychlé přihlášení",
                 contact_inquiry: "Nová zpráva (pro admina)",
-                newsletter_signup: "Přihlášení newsletteru"
+                newsletter_signup: "Přihlášení newsletteru",
+                newsletter_welcome: "Uvítání odběratele newsletteru"
             },
             campaign: {
                 title: "Emailové Kampaně",

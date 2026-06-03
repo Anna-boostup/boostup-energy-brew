@@ -106,6 +106,7 @@ const EmailManagement = () => {
         { id: 'magic_link', label: content?.admin?.emailManager?.templates?.magic_link, icon: Key, category: 'system' },
         { id: 'contact_inquiry', label: content?.admin?.emailManager?.templates?.contact_inquiry, icon: Info, category: 'system' },
         { id: 'newsletter_signup', label: content?.admin?.emailManager?.templates?.newsletter_signup, icon: Mail, category: 'system' },
+        { id: 'newsletter_welcome', label: content?.admin?.emailManager?.templates?.newsletter_welcome, icon: Mail, category: 'system' },
     ];
 
     const [templates, setTemplates] = useState<EmailTemplate[]>([]);

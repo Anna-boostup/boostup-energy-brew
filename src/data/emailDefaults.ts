@@ -97,6 +97,23 @@ export const EMAIL_DEFAULTS: Record<string, EmailTemplateDefault> = {
 </div>
         `
     },
+    newsletter_welcome: {
+        subject: 'Vítej ve světě BoostUp! ⚡',
+        content_html: `
+<h2 style="color:#3a572c;margin:0 0 16px 0;font-size:24px;font-weight:bold">Vítej v komunitě BoostUp! ⚡</h2>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">Ahoj,</p>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">děkujeme za přihlášení k odběru našeho newsletteru. Odteď ti neunikne žádná novinka, speciální akce ani tipy pro tvůj maximální výkon a soustředění.</p>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">Jako poděkování pro tebe máme slevu 10 % na tvůj první nákup! V košíku stačí zadat kód:</p>
+<div style="background:#f9fafb;padding:24px;border-radius:16px;margin:24px 0;border:1px solid #f3f4f6;text-align:center">
+    <p style="margin:0 0 8px 0;font-size:12px;color:#4b5563;text-transform:uppercase;font-weight:bold;letter-spacing:1px">Slevový kód</p>
+    <p style="font-size:28px;font-weight:bold;margin:0;color:#3a572c">WELCOME10</p>
+</div>
+<div style="margin:32px 0;text-align:center">
+    <a href="{{BASE_URL}}" style="background:#3a572c;color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px">Vyzkoušet BoostUp</a>
+</div>
+<p style="margin:0;font-size:14px;color:#4b5563">Sleduj nás také na <a href="https://instagram.com/drinkboostup" style="color:#3a572c;font-weight:600;text-decoration:none">Instagramu</a>, kde sdílíme novinky a střípky ze zákulisí.</p>
+        `
+    },
     contact_inquiry: {
         subject: 'Nová zpráva z kontaktního formuláře 📩',
         content_html: `
