@@ -228,6 +228,13 @@ const EmailManagement = () => {
         setUseMasterFrame(!isSystem);
     }, [selectedTypeId, templates]);
 
+    // Sync campaign template selection with editing template selection
+    useEffect(() => {
+        if (selectedTypeId) {
+            setSelectedCampaignTemplate(selectedTypeId);
+        }
+    }, [selectedTypeId]);
+
     const handleResetToDefault = () => {
         if (!EMAIL_DEFAULTS[selectedTypeId]) {
             toast.error(content?.admin?.emailManager?.errors?.defaultMissing || "Default not found");
@@ -1029,7 +1036,10 @@ const EmailManagement = () => {
                                             {templateTypes.map((type) => (
                                                 <button
                                                     key={type.id}
-                                                    onClick={() => setSelectedCampaignTemplate(type.id)}
+                                                    onClick={() => {
+                                                        setSelectedCampaignTemplate(type.id);
+                                                        setSelectedTypeId(type.id);
+                                                    }}
                                                     className={`p-6 rounded-2xl border-2 transition-all flex items-center justify-between group ${
                                                         selectedCampaignTemplate === type.id
                                                         ? 'border-lime bg-lime/5 text-olive-dark'
