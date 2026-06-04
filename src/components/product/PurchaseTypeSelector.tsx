@@ -12,6 +12,7 @@ const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTy
       <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
         <button
+          data-testid="purchase-type-onetime"
           onClick={() => onSelectPurchaseType('onetime')}
           className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${purchaseType === 'onetime'
             ? "bg-primary border-primary text-primary-foreground shadow-button scale-[1.02]"
@@ -30,6 +31,7 @@ const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTy
         </button>
 
         <button
+          data-testid="purchase-type-subscription"
           onClick={() => onSelectPurchaseType('subscription')}
           className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${purchaseType === 'subscription'
             ? "bg-amber-500 border-amber-500 text-white shadow-button scale-[1.02]"

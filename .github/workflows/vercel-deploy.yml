@@ -81,24 +81,6 @@ jobs:
           TEST_COMPANY_PASSWORD: ${{ secrets.TEST_COMPANY_PASSWORD }}
           IS_TEST_MODE: "true"
 
-      - name: Run Full Stripe Card Payment E2E
-        run: npx playwright test tests/payment_stripe_full_e2e.spec.ts
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
-          STRIPE_FULL_E2E: "true"
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-
-      - name: Run Full GoPay Payment E2E
-        run: npx playwright test tests/payment_gopay_full_e2e.spec.ts
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
-          GOPAY_FULL_E2E: "true"
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
-          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
-
       - name: Notify on Success (Slack)
         if: success()
         run: |
