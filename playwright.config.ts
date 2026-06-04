@@ -51,7 +51,7 @@ export default defineConfig({
     // Admin Desktop
     {
       name: 'admin-desktop',
-      testMatch: ['tests/admin.spec.ts', 'tests/capture_admin_screenshots.spec.ts'],
+      testMatch: ['tests/admin.spec.ts', 'tests/capture_admin_screenshots.spec.ts', 'tests/debug-email.spec.ts'],
       use: { 
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
@@ -98,6 +98,19 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         // Allow navigation to stripe.com
+        bypassCSP: true,
+      },
+      dependencies: ['setup'],
+    },
+
+    // Full GoPay E2E — goes through real GoPay Sandbox hosted checkout page
+    // Requires: GOPAY_FULL_E2E=true, IS_TEST_MODE=false
+    {
+      name: 'payment-gopay-e2e',
+      testMatch: 'tests/payment_gopay_full_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow navigation to gopay.com/gopay.cz
         bypassCSP: true,
       },
       dependencies: ['setup'],
