@@ -158,7 +158,7 @@ export default defineConfig({
     // Layout and Accessibility
     {
       name: 'layout-and-a11y',
-      testMatch: 'tests/layout_and_a11y.spec.ts',
+      testMatch: ['tests/layout.spec.ts', 'tests/a11y.spec.ts'],
       use: { 
         ...devices['Desktop Chrome'],
       },
