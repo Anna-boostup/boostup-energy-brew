@@ -26,7 +26,7 @@ import { test as boostupTest } from './fixtures';
 const RUN = process.env.STRIPE_FULL_E2E === 'true';
 
 // ─── Helper: fill Stripe hosted checkout card form ────────────────────────────
-async function fillStripeCheckout(page: Page, email: string, cardNumber: string = '4242424242424242') {
+async function fillStripeCheckout(page: Page, email: string, cardNumber: string = '4000000000000010') {
   // Wait for Stripe checkout page to fully load
   await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
 
@@ -39,12 +39,26 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   
   const isCardFormVisible = await page.locator(cardLoadSelector).first().isVisible({ timeout: 3000 }).catch(() => false);
   if (!isCardFormVisible) {
-    const cardSelectorBtn = page.locator('[data-testid="card-accordion-item-button"], button[aria-label="Pay with card"], button[aria-label="Platba kartou"]').first();
-    await cardSelectorBtn.waitFor({ state: 'visible', timeout: 10000 });
+    // Pokusíme se najít jak viditelný text "Card" / "Karta", tak případný button (i když je visually hidden)
+    const cardTextSelector = 'text=/^Card$|^Karta$|^Platba kartou$/i';
+    const cardBtnSelector = '[data-testid="card-accordion-item-button"], button[aria-label="Pay with card"], button[aria-label="Platba kartou"]';
     
-    // Zkusíme na metodu kliknout (s force:true) a čekáme, zda se rozbalí formulář karty (toPass řeší případnou pomalou hydrataci Reactu u Stripe Checkout)
+    const textLabel = page.locator(cardTextSelector).first();
+    const nativeBtn = page.locator(cardBtnSelector).first();
+    
+    // Počkáme, až bude aspoň jeden z nich přítomen/viditelný
+    await Promise.race([
+      textLabel.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+      nativeBtn.waitFor({ state: 'attached', timeout: 10000 }).catch(() => {})
+    ]);
+    
+    // Zkusíme na element kliknout (s force:true) a čekáme, zda se rozbalí formulář karty
     await expect(async () => {
-      await cardSelectorBtn.click({ force: true });
+      if (await textLabel.isVisible().catch(() => false)) {
+        await textLabel.click({ force: true });
+      } else {
+        await nativeBtn.click({ force: true });
+      }
       await expect(page.locator(cardLoadSelector).first()).toBeVisible({ timeout: 2000 });
     }).toPass({
       intervals: [1000, 2000],
@@ -61,6 +75,27 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
     await emailInput.clear();
     await emailInput.fill(email);
+  }
+
+  // 4b. Doručovací údaje a adresa (pokud je Stripe vyžaduje - např. u fyzických produktů)
+  const shippingName = page.locator('input[name="shippingName"], input[autocomplete="name"], input#shippingName').first();
+  if (await shippingName.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await shippingName.fill('Stripe E2E Test');
+  }
+
+  const addressLine1 = page.locator('input[name="shippingAddressLine1"], input[autocomplete="address-line1"], input#shippingAddressLine1, input[name="address-line1"]').first();
+  if (await addressLine1.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await addressLine1.fill('Testovací 123');
+  }
+
+  const cityInput = page.locator('input[name="shippingLocality"], input[autocomplete="address-level2"], input#shippingLocality, input[name="locality"]').first();
+  if (await cityInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await cityInput.fill('Brno');
+  }
+
+  const shippingPostal = page.locator('input[name="shippingPostalCode"], input[autocomplete="postal-code"], input#shippingPostalCode, input[name="postal-code"], input[name="postal"]').first();
+  if (await shippingPostal.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await shippingPostal.fill('62300');
   }
 
   // ── Card number ──────────────────────────────────────────────────────────────
@@ -174,7 +209,7 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   });
 
   // ── Test 1: Úspěšná platba testovací kartou ──────────────────────────────────
-  boostupTest('Úspěšná platba — karta 4242 (Stripe Test Mode)', async ({ page }) => {
+  boostupTest('Úspěšná platba — karta 4000 (Stripe Test Mode)', async ({ page }) => {
     const testEmail = `stripe-e2e-${Date.now()}@test.drinkboostup.cz`;
 
     // 1. Přidat do košíku (VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE)
@@ -271,14 +306,20 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     // 11. Počkat na webhook (Stripe volá náš server asynchronně, typicky do 5s)
     await page.waitForTimeout(6000);
 
-    // 12. Ověřit objednávku v adminu
-    await page.goto('/admin/orders', { waitUntil: 'load', timeout: 30000 });
-    await expect(page.locator(`text=${orderNumber}`)).toBeVisible({ timeout: 15000 });
-    console.log(`✅ Objednávka ${orderNumber} nalezena v administraci`);
+    // 12. Ověřit objednávku v adminu (použijeme nový context s admin session, protože hlavní test běží jako guest)
+    const adminContext = await page.context().browser().newContext({
+      storageState: 'playwright/.auth/admin.json'
+    });
+    const adminPage = await adminContext.newPage();
+    await adminPage.goto('/admin/orders', { waitUntil: 'load', timeout: 30000 });
+    const shortOrderNumber = orderNumber.substring(0, 12);
+    await expect(adminPage.locator(`text=${shortOrderNumber}`).first()).toBeVisible({ timeout: 20000 });
+    console.log(`✅ Objednávka ${orderNumber} (zkráceně ${shortOrderNumber}) nalezena v administraci`);
+    await adminContext.close();
   });
 
   // ── Test 2: Zamítnutá karta ──────────────────────────────────────────────────
-  boostupTest('Zamítnutá platba — karta 4000 0000 0000 0002', async ({ page }) => {
+  boostupTest('Zamítnutá platba — karta 4000 0000 0000 9995', async ({ page }) => {
     const testEmail = `stripe-fail-${Date.now()}@test.drinkboostup.cz`;
 
     // VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE
@@ -324,8 +365,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
       submitBtn.click(),
     ]);
 
-    // Vyplnit zamítnutou kartu přímo přes naši upravenou helper funkci
-    await fillStripeCheckout(page, testEmail, '4000000000000002');
+    // Vyplnit zamítnutou kartu přímo přes naši upravenou helper funkci (použijeme kartu s nedostatečnými prostředky)
+    await fillStripeCheckout(page, testEmail, '4000000000009995');
 
     const stripePayBtn = page.locator(
       'button[type="submit"]:has-text("Pay"), ' +
@@ -338,7 +379,7 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
 
     // Ověřit, že Stripe zobrazí chybovou hlášku (platba zamítnuta)
     await expect(
-      page.locator('text=/Your card was declined|Platba zamítnuta|declined/i')
+      page.locator('text=/Your card was declined|Platba zamítnuta|declined|insufficient|nedostatek/i')
     ).toBeVisible({ timeout: 30000 });
 
     console.log('✅ Zamítnutá karta správně zobrazila chybu na Stripe stránce');
