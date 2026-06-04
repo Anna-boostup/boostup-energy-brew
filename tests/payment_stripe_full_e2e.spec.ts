@@ -202,6 +202,49 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   }
 }
 
+// Helper pro zpracování Stripe 3D Secure (SCA) výzvy
+async function handleStripe3DS(page: Page, approve: boolean = true) {
+  const is3dsVisible = await page.locator('iframe[name="challengeFrame"]').first().isVisible({ timeout: 8000 }).catch(() => false);
+  
+  if (is3dsVisible) {
+    console.log('ℹ️ Detekován Stripe 3D Secure iframe, provádím autorizaci...');
+    const frame = page.frameLocator('iframe[name="challengeFrame"]');
+    
+    const completeSelector = 'button#challenge-complete, button:has-text("Complete"), button:has-text("Autorizovat"), button:has-text("Schválit"), button:has-text("Submit")';
+    const failSelector = 'button#challenge-fail, button:has-text("Fail"), button:has-text("Odmítnout"), button:has-text("Cancel")';
+    
+    const targetButton = approve 
+      ? frame.locator(completeSelector).first()
+      : frame.locator(failSelector).first();
+      
+    if (await targetButton.isVisible({ timeout: 10000 }).catch(() => false)) {
+      await targetButton.click({ force: true });
+      console.log(`✅ Kliknuto na 3DS tlačítko (schválit=${approve})`);
+      await page.waitForTimeout(3000);
+    } else {
+      const subFrames = page.frames();
+      let clicked = false;
+      for (const f of subFrames) {
+        if (f.url().includes('3d-secure') || f.name().includes('challenge')) {
+          const btn = f.locator(approve ? completeSelector : failSelector).first();
+          if (await btn.isVisible().catch(() => false)) {
+            await btn.click({ force: true });
+            console.log(`✅ Kliknuto na 3DS tlačítko ve vnořeném frame (schválit=${approve})`);
+            clicked = true;
+            await page.waitForTimeout(3000);
+            break;
+          }
+        }
+      }
+      if (!clicked) {
+        console.log('⚠️ 3DS iframe nalezen, ale nepodařilo se vyhledat správné tlačítko.');
+      }
+    }
+  } else {
+    console.log('ℹ️ Stripe 3D Secure nebyl vyžadován.');
+  }
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
 
@@ -300,6 +343,9 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     await expect(stripePayBtn).toBeEnabled({ timeout: 15000 });
     await stripePayBtn.click();
 
+    // 8b. Ošetřit případný 3D Secure modal (potvrdit pro úspěšnou platbu)
+    await handleStripe3DS(page, true);
+
     // 9. Počkat na přesměrování zpět na náš web (matches any environment success url)
     await page.waitForURL(/.*payment\/success/, { timeout: 60000 });
     console.log(`✅ Platba úspěšná, URL: ${page.url()}`);
@@ -385,6 +431,9 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
       '[data-testid="hosted-payment-submit-button"]'
     ).first();
     await stripePayBtn.click();
+
+    // Ošetřit případný 3D Secure modal (zamítnout autorizaci)
+    await handleStripe3DS(page, false);
 
     // Ověřit, že Stripe zobrazí chybovou hlášku (platba zamítnuta)
     await expect(
