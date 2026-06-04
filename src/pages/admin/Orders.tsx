@@ -83,13 +83,15 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     </div>
                     <Badge
                         className={`text-[9px] font-black uppercase tracking-widest px-3 h-6 rounded-lg border-none shadow-sm ${
+                            order.status === 'completed' ? 'bg-black text-white shadow-xl shadow-black/20' :
                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
                                 order.status === 'processing' ? 'bg-olive-dark text-white' :
                                     order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/40' :
                                         'bg-lime/20 text-olive-dark'
                         }`}
                     >
-                        {order.status === 'shipped' ? content.admin.dashboard.statusShipped :
+                        {order.status === 'completed' ? content.admin.dashboard.statusCompleted :
+                            order.status === 'shipped' ? content.admin.dashboard.statusShipped :
                             order.status === 'processing' ? content.admin.dashboard.statusProcessing :
                                 order.status === 'cancelled' ? content.admin.dashboard.statusCancelled :
                                     content.admin.dashboard.statusReceived}
@@ -136,6 +138,11 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     {(order.status === 'paid' || order.status === 'processing') && (
                         <Button size="icon" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-11 w-11" aria-label={content.admin.orders.markAsShipped}>
                             <Truck className="w-5 h-5" />
+                        </Button>
+                    )}
+                    {order.status === 'shipped' && (
+                        <Button size="icon" onClick={() => onStatusChange(order.id, 'completed')} className="bg-black text-white hover:bg-black/80 rounded-xl h-11 w-11 shadow-xl shadow-black/20" aria-label={content.admin.orders.markAsCompleted}>
+                            <CheckCircle className="w-5 h-5" />
                         </Button>
                     )}
                     <InvoiceModal order={order}>
@@ -287,13 +294,15 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 <TableCell className="text-center px-1">
                                     <Badge
                                         className={`text-[8px] font-black uppercase tracking-widest px-2 h-5 rounded-md border-none shadow-sm ${
+                                            order.status === 'completed' ? 'bg-black text-white shadow-xl shadow-black/20' :
                                             order.status === 'shipped' ? 'bg-olive-dark text-white' :
                                                 order.status === 'processing' ? 'bg-[#3d5a2f] text-white' :
                                                     order.status === 'cancelled' ? 'bg-olive/10 text-olive/40' :
                                                         'bg-lime/20 text-olive-dark'
                                         }`}
                                     >
-                                        {order.status === 'shipped' ? content.admin.dashboard.statusShipped :
+                                        {order.status === 'completed' ? content.admin.dashboard.statusCompleted :
+                                            order.status === 'shipped' ? content.admin.dashboard.statusShipped :
                                             order.status === 'processing' ? content.admin.dashboard.statusProcessing :
                                                 order.status === 'cancelled' ? content.admin.dashboard.statusCancelled :
                                                     content.admin.dashboard.statusReceived}
@@ -340,8 +349,18 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 <Truck className="w-5 h-5" />
                                             </Button>
                                         )}
+                                        {order.status === 'shipped' && (
+                                            <Button
+                                                size="sm"
+                                                onClick={() => onStatusChange(order.id, 'completed')}
+                                                className="h-10 w-10 p-0 bg-black text-white hover:bg-black/80 rounded-xl shadow-lg shadow-black/20"
+                                                title={content.admin.orders.markAsCompleted}
+                                            >
+                                                <CheckCircle className="w-5 h-5" />
+                                            </Button>
+                                        )}
 
-                                        {order.status !== 'shipped' && order.status !== 'cancelled' && (
+                                        {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button
@@ -675,7 +694,8 @@ const Orders = () => {
             title: content.admin.orders.statusChanged,
             description: content.admin.orders.statusChangedDesc
                 .replace('{id}', orderId.slice(0, 8))
-                .replace('{status}', newStatus === 'shipped' ? content.admin.dashboard.statusShipped :
+                .replace('{status}', newStatus === 'completed' ? content.admin.dashboard.statusCompleted :
+                    newStatus === 'shipped' ? content.admin.dashboard.statusShipped :
                     newStatus === 'paid' ? content.admin.orders.status.paid :
                         newStatus === 'cancelled' ? content.admin.dashboard.statusCancelled :
                             content.admin.dashboard.statusProcessing),
@@ -690,7 +710,8 @@ const Orders = () => {
             title: content.admin.orders.bulkStatusTitle,
             description: content.admin.orders.bulkStatusChangedDesc
                 .replace('{count}', idsArray.length.toString())
-                .replace('{status}', newStatus === 'shipped' ? content.admin.dashboard.statusShipped :
+                .replace('{status}', newStatus === 'completed' ? content.admin.dashboard.statusCompleted :
+                    newStatus === 'shipped' ? content.admin.dashboard.statusShipped :
                     newStatus === 'processing' ? content.admin.dashboard.statusProcessing :
                         newStatus === 'paid' ? content.admin.orders.status.paid : content.admin.dashboard.statusCancelled),
         });
@@ -705,9 +726,11 @@ const Orders = () => {
     };
 
     const filteredOrders = {
-        pending: getSortedOrders(orders.filter(o => o.status === 'pending' || o.status === 'paid')),
+        pending: getSortedOrders(orders.filter(o => o.status === 'pending')),
+        paid: getSortedOrders(orders.filter(o => o.status === 'paid')),
         processing: getSortedOrders(orders.filter(o => o.status === 'processing')),
         shipped: getSortedOrders(orders.filter(o => o.status === 'shipped')),
+        completed: getSortedOrders(orders.filter(o => o.status === 'completed')),
         cancelled: getSortedOrders(orders.filter(o => o.status === 'cancelled'))
     };
 
@@ -792,10 +815,12 @@ const Orders = () => {
             </div>
             <Tabs defaultValue="pending" className="w-full">
                 <div className="overflow-x-auto pb-6 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8 sm:mb-12">
-                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-4 min-w-max md:min-w-0 bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
+                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-6 min-w-max md:min-w-0 bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
                         <TabsTrigger value="pending" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
+                        <TabsTrigger value="paid" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPaid} ({filteredOrders.paid.length})</TabsTrigger>
                         <TabsTrigger value="processing" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
                         <TabsTrigger value="shipped" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
+                        <TabsTrigger value="completed" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCompleted} ({filteredOrders.completed.length})</TabsTrigger>
                         <TabsTrigger value="cancelled" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
                     </TabsList>
                 </div>
@@ -804,6 +829,18 @@ const Orders = () => {
                 <TabsContent value="pending" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
                     <OrderTable
                         data={filteredOrders.pending}
+                        selectedOrders={selectedOrders}
+                        toggleOrderSelection={toggleOrderSelection}
+                        onStatusChange={handleStatusChange}
+                        setSelectedOrders={setSelectedOrders}
+                        onSort={handleSort}
+                        sortConfig={sortConfig}
+                    />
+                </TabsContent>
+
+                <TabsContent value="paid" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
+                    <OrderTable
+                        data={filteredOrders.paid}
                         selectedOrders={selectedOrders}
                         toggleOrderSelection={toggleOrderSelection}
                         onStatusChange={handleStatusChange}
@@ -828,6 +865,18 @@ const Orders = () => {
                 <TabsContent value="shipped" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
                     <OrderTable
                         data={filteredOrders.shipped}
+                        selectedOrders={selectedOrders}
+                        toggleOrderSelection={toggleOrderSelection}
+                        onStatusChange={handleStatusChange}
+                        setSelectedOrders={setSelectedOrders}
+                        onSort={handleSort}
+                        sortConfig={sortConfig}
+                    />
+                </TabsContent>
+
+                <TabsContent value="completed" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
+                    <OrderTable
+                        data={filteredOrders.completed}
                         selectedOrders={selectedOrders}
                         toggleOrderSelection={toggleOrderSelection}
                         onStatusChange={handleStatusChange}
@@ -885,6 +934,16 @@ const Orders = () => {
                             >
                                 <Truck className="w-4 h-4" />
                                 <span className="hidden sm:inline uppercase">{content.admin.dashboard.statusShipped}</span>
+                            </Button>
+
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-12 px-8 text-white hover:bg-lime hover:text-olive-dark font-black uppercase text-[10px] tracking-widest gap-3 rounded-[1.5rem] transition-all duration-300"
+                                onClick={() => handleBulkStatusChange('completed')}
+                            >
+                                <CheckCircle className="w-4 h-4" />
+                                <span className="hidden sm:inline uppercase">{content.admin.dashboard.statusCompleted}</span>
                             </Button>
 
                             <Dialog open={isBulkCancelDialogOpen} onOpenChange={setIsBulkCancelDialogOpen}>

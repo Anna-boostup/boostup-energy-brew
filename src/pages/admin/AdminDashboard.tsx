@@ -27,6 +27,7 @@ const AdminDashboard = () => {
     const newOrdersCount = (orders || []).filter(o => o && (o.status === 'pending' || o.status === 'paid')).length;
     const processingCount = (orders || []).filter(o => o && o.status === 'processing').length;
     const shippedCount = (orders || []).filter(o => o && o.status === 'shipped').length;
+    const completedCount = (orders || []).filter(o => o && o.status === 'completed').length;
     const cancelledCount = (orders || []).filter(o => o && o.status === 'cancelled').length;
     
     const today = new Date().toISOString().split('T')[0];
@@ -159,7 +160,7 @@ const AdminDashboard = () => {
                         </div>
                     </CardHeader>
                     <CardContent className="px-6 sm:px-10 pb-6 sm:pb-10">
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
+                        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-12">
                             <div className="relative group/stat">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.newOrders}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
@@ -176,6 +177,11 @@ const AdminDashboard = () => {
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.shipped}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{shippedCount}</div>
                                 <div className="w-6 h-1 bg-lime mt-5 rounded-full" />
+                            </div>
+                            <div className="group/stat">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.completed}</p>
+                                <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{completedCount}</div>
+                                <div className="w-6 h-1 bg-black mt-5 rounded-full" />
                             </div>
                             <div className="group/stat opacity-60">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/80 mb-3 ml-1">{content?.admin?.dashboard?.cancelled}</p>
@@ -277,12 +283,14 @@ const AdminDashboard = () => {
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50">{content?.admin?.dashboard?.statusLabel}</span>
                                                     <Badge className={`text-[10px] h-7 px-4 rounded-xl font-black border-none shadow-lg ${
+                                                        order.status === 'completed' ? 'bg-black text-white' :
                                                         order.status === 'shipped' ? 'bg-olive-dark text-white' :
                                                         order.status === 'processing' ? 'bg-olive-light text-white' :
                                                         order.status === 'cancelled' ? 'bg-olive-dark/10 text-olive-dark/50' :
                                                         'bg-lime/20 text-olive-dark'
                                                     }`}>
-                                                        {order.status === 'shipped' ? content?.admin?.dashboard?.statusShipped :
+                                                        {order.status === 'completed' ? content?.admin?.dashboard?.statusCompleted :
+                                                            order.status === 'shipped' ? content?.admin?.dashboard?.statusShipped :
                                                             order.status === 'processing' ? content?.admin?.dashboard?.statusProcessing :
                                                                 order.status === 'cancelled' ? content?.admin?.dashboard?.statusCancelled :
                                                                     content?.admin?.dashboard?.statusReceived}

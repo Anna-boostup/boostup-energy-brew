@@ -141,13 +141,15 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                             {order.status === 'pending' ? content.admin.orders.detail.paymentPending : content.admin.orders.detail.paymentPaid}
                         </Badge>
                         <Badge
-                            variant={order.status === 'shipped' ? 'default' : 'outline'}
-                            className={`text-xs px-3 py-1 ${order.status === 'shipped' ? 'bg-blue-600' :
+                            variant={order.status === 'completed' ? 'default' : order.status === 'shipped' ? 'default' : 'outline'}
+                            className={`text-xs px-3 py-1 ${order.status === 'completed' ? 'bg-black text-white hover:bg-black/90' :
+                                order.status === 'shipped' ? 'bg-blue-600' :
                                 order.status === 'processing' ? 'border-blue-200 text-blue-700 bg-blue-50' :
                                     'border-amber-200 text-amber-700'
                                 }`}
                         >
-                            {order.status === 'shipped' ? content.admin.orders.detail.shippedStatus :
+                            {order.status === 'completed' ? content.admin.orders.detail.completedStatus :
+                                order.status === 'shipped' ? content.admin.orders.detail.shippedStatus :
                                 order.status === 'processing' ? content.admin.orders.detail.processingStatus :
                                     content.admin.orders.detail.pendingStatus}
                         </Badge>
