@@ -131,8 +131,13 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   boostupTest('Úspěšná platba — karta 4242 (Stripe Test Mode)', async ({ page }) => {
     const testEmail = `stripe-e2e-${Date.now()}@test.drinkboostup.cz`;
 
-    // 1. Přidat do košíku
+    // 1. Přidat do košíku (VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE)
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+    
+    // Klikneme na tlačítko "Předplatné" (podle textu)
+    await page.getByText('Předplatné', { exact: true }).first().click();
+    await page.waitForTimeout(500); // Nechat chvíli na přerenderování
+
     const addBtn = page.getByTestId('add-to-cart-hero-btn');
     await addBtn.waitFor({ state: 'visible', timeout: 60000 });
     await addBtn.click();
@@ -218,7 +223,11 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   boostupTest('Zamítnutá platba — karta 4000 0000 0000 0002', async ({ page }) => {
     const testEmail = `stripe-fail-${Date.now()}@test.drinkboostup.cz`;
 
+    // VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+    await page.getByText('Předplatné', { exact: true }).first().click();
+    await page.waitForTimeout(500);
+
     await page.getByTestId('add-to-cart-hero-btn').waitFor({ state: 'visible', timeout: 60000 });
     await page.getByTestId('add-to-cart-hero-btn').click();
 
