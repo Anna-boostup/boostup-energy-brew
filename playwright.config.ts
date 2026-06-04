@@ -27,6 +27,10 @@ export default defineConfig({
   reporter: 'html',
   expect: {
     timeout: 30000,
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.05,
+      animations: 'disabled',
+    },
   },
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173',
@@ -51,7 +55,7 @@ export default defineConfig({
     // Admin Desktop
     {
       name: 'admin-desktop',
-      testMatch: ['tests/admin.spec.ts', 'tests/capture_admin_screenshots.spec.ts'],
+      testMatch: ['tests/admin.spec.ts', 'tests/capture_admin_screenshots.spec.ts', 'tests/debug-email.spec.ts'],
       use: { 
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
@@ -103,6 +107,19 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
+    // Full GoPay E2E — goes through real GoPay Sandbox hosted checkout page
+    // Requires: GOPAY_FULL_E2E=true, IS_TEST_MODE=false
+    {
+      name: 'payment-gopay-e2e',
+      testMatch: 'tests/payment_gopay_full_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow navigation to gopay.com/gopay.cz
+        bypassCSP: true,
+      },
+      dependencies: ['setup'],
+    },
+
     // Guest / General Smoke Tests
     {
       name: 'smoke-desktop',
@@ -117,6 +134,33 @@ export default defineConfig({
       testMatch: 'tests/mobile.spec.ts',
       use: { 
         ...devices['Pixel 5'],
+      },
+    },
+    
+    // Visual Regression Tests (Desktop)
+    {
+      name: 'visual-desktop',
+      testMatch: 'tests/visual.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
+    },
+
+    // Visual Regression Tests (Mobile)
+    {
+      name: 'visual-mobile',
+      testMatch: 'tests/visual.spec.ts',
+      use: { 
+        ...devices['Pixel 5'],
+      },
+    },
+    
+    // Layout and Accessibility
+    {
+      name: 'layout-and-a11y',
+      testMatch: 'tests/layout_and_a11y.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
       },
     },
   ],

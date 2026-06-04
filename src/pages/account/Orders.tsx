@@ -90,8 +90,10 @@ const AccountOrders = () => {
                                                 {order.status === 'pending' && <Clock className="w-3 h-3 mr-1" />}
                                                 {order.status === 'paid' && <CheckCircle className="w-3 h-3 mr-1" />}
                                                 {order.status === 'shipped' && <Truck className="w-3 h-3 mr-1" />}
+                                                {order.status === 'completed' && <CheckCircle className="w-3 h-3 mr-1" />}
                                                 {order.status === 'pending' ? 'Čeká na platbu' :
-                                                    order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+                                                    order.status === 'paid' ? 'Zaplaceno' :
+                                                        order.status === 'completed' ? 'Doručeno' : 'Odesláno'}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
@@ -131,7 +133,8 @@ const AccountOrders = () => {
                                             order.status === 'paid' ? 'secondary' : 'default'
                                     }>
                                         {order.status === 'pending' ? 'Čeká na platbu' :
-                                            order.status === 'paid' ? 'Zaplaceno' : 'Odesláno'}
+                                            order.status === 'paid' ? 'Zaplaceno' :
+                                                order.status === 'completed' ? 'Doručeno' : 'Odesláno'}
                                     </Badge>
                                 </div>
 
