@@ -26,7 +26,7 @@ import { test as boostupTest } from './fixtures';
 const RUN = process.env.STRIPE_FULL_E2E === 'true';
 
 // ─── Helper: fill Stripe hosted checkout card form ────────────────────────────
-async function fillStripeCheckout(page: Page, email: string, cardNumber: string = '4000000000000010') {
+async function fillStripeCheckout(page: Page, email: string, cardNumber: string = '4242424242424242') {
   // Wait for Stripe checkout page to fully load
   await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
 
@@ -78,33 +78,48 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   }
 
   // 4b. Doručovací údaje a adresa (pokud je Stripe vyžaduje - např. u fyzických produktů)
-  const shippingName = page.locator('input[name="shippingName"], input[autocomplete="name"], input#shippingName').first();
-  const addressLine1 = page.locator('input[name="shippingAddressLine1"], input[autocomplete="address-line1"], input#shippingAddressLine1, input[name="address-line1"]').first();
+  // Stripe Hosted Checkout používá placeholder-based inputy bez name atributů
+  const shippingName = page.locator(
+    'input[name="shippingName"], input[autocomplete="name"], input#shippingName, ' +
+    'input[placeholder*="Name" i], input[placeholder*="Jméno" i]'
+  ).first();
+  const addressLine1 = page.locator(
+    'input[name="shippingAddressLine1"], input[autocomplete="address-line1"], input#shippingAddressLine1, ' +
+    'input[name="address-line1"], input[placeholder*="Address line 1" i], input[placeholder*="Adresa" i]'
+  ).first();
+  
+  // Čekáme na adresní pole s delším timeoutem (Stripe dynamicky renderuje sekce)
+  await page.waitForTimeout(1000);
   
   // Pokud je v DOMu přítomen element pro adresu, vyčkáme na jeho viditelnost a vyplníme údaje
-  const hasShipping = await addressLine1.count().catch(() => 0) > 0;
+  const hasShipping = await addressLine1.isVisible({ timeout: 5000 }).catch(() => false);
   if (hasShipping) {
-    await shippingName.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-    if (await shippingName.isVisible().catch(() => false)) {
+    if (await shippingName.isVisible({ timeout: 3000 }).catch(() => false)) {
       await shippingName.fill('Stripe E2E Test');
     }
     
-    await addressLine1.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-    if (await addressLine1.isVisible().catch(() => false)) {
-      await addressLine1.fill('Testovací 123');
-    }
+    await addressLine1.fill('Testovací 123');
     
-    const cityInput = page.locator('input[name="shippingLocality"], input[autocomplete="address-level2"], input#shippingLocality, input[name="locality"]').first();
-    await cityInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    if (await cityInput.isVisible().catch(() => false)) {
+    const cityInput = page.locator(
+      'input[name="shippingLocality"], input[autocomplete="address-level2"], ' +
+      'input#shippingLocality, input[name="locality"], input[placeholder*="City" i], input[placeholder*="Město" i]'
+    ).first();
+    if (await cityInput.isVisible({ timeout: 3000 }).catch(() => false)) {
       await cityInput.fill('Brno');
     }
     
-    const shippingPostal = page.locator('input[name="shippingPostalCode"], input[autocomplete="postal-code"], input#shippingPostalCode, input[name="postal-code"], input[name="postal"]').first();
-    await shippingPostal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    if (await shippingPostal.isVisible().catch(() => false)) {
+    const shippingPostal = page.locator(
+      'input[name="shippingPostalCode"], input[autocomplete="postal-code"], ' +
+      'input#shippingPostalCode, input[name="postal-code"], input[name="postal"], ' +
+      'input[placeholder*="Postal" i], input[placeholder*="PSČ" i]'
+    ).first();
+    if (await shippingPostal.isVisible({ timeout: 3000 }).catch(() => false)) {
       await shippingPostal.fill('62300');
     }
+    
+    console.log('✅ Shipping adresa vyplněna na Stripe Checkout');
+  } else {
+    console.log('ℹ️ Stripe Checkout nevyžaduje shipping adresu (digitální produkt nebo jiný formát)');
   }
 
   // ── Card number ──────────────────────────────────────────────────────────────
@@ -203,45 +218,90 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
 }
 
 // Helper pro zpracování Stripe 3D Secure (SCA) výzvy
+// Poznámka: karta 4242424242424242 3DS nevyžaduje. Tento helper slouží jako fallback pro jiné karty.
 async function handleStripe3DS(page: Page, approve: boolean = true) {
-  const is3dsVisible = await page.locator('iframe[name="challengeFrame"]').first().isVisible({ timeout: 8000 }).catch(() => false);
+  // Čekáme krátce na případný redirect/modal
+  await page.waitForTimeout(2000);
+  
+  // Stripe Hosted Checkout - 3DS může být prezentováno jako:
+  // 1. iframe[name="challengeFrame"] (Stripe Elements)
+  // 2. Celostránkový redirect (Hosted Checkout automaticky zpracovává)
+  // 3. Modal s tlačítky Complete/Fail (Stripe test mode)
+  
+  const completeSelector = '#test-source-authorize-3ds, button#challenge-complete, button:has-text("Complete"), button:has-text("Autorizovat"), button:has-text("Schválit"), [data-testid="3ds-authorize"]';
+  const failSelector = '#test-source-fail-3ds, button#challenge-fail, button:has-text("Fail"), button:has-text("Odmítnout"), [data-testid="3ds-fail"]';
+  
+  // Zkontrolujeme, zda se zobrazil challengeFrame
+  const challengeFrame = page.locator('iframe[name="challengeFrame"]').first();
+  const is3dsVisible = await challengeFrame.isVisible({ timeout: 6000 }).catch(() => false);
   
   if (is3dsVisible) {
-    console.log('ℹ️ Detekován Stripe 3D Secure iframe, provádím autorizaci...');
+    console.log('ℹ️ Detekován Stripe 3D Secure challengeFrame, provádím autorizaci...');
     const frame = page.frameLocator('iframe[name="challengeFrame"]');
     
-    const completeSelector = 'button#challenge-complete, button:has-text("Complete"), button:has-text("Autorizovat"), button:has-text("Schválit"), button:has-text("Submit")';
-    const failSelector = 'button#challenge-fail, button:has-text("Fail"), button:has-text("Odmítnout"), button:has-text("Cancel")';
+    // 3DS challenge může mít vnořený iframe
+    const innerFrame = frame.frameLocator('iframe').first();
     
-    const targetButton = approve 
-      ? frame.locator(completeSelector).first()
-      : frame.locator(failSelector).first();
-      
-    if (await targetButton.isVisible({ timeout: 10000 }).catch(() => false)) {
-      await targetButton.click({ force: true });
-      console.log(`✅ Kliknuto na 3DS tlačítko (schválit=${approve})`);
-      await page.waitForTimeout(3000);
-    } else {
-      const subFrames = page.frames();
-      let clicked = false;
-      for (const f of subFrames) {
-        if (f.url().includes('3d-secure') || f.name().includes('challenge')) {
-          const btn = f.locator(approve ? completeSelector : failSelector).first();
-          if (await btn.isVisible().catch(() => false)) {
+    const targetSelector = approve ? completeSelector : failSelector;
+    
+    // Zkusíme nejprve přímý frame, pak vnořený
+    let clicked = false;
+    
+    const directBtn = frame.locator(targetSelector).first();
+    if (await directBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await directBtn.click({ force: true });
+      clicked = true;
+      console.log(`✅ Kliknuto na 3DS tlačítko v challengeFrame (schválit=${approve})`);
+    }
+    
+    if (!clicked) {
+      const innerBtn = innerFrame.locator(targetSelector).first();
+      if (await innerBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await innerBtn.click({ force: true });
+        clicked = true;
+        console.log(`✅ Kliknuto na 3DS tlačítko ve vnořeném iframe (schválit=${approve})`);
+      }
+    }
+    
+    if (!clicked) {
+      // Zkusíme všechny frames
+      for (const f of page.frames()) {
+        if (f.url().includes('3d-secure') || f.url().includes('stripe') || f.name().includes('challenge')) {
+          const btn = f.locator(targetSelector).first();
+          if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
             await btn.click({ force: true });
-            console.log(`✅ Kliknuto na 3DS tlačítko ve vnořeném frame (schválit=${approve})`);
             clicked = true;
-            await page.waitForTimeout(3000);
+            console.log(`✅ 3DS tlačítko kliknuto v frame: ${f.url()} (schválit=${approve})`);
             break;
           }
         }
       }
-      if (!clicked) {
-        console.log('⚠️ 3DS iframe nalezen, ale nepodařilo se vyhledat správné tlačítko.');
+    }
+    
+    if (!clicked) {
+      console.log('⚠️ 3DS challengeFrame nalezen, ale nepodařilo se najít a kliknout na tlačítko.');
+    }
+    
+    await page.waitForTimeout(3000);
+  } else {
+    // Zkontrolujeme všechny frames pro případ, že 3DS je v jiném iframe
+    let clicked = false;
+    for (const f of page.frames()) {
+      if (f.url().includes('3d-secure')) {
+        const targetSelector = approve ? completeSelector : failSelector;
+        const btn = f.locator(targetSelector).first();
+        if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await btn.click({ force: true });
+          clicked = true;
+          console.log(`✅ 3DS tlačítko kliknuto v frame URL: ${f.url()}`);
+          await page.waitForTimeout(3000);
+          break;
+        }
       }
     }
-  } else {
-    console.log('ℹ️ Stripe 3D Secure nebyl vyžadován.');
+    if (!clicked) {
+      console.log('ℹ️ Stripe 3D Secure nebyl vyžadován (karta ho nepotřebuje).');
+    }
   }
 }
 
@@ -410,6 +470,15 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     await page.fill('input[name="houseNumber"]', '1');
     await page.fill('input[name="city"]', 'Praha');
     await page.fill('input[name="zip"]', '110 00');
+
+    // Vybrat dopravu (stejně jako v Test 1)
+    const homeDelivery2 = page.getByTestId('checkout-shipping-home_delivery');
+    const zasilkovna2 = page.getByTestId('checkout-shipping-zasilkovna');
+    if (await homeDelivery2.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await homeDelivery2.click();
+    } else {
+      await zasilkovna2.click();
+    }
 
     await page.getByTestId('checkout-payment-card').click();
     const submitBtn = page.getByTestId('checkout-submit-btn');
