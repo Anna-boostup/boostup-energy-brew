@@ -24,69 +24,108 @@ import { test as boostupTest } from './fixtures';
 const RUN = process.env.GOPAY_FULL_E2E === 'true';
 
 // ─── Helper: fill GoPay hosted checkout card form ─────────────────────────────
-async function fillGoPayCheckout(page: Page, cardNumber: string = '4000000000000000') {
-  // Wait for GoPay checkout page to fully load
-  await page.waitForLoadState('networkidle', { timeout: 30000 });
+async function fillGoPayCheckout(page: Page, cardNumber: string = '4444444444444448') {
+  // Wait for GoPay checkout page to start rendering (wait for first visible input)
+  await page.locator('input:visible').first().waitFor({ state: 'visible', timeout: 15000 });
+  await page.waitForTimeout(500); // Nechat chvíli na vykreslení okolních textů
 
-  // Sometimes GoPay requires selecting the card payment method first
+  // 1. Zkontrolujeme, zda GoPay vyžaduje zadání e-mailu na první obrazovce (nové chování sandboxu)
+  const isEmailScreenVisible = await page.locator('text=/Zadejte váš e-mail|email/i').first().isVisible().catch(() => false);
+  
+  if (isEmailScreenVisible) {
+    // Použijeme specifičtější selektor pro emailový input
+    const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="e-mail" i], input:visible').first();
+    await emailInput.fill('gopay-test@drinkboostup.cz');
+    
+    // Tlačítko pokračovat nesmí obsahovat obecné button:visible, abychom neklikli na "Zavřít"
+    const continueBtn = page.locator('button:has-text("Pokračovat"), button:has-text("Continue"), button[type="submit"]').first();
+    await continueBtn.click({ force: true });
+    
+    // Počkáme, až se emailová obrazovka skryje
+    await page.waitForTimeout(1000);
+    const stillVisible = await page.locator('text=/Zadejte váš e-mail|email/i').first().isVisible().catch(() => false);
+    if (stillVisible) {
+      // Pokud se stále zobrazuje, zkusíme najít tlačítko explicitně přes textový filtr
+      await page.locator('button').filter({ hasText: /Pokračovat|Continue/i }).first().click({ force: true }).catch(() => {});
+      await page.waitForTimeout(1000);
+    }
+  }
+
+  // 2. Někdy je potřeba nejdříve kliknout na platební metodu "Karta"
   const cardMethodBtn = page.locator('button:has-text("Karta"), button:has-text("Platební karta"), .payment-method-card').first();
   if (await cardMethodBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await cardMethodBtn.click();
+    await page.waitForTimeout(1000);
   }
 
-  // ── Card number ──────────────────────────────────────────────────────────────
+  // 3. Robustní vyhledání a vyplnění formuláře karty (zkoušíme jak direct inputs, tak prohledávání všech asynchronně načtených iframů)
   const cardInput = page.locator('input[name="cardNumber"], input[autocomplete="cc-number"], input[id*="card-number"]').first();
-  if (await cardInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await cardInput.fill(cardNumber);
-  } else {
-    // Look inside iframe if GoPay uses one
+  let cardFilled = false;
+
+  await expect(async () => {
+    // A. Direct input v hlavním okně
+    if (await cardInput.isVisible().catch(() => false)) {
+      await cardInput.click();
+      await (cardInput.pressSequentially ? cardInput.pressSequentially(cardNumber, { delay: 30 }) : cardInput.type(cardNumber, { delay: 30 }));
+      
+      const expInput = page.locator('input[name="expiryDate"], input[autocomplete="cc-exp"]').first();
+      if (await expInput.isVisible().catch(() => false)) {
+        await expInput.click();
+        await (expInput.pressSequentially ? expInput.pressSequentially('1229', { delay: 30 }) : expInput.type('1229', { delay: 30 }));
+      }
+      
+      const cvcInput = page.locator('input[name="cvv"], input[autocomplete="cc-csc"], input[name="cvc"]').first();
+      if (await cvcInput.isVisible().catch(() => false)) {
+        await cvcInput.click();
+        await (cvcInput.pressSequentially ? cvcInput.pressSequentially('123', { delay: 30 }) : cvcInput.type('123', { delay: 30 }));
+      }
+      cardFilled = true;
+      return;
+    }
+    
+    // B. Prohledání všech iframů (GoPay inline iframe se může načíst asynchronně, toPass zajistí aktualizaci seznamu frames)
     const frames = page.frames();
-    let filled = false;
     for (const frame of frames) {
       const fCardInput = frame.locator('input[name="cardNumber"], input[autocomplete="cc-number"]');
-      if (await fCardInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await fCardInput.fill(cardNumber);
-        filled = true;
+      if (await fCardInput.isVisible().catch(() => false)) {
+        await fCardInput.click();
+        await (fCardInput.pressSequentially ? fCardInput.pressSequentially(cardNumber, { delay: 30 }) : fCardInput.type(cardNumber, { delay: 30 }));
         
-        // Fill expiry and cvc in the same frame if possible
         const fExpInput = frame.locator('input[name="expiryDate"], input[autocomplete="cc-exp"]');
         if (await fExpInput.isVisible().catch(() => false)) {
-          await fExpInput.fill('1229');
+          await fExpInput.click();
+          await (fExpInput.pressSequentially ? fExpInput.pressSequentially('1229', { delay: 30 }) : fExpInput.type('1229', { delay: 30 }));
         }
         
         const fCvcInput = frame.locator('input[name="cvv"], input[autocomplete="cc-csc"], input[name="cvc"]');
         if (await fCvcInput.isVisible().catch(() => false)) {
-          await fCvcInput.fill('123');
+          await fCvcInput.click();
+          await (fCvcInput.pressSequentially ? fCvcInput.pressSequentially('123', { delay: 30 }) : fCvcInput.type('123', { delay: 30 }));
         }
-        break;
+        cardFilled = true;
+        return;
       }
     }
     
-    if (!filled) {
-      throw new Error('Could not find GoPay card number input.');
-    }
+    throw new Error('GoPay card inputs not visible yet');
+  }).toPass({
+    intervals: [1000, 2000],
+    timeout: 20000
+  });
+
+  if (!cardFilled) {
+    throw new Error('Could not find GoPay card number input after timeout.');
   }
 
-  // ── Expiry (if not in iframe) ────────────────────────────────────────────────
-  const expInput = page.locator('input[name="expiryDate"], input[autocomplete="cc-exp"]').first();
-  if (await expInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await expInput.fill('1229');
-  }
-
-  // ── CVC (if not in iframe) ───────────────────────────────────────────────────
-  const cvcInput = page.locator('input[name="cvv"], input[autocomplete="cc-csc"], input[name="cvc"]').first();
-  if (await cvcInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await cvcInput.fill('123');
-  }
-
-  // GoPay sometimes has an explicit "Zaplatit" / "Pay" button on the card form
+  // 4. Kliknout na tlačítko odeslání platby na GoPay
   const gopayPayBtn = page.locator(
     'button[type="submit"]:has-text("Zaplatit"), ' +
     'button[type="submit"]:has-text("Pay"), ' +
-    '.pay-button'
+    '.pay-button, ' +
+    'button:has-text("Zaplatit")'
   ).first();
   
-  if (await gopayPayBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+  if (await gopayPayBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await gopayPayBtn.click();
   }
 }
@@ -105,7 +144,7 @@ test.describe('Full GoPay E2E — Real Gateway', () => {
   });
 
   // ── Test 1: Úspěšná platba testovací kartou ──────────────────────────────────
-  boostupTest('Úspěšná platba — karta 4000 (GoPay Test Mode)', async ({ page }) => {
+  boostupTest('Úspěšná platba — karta 4444 (GoPay Test Mode)', async ({ page }) => {
     const testEmail = `gopay-e2e-${Date.now()}@test.drinkboostup.cz`;
 
     // 1. Přidat do košíku
@@ -157,7 +196,7 @@ test.describe('Full GoPay E2E — Real Gateway', () => {
     console.log(`✅ Přesměrováno na GoPay: ${page.url()}`);
 
     // 7. Vyplnit platební formulář na GoPay
-    await fillGoPayCheckout(page, '4000000000000000');
+    await fillGoPayCheckout(page, '4444444444444448');
 
     // 8. Počkat na přesměrování zpět na náš web (matches any environment success url)
     // U GoPay se přesměrovává hned po úspěšné platbě (nečeká na webhook pro redirect).
