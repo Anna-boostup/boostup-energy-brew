@@ -79,23 +79,32 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
 
   // 4b. Doručovací údaje a adresa (pokud je Stripe vyžaduje - např. u fyzických produktů)
   const shippingName = page.locator('input[name="shippingName"], input[autocomplete="name"], input#shippingName').first();
-  if (await shippingName.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await shippingName.fill('Stripe E2E Test');
-  }
-
   const addressLine1 = page.locator('input[name="shippingAddressLine1"], input[autocomplete="address-line1"], input#shippingAddressLine1, input[name="address-line1"]').first();
-  if (await addressLine1.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await addressLine1.fill('Testovací 123');
-  }
-
-  const cityInput = page.locator('input[name="shippingLocality"], input[autocomplete="address-level2"], input#shippingLocality, input[name="locality"]').first();
-  if (await cityInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await cityInput.fill('Brno');
-  }
-
-  const shippingPostal = page.locator('input[name="shippingPostalCode"], input[autocomplete="postal-code"], input#shippingPostalCode, input[name="postal-code"], input[name="postal"]').first();
-  if (await shippingPostal.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await shippingPostal.fill('62300');
+  
+  // Pokud je v DOMu přítomen element pro adresu, vyčkáme na jeho viditelnost a vyplníme údaje
+  const hasShipping = await addressLine1.count().catch(() => 0) > 0;
+  if (hasShipping) {
+    await shippingName.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    if (await shippingName.isVisible().catch(() => false)) {
+      await shippingName.fill('Stripe E2E Test');
+    }
+    
+    await addressLine1.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    if (await addressLine1.isVisible().catch(() => false)) {
+      await addressLine1.fill('Testovací 123');
+    }
+    
+    const cityInput = page.locator('input[name="shippingLocality"], input[autocomplete="address-level2"], input#shippingLocality, input[name="locality"]').first();
+    await cityInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    if (await cityInput.isVisible().catch(() => false)) {
+      await cityInput.fill('Brno');
+    }
+    
+    const shippingPostal = page.locator('input[name="shippingPostalCode"], input[autocomplete="postal-code"], input#shippingPostalCode, input[name="postal-code"], input[name="postal"]').first();
+    await shippingPostal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    if (await shippingPostal.isVisible().catch(() => false)) {
+      await shippingPostal.fill('62300');
+    }
   }
 
   // ── Card number ──────────────────────────────────────────────────────────────
