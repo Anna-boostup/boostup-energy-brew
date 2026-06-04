@@ -30,7 +30,33 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   // Wait for Stripe checkout page to fully load
   await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
 
-  // Email field — Stripe pre-fills if passed in session, but may show an input
+  // 1. Počkáme, až se na stránce objeví jakékoliv viditelné vstupní pole (záruka načtení formuláře, např. jméno, adresa atd. - email může být prefilled jako read-only div)
+  await page.locator('input:visible').first().waitFor({ state: 'visible', timeout: 30000 });
+  await page.waitForTimeout(1000);
+
+  // 2. Pokud ještě není zobrazeno pole pro číslo karty, zkusíme kliknout na metodu "Card"
+  const cardLoadSelector = 'iframe[title="Secure card number input frame"]:visible, iframe[name="__privateStripeFrame5"]:visible, iframe[src*="js.stripe.com"][src*="card-number"]:visible, input#cardNumber:visible, input[name="cardNumber"]:visible, input[autocomplete="cc-number"]:visible';
+  
+  const isCardFormVisible = await page.locator(cardLoadSelector).first().isVisible({ timeout: 3000 }).catch(() => false);
+  if (!isCardFormVisible) {
+    const cardSelectorBtn = page.locator('[data-testid="card-accordion-item-button"], button[aria-label="Pay with card"], button[aria-label="Platba kartou"]').first();
+    await cardSelectorBtn.waitFor({ state: 'visible', timeout: 10000 });
+    
+    // Zkusíme na metodu kliknout (s force:true) a čekáme, zda se rozbalí formulář karty (toPass řeší případnou pomalou hydrataci Reactu u Stripe Checkout)
+    await expect(async () => {
+      await cardSelectorBtn.click({ force: true });
+      await expect(page.locator(cardLoadSelector).first()).toBeVisible({ timeout: 2000 });
+    }).toPass({
+      intervals: [1000, 2000],
+      timeout: 20000
+    });
+    await page.waitForTimeout(1000);
+  }
+
+  // 3. Počkáme, až se fyzicky načte a zobrazí jakékoliv pole pro kartu (buď iframe, nebo direct input)
+  await page.locator(cardLoadSelector).first().waitFor({ state: 'visible', timeout: 15000 });
+
+  // 4. Vyplníme email (pokud je pole zobrazeno a není předvyplněno)
   const emailInput = page.locator('input[type="email"][name="email"], input[autocomplete="email"]').first();
   if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
     await emailInput.clear();
@@ -49,7 +75,7 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   for (const sel of cardFrameSelectors) {
     const frame = page.frameLocator(sel);
     const input = frame.locator('input[name="cardnumber"], input[autocomplete="cc-number"], input[data-elements-stable-field-name="cardNumber"]');
-    if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
+    if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
       await input.fill(cardNumber);
       cardFilled = true;
       break;
@@ -58,8 +84,8 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
 
   // Fallback: Stripe's newer unified checkout might have direct inputs
   if (!cardFilled) {
-    const directCardInput = page.locator('[data-testid="card-number-input"], input[name="cardNumber"]');
-    if (await directCardInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const directCardInput = page.locator('input#cardNumber, input[name="cardNumber"], input[autocomplete="cc-number"], [data-testid="card-number-input"]');
+    if (await directCardInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await directCardInput.fill(cardNumber);
       cardFilled = true;
     }
@@ -75,12 +101,22 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
     'iframe[name="__privateStripeFrame6"]',
     'iframe[src*="js.stripe.com"][src*="card-expiry"]',
   ];
+  let expiryFilled = false;
   for (const sel of expiryFrameSelectors) {
     const frame = page.frameLocator(sel);
     const input = frame.locator('input[name="exp-date"], input[autocomplete="cc-exp"], input[data-elements-stable-field-name="cardExpiry"]');
-    if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
+    if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
       await input.fill('1229');
+      expiryFilled = true;
       break;
+    }
+  }
+
+  // Fallback: Direct expiry input
+  if (!expiryFilled) {
+    const directExpiryInput = page.locator('input#cardExpiry, input[name="cardExpiry"], input[autocomplete="cc-exp"]');
+    if (await directExpiryInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await directExpiryInput.fill('1229');
     }
   }
 
@@ -90,12 +126,22 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
     'iframe[name="__privateStripeFrame7"]',
     'iframe[src*="js.stripe.com"][src*="card-cvc"]',
   ];
+  let cvcFilled = false;
   for (const sel of cvcFrameSelectors) {
     const frame = page.frameLocator(sel);
     const input = frame.locator('input[name="cvc"], input[autocomplete="cc-csc"], input[data-elements-stable-field-name="cardCvc"]');
-    if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
+    if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
       await input.fill('123');
+      cvcFilled = true;
       break;
+    }
+  }
+
+  // Fallback: Direct CVC input
+  if (!cvcFilled) {
+    const directCvcInput = page.locator('input#cardCvc, input[name="cardCvc"], input[autocomplete="cc-csc"]');
+    if (await directCvcInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await directCvcInput.fill('123');
     }
   }
 
@@ -131,8 +177,23 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   boostupTest('Úspěšná platba — karta 4242 (Stripe Test Mode)', async ({ page }) => {
     const testEmail = `stripe-e2e-${Date.now()}@test.drinkboostup.cz`;
 
-    // 1. Přidat do košíku
+    // 1. Přidat do košíku (VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE)
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+    
+    // Klikneme na tlačítko "Předplatné" (podporuje jak nasazenou verzi pomocí textu, tak lokální s test-id)
+    const subBtn = page.locator('button:has-text("Předplatné"), button[data-testid="purchase-type-subscription"]').first();
+    await subBtn.waitFor({ state: 'visible', timeout: 30000 });
+    
+    // Klikneme na tlačítko a ověříme výběr (třída bg-amber-500) – řeší případnou pomalou hydrataci Reactu
+    await expect(async () => {
+      await subBtn.click();
+      await expect(subBtn).toHaveClass(/bg-amber-500/, { timeout: 2000 });
+    }).toPass({
+      intervals: [1000, 2000],
+      timeout: 15000
+    });
+    await page.waitForTimeout(500); // Nechat chvíli na přerenderování
+
     const addBtn = page.getByTestId('add-to-cart-hero-btn');
     await addBtn.waitFor({ state: 'visible', timeout: 60000 });
     await addBtn.click();
@@ -187,6 +248,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
       'button[type="submit"]:has-text("Pay"), ' +
       'button[type="submit"]:has-text("Zaplatit"), ' +
       'button[type="submit"]:has-text("Confirm"), ' +
+      'button[type="submit"]:has-text("Subscribe"), ' +
+      'button[type="submit"]:has-text("Předplatit"), ' +
       '[data-testid="hosted-payment-submit-button"], ' +
       'button.SubmitButton'
     ).first();
@@ -218,7 +281,23 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   boostupTest('Zamítnutá platba — karta 4000 0000 0000 0002', async ({ page }) => {
     const testEmail = `stripe-fail-${Date.now()}@test.drinkboostup.cz`;
 
+    // VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
+    
+    // Vybereme tlačítko předplatného (podporuje jak nasazenou verzi pomocí textu, tak lokální s test-id)
+    const subBtn = page.locator('button:has-text("Předplatné"), button[data-testid="purchase-type-subscription"]').first();
+    await subBtn.waitFor({ state: 'visible', timeout: 30000 });
+    
+    // Klikneme na tlačítko a ověříme výběr (třída bg-amber-500) – řeší případnou pomalou hydrataci Reactu
+    await expect(async () => {
+      await subBtn.click();
+      await expect(subBtn).toHaveClass(/bg-amber-500/, { timeout: 2000 });
+    }).toPass({
+      intervals: [1000, 2000],
+      timeout: 15000
+    });
+    await page.waitForTimeout(500);
+
     await page.getByTestId('add-to-cart-hero-btn').waitFor({ state: 'visible', timeout: 60000 });
     await page.getByTestId('add-to-cart-hero-btn').click();
 
@@ -251,6 +330,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     const stripePayBtn = page.locator(
       'button[type="submit"]:has-text("Pay"), ' +
       'button[type="submit"]:has-text("Zaplatit"), ' +
+      'button[type="submit"]:has-text("Subscribe"), ' +
+      'button[type="submit"]:has-text("Předplatit"), ' +
       '[data-testid="hosted-payment-submit-button"]'
     ).first();
     await stripePayBtn.click();
