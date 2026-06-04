@@ -27,6 +27,10 @@ export default defineConfig({
   reporter: 'html',
   expect: {
     timeout: 30000,
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.05,
+      animations: 'disabled',
+    },
   },
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173',
@@ -130,6 +134,33 @@ export default defineConfig({
       testMatch: 'tests/mobile.spec.ts',
       use: { 
         ...devices['Pixel 5'],
+      },
+    },
+    
+    // Visual Regression Tests (Desktop)
+    {
+      name: 'visual-desktop',
+      testMatch: 'tests/visual.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
+    },
+
+    // Visual Regression Tests (Mobile)
+    {
+      name: 'visual-mobile',
+      testMatch: 'tests/visual.spec.ts',
+      use: { 
+        ...devices['Pixel 5'],
+      },
+    },
+    
+    // Layout and Accessibility
+    {
+      name: 'layout-and-a11y',
+      testMatch: 'tests/layout_and_a11y.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
       },
     },
   ],
