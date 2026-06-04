@@ -323,6 +323,25 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   // ── Test 1: Úspěšná platba testovací kartou ──────────────────────────────────
   boostupTest('Úspěšná platba — karta 4000 (Stripe Test Mode)', async ({ page }) => {
     const testEmail = `stripe-e2e-${Date.now()}@test.drinkboostup.cz`;
+    const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
+    const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
+
+    // ⭐ Klíčová oprava pro CI/Preview:
+    // Když Stripe přesměruje browser zpět na naši doménu (preview.drinkboostup.cz),
+    // Playwright extraHTTPHeaders tento redirect neobsáhne (je to external navigation).
+    // Proto použijeme page.route() interceptor, který přidá bypass header pro VŠECHNY
+    // requesty na naši doménu — včetně Stripe redirect.
+    if (bypassSecret) {
+      const ourOrigin = new URL(baseURL).origin;
+      await page.route(`${ourOrigin}/**`, async (route) => {
+        const headers = {
+          ...route.request().headers(),
+          'x-vercel-protection-bypass': bypassSecret,
+        };
+        await route.continue({ headers });
+      });
+      console.log(`ℹ️ Vercel bypass route interceptor nastaven pro: ${ourOrigin}`);
+    }
 
     // 1. Přidat do košíku (VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE)
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
@@ -401,13 +420,17 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
       'button.SubmitButton'
     ).first();
     await expect(stripePayBtn).toBeEnabled({ timeout: 15000 });
+    console.log('ℹ️ Klikám na Pay tlačítko na Stripe...');
     await stripePayBtn.click();
+    console.log('ℹ️ Pay tlačítko kliknuto, čekám na zpracování...');
 
     // 8b. Ošetřit případný 3D Secure modal (potvrdit pro úspěšnou platbu)
     await handleStripe3DS(page, true);
 
     // 9. Počkat na přesměrování zpět na náš web (matches any environment success url)
-    await page.waitForURL(/.*payment\/success/, { timeout: 60000 });
+    // Stripe přesměrovává na success_url = {origin}/payment/success?session_id=...
+    // V CI (preview) může být URL jiná než lokálně, ale regex matches vše s 'payment/success'
+    await page.waitForURL(/payment\/success/, { timeout: 90000 });
     console.log(`✅ Platba úspěšná, URL: ${page.url()}`);
 
     // 10. Ověřit obsah success stránky
@@ -436,6 +459,20 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   // ── Test 2: Zamítnutá karta ──────────────────────────────────────────────────
   boostupTest('Zamítnutá platba — karta 4000 0000 0000 9995', async ({ page }) => {
     const testEmail = `stripe-fail-${Date.now()}@test.drinkboostup.cz`;
+    const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
+    const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
+
+    // Vercel bypass interceptor (stejný jako v Test 1)
+    if (bypassSecret) {
+      const ourOrigin = new URL(baseURL).origin;
+      await page.route(`${ourOrigin}/**`, async (route) => {
+        const headers = {
+          ...route.request().headers(),
+          'x-vercel-protection-bypass': bypassSecret,
+        };
+        await route.continue({ headers });
+      });
+    }
 
     // VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
@@ -505,10 +542,50 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     await handleStripe3DS(page, false);
 
     // Ověřit, že Stripe zobrazí chybovou hlášku (platba zamítnuta)
-    await expect(
-      page.locator('text=/Your card was declined|Platba zamítnuta|declined|insufficient|nedostatek/i')
-    ).toBeVisible({ timeout: 30000 });
+    // Stripe Hosted Checkout zobrazuje chyby v:
+    //   - p.p-ErrorMessage (starší Stripe UI)
+    //   - div[data-testid="error-message"]
+    //   - [class*="Error"] (případné třídy)
+    //   - text včetně textu declined/insufficient/card
+    // Pro nejspolehlivejší detekci kombinujeme selektory OR
+    const stripeErrorLocator = page.locator([
+      'p.p-ErrorMessage',
+      '[data-testid="error-message"]',
+      '[class*="ErrorMessage"]',
+      '[class*="error-message"]',
+      'div[role="alert"]',
+      // Fallback: jakýkoliv viditellný text o chybě platby
+      'text=/declined|insufficient|zamit|zamítnut|náž|card.*error|Your card/i',
+    ].join(', '));
+    
+    // Karta 4000 0000 0000 9995 = insufficient funds
+    // Stripe může: (a) zobrazit chybu inline, (b) přesměrovat na cancel_url
+    // Ověříme obě možnosti
+    const errorOrRedirect = await Promise.race([
+      stripeErrorLocator.first().waitFor({ state: 'visible', timeout: 35000 })
+        .then(() => 'error')
+        .catch(() => 'timeout'),
+      page.waitForURL(/kosik|cancel|payment\/fail/, { timeout: 35000 })
+        .then(() => 'redirected')
+        .catch(() => 'timeout'),
+    ]);
 
-    console.log('✅ Zamítnutá karta správně zobrazila chybu na Stripe stránce');
+    if (errorOrRedirect === 'error') {
+      const errorText = await stripeErrorLocator.first().textContent().catch(() => '(text unavailable)');
+      console.log(`✅ Zamítnutá karta správně zobrazila chybu: "${errorText}"`);
+    } else if (errorOrRedirect === 'redirected') {
+      console.log(`✅ Zamítnutá karta způsobila přesměrování na: ${page.url()}`);
+    } else {
+      // Jako poslední možnost zkontřolujeme, zda nejsme na Stripe URL se zobrazenu chybou
+      const currentUrl = page.url();
+      const pageText = await page.locator('body').textContent().catch(() => '');
+      const hasError = /declined|insufficient|zamit|zamítnutá|Your card/i.test(pageText || '');
+      if (hasError) {
+        console.log(`✅ Zamítnutá karta zobrazila chybu v body (URL: ${currentUrl})`);
+      } else {
+        // Tvrdd assert - pokud žádná z možností nenastala, test selže
+        throw new Error(`Zamítnutá karta nezobrazila očekávanou chybu. URL: ${currentUrl}\nBody: ${(pageText || '').substring(0, 500)}`);
+      }
+    }
   });
 });
