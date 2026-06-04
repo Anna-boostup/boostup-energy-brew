@@ -11,9 +11,11 @@ const corsHeaders = {
 };
 
 // Initialize Supabase
+const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 const supabaseAdmin = createClient(
-    process.env.VITE_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    supabaseUrl,
+    supabaseKey,
     { auth: { autoRefreshToken: false, persistSession: false } }
 );
 

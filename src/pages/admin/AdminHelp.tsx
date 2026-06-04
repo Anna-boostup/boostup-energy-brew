@@ -21,6 +21,7 @@ interface HelpItem {
 }
 
 interface Section {
+    id: string;
     icon: React.ElementType;
     title: string;
     description: string;
@@ -28,6 +29,416 @@ interface Section {
     image?: string;
     path?: string;
 }
+
+const COLORS = {
+    primary: '#3a572c',
+    text: '#1f2937',
+    secondary: '#4b5563',
+};
+
+const AdminMockup = ({ id }: { id: string }) => {
+    switch (id) {
+        case "dashboard":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">test.drinkboostup.cz/admin</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between bg-[#23311f] p-2 rounded-lg border border-[#32452c]">
+                            <span className="font-bold text-[#b4cfa6]">VYPÍNAČ PRODEJE</span>
+                            <div className="w-7 h-4 bg-lime rounded-full p-0.5 flex justify-end items-center cursor-pointer">
+                                <div className="w-3 h-3 bg-[#1b2518] rounded-full" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] text-center">
+                                <span className="block text-[7px] uppercase tracking-wider opacity-60">Tržby dnes</span>
+                                <span className="text-xs font-black text-lime font-display">12 450 Kč</span>
+                            </div>
+                            <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] text-center">
+                                <span className="block text-[7px] uppercase tracking-wider opacity-60">Objednávky</span>
+                                <span className="text-xs font-black text-lime font-display">8</span>
+                            </div>
+                        </div>
+
+                        <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] space-y-1">
+                            <div className="flex justify-between text-[7px]">
+                                <span>LEMON RUSH</span>
+                                <span className="font-bold text-lime">80% (Skladem)</span>
+                            </div>
+                            <div className="w-full bg-[#1b2518] h-1.5 rounded-full overflow-hidden">
+                                <div className="bg-lime h-full w-[80%]" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "content":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Obsah webu (Hero)</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="space-y-1">
+                            <span className="text-[7px] opacity-60 uppercase">Nadpis Část 1</span>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] text-[#b4cfa6] truncate">
+                                ENERGIE PRO TVŮJ
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <span className="text-[7px] opacity-60 uppercase">Nadpis Zvýrazněný</span>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] text-lime font-bold truncate">
+                                MOZEK ⚡
+                            </div>
+                        </div>
+                        <div className="flex justify-between gap-2 pt-1">
+                            <div className="bg-[#23311f] px-2 py-1.5 rounded border border-[#32452c] text-[7px] text-[#b4cfa6] flex-1 text-center">
+                                Font: Poppins
+                            </div>
+                            <div className="bg-lime text-[#1b2518] font-bold px-2 py-1.5 rounded text-[7px] flex-1 text-center font-display uppercase tracking-widest">
+                                Uložit změny
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "blog":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Blog Editor</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] text-lime font-bold">
+                            Název: Proč kofein nestačí?
+                        </div>
+                        <div className="bg-[#23311f] p-2 rounded border border-[#32452c] text-[8px] h-12 overflow-hidden leading-relaxed opacity-80 font-bold">
+                            <strong>Dnešní doba</strong> vyžaduje více než jen rychlé nakopnutí. Kofein zvyšuje bdělost, ale bez L-theaninu a adaptogenů...
+                        </div>
+                        <div className="flex justify-between items-center text-[7px]">
+                            <span className="bg-[#32452c] text-lime px-1.5 py-0.5 rounded">Šablona: Modern</span>
+                            <span className="text-[#b4cfa6]">Perex: 150/160 znaků</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "emails":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">E-mail: order_confirmation</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="space-y-1">
+                            <span className="text-[7px] opacity-60">Předmět:</span>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] text-[#b4cfa6] truncate">
+                                ✅ Potvrzení objednávky {"{{orderNumber}}"} | BoostUp
+                            </div>
+                        </div>
+                        <span className="block text-[7px] opacity-60">Dostupné značky:</span>
+                        <div className="flex flex-wrap gap-1">
+                            <span className="bg-[#32452c] text-lime px-1 py-0.5 rounded text-[6px]">{"{{customerName}}"}</span>
+                            <span className="bg-[#32452c] text-lime px-1 py-0.5 rounded text-[6px]">{"{{total}}"} Kč</span>
+                            <span className="bg-[#32452c] text-lime px-1 py-0.5 rounded text-[6px]">{"{{itemsHtml}}"}</span>
+                        </div>
+                        <div className="bg-lime text-[#1b2518] font-bold text-center py-1 rounded text-[7px] uppercase tracking-widest font-display">
+                            Odeslat testovací e-mail
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "messages":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Příchozí zprávy</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="bg-[#23311f] p-1.5 rounded-lg border-l-2 border-orange border-y border-r border-[#32452c] space-y-1">
+                            <div className="flex justify-between font-bold text-[#b4cfa6] text-[8px]">
+                                <span>Zdeněk Dias</span>
+                                <span className="text-orange text-[7px]">NOVÉ</span>
+                            </div>
+                            <p className="text-[7px] truncate">Mám dotaz ohledně doručení mix packu...</p>
+                        </div>
+                        <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] space-y-1">
+                            <span className="text-[7px] opacity-50 block">Rychlá odpověď:</span>
+                            <div className="text-[7px] opacity-80 italic">Ahoj Zdeňku, tvůj balík odesíláme zítra...</div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "orders":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Objednávky</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] space-y-1.5">
+                            <div className="flex justify-between items-center">
+                                <span className="font-bold text-[#b4cfa6]">#BUP17760</span>
+                                <span className="bg-[#32452c] text-lime px-1.5 py-0.5 rounded text-[6px] font-bold">ZAPLACENO</span>
+                            </div>
+                            <div className="text-[7px] space-y-0.5">
+                                <div>Zákazník: Jan Novák</div>
+                                <div>Doprava: Zásilkovna (Brno)</div>
+                                <div className="text-lime font-bold">Celkem: 1 240 Kč</div>
+                            </div>
+                        </div>
+                        <div className="bg-[#32452c] text-lime font-bold text-center py-1 rounded text-[7px] uppercase tracking-widest font-display">
+                            Vytvořit štítek Packeta
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "inventory":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Skladové zásoby</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2.5">
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-[7px]">
+                                <span>Lemon Rush</span>
+                                <span className="text-lime">120 ks</span>
+                            </div>
+                            <div className="w-full bg-[#1b2518] h-1 rounded-full overflow-hidden">
+                                <div className="bg-lime h-full w-[80%]" />
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-[7px]">
+                                <span>Red Dragon</span>
+                                <span className="text-orange">45 ks</span>
+                            </div>
+                            <div className="w-full bg-[#1b2518] h-1 rounded-full overflow-hidden">
+                                <div className="bg-orange h-full w-[30%]" />
+                            </div>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-[7px]">
+                                <span>Silky Breeze</span>
+                                <span className="text-red-400 font-bold">10 ks (Nízký stav!)</span>
+                            </div>
+                            <div className="w-full bg-[#1b2518] h-1 rounded-full overflow-hidden">
+                                <div className="bg-red-500 h-full w-[7%]" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "manufacture":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Surovinový sklad</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                                <span className="block text-[6px] opacity-50">Plechovky</span>
+                                <span className="font-bold text-[#b4cfa6]">12 500 ks</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                                <span className="block text-[6px] opacity-50">Nápoj</span>
+                                <span className="font-bold text-[#b4cfa6]">2 400 L</span>
+                            </div>
+                        </div>
+                        <div className="bg-[#23311f] p-2 rounded border border-red-500/30 flex justify-between items-center">
+                            <div>
+                                <span className="block text-[6px] text-red-400">Hliníková víčka</span>
+                                <span className="font-bold text-red-400">80 ks</span>
+                            </div>
+                            <span className="bg-red-950 text-red-400 font-bold border border-red-500/40 rounded px-1.5 py-0.5 text-[5px] animate-pulse">CRITICAL</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "pricing":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Globální cenotvorba</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                            <span>Balení 3 ks</span>
+                            <span className="font-bold text-lime">237 Kč</span>
+                        </div>
+                        <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                            <span>Balení 12 ks</span>
+                            <span className="font-bold text-lime">890 Kč</span>
+                        </div>
+                        <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                            <span>Balení 21 ks</span>
+                            <span className="font-bold text-lime">1 450 Kč</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "promos":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Slevový kód</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="bg-[#23311f] p-3 rounded-xl border border-dashed border-[#4a5f42] text-center space-y-2 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-[#32452c] text-lime px-2 py-0.5 rounded-bl text-[5px] font-bold">AKTIVNÍ</div>
+                        <div className="text-xs font-black text-lime font-display tracking-widest pt-1">WELCOME10</div>
+                        <p className="text-[7px] text-[#b4cfa6] opacity-80 font-bold">Sleva 10 % na první nákup</p>
+                    </div>
+                </div>
+            );
+
+        case "users":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Uživatelé a Role</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] flex justify-between items-center">
+                            <div>
+                                <span className="font-bold text-[#b4cfa6] block">Anna Palusková</span>
+                                <span className="text-[6px] opacity-50">anna@example.com</span>
+                            </div>
+                            <span className="bg-[#32452c] text-lime px-1.5 py-0.5 rounded text-[6px] font-bold">ADMIN</span>
+                        </div>
+                        <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] flex justify-between items-center">
+                            <div>
+                                <span className="font-bold text-[#b4cfa6] block">Marek Kovář</span>
+                                <span className="text-[6px] opacity-50">marek@example.com</span>
+                            </div>
+                            <span className="bg-[#32452c] text-[#b4cfa6] px-1.5 py-0.5 rounded text-[6px]">ZÁKAZNÍK</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+        case "accounting":
+            return (
+                <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
+                    <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                            <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                            <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[8px] opacity-60">Export dat</span>
+                        <span className="w-4" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between text-[7px]">
+                            <span>Období:</span>
+                            <span className="font-bold text-[#b4cfa6]">Květen 2026</span>
+                        </div>
+                        <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between text-[7px]">
+                            <span>Formát:</span>
+                            <span className="font-bold text-[#b4cfa6]">Pohoda / iDoklad (CSV)</span>
+                        </div>
+                        <div className="bg-lime text-[#1b2518] font-bold text-center py-1 rounded text-[7px] uppercase tracking-widest font-display">
+                            Stáhnout export (CSV)
+                        </div>
+                    </div>
+                </div>
+            );
+
+        default:
+            return null;
+    }
+};
 
 const AdminHelp = () => {
     const { content, loading } = useContent();
@@ -44,10 +455,10 @@ const AdminHelp = () => {
 
     const sections: Section[] = [
         {
+            id: 'dashboard',
             icon: Zap,
             title: content?.admin?.help?.sections?.dashboard?.title || "Přehled (Dashboard)",
             description: content?.admin?.help?.sections?.dashboard?.description || "Hlavní řídicí panel a stav prodeje",
-            image: "/admin-guide/dashboard.png",
             path: "/admin",
             items: [
                 { label: content?.admin?.help?.sections?.dashboard?.items?.salesToggle?.label || "Vypínač prodeje", description: content?.admin?.help?.sections?.dashboard?.items?.salesToggle?.desc || "Hlavní přepínač pro okamžité pozastavení nebo spuštění možnosti nakupovat na e-shopu." },
@@ -56,10 +467,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'content',
             icon: Globe,
             title: content?.admin?.help?.sections?.content?.title || "Obsah webu",
             description: content?.admin?.help?.sections?.content?.description || "Správa textů, ingrediencí a domovské stránky",
-            image: "/admin-guide/content-management.png",
             path: "/admin/content",
             items: [
                 { label: content?.admin?.help?.sections?.content?.items?.hero?.label || "Hlavní sekce", description: content?.admin?.help?.sections?.content?.items?.hero?.desc || "Správa úvodního banneru a textů." },
@@ -72,10 +483,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'blog',
             icon: FileText,
             title: content?.admin?.help?.sections?.blog?.title || "Blog a články",
             description: content?.admin?.help?.sections?.blog?.description || "Publikační systém pro tvorbu obsahu",
-            image: "/admin-guide/blog.png",
             path: "/admin/blog",
             items: [
                 { label: content?.admin?.help?.sections?.blog?.items?.editor?.label || "Vytvoření článku", description: content?.admin?.help?.sections?.blog?.items?.editor?.desc || "Použijte textový editor pro napsání formátovaného obsahu s možností vkládat obrázky." },
@@ -84,10 +495,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'emails',
             icon: Send,
             title: content?.admin?.help?.sections?.emails?.title || "E-mailové šablony a kampaně",
             description: content?.admin?.help?.sections?.emails?.description || "Správa transakčních e-mailů a hromadného marketingu",
-            image: "/admin-guide/emails.png",
             path: "/admin/emails",
             items: [
                 { label: content?.admin?.help?.sections?.emails?.items?.transactional?.label || "Transakční e-maily", description: content?.admin?.help?.sections?.emails?.items?.transactional?.desc || "Úprava zpráv, které se odesílají automaticky (např. potvrzení objednávky, expedice)." },
@@ -99,10 +510,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'messages',
             icon: Mail,
             title: content?.admin?.help?.sections?.messages?.title || "Příchozí zprávy",
             description: content?.admin?.help?.sections?.messages?.description || "Zpracování dotazů od zákazníků",
-            image: "/admin-guide/messages.png",
             path: "/admin/messages",
             items: [
                 { label: content?.admin?.help?.sections?.messages?.items?.inbox?.label || "Nový dotaz", description: content?.admin?.help?.sections?.messages?.items?.inbox?.desc || "Všechny zprávy z kontaktního formuláře se řadí sem. Neoznačené zprávy ukáží upozornění." },
@@ -110,10 +521,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'orders',
             icon: ShoppingCart,
             title: content?.admin?.help?.sections?.orders?.title || "Objednávky",
             description: content?.admin?.help?.sections?.orders?.description || "Zpracování nákupů zákazníků",
-            image: "/admin-guide/orders.png",
             path: "/admin/orders",
             items: [
                 { label: content?.admin?.help?.sections?.orders?.items?.filtering?.label || "Filtrování", description: content?.admin?.help?.sections?.orders?.items?.filtering?.desc || "Rychlé řazení podle stavu (nové, odeslané atd.)." },
@@ -123,10 +534,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'inventory',
             icon: Package,
             title: content?.admin?.help?.sections?.inventory?.title || "Skladové zásoby",
             description: content?.admin?.help?.sections?.inventory?.description || "Evidování dostupnosti produktů",
-            image: "/admin-guide/inventory.png",
             path: "/admin/inventory",
             items: [
                 { label: content?.admin?.help?.sections?.inventory?.items?.add?.label || "Naskladnění", description: content?.admin?.help?.sections?.inventory?.items?.add?.desc || "Navýšení nebo snížení množství jednotlivých příchutí." },
@@ -135,10 +546,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'manufacture',
             icon: Factory,
             title: content?.admin?.help?.sections?.manufacture?.title || "Výroba",
             description: content?.admin?.help?.sections?.manufacture?.description || "Suroviny potřebné pro výrobu",
-            image: "/admin-guide/manufacture.png",
             path: "/admin/manufacture",
             items: [
                 { label: content?.admin?.help?.sections?.manufacture?.items?.alert?.label || "Stav surovin", description: content?.admin?.help?.sections?.manufacture?.items?.alert?.desc || "Monitorování plechovek, víček, etiket a samotného nápoje." },
@@ -146,10 +557,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'pricing',
             icon: BarChart,
             title: content?.admin?.help?.sections?.pricing?.title || "Cenotvorba a Statistiky",
             description: content?.admin?.help?.sections?.pricing?.description || "Finanční přehledy a nastavení cen",
-            image: "/admin-guide/pricing.png",
             path: "/admin/pricing",
             items: [
                 { label: content?.admin?.help?.sections?.pricing?.items?.global?.label || "Základní cena", description: content?.admin?.help?.sections?.pricing?.items?.global?.desc || "Centrální úprava prodejní ceny pro všechny produkty." },
@@ -157,10 +568,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'promos',
             icon: Gift,
             title: content?.admin?.help?.sections?.promos?.title || "Slevové kódy",
             description: content?.admin?.help?.sections?.promos?.description || "Marketingové a slevové kampaně",
-            image: "/admin-guide/promo-codes.png",
             path: "/admin/promo-codes",
             items: [
                 { label: content?.admin?.help?.sections?.promos?.items?.creation?.label || "Vytvoření kódu", description: content?.admin?.help?.sections?.promos?.items?.creation?.desc || "Nastavení unikátního textového kódu a výše slevy." },
@@ -169,10 +580,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'users',
             icon: Users,
             title: content?.admin?.help?.sections?.users?.title || "Uživatelé a Práva",
             description: content?.admin?.help?.sections?.users?.description || "Správa přístupů a zákazníků",
-            image: "/admin-guide/users.png",
             path: "/admin/users",
             items: [
                 { label: content?.admin?.help?.sections?.users?.items?.list?.label || "Seznam uživatelů", description: content?.admin?.help?.sections?.users?.items?.list?.desc || "Přehled všech registrovaných osob na platformě." },
@@ -181,10 +592,10 @@ const AdminHelp = () => {
             ]
         },
         {
+            id: 'accounting',
             icon: Download,
             title: content?.admin?.help?.sections?.accounting?.title || "Účetnictví a Exporty",
             description: content?.admin?.help?.sections?.accounting?.description || "Generování podkladů pro účetní systémy",
-            image: "/admin-guide/accounting-export.png",
             path: "/admin/orders",
             items: [
                 { label: content?.admin?.help?.sections?.accounting?.items?.csv?.label || "Export do CSV", description: content?.admin?.help?.sections?.accounting?.items?.csv?.desc || "V horní části správy objednávek naleznete tlačítko pro stažení všech dat ve formátu CSV pro systémy jako Pohoda nebo iDoklad." },
@@ -240,12 +651,8 @@ const AdminHelp = () => {
                             {(section.image || section.path) && (
                                 <div className="rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden bg-olive-dark/5 p-4 sm:p-6 shadow-canvas border border-white relative group flex flex-col justify-center h-full">
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                                    {section.image && (
-                                        <img 
-                                            src={section.image} 
-                                            alt={section.title} 
-                                            className="w-full h-auto rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl relative z-10 transition-all duration-1000 object-cover border border-white/20 mb-6 group-hover:scale-[1.02]"
-                                        />
+                                    {section.id && (
+                                        <AdminMockup id={section.id} />
                                     )}
                                     {section.path && (
                                         <div className="text-center relative z-10 mt-auto">
