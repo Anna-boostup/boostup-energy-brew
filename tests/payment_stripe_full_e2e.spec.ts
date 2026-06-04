@@ -385,24 +385,6 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
     const ourOrigin = new URL(baseURL).origin;
 
-    // ⭐ Vercel Protection bypass pro CI/Preview:
-    // používáme context.route() (např. page.route() může mít problém s cross-origin navigácími)
-    if (bypassSecret) {
-      await page.context().route(`${ourOrigin}/**`, async (route) => {
-        try {
-          await route.continue({
-            headers: {
-              ...route.request().headers(),
-              'x-vercel-protection-bypass': bypassSecret,
-            },
-          });
-        } catch {
-          await route.continue(); // fallback bez modifikace
-        }
-      });
-      console.log(`ℹ️ Vercel bypass interceptor nastaven pro: ${ourOrigin}`);
-    }
-    
     // Přidat nav loggér pro diagnostiku v CI
     page.on('framenavigated', (frame) => {
       if (frame === page.mainFrame()) {
@@ -532,23 +514,6 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     const testEmail = `stripe-fail-${Date.now()}@test.drinkboostup.cz`;
     const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
-
-    // Vercel bypass interceptor (stejný jako v Test 1 — context.route() pro cross-origin navigace)
-    if (bypassSecret) {
-      const ourOrigin = new URL(baseURL).origin;
-      await page.context().route(`${ourOrigin}/**`, async (route) => {
-        try {
-          await route.continue({
-            headers: {
-              ...route.request().headers(),
-              'x-vercel-protection-bypass': bypassSecret,
-            },
-          });
-        } catch {
-          await route.continue();
-        }
-      });
-    }
 
     // VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
