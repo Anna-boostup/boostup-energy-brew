@@ -192,6 +192,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
       'button[type="submit"]:has-text("Pay"), ' +
       'button[type="submit"]:has-text("Zaplatit"), ' +
       'button[type="submit"]:has-text("Confirm"), ' +
+      'button[type="submit"]:has-text("Subscribe"), ' +
+      'button[type="submit"]:has-text("Předplatit"), ' +
       '[data-testid="hosted-payment-submit-button"], ' +
       'button.SubmitButton'
     ).first();
@@ -260,6 +262,8 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     const stripePayBtn = page.locator(
       'button[type="submit"]:has-text("Pay"), ' +
       'button[type="submit"]:has-text("Zaplatit"), ' +
+      'button[type="submit"]:has-text("Subscribe"), ' +
+      'button[type="submit"]:has-text("Předplatit"), ' +
       '[data-testid="hosted-payment-submit-button"]'
     ).first();
     await stripePayBtn.click();
