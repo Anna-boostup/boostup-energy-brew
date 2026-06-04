@@ -305,6 +305,64 @@ async function handleStripe3DS(page: Page, approve: boolean = true) {
   }
 }
 
+/**
+ * Robust helper: čeká na přesměrování na /payment/success po Stripe platbě.
+ *
+ * V CI (preview.drinkboostup.cz s Vercel Protection) může nastat:
+ *   A) Přímé přesměrování na /payment/success ✔
+ *   B) Vercel interceptuje redirect → přesměrovává na /_vercel/auth?redirect=/payment/success
+ *
+ * Tento helper detekuje obě možnosti a v případě B manuálně naviguje na cíl.
+ */
+async function waitForPaymentSuccess(
+  page: Page,
+  baseURL: string,
+  _bypassSecret: string,
+  timeoutMs: number = 90000
+): Promise<string> {
+  const start = Date.now();
+  const ourOrigin = new URL(baseURL).origin;
+
+  console.log(`⏳ Čekám na redirect na /payment/success (max ${timeoutMs / 1000}s)...`);
+
+  while (Date.now() - start < timeoutMs) {
+    const currentUrl = page.url();
+
+    // A) Úspěch - jsme na success stránce
+    if (/payment\/success/i.test(currentUrl)) {
+      console.log(`✅ Dosažena success URL: ${currentUrl.substring(0, 120)}`);
+      return currentUrl;
+    }
+
+    // B) Vercel auth redirect - manuálně obejdeme
+    if (currentUrl.includes('_vercel/auth')) {
+      try {
+        const parsed = new URL(currentUrl);
+        const redirectParam = decodeURIComponent(parsed.searchParams.get('redirect') || '');
+        if (redirectParam) {
+          const targetUrl = `${ourOrigin}${redirectParam}`;
+          console.log(`⚠️ Vercel auth redirect! Manuálně naviguji na: ${targetUrl.substring(0, 120)}`);
+          await page.goto(targetUrl, { waitUntil: 'commit', timeout: 30000 });
+          continue;
+        }
+      } catch { /* ignore */ }
+    }
+
+    // Log každých ~10s pro debug
+    const elapsed = Date.now() - start;
+    if (elapsed > 5000 && elapsed % 10000 < 1500) {
+      console.log(`⏳ ${Math.round(elapsed / 1000)}s: čekám na success URL, aktuální: ${currentUrl.substring(0, 100)}`);
+    }
+
+    await page.waitForTimeout(1500);
+  }
+
+  const finalUrl = page.url();
+  throw new Error(
+    `Timeout ${timeoutMs / 1000}s při čekání na /payment/success.\nFinální URL: ${finalUrl}`
+  );
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
 
@@ -325,23 +383,35 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     const testEmail = `stripe-e2e-${Date.now()}@test.drinkboostup.cz`;
     const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
+    const ourOrigin = new URL(baseURL).origin;
 
-    // ⭐ Klíčová oprava pro CI/Preview:
-    // Když Stripe přesměruje browser zpět na naši doménu (preview.drinkboostup.cz),
-    // Playwright extraHTTPHeaders tento redirect neobsáhne (je to external navigation).
-    // Proto použijeme page.route() interceptor, který přidá bypass header pro VŠECHNY
-    // requesty na naši doménu — včetně Stripe redirect.
+    // ⭐ Vercel Protection bypass pro CI/Preview:
+    // používáme context.route() (např. page.route() může mít problém s cross-origin navigácími)
     if (bypassSecret) {
-      const ourOrigin = new URL(baseURL).origin;
-      await page.route(`${ourOrigin}/**`, async (route) => {
-        const headers = {
-          ...route.request().headers(),
-          'x-vercel-protection-bypass': bypassSecret,
-        };
-        await route.continue({ headers });
+      await page.context().route(`${ourOrigin}/**`, async (route) => {
+        try {
+          await route.continue({
+            headers: {
+              ...route.request().headers(),
+              'x-vercel-protection-bypass': bypassSecret,
+            },
+          });
+        } catch {
+          await route.continue(); // fallback bez modifikace
+        }
       });
-      console.log(`ℹ️ Vercel bypass route interceptor nastaven pro: ${ourOrigin}`);
+      console.log(`ℹ️ Vercel bypass interceptor nastaven pro: ${ourOrigin}`);
     }
+    
+    // Přidat nav loggér pro diagnostiku v CI
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame()) {
+        const url = frame.url();
+        if (!url.startsWith('data:') && url !== 'about:blank') {
+          console.log(`📍 Navigace: ${url.substring(0, 130)}`);
+        }
+      }
+    });
 
     // 1. Přidat do košíku (VYBRAT PŘEDPLATNÉ, ABY SE AKTIVOVAL STRIPE)
     await page.goto('/', { waitUntil: 'load', timeout: 30000 });
@@ -427,10 +497,11 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     // 8b. Ošetřit případný 3D Secure modal (potvrdit pro úspěšnou platbu)
     await handleStripe3DS(page, true);
 
-    // 9. Počkat na přesměrování zpět na náš web (matches any environment success url)
-    // Stripe přesměrovává na success_url = {origin}/payment/success?session_id=...
-    // V CI (preview) může být URL jiná než lokálně, ale regex matches vše s 'payment/success'
-    await page.waitForURL(/payment\/success/, { timeout: 90000 });
+    // 9. Počkat na přesměrování zpět na náš web
+    // Používáme vlastní helper, který detekuje i případ, kdy Vercel Protection zachytí redirect
+    const successUrl = await waitForPaymentSuccess(page, baseURL, bypassSecret, 90000);
+    // Po dosahování URL, počkáme na plné načtení stránky
+    await page.waitForLoadState('domcontentloaded', { timeout: 30000 }).catch(() => {});
     console.log(`✅ Platba úspěšná, URL: ${page.url()}`);
 
     // 10. Ověřit obsah success stránky
@@ -462,15 +533,20 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
 
-    // Vercel bypass interceptor (stejný jako v Test 1)
+    // Vercel bypass interceptor (stejný jako v Test 1 — context.route() pro cross-origin navigace)
     if (bypassSecret) {
       const ourOrigin = new URL(baseURL).origin;
-      await page.route(`${ourOrigin}/**`, async (route) => {
-        const headers = {
-          ...route.request().headers(),
-          'x-vercel-protection-bypass': bypassSecret,
-        };
-        await route.continue({ headers });
+      await page.context().route(`${ourOrigin}/**`, async (route) => {
+        try {
+          await route.continue({
+            headers: {
+              ...route.request().headers(),
+              'x-vercel-protection-bypass': bypassSecret,
+            },
+          });
+        } catch {
+          await route.continue();
+        }
       });
     }
 
