@@ -529,6 +529,7 @@ const AdminHelp = () => {
             items: [
                 { label: content?.admin?.help?.sections?.orders?.items?.filtering?.label || "Filtrování", description: content?.admin?.help?.sections?.orders?.items?.filtering?.desc || "Rychlé řazení podle stavu (nové, odeslané atd.)." },
                 { label: content?.admin?.help?.sections?.orders?.items?.detail?.label || "Detail objednávky", description: content?.admin?.help?.sections?.orders?.items?.detail?.desc || "Kompletní rozpis včetně fakturačních a dodacích údajů." },
+                { label: content?.admin?.help?.sections?.orders?.items?.manual?.label || "Manuální objednávka", description: content?.admin?.help?.sections?.orders?.items?.manual?.desc || "Pomocí tlačítka '+ Nová objednávka' můžete vytvořit objednávku ručně např. pro B2B zákazníky." },
                 { label: content?.admin?.help?.sections?.orders?.items?.bulk?.label || "Hromadné akce", description: content?.admin?.help?.sections?.orders?.items?.bulk?.desc || "Hromadná stornování, změny stavů nebo hromadný tisk štítků Zásilkovny (A4 combined pro úsporu papíru)." },
                 { label: content?.admin?.help?.sections?.orders?.items?.packeta?.label || "Zásilkovna (Packeta API)", description: content?.admin?.help?.sections?.orders?.items?.packeta?.desc || "Přímé vygenerování a tisk štítků. Tlačítko 'Synchronizovat' stáhne aktuální stavy přepravy." }
             ]
@@ -599,6 +600,7 @@ const AdminHelp = () => {
             path: "/admin/orders",
             items: [
                 { label: content?.admin?.help?.sections?.accounting?.items?.csv?.label || "Export do CSV", description: content?.admin?.help?.sections?.accounting?.items?.csv?.desc || "V horní části správy objednávek naleznete tlačítko pro stažení všech dat ve formátu CSV pro systémy jako Pohoda nebo iDoklad." },
+                { label: content?.admin?.help?.sections?.accounting?.items?.automated?.label || "Automatický měsíční report", description: content?.admin?.help?.sections?.accounting?.items?.automated?.desc || "Každý první den v měsíci se vygeneruje report objednávek za předchozí měsíc a odešle se na zadaný e-mail společně s CSV přílohou." },
                 { label: content?.admin?.help?.sections?.accounting?.items?.filter?.label || "Časová období", description: content?.admin?.help?.sections?.accounting?.items?.filter?.desc || "Data můžete exportovat za konkrétní měsíc, čtvrtletí, rok nebo si zvolit libovolné vlastní rozmezí." }
             ]
         }
