@@ -57,7 +57,7 @@ export interface Order {
         };
     }[];
     total: number;
-    status: 'pending' | 'paid' | 'processing' | 'shipped' | 'cancelled';
+    status: 'pending' | 'paid' | 'processing' | 'shipped' | 'completed' | 'cancelled';
     is_subscription_order?: boolean;
     packeta_barcode?: string;
     packeta_packet_id?: string;
