@@ -6,6 +6,25 @@ export const test = base.extend({
     await page.addInitScript(() => {
       window.localStorage.setItem('boostup_cookie_consent', JSON.stringify({ necessary: true, analytics: true, marketing: true, preferences: true }));
       window.localStorage.setItem('boostup_discount_dismissed', 'true');
+
+      // Bot evasion: Hide webdriver property
+      Object.defineProperty(navigator, 'webdriver', {
+        get: () => undefined,
+      });
+
+      // Bot evasion: Overwrite chrome object
+      // @ts-ignore
+      window.chrome = { runtime: {} };
+
+      // Bot evasion: Overwrite languages
+      Object.defineProperty(navigator, 'languages', {
+        get: () => ['cs-CZ', 'cs', 'en-US', 'en'],
+      });
+
+      // Bot evasion: Overwrite plugins
+      Object.defineProperty(navigator, 'plugins', {
+        get: () => [1, 2, 3, 4, 5],
+      });
     });
 
     await page.emulateMedia({ reducedMotion: 'reduce' });

@@ -98,34 +98,117 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
 
   // 3. Doručovací/billing adresa (Stripe Hosted Checkout může vyžadovat)
   await page.waitForTimeout(500);
-  const addressLine1 = page.locator(
-    'input[name="shippingAddressLine1"], input[autocomplete="address-line1"], ' +
-    'input[placeholder*="Address line 1" i], input[placeholder*="Adresa" i], ' +
-    'input[name="address-line1"]'
-  ).first();
+
+  // 3b. Vynutit zemi CZ v rozevíracím seznamu (řeší defaultování na US/IE v CI na základě IP adresy běžícího runneru)
+  const countrySelectors = [
+    'select#shippingCountry',
+    'select#billingCountry',
+    'select[name="country"]',
+    'select[name="shippingCountry"]',
+    'select[name="billingCountry"]',
+    'select[autocomplete="country"]',
+    'select[autocomplete="shipping country"]',
+    'select[autocomplete="billing country"]'
+  ];
+  for (const sel of countrySelectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      try {
+        const val = await el.inputValue().catch(() => '');
+        if (val !== 'CZ') {
+          await el.selectOption('CZ');
+          console.log(`✅ Země nastavena na CZ přes: ${sel}`);
+          await page.waitForTimeout(1500); // Počkat na překreslení formuláře
+        } else {
+          console.log(`ℹ️ Země je již nastavena na CZ (${sel})`);
+        }
+        break; // Vybereme pouze jednou a ukončíme loop pro zamezení vícenásobného reloadu
+      } catch (err) {
+        console.warn(`⚠️ Nepodařilo se vybrat CZ v ${sel}:`, err);
+      }
+    }
+  }
+
+  const addressLine1 = page.locator([
+    'input[autocomplete*="address-line1" i]',
+    'input[name*="AddressLine1" i]',
+    'input[name*="address-line1" i]',
+    'input[placeholder*="Address line 1" i]',
+    'input[placeholder*="Adresa" i]'
+  ].join(', ')).first();
   const hasShipping = await addressLine1.isVisible({ timeout: 4000 }).catch(() => false);
   if (hasShipping) {
-    const shippingName = page.locator(
-      'input[name="shippingName"], input[autocomplete="name"], ' +
-      'input[placeholder*="Name" i], input[placeholder*="Jméno" i]'
-    ).first();
+    const shippingName = page.locator([
+      'input[autocomplete*="name" i]',
+      'input[name*="shippingName" i]',
+      'input[name*="name" i]',
+      'input[placeholder*="Name" i]',
+      'input[placeholder*="Jméno" i]'
+    ].join(', ')).first();
     if (await shippingName.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await shippingName.fill('Stripe E2E Test');
+      await expect(async () => {
+        await shippingName.fill('Stripe E2E Test');
+        await expect(shippingName).toHaveValue('Stripe E2E Test', { timeout: 1000 });
+      }).toPass({ timeout: 8000 });
     }
-    await addressLine1.fill('Testovací 123');
-    const cityInput = page.locator(
-      'input[autocomplete="address-level2"], input[placeholder*="City" i], input[placeholder*="Město" i]'
-    ).first();
+
+    await expect(async () => {
+      await addressLine1.fill('Testovací 123');
+      await expect(addressLine1).toHaveValue('Testovací 123', { timeout: 1000 });
+    }).toPass({ timeout: 8000 });
+
+    const cityInput = page.locator([
+      'input[autocomplete*="address-level2" i]',
+      'input[name*="city" i]',
+      'input[name*="address-level2" i]',
+      'input[placeholder*="City" i]',
+      'input[placeholder*="Město" i]'
+    ].join(', ')).first();
     if (await cityInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await cityInput.fill('Brno');
+      await expect(async () => {
+        await cityInput.fill('Brno');
+        await expect(cityInput).toHaveValue('Brno', { timeout: 1000 });
+      }).toPass({ timeout: 8000 });
     }
-    const postalInput = page.locator(
-      'input[autocomplete="postal-code"], input[placeholder*="Postal" i], input[placeholder*="PSČ" i]'
-    ).first();
+
+    const postalInput = page.locator([
+      'input[autocomplete*="postal-code" i]',
+      'input[name*="postal" i]',
+      'input[name*="zip" i]',
+      'input[id*="postal" i]',
+      'input[id*="zip" i]',
+      'input[placeholder*="směrovací" i]',
+      'input[placeholder*="postal" i]',
+      'input[placeholder*="zip" i]',
+      'input[placeholder*="PSČ" i]'
+    ].join(', ')).first();
     if (await postalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await postalInput.fill('62300');
+      await expect(async () => {
+        await postalInput.fill('62300');
+        await expect(postalInput).toHaveValue('62300', { timeout: 1000 });
+      }).toPass({ timeout: 10000 });
     }
     console.log('✅ Shipping adresa vyplněna na Stripe Checkout');
+  }
+
+  // 3c. Pokud se doručovací adresa nezobrazila, ale je přítomen samostatný billing PSČ input
+  const billingZip = page.locator([
+    'input[autocomplete*="postal-code" i]',
+    'input[name*="postal" i]',
+    'input[name*="zip" i]',
+    'input[id*="postal" i]',
+    'input[id*="zip" i]',
+    'input[placeholder*="směrovací" i]',
+    'input[placeholder*="postal" i]',
+    'input[placeholder*="zip" i]',
+    'input[placeholder*="PSČ" i]'
+  ].join(', ')).first();
+  if (await billingZip.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await expect(async () => {
+      await billingZip.fill('11000');
+      await expect(billingZip).toHaveValue('11000', { timeout: 1000 });
+    }).toPass({ timeout: 8000 });
+    console.log('✅ Billing PSČ vyplněno na Stripe Checkout');
   }
 
   // ── Karta ────────────────────────────────────────────────────────────────────
@@ -185,6 +268,17 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
           console.log('✅ CVC vyplněno');
         }
 
+        // ZIP/Postal code inside iframe (případně vyžadovaný pro non-CZ lokace v Elements)
+        const frameZipInput = frame.locator(
+          'input[name="postal"], input[name="zip"], input[autocomplete="postal-code"], ' +
+          'input[placeholder*="ZIP" i], input[placeholder*="Postcode" i], input[placeholder*="PSČ" i]'
+        ).first();
+        if (await frameZipInput.isVisible({ timeout: 1500 }).catch(() => false)) {
+          await frameZipInput.click();
+          await frameZipInput.type('11000', { delay: 50 });
+          console.log('✅ PSČ vyplněno v iframe karty');
+        }
+
         cardFilled = true;
         break;
       }
@@ -238,6 +332,13 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
         await directCvc.click({ force: true });
         await directCvc.focus();
         await directCvc.type('123', { delay: 80 });
+      }
+
+      const directZip = page.locator('input#postalCode, input[name="postalCode"], input[autocomplete="postal-code"], input[name="postal"]').first();
+      if (await directZip.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await directZip.click({ force: true });
+        await directZip.focus();
+        await directZip.type('11000', { delay: 80 });
       }
       cardFilled = true;
       console.log('✅ Číslo karty vyplněno přes přímý input');
