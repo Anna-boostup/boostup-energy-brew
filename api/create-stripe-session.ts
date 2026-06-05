@@ -112,7 +112,7 @@ export default async function handler(req: Request) {
             line_items: lineItems,
             mode: isSubscription ? 'subscription' : 'payment',
             success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${total}`,
-            cancel_url: `${origin}/kosik`,
+            cancel_url: `${origin}/checkout`,
             metadata: {
                 orderId: orderNumber,
                 isSubscription: isSubscription ? 'true' : 'false'
