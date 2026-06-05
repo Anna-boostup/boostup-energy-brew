@@ -1005,7 +1005,7 @@ const CheckoutPage = () => {
 
                 <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                   {cart.map(item => (
-                    <div key={item.id} className="flex gap-4 group">
+                    <div key={item.cartItemId || item.id} className="flex gap-4 group">
                       <div className="w-16 h-16 bg-white/10 rounded-2xl flex-shrink-0 flex items-center justify-center p-2 border border-white/5 group-hover:bg-white/20 transition-all">
                         <img
                           src={item.image}
