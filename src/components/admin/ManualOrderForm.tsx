@@ -16,6 +16,7 @@ export function ManualOrderForm({ onSuccess }: { onSuccess: () => void }) {
     const [paymentMethod, setPaymentMethod] = useState("transfer_manual");
     const [deliveryMethod, setDeliveryMethod] = useState("courier");
     const [items, setItems] = useState<{ sku: string; quantity: number }[]>([]);
+    const [promoPriceType, setPromoPriceType] = useState<"regular" | "free">("free");
 
     const activeProducts = products.filter(p => p.is_active);
 
@@ -36,6 +37,9 @@ export function ManualOrderForm({ onSuccess }: { onSuccess: () => void }) {
     };
 
     const calculateTotal = () => {
+        if (paymentMethod === 'promo' && promoPriceType === 'free') {
+            return 0;
+        }
         return items.reduce((total, item) => {
             const prod = activeProducts.find(p => p.sku === item.sku);
             return total + ((prod?.price || 0) * item.quantity);
@@ -59,11 +63,12 @@ export function ManualOrderForm({ onSuccess }: { onSuccess: () => void }) {
 
         const orderItems = items.map(item => {
             const prod = activeProducts.find(p => p.sku === item.sku);
+            const isFree = paymentMethod === 'promo' && promoPriceType === 'free';
             return {
                 sku: item.sku,
                 name: prod?.name || item.sku,
                 quantity: item.quantity,
-                price: prod?.price || 0
+                price: isFree ? 0 : (prod?.price || 0)
             };
         });
 
@@ -150,6 +155,7 @@ export function ManualOrderForm({ onSuccess }: { onSuccess: () => void }) {
                                 <SelectItem value="transfer_manual">Převodem (Čeká na platbu)</SelectItem>
                                 <SelectItem value="cash">Hotově (Zaplaceno)</SelectItem>
                                 <SelectItem value="card">Kartou / Jiné (Zaplaceno)</SelectItem>
+                                <SelectItem value="promo">Promo / Dárek</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -166,6 +172,20 @@ export function ManualOrderForm({ onSuccess }: { onSuccess: () => void }) {
                             </SelectContent>
                         </Select>
                     </div>
+                    {paymentMethod === 'promo' && (
+                        <div className="space-y-2 col-span-2 bg-lime/5 p-4 rounded-xl border border-lime/20 animate-in fade-in slide-in-from-top-2">
+                            <Label className="font-bold text-olive-dark text-[10px] uppercase tracking-widest pl-0.5">Cena pro Promo / Dárek</Label>
+                            <Select value={promoPriceType} onValueChange={(val: "regular" | "free") => setPromoPriceType(val)}>
+                                <SelectTrigger className="bg-white border-lime/20 h-11 text-sm font-bold text-olive-dark focus:ring-lime">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="free">0 Kč (Zdarma / Dárek)</SelectItem>
+                                    <SelectItem value="regular">Běžná cena (Sledovat hodnotu)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
                 </div>
             </div>
 
