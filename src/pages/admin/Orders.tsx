@@ -79,6 +79,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-0.5 pr-1">
                             {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer :
                              order.delivery_info?.paymentMethod === 'stripe_express' ? content.admin.orders.status.express :
+                             order.delivery_info?.paymentMethod === 'promo' ? 'Promo / Dárek' :
                              order.delivery_info?.paymentMethod || content.admin.orders.table.payment}
                         </span>
                     </div>
@@ -144,6 +145,17 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     {order.status === 'shipped' && (
                         <Button size="icon" onClick={() => onStatusChange(order.id, 'completed')} className="bg-black text-white hover:bg-black/80 rounded-xl h-11 w-11 shadow-xl shadow-black/20" aria-label={content.admin.orders.markAsCompleted}>
                             <CheckCircle className="w-5 h-5" />
+                        </Button>
+                    )}
+                    {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
+                        <Button 
+                            size="icon" 
+                            onClick={() => onStatusChange(order.id, 'completed')} 
+                            className="bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl h-11 w-11 shadow-lg shadow-emerald-600/20" 
+                            title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                            aria-label={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                        >
+                            <CheckSquare className="w-5 h-5" />
                         </Button>
                     )}
                     <InvoiceModal order={order}>
@@ -289,6 +301,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                     <span className="text-[9px] font-black text-olive-dark/60 uppercase tracking-widest">
                                         {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer.slice(0, 4) :
                                          order.delivery_info?.paymentMethod === 'stripe_express' ? 'STRP' :
+                                         order.delivery_info?.paymentMethod === 'promo' ? 'PROM' :
                                          order.delivery_info?.paymentMethod?.toUpperCase().slice(0, 4) || 'CARD'}
                                     </span>
                                 </TableCell>
@@ -358,6 +371,16 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 title={content.admin.orders.markAsCompleted}
                                             >
                                                 <CheckCircle className="w-5 h-5" />
+                                            </Button>
+                                        )}
+                                        {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
+                                            <Button
+                                                size="sm"
+                                                onClick={() => onStatusChange(order.id, 'completed')}
+                                                className="h-10 w-10 p-0 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-600/20"
+                                                title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                                            >
+                                                <CheckSquare className="w-5 h-5" />
                                             </Button>
                                         )}
 
@@ -465,6 +488,7 @@ const Orders = () => {
     // Export State
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
     const [exportType, setExportType] = useState<'month' | 'quarter' | 'year' | 'custom'>('month');
+    const [exportSource, setExportSource] = useState<'all' | 'web' | 'manual'>('all');
     const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
     const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
@@ -563,10 +587,16 @@ const Orders = () => {
             });
         }
 
+        if (exportSource === 'web') {
+            filteredForExport = filteredForExport.filter(o => !o.id.startsWith('MAN-'));
+        } else if (exportSource === 'manual') {
+            filteredForExport = filteredForExport.filter(o => o.id.startsWith('MAN-'));
+        }
+
         if (filteredForExport.length === 0) {
             toast({
                 title: "Chyba exportu",
-                description: "Za vybrané období nebyly nalezeny žádné objednávky.",
+                description: "Za vybrané filtry a období nebyly nalezeny žádné objednávky.",
                 variant: "destructive"
             });
             return;
@@ -595,7 +625,8 @@ const Orders = () => {
         const link = document.createElement("a");
         link.setAttribute("href", url);
         const timestamp = new Date().toISOString().split('T')[0];
-        link.setAttribute("download", `boostup-faktury-${exportType}-${timestamp}.csv`);
+        const sourceSuffix = exportSource === 'web' ? 'webove' : exportSource === 'manual' ? 'manualni' : 'vsechny';
+        link.setAttribute("download", `boostup-faktury-${sourceSuffix}-${exportType}-${timestamp}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1058,6 +1089,20 @@ const Orders = () => {
                                     <SelectItem value="quarter">Aktuální čtvrtletí</SelectItem>
                                     <SelectItem value="year">Celý aktuální rok</SelectItem>
                                     <SelectItem value="custom">Vlastní rozsah (Od-Do)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-3">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Typ objednávek</Label>
+                            <Select value={exportSource} onValueChange={(val: any) => setExportSource(val)}>
+                                <SelectTrigger className="rounded-xl border-olive/10 bg-white shadow-sm h-12">
+                                    <SelectValue placeholder="Vyberte typ objednávek" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl border-olive/10 shadow-xl">
+                                    <SelectItem value="all">Všechny objednávky</SelectItem>
+                                    <SelectItem value="web">Jen z webu (nákupy)</SelectItem>
+                                    <SelectItem value="manual">Jen manuálně vytvořené</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

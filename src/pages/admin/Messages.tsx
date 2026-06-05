@@ -105,6 +105,33 @@ const Messages = () => {
         }
     };
 
+    const handleMarkAllAsRead = async () => {
+        setLoading(true);
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .update({ is_read: true })
+                .eq('is_read', false);
+
+            if (error) throw error;
+            setMessages(prev => prev.map(m => ({ ...m, is_read: true })));
+            window.dispatchEvent(new Event('message-read'));
+            toast({
+                title: content?.admin?.messages?.success?.allRead || "Označeno jako přečtené",
+                description: content?.admin?.messages?.success?.allRead || "Všechny zprávy byly označeny jako přečtené.",
+            });
+        } catch (error: any) {
+            console.error('Error marking all as read:', error);
+            toast({
+                title: content?.admin?.general?.error || "Error",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const deleteMessage = async (id: string) => {
         const messageToDelete = messages.find(m => m.id === id);
         try {
@@ -238,6 +265,18 @@ const Messages = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
+                    {unreadCount > 0 && (
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={handleMarkAllAsRead} 
+                            disabled={loading} 
+                            title={content?.admin?.messages?.actions?.markAllRead || "Mark all as read"}
+                            className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0 text-primary hover:text-primary/80"
+                        >
+                            <CheckCheck className="w-5 h-5" />
+                        </Button>
+                    )}
                     <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
                         <RefreshCcw className={`w-5 h-5 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
@@ -334,7 +373,7 @@ const Messages = () => {
                                             </h2>
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-olive-dark flex items-center justify-center shadow-lg">
-                                                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                                                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-lime" />
                                                 </div>
                                                 <div>
                                                     <p className="text-lg sm:text-xl font-black text-olive-dark leading-tight">
@@ -350,7 +389,7 @@ const Messages = () => {
                                             {!isReplyMode && (
                                                 <Button 
                                                     onClick={() => setIsReplyMode(true)}
-                                                    className="h-12 sm:h-14 flex-1 sm:flex-initial px-6 sm:px-8 bg-olive-dark hover:bg-black text-primary font-black uppercase text-[10px] sm:text-xs tracking-widest rounded-2xl shadow-xl shadow-olive-dark/10"
+                                                    className="h-12 sm:h-14 flex-1 sm:flex-initial px-6 sm:px-8 bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] sm:text-xs tracking-widest rounded-2xl shadow-xl shadow-lime/20"
                                                 >
                                                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
                                                     {content?.admin?.messages?.actions?.reply || "Reply"}
@@ -466,7 +505,7 @@ const Messages = () => {
                                                     <Button 
                                                         onClick={handleSendReply}
                                                         disabled={isSending || !replyText.trim()}
-                                                        className="h-14 sm:h-16 px-8 sm:px-10 bg-olive-dark hover:bg-black text-primary font-black uppercase text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 w-full sm:w-auto"
+                                                        className="h-14 sm:h-16 px-8 sm:px-10 bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] rounded-2xl shadow-xl shadow-lime/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 w-full sm:w-auto"
                                                     >
                                                         {isSending ? (
                                                             <><RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-3 animate-spin" /> {content?.admin?.messages?.actions?.saving || "Saving..."}</>

@@ -1211,6 +1211,7 @@ export const SITE_CONTENT = {
             actions: {
                 reply: "Odpovědět",
                 markRead: "Označit jako přečtené",
+                markAllRead: "Označit vše jako přečtené",
                 delete: "Smazat",
                 send: "Odeslat odpověď",
                 cancel: "Zrušit",
@@ -1219,6 +1220,7 @@ export const SITE_CONTENT = {
             success: {
                 replied: "Odpověď odeslána",
                 read: "Zpráva označena jako přečtená",
+                allRead: "Všechny zprávy byly označeny jako přečtené",
                 deleted: "Zpráva byla smazána"
             }
         },

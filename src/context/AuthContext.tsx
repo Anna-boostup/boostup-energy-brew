@@ -19,6 +19,7 @@ interface AuthContextType {
     loading: boolean;
     isAdmin: boolean;
     signOut: () => Promise<void>;
+    refetchProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -88,6 +89,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const refetchProfile = async () => {
+        if (user) {
+            await fetchProfile(user.id);
+        }
+    };
+
     const signOut = async () => {
         await supabase.auth.signOut();
         setProfile(null);
@@ -102,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         isAdmin: profile?.role === 'admin',
         signOut,
+        refetchProfile,
     };
 
     return (

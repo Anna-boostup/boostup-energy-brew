@@ -1135,6 +1135,7 @@ export const SITE_CONTENT_EN = {
             actions: {
                 reply: "Reply",
                 markRead: "Mark as read",
+                markAllRead: "Mark all as read",
                 delete: "Delete",
                 send: "Send reply",
                 cancel: "Cancel",
@@ -1143,6 +1144,7 @@ export const SITE_CONTENT_EN = {
             success: {
                 replied: "Reply sent",
                 read: "Message marked as read",
+                allRead: "All messages marked as read",
                 deleted: "Message deleted"
             }
         },
