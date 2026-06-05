@@ -222,14 +222,22 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   if (!cardFilled) {
     const directCard = page.locator('input#cardNumber, input[name="cardNumber"], input[autocomplete="cc-number"]').first();
     if (await directCard.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await directCard.type(cardNumber, { delay: 50 });
+      await directCard.click({ force: true });
+      await directCard.focus();
+      await directCard.type(cardNumber, { delay: 80 });
+      
       const directExpiry = page.locator('input#cardExpiry, input[name="cardExpiry"], input[autocomplete="cc-exp"]').first();
       if (await directExpiry.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await directExpiry.type('1229', { delay: 50 });
+        await directExpiry.click({ force: true });
+        await directExpiry.focus();
+        await directExpiry.type('1229', { delay: 80 });
       }
+      
       const directCvc = page.locator('input#cardCvc, input[name="cardCvc"], input[autocomplete="cc-csc"]').first();
       if (await directCvc.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await directCvc.type('123', { delay: 50 });
+        await directCvc.click({ force: true });
+        await directCvc.focus();
+        await directCvc.type('123', { delay: 80 });
       }
       cardFilled = true;
       console.log('✅ Číslo karty vyplněno přes přímý input');
