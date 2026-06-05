@@ -105,6 +105,33 @@ const Messages = () => {
         }
     };
 
+    const handleMarkAllAsRead = async () => {
+        setLoading(true);
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .update({ is_read: true })
+                .eq('is_read', false);
+
+            if (error) throw error;
+            setMessages(prev => prev.map(m => ({ ...m, is_read: true })));
+            window.dispatchEvent(new Event('message-read'));
+            toast({
+                title: content?.admin?.messages?.success?.allRead || "Označeno jako přečtené",
+                description: content?.admin?.messages?.success?.allRead || "Všechny zprávy byly označeny jako přečtené.",
+            });
+        } catch (error: any) {
+            console.error('Error marking all as read:', error);
+            toast({
+                title: content?.admin?.general?.error || "Error",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const deleteMessage = async (id: string) => {
         const messageToDelete = messages.find(m => m.id === id);
         try {
@@ -238,6 +265,18 @@ const Messages = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
+                    {unreadCount > 0 && (
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={handleMarkAllAsRead} 
+                            disabled={loading} 
+                            title={content?.admin?.messages?.actions?.markAllRead || "Mark all as read"}
+                            className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0 text-primary hover:text-primary/80"
+                        >
+                            <CheckCheck className="w-5 h-5" />
+                        </Button>
+                    )}
                     <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
                         <RefreshCcw className={`w-5 h-5 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
