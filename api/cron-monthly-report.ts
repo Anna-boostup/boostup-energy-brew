@@ -88,7 +88,6 @@ const processOrders = (ordersList: any[]) => {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Basic protection against unwanted calls.
-    // Vercel cron jobs pass an Authorization header starting with "Bearer " and the CRON_SECRET
     const authHeader = req.headers.authorization;
     const cronSecret = process.env.CRON_SECRET;
     
@@ -120,19 +119,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const reportOrders = orders || [];
 
-        // Split orders into web purchases and manual orders
-        const webOrders = reportOrders.filter(o => !o.id.startsWith('MAN-'));
-        const manualOrders = reportOrders.filter(o => o.id.startsWith('MAN-'));
+        // Segment orders:
+        // E-shop: web orders OR manual orders where paymentMethod is NOT 'promo'
+        // Promo/Gifts: manual orders where paymentMethod is 'promo'
+        const eshopOrders = reportOrders.filter(o => {
+            const delInfo = o.delivery_info || {};
+            return delInfo.paymentMethod !== 'promo';
+        });
+        const promoOrders = reportOrders.filter(o => {
+            const delInfo = o.delivery_info || {};
+            return delInfo.paymentMethod === 'promo';
+        });
 
-        // Process both groups
-        const webReport = processOrders(webOrders);
-        const manualReport = processOrders(manualOrders);
+        // Process all reports
+        const totalReport = processOrders(reportOrders);
+        const eshopReport = processOrders(eshopOrders);
+        const promoReport = processOrders(promoOrders);
 
         const monthName = firstDayOfPrevMonth.toLocaleString('cs-CZ', { month: 'long' });
         const year = firstDayOfPrevMonth.getFullYear();
 
-        const webReportTitle = `Report webových objednávek - ${monthName} ${year}`;
-        const manualReportTitle = `Report manuálních objednávek - ${monthName} ${year}`;
+        const reportTitle = `Měsíční report objednávek BoostUp - ${monthName} ${year}`;
+
+        // Fetch report settings from site_content
+        const { data: contentRow } = await supabase
+            .from('site_content')
+            .select('content')
+            .eq('id', 'main')
+            .single();
+
+        const dbContent = contentRow?.content || {};
+        const emailTo = dbContent.reportRecipientEmail || process.env.REPORT_EMAIL || 'objednavky@drinkboostup.cz';
+        
+        let ccEmails: string[] = [];
+        if (dbContent.reportRecipientCc) {
+            ccEmails = dbContent.reportRecipientCc.split(',').map((e: string) => e.trim()).filter(Boolean);
+        } else if (process.env.REPORT_EMAIL_CC) {
+            ccEmails = process.env.REPORT_EMAIL_CC.split(',').map((e: string) => e.trim()).filter(Boolean);
+        }
 
         // Send Email
         const resendApiKey = process.env.RESEND_API_KEY;
@@ -141,87 +165,123 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
         const resend = new Resend(resendApiKey);
 
-        const emailTo = process.env.REPORT_EMAIL || 'objednavky@drinkboostup.cz';
-        const ccEmails = process.env.REPORT_EMAIL_CC ? process.env.REPORT_EMAIL_CC.split(',').map((e:string) => e.trim()) : [];
+        // HTML Content
+        const htmlContent = `
+            <div style="font-family: sans-serif; max-width: 650px; margin: 0 auto; padding: 25px; color: #1f2937; border: 1px solid #e5e7eb; border-radius: 12px; background-color: #f9fafb;">
+                <div style="text-align: center; border-bottom: 2px solid #3d5a2f; padding-bottom: 20px; margin-bottom: 25px;">
+                    <h1 style="color: #3d5a2f; margin: 0; font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">BoostUp Měsíční Report</h1>
+                    <p style="color: #6b7280; font-size: 14px; font-weight: 600; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 0.1em;">${monthName} ${year}</p>
+                </div>
 
-        // Web orders HTML content
-        const webHtmlContent = `
-            <div style="font-family: sans-serif; max-w-2xl; margin: 0 auto; padding: 20px; color: #1f2937;">
-                <h1 style="color: #3a572c;">${webReportTitle}</h1>
-                <p>V příloze naleznete automaticky vygenerovaný export nákupů na webu (e-shopu) BoostUp za uplynulý měsíc pro vaše účetnictví.</p>
-                
-                <h2 style="margin-top: 30px;">Základní přehled:</h2>
-                <ul style="font-size: 16px; line-height: 1.6;">
-                    <li><strong>Celkem objednávek (bez storen):</strong> ${webReport.paidOrdersCount}</li>
-                    <li><strong>Stornováno:</strong> ${webReport.cancelledOrdersCount}</li>
-                    <li><strong>Celkový obrat (vč. DPH):</strong> ${webReport.totalRevenue.toLocaleString('cs-CZ')} Kč</li>
-                </ul>
+                <p style="font-size: 15px; line-height: 1.6; color: #374151;">Dobrý den,<br />v příloze naleznete automaticky vygenerované exporty objednávek BoostUp za uplynulý měsíc pro vaše účetnictví.</p>
 
-                <h2 style="margin-top: 30px;">Prodané kusy (lahve):</h2>
-                <ul style="font-size: 16px; line-height: 1.6;">
-                    <li><strong>Lemon Blast:</strong> ${webReport.totalsByFlavor.lemon} ks</li>
-                    <li><strong>Red Rush:</strong> ${webReport.totalsByFlavor.red} ks</li>
-                    <li><strong>Silky Leaf:</strong> ${webReport.totalsByFlavor.silky} ks</li>
-                </ul>
+                <!-- 1. CELKOVÝ PŘEHLED -->
+                <div style="background-color: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <h2 style="color: #3d5a2f; margin-top: 0; font-size: 18px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">📊 Celkový přehled (všechny objednávky)</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.8;">
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Celkem objednávek (bez stornovaných):</td>
+                            <td style="font-weight: 800; text-align: right; color: #111827;">${totalReport.paidOrdersCount}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563;">Stornováno objednávek:</td>
+                            <td style="font-weight: 800; text-align: right; color: #9ca3af;">${totalReport.cancelledOrdersCount}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563; border-top: 1px dashed #e5e7eb; padding-top: 5px;">Celkový obrat (vč. DPH):</td>
+                            <td style="font-weight: 850; text-align: right; color: #3d5a2f; border-top: 1px dashed #e5e7eb; padding-top: 5px; font-size: 16px;">${totalReport.totalRevenue.toLocaleString('cs-CZ')} Kč</td>
+                        </tr>
+                    </table>
+                    <h3 style="color: #4b5563; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin: 15px 0 8px 0;">Prodané kusy (lahve):</h3>
+                    <table style="width: 100%; font-size: 13px;">
+                        <tr>
+                            <td style="color: #6b7280;">Lemon Blast: <strong style="color: #111827;">${totalReport.totalsByFlavor.lemon} ks</strong></td>
+                            <td style="color: #6b7280;">Red Rush: <strong style="color: #111827;">${totalReport.totalsByFlavor.red} ks</strong></td>
+                            <td style="color: #6b7280;">Silky Leaf: <strong style="color: #111827;">${totalReport.totalsByFlavor.silky} ks</strong></td>
+                        </tr>
+                    </table>
+                </div>
 
-                <p style="margin-top: 40px; font-size: 14px; color: #6b7280;">
-                    Tento e-mail byl vygenerován automaticky ze systému BoostUp Admin.
-                </p>
+                <!-- 2. ZA E-SHOP -->
+                <div style="background-color: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <h2 style="color: #3d5a2f; margin-top: 0; font-size: 18px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">🛒 Za E-shop (web + běžné prodeje)</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.8;">
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Celkem objednávek (bez stornovaných):</td>
+                            <td style="font-weight: 800; text-align: right; color: #111827;">${eshopReport.paidOrdersCount}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563;">Stornováno objednávek:</td>
+                            <td style="font-weight: 800; text-align: right; color: #9ca3af;">${eshopReport.cancelledOrdersCount}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563; border-top: 1px dashed #e5e7eb; padding-top: 5px;">Obrat E-shopu (vč. DPH):</td>
+                            <td style="font-weight: 850; text-align: right; color: #3d5a2f; border-top: 1px dashed #e5e7eb; padding-top: 5px; font-size: 16px;">${eshopReport.totalRevenue.toLocaleString('cs-CZ')} Kč</td>
+                        </tr>
+                    </table>
+                    <h3 style="color: #4b5563; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin: 15px 0 8px 0;">Prodané kusy (lahve):</h3>
+                    <table style="width: 100%; font-size: 13px;">
+                        <tr>
+                            <td style="color: #6b7280;">Lemon Blast: <strong style="color: #111827;">${eshopReport.totalsByFlavor.lemon} ks</strong></td>
+                            <td style="color: #6b7280;">Red Rush: <strong style="color: #111827;">${eshopReport.totalsByFlavor.red} ks</strong></td>
+                            <td style="color: #6b7280;">Silky Leaf: <strong style="color: #111827;">${eshopReport.totalsByFlavor.silky} ks</strong></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- 3. ZA PROMO / DÁRKY -->
+                <div style="background-color: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <h2 style="color: #3d5a2f; margin-top: 0; font-size: 18px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">🎁 Za Promo / Dárky</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.8;">
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Rozdané promo objednávky:</td>
+                            <td style="font-weight: 800; text-align: right; color: #111827;">${promoReport.paidOrdersCount}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563;">Stornováno objednávek:</td>
+                            <td style="font-weight: 800; text-align: right; color: #9ca3af;">${promoReport.cancelledOrdersCount}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #4b5563; border-top: 1px dashed #e5e7eb; padding-top: 5px;">Promo hodnota (případné doplatky):</td>
+                            <td style="font-weight: 850; text-align: right; color: #3d5a2f; border-top: 1px dashed #e5e7eb; padding-top: 5px; font-size: 16px;">${promoReport.totalRevenue.toLocaleString('cs-CZ')} Kč</td>
+                        </tr>
+                    </table>
+                    <h3 style="color: #4b5563; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin: 15px 0 8px 0;">Prodané kusy (lahve):</h3>
+                    <table style="width: 100%; font-size: 13px;">
+                        <tr>
+                            <td style="color: #6b7280;">Lemon Blast: <strong style="color: #111827;">${promoReport.totalsByFlavor.lemon} ks</strong></td>
+                            <td style="color: #6b7280;">Red Rush: <strong style="color: #111827;">${promoReport.totalsByFlavor.red} ks</strong></td>
+                            <td style="color: #6b7280;">Silky Leaf: <strong style="color: #111827;">${promoReport.totalsByFlavor.silky} ks</strong></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 15px; margin-top: 25px; text-align: center; font-size: 12px; color: #9ca3af;">
+                    Tento e-mail byl automaticky vygenerován systémem BoostUp Admin.<br />
+                    Nastavení příjemců můžete změnit přímo v administraci v sekci <strong>Nastavení webu</strong>.
+                </div>
             </div>
         `;
 
-        // Manual orders HTML content
-        const manualHtmlContent = `
-            <div style="font-family: sans-serif; max-w-2xl; margin: 0 auto; padding: 20px; color: #1f2937;">
-                <h1 style="color: #3a572c;">${manualReportTitle}</h1>
-                <p>V příloze naleznete automaticky vygenerovaný export manuálně vytvořených objednávek BoostUp za uplynulý měsíc pro vaše účetnictví.</p>
-                
-                <h2 style="margin-top: 30px;">Základní přehled:</h2>
-                <ul style="font-size: 16px; line-height: 1.6;">
-                    <li><strong>Celkem objednávek (bez storen):</strong> ${manualReport.paidOrdersCount}</li>
-                    <li><strong>Stornováno:</strong> ${manualReport.cancelledOrdersCount}</li>
-                    <li><strong>Celkový obrat (vč. DPH):</strong> ${manualReport.totalRevenue.toLocaleString('cs-CZ')} Kč</li>
-                </ul>
-
-                <h2 style="margin-top: 30px;">Prodané kusy (lahve):</h2>
-                <ul style="font-size: 16px; line-height: 1.6;">
-                    <li><strong>Lemon Blast:</strong> ${manualReport.totalsByFlavor.lemon} ks</li>
-                    <li><strong>Red Rush:</strong> ${manualReport.totalsByFlavor.red} ks</li>
-                    <li><strong>Silky Leaf:</strong> ${manualReport.totalsByFlavor.silky} ks</li>
-                </ul>
-
-                <p style="margin-top: 40px; font-size: 14px; color: #6b7280;">
-                    Tento e-mail byl vygenerován automaticky ze systému BoostUp Admin.
-                </p>
-            </div>
-        `;
-
-        // Send Web report email
+        // Send consolidated report email
         await resend.emails.send({
             from: 'BoostUp Systém <info@drinkboostup.cz>',
             to: emailTo,
             cc: ccEmails.length > 0 ? ccEmails : undefined,
-            subject: webReportTitle,
-            html: webHtmlContent,
+            subject: reportTitle,
+            html: htmlContent,
             attachments: [
                 {
-                    filename: `boostup-webove-objednavky-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
-                    content: Buffer.from(webReport.csvContent, 'utf-8')
-                }
-            ]
-        });
-
-        // Send Manual report email
-        await resend.emails.send({
-            from: 'BoostUp Systém <info@drinkboostup.cz>',
-            to: emailTo,
-            cc: ccEmails.length > 0 ? ccEmails : undefined,
-            subject: manualReportTitle,
-            html: manualHtmlContent,
-            attachments: [
+                    filename: `boostup-celkovy-prehled-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
+                    content: Buffer.from(totalReport.csvContent, 'utf-8')
+                },
                 {
-                    filename: `boostup-manualni-objednavky-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
-                    content: Buffer.from(manualReport.csvContent, 'utf-8')
+                    filename: `boostup-eshop-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
+                    content: Buffer.from(eshopReport.csvContent, 'utf-8')
+                },
+                {
+                    filename: `boostup-promodarky-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
+                    content: Buffer.from(promoReport.csvContent, 'utf-8')
                 }
             ]
         });
@@ -231,17 +291,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             reports: {
                 month: monthName,
                 year,
-                web: {
-                    paidOrdersCount: webReport.paidOrdersCount,
-                    cancelledOrdersCount: webReport.cancelledOrdersCount,
-                    totalRevenue: webReport.totalRevenue,
-                    totalsByFlavor: webReport.totalsByFlavor
+                total: {
+                    paidOrdersCount: totalReport.paidOrdersCount,
+                    cancelledOrdersCount: totalReport.cancelledOrdersCount,
+                    totalRevenue: totalReport.totalRevenue,
+                    totalsByFlavor: totalReport.totalsByFlavor
                 },
-                manual: {
-                    paidOrdersCount: manualReport.paidOrdersCount,
-                    cancelledOrdersCount: manualReport.cancelledOrdersCount,
-                    totalRevenue: manualReport.totalRevenue,
-                    totalsByFlavor: manualReport.totalsByFlavor
+                eshop: {
+                    paidOrdersCount: eshopReport.paidOrdersCount,
+                    cancelledOrdersCount: eshopReport.cancelledOrdersCount,
+                    totalRevenue: eshopReport.totalRevenue,
+                    totalsByFlavor: eshopReport.totalsByFlavor
+                },
+                promo: {
+                    paidOrdersCount: promoReport.paidOrdersCount,
+                    cancelledOrdersCount: promoReport.cancelledOrdersCount,
+                    totalRevenue: promoReport.totalRevenue,
+                    totalsByFlavor: promoReport.totalsByFlavor
                 }
             }
         });
