@@ -42,10 +42,18 @@ export default defineConfig({
   },
 
   projects: [
-    // Setup project for authentication
+    // Setup projects for authentication
     {
-      name: 'setup',
-      testMatch: 'tests/auth.setup.ts',
+      name: 'setup-admin',
+      testMatch: 'tests/admin.setup.ts',
+    },
+    {
+      name: 'setup-customer',
+      testMatch: 'tests/customer.setup.ts',
+    },
+    {
+      name: 'setup-company',
+      testMatch: 'tests/company.setup.ts',
     },
     
     // Admin Desktop
@@ -56,7 +64,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/admin.json',
       },
-      dependencies: ['setup'],
+      dependencies: ['setup-admin'],
     },
 
     // Admin Mobile
@@ -67,7 +75,7 @@ export default defineConfig({
         ...devices['Pixel 5'],
         storageState: 'playwright/.auth/admin.json',
       },
-      dependencies: ['setup'],
+      dependencies: ['setup-admin'],
     },
 
     // Checkout Scenarios (Guest or Logged in depending on test logic)
@@ -77,7 +85,7 @@ export default defineConfig({
       use: { 
         ...devices['Desktop Chrome'],
       },
-      dependencies: ['setup'],
+      dependencies: ['setup-admin', 'setup-customer', 'setup-company'],
     },
 
     // Payment E2E — runs on Preview only (IS_TEST_MODE=true bypasses real gateway)
@@ -87,7 +95,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
       },
-      dependencies: ['setup'],
+      dependencies: ['setup-customer'],
     },
 
     // Full Stripe E2E — goes through real Stripe hosted checkout page
@@ -100,7 +108,7 @@ export default defineConfig({
         // Allow navigation to stripe.com
         bypassCSP: true,
       },
-      dependencies: ['setup'],
+      dependencies: ['setup-admin'],
     },
 
     // Full GoPay E2E — goes through real GoPay Sandbox hosted checkout page
@@ -113,7 +121,7 @@ export default defineConfig({
         // Allow navigation to gopay.com/gopay.cz
         bypassCSP: true,
       },
-      dependencies: ['setup'],
+      dependencies: ['setup-admin'],
     },
 
     // Guest / General Smoke Tests
