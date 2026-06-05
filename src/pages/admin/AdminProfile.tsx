@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
 const AdminProfile = () => {
-    const { user, profile, loading: authLoading } = useAuth();
+    const { user, profile, loading: authLoading, refetchProfile } = useAuth();
     const { content, loading: contentLoading } = useContent();
     const { toast } = useToast();
 
@@ -32,6 +32,8 @@ const AdminProfile = () => {
     // Profile info state
     const [fullName, setFullName] = useState(profile?.full_name || "");
     const [phone, setPhone] = useState(profile?.address?.delivery?.phone || "");
+    const [avatarText, setAvatarText] = useState(profile?.address?.avatar_text || "");
+    const [avatarUrl, setAvatarUrl] = useState(profile?.address?.avatar_url || "");
     
     // Address state
     const [deliveryStreet, setDeliveryStreet] = useState(profile?.address?.delivery?.street || "");
@@ -81,7 +83,9 @@ const AdminProfile = () => {
                     houseNumber: billingSame ? deliveryHouseNumber : billingHouseNumber,
                     city: billingSame ? deliveryCity : billingCity,
                     zip: billingSame ? deliveryZip : billingZip,
-                }
+                },
+                avatar_text: avatarText,
+                avatar_url: avatarUrl
             };
 
             const { error } = await supabase
@@ -92,6 +96,7 @@ const AdminProfile = () => {
                 })
                 .eq("id", user.id);
             if (error) throw error;
+            await refetchProfile();
             toast({ title: content?.admin?.profile?.form?.success || "Saved", description: content?.admin?.profile?.form?.successDesc });
         } catch (error: any) {
             toast({ title: content?.admin?.profile?.form?.generalError || "Error", description: error.message, variant: "destructive" });
@@ -226,6 +231,44 @@ const AdminProfile = () => {
                                         <Mail className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-olive-dark/20" />
                                     </div>
                                     <p className="text-[9px] text-olive-dark/70 font-black uppercase tracking-widest pl-1">{content?.admin?.profile?.form?.emailNote}</p>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <Label htmlFor="fullName" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Celé jméno</Label>
+                                    <div className="relative group/input">
+                                        <Input
+                                            id="fullName"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                            placeholder="Jan Novák"
+                                            className="h-14 sm:h-16 pl-12 sm:pl-14 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-base sm:text-lg text-olive-dark"
+                                            required
+                                        />
+                                        <User className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-olive-dark/20 group-focus-within/input:text-white transition-colors" />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div className="space-y-3">
+                                        <Label htmlFor="avatarText" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Vlastní iniciály / Emoji</Label>
+                                        <Input
+                                            id="avatarText"
+                                            value={avatarText}
+                                            onChange={(e) => setAvatarText(e.target.value.slice(0, 2))}
+                                            placeholder="Z (max 2 znaky)"
+                                            className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-base sm:text-lg text-olive-dark"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label htmlFor="avatarUrl" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">URL profilového obrázku</Label>
+                                        <Input
+                                            id="avatarUrl"
+                                            value={avatarUrl}
+                                            onChange={(e) => setAvatarUrl(e.target.value)}
+                                            placeholder="https://..."
+                                            className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-medium text-olive-dark"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-3">
