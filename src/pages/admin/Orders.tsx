@@ -488,6 +488,7 @@ const Orders = () => {
     // Export State
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
     const [exportType, setExportType] = useState<'month' | 'quarter' | 'year' | 'custom'>('month');
+    const [exportSource, setExportSource] = useState<'all' | 'web' | 'manual'>('all');
     const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
     const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
@@ -586,10 +587,16 @@ const Orders = () => {
             });
         }
 
+        if (exportSource === 'web') {
+            filteredForExport = filteredForExport.filter(o => !o.id.startsWith('MAN-'));
+        } else if (exportSource === 'manual') {
+            filteredForExport = filteredForExport.filter(o => o.id.startsWith('MAN-'));
+        }
+
         if (filteredForExport.length === 0) {
             toast({
                 title: "Chyba exportu",
-                description: "Za vybrané období nebyly nalezeny žádné objednávky.",
+                description: "Za vybrané filtry a období nebyly nalezeny žádné objednávky.",
                 variant: "destructive"
             });
             return;
@@ -618,7 +625,8 @@ const Orders = () => {
         const link = document.createElement("a");
         link.setAttribute("href", url);
         const timestamp = new Date().toISOString().split('T')[0];
-        link.setAttribute("download", `boostup-faktury-${exportType}-${timestamp}.csv`);
+        const sourceSuffix = exportSource === 'web' ? 'webove' : exportSource === 'manual' ? 'manualni' : 'vsechny';
+        link.setAttribute("download", `boostup-faktury-${sourceSuffix}-${exportType}-${timestamp}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1081,6 +1089,20 @@ const Orders = () => {
                                     <SelectItem value="quarter">Aktuální čtvrtletí</SelectItem>
                                     <SelectItem value="year">Celý aktuální rok</SelectItem>
                                     <SelectItem value="custom">Vlastní rozsah (Od-Do)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-3">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60">Typ objednávek</Label>
+                            <Select value={exportSource} onValueChange={(val: any) => setExportSource(val)}>
+                                <SelectTrigger className="rounded-xl border-olive/10 bg-white shadow-sm h-12">
+                                    <SelectValue placeholder="Vyberte typ objednávek" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl border-olive/10 shadow-xl">
+                                    <SelectItem value="all">Všechny objednávky</SelectItem>
+                                    <SelectItem value="web">Jen z webu (nákupy)</SelectItem>
+                                    <SelectItem value="manual">Jen manuálně vytvořené</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
