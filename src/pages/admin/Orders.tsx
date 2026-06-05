@@ -79,6 +79,7 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                         <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-0.5 pr-1">
                             {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer :
                              order.delivery_info?.paymentMethod === 'stripe_express' ? content.admin.orders.status.express :
+                             order.delivery_info?.paymentMethod === 'promo' ? 'Promo / Dárek' :
                              order.delivery_info?.paymentMethod || content.admin.orders.table.payment}
                         </span>
                     </div>
@@ -144,6 +145,17 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                     {order.status === 'shipped' && (
                         <Button size="icon" onClick={() => onStatusChange(order.id, 'completed')} className="bg-black text-white hover:bg-black/80 rounded-xl h-11 w-11 shadow-xl shadow-black/20" aria-label={content.admin.orders.markAsCompleted}>
                             <CheckCircle className="w-5 h-5" />
+                        </Button>
+                    )}
+                    {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
+                        <Button 
+                            size="icon" 
+                            onClick={() => onStatusChange(order.id, 'completed')} 
+                            className="bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl h-11 w-11 shadow-lg shadow-emerald-600/20" 
+                            title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                            aria-label={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                        >
+                            <CheckSquare className="w-5 h-5" />
                         </Button>
                     )}
                     <InvoiceModal order={order}>
@@ -289,6 +301,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                     <span className="text-[9px] font-black text-olive-dark/60 uppercase tracking-widest">
                                         {order.delivery_info?.paymentMethod === 'transfer_manual' ? content.admin.orders.status.transfer.slice(0, 4) :
                                          order.delivery_info?.paymentMethod === 'stripe_express' ? 'STRP' :
+                                         order.delivery_info?.paymentMethod === 'promo' ? 'PROM' :
                                          order.delivery_info?.paymentMethod?.toUpperCase().slice(0, 4) || 'CARD'}
                                     </span>
                                 </TableCell>
@@ -358,6 +371,16 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                 title={content.admin.orders.markAsCompleted}
                                             >
                                                 <CheckCircle className="w-5 h-5" />
+                                            </Button>
+                                        )}
+                                        {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
+                                            <Button
+                                                size="sm"
+                                                onClick={() => onStatusChange(order.id, 'completed')}
+                                                className="h-10 w-10 p-0 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-600/20"
+                                                title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                                            >
+                                                <CheckSquare className="w-5 h-5" />
                                             </Button>
                                         )}
 
