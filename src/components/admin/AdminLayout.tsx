@@ -404,8 +404,8 @@ const AdminLayout = () => {
                         </div>
                         {isExpanded && (
                             <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
-                                <span className="text-[11px] font-black text-white truncate leading-tight uppercase tracking-[0.2em]">{profile?.full_name?.split(' ')[0] || "Admin"}</span>
-                                <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email?.split('@')[0]}</span>
+                                <span className="text-[11px] font-black text-white truncate leading-tight uppercase tracking-[0.2em]">{profile?.full_name || "Admin"}</span>
+                                <span className="text-[9px] font-bold text-white/30 truncate uppercase tracking-widest">{user?.email}</span>
                             </div>
                         )}
                     </Link>
