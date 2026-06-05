@@ -39,10 +39,6 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     actionTimeout: 30000,
     ignoreHTTPSErrors: true,
-    extraHTTPHeaders: {
-      'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
-      // 'x-vercel-skip-toolbar': '1',
-    },
   },
 
   projects: [

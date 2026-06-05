@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from './fixtures';
 
 // Použijeme existující admin session
 test.use({ storageState: 'playwright/.auth/admin.json' });

@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { test as boostupTest } from './fixtures';
+import { test, expect } from './fixtures';
 
 /**
  * Layout Overflow Tests
@@ -16,7 +15,7 @@ const pathsToTest = [
 
 test.describe('Layout Overflow Tests', () => {
   for (const path of pathsToTest) {
-    boostupTest(`No horizontal scroll on ${path}`, async ({ page }) => {
+    test(`No horizontal scroll on ${path}`, async ({ page }) => {
       await page.goto(path);
       
       // Počkáme, až se stránka plně načte

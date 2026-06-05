@@ -55,8 +55,17 @@ for (const role of roles) {
       const emailInput = page.locator('#email');
       await emailInput.waitFor({ state: 'visible', timeout: 30000 });
       
-      await emailInput.fill(role.email);
-      await page.locator('#password').fill(role.password);
+      // Use toPass to fill and assert values, avoiding React hydration race conditions
+      await expect(async () => {
+        await emailInput.fill(role.email);
+        await expect(emailInput).toHaveValue(role.email, { timeout: 1000 });
+      }).toPass({ timeout: 15000 });
+
+      const passwordInput = page.locator('#password');
+      await expect(async () => {
+        await passwordInput.fill(role.password);
+        await expect(passwordInput).toHaveValue(role.password, { timeout: 1000 });
+      }).toPass({ timeout: 10000 });
       
       const submitBtn = page.getByTestId('login-submit-btn');
       await expect(submitBtn).toBeEnabled({ timeout: 10000 });
