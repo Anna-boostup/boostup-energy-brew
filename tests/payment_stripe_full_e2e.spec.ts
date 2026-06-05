@@ -482,9 +482,18 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     // 9. Počkat na přesměrování zpět na náš web
     // Používáme vlastní helper, který detekuje i případ, kdy Vercel Protection zachytí redirect
     const successUrl = await waitForPaymentSuccess(page, baseURL, bypassSecret, 90000);
-    // Po dosahování URL, počkáme na plné načtení stránky
+    // Po dosažení URL počkáme na plné načtení stránky
     await page.waitForLoadState('domcontentloaded', { timeout: 30000 }).catch(() => {});
     console.log(`✅ Platba úspěšná, URL: ${page.url()}`);
+
+    // 9b. Počkat, až zmizí React Suspense spinner (lazy-load bundle)
+    // Spinner se zobrazuje dokud se nenačte JS chunk pro PaymentSuccess stránku
+    const spinner = page.locator('[data-testid="admin-loader"]');
+    if (await spinner.isVisible({ timeout: 3000 }).catch(() => false)) {
+      console.log('⏳ Čekám na zmizení loadovacího spinneru...');
+      await expect(spinner).toBeHidden({ timeout: 30000 });
+      console.log('✅ Spinner zmizel, stránka načtena.');
+    }
 
     // 10. Ověřit obsah success stránky
     await expect(page.locator('body')).toContainText(/děkujeme|úspěšn|BUP-/i, { timeout: 15000 });
