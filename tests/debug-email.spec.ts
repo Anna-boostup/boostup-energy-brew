@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test('Debug email odesilani and diagnostic error', async ({ page }) => {
   // Capture console logs

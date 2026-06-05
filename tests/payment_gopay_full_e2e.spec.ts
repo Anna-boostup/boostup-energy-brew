@@ -1,5 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
-import { test as boostupTest } from './fixtures';
+import { Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 /**
  * FULL E2E GoPay Payment Test
@@ -144,7 +144,7 @@ test.describe('Full GoPay E2E — Real Gateway', () => {
   });
 
   // ── Test 1: Úspěšná platba testovací kartou ──────────────────────────────────
-  boostupTest('Úspěšná platba — karta 4444 (GoPay Test Mode)', async ({ page }) => {
+  test('Úspěšná platba — karta 4444 (GoPay Test Mode)', async ({ page }) => {
     const testEmail = `gopay-e2e-${Date.now()}@test.drinkboostup.cz`;
 
     // 1. Přidat do košíku

@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { test as boostupTest } from './fixtures';
+import { test, expect } from './fixtures';
 import AxeBuilder from '@axe-core/playwright';
 
 /**
@@ -15,7 +14,7 @@ const pathsToTest = [
 
 test.describe('Accessibility Tests', () => {
   for (const path of pathsToTest) {
-    boostupTest(`Accessibility validation on ${path}`, async ({ page }) => {
+    test(`Accessibility validation on ${path}`, async ({ page }) => {
       await page.goto(path);
       await page.waitForLoadState('networkidle');
 

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 /**
  * Form Validation Tests – ověřuje správné chování validace formuláře na checkout stránce.
