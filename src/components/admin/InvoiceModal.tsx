@@ -39,6 +39,16 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
         });
     };
 
+    const formatDueDate = (date: string) => {
+        const d = new Date(date);
+        d.setDate(d.getDate() + 14); // 14 days due date
+        return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'cs-CZ', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -74,16 +84,19 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                 <div className="flex-1 overflow-y-auto p-2 sm:p-12 print:p-0 scrollbar-premium bg-zinc-100">
                     <div ref={invoiceRef} className="bg-white shadow-2xl mx-auto p-8 sm:p-16 min-h-[1100px] w-full max-w-[800px] print:shadow-none print:p-0 origin-top transform scale-[0.9] sm:scale-100 mb-8 rounded-[2rem] sm:rounded-none">
                         {/* Header */}
-                        <div className="flex justify-between items-start mb-16">
-                            <div>
-                                <h1 className="text-3xl font-bold text-olive-dark">{t.title}</h1>
-                                <p className="text-olive/50 mt-1">{t.docNumber}: {order.id}</p>
+                        <div className="flex justify-between items-start mb-16 border-b border-zinc-100 pb-8">
+                            <div className="flex items-center gap-4">
+                                <img src="/logo-green.png" alt="BoostUp Logo" className="h-14 w-auto object-contain" />
+                                <div>
+                                    <h1 className="text-3xl font-bold text-olive-dark tracking-tight">{t.title}</h1>
+                                    <p className="text-olive/50 mt-1">{t.docNumber}: {order.id}</p>
+                                </div>
                             </div>
                             <div className="text-right">
-                                <h2 className="font-bold text-xl mb-2">{bank.accountName}</h2>
-                                <p className="text-sm text-olive-dark/60">{bank.address.street}</p>
-                                <p className="text-sm text-olive-dark/60">{bank.address.city}</p>
-                                <p className="text-sm text-olive-dark/60">{t.icLabel}: {bank.address.ic}</p>
+                                <h2 className="font-black text-lg text-olive-dark uppercase tracking-wider mb-2">{bank.accountName}</h2>
+                                <p className="text-sm text-olive-dark/70">{bank.address.street}</p>
+                                <p className="text-sm text-olive-dark/70">{bank.address.city}</p>
+                                <p className="text-sm text-olive-dark/70 font-semibold">{t.icLabel}: {bank.address.ic}</p>
                             </div>
                         </div>
 
@@ -92,24 +105,72 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                             <div>
                                 <h3 className="font-bold text-olive-dark mb-4 uppercase text-sm tracking-wider">{t.customer}</h3>
                                 <div className="space-y-1 text-sm">
-                                    <p className="font-black text-lg">{order.firstName} {order.lastName}</p>
-                                    <p className="text-olive-dark/70">{order.email}</p>
-                                    <p className="text-olive-dark/70">{order.phone}</p>
+                                    {order.delivery_info?.isCompany ? (
+                                        <>
+                                            <p className="font-black text-lg text-olive-dark">{order.delivery_info.companyName}</p>
+                                            <p className="text-olive-dark/70">IČO: {order.delivery_info.ico}</p>
+                                            {order.delivery_info.dic && <p className="text-olive-dark/70">DIČ: {order.delivery_info.dic}</p>}
+                                            {order.delivery_info.firstName && (
+                                                <p className="text-olive-dark/60 mt-1 text-xs">
+                                                    Kontaktní osoba: {order.delivery_info.firstName} {order.delivery_info.lastName}
+                                                </p>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p className="font-black text-lg text-olive-dark">
+                                            {order.delivery_info?.firstName || order.customer?.name || ""} {order.delivery_info?.lastName || ""}
+                                        </p>
+                                    )}
+                                    <p className="text-olive-dark/70">{order.delivery_info?.phone || ""}</p>
+                                    <p className="text-olive-dark/70">{order.customer?.email || order.delivery_info?.email || ""}</p>
+                                    
                                     <div className="mt-4 pt-4 border-t border-zinc-100">
-                                        <p className="text-olive-dark/70">{order.street} {order.houseNumber}</p>
-                                        <p className="text-olive-dark/70">{order.zip} {order.city}</p>
+                                        <p className="font-bold text-[10px] uppercase tracking-wider text-zinc-400 mb-1">
+                                            {order.delivery_info?.isCompany ? "Fakturační adresa" : "Adresa"}
+                                        </p>
+                                        {order.delivery_info?.billingSameAsDelivery !== false ? (
+                                            <>
+                                                <p className="text-olive-dark/70">
+                                                    {order.delivery_info?.street} {order.delivery_info?.houseNumber}
+                                                </p>
+                                                <p className="text-olive-dark/70">
+                                                    {order.delivery_info?.zip} {order.delivery_info?.city}
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <p className="text-olive-dark/70">
+                                                    {order.delivery_info?.billingStreet} {order.delivery_info?.billingHouseNumber}
+                                                </p>
+                                                <p className="text-olive-dark/70">
+                                                    {order.delivery_info?.billingZip} {order.delivery_info?.billingCity}
+                                                </p>
+                                            </>
+                                        )}
                                     </div>
+
+                                    {order.delivery_info?.billingSameAsDelivery === false && (
+                                        <div className="mt-2 pt-2 border-t border-zinc-50">
+                                            <p className="font-bold text-[10px] uppercase tracking-wider text-zinc-400 mb-1">Doručovací adresa</p>
+                                            <p className="text-olive-dark/70">
+                                                {order.delivery_info?.street} {order.delivery_info?.houseNumber}
+                                            </p>
+                                            <p className="text-olive-dark/70">
+                                                {order.delivery_info?.zip} {order.delivery_info?.city}
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="bg-zinc-50 p-6 rounded-2xl">
                                 <div className="space-y-4">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-zinc-500">{t.issueDate}</span>
-                                        <span className="font-bold">{formatDate(order.created_at)}</span>
+                                        <span className="font-bold">{formatDate(order.date)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-zinc-500">{t.dueDate}</span>
-                                        <span className="font-bold">{formatDate(order.created_at)}</span>
+                                        <span className="font-bold">{formatDueDate(order.date)}</span>
                                     </div>
                                     <div className="pt-4 border-t border-zinc-200">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">{t.issuer}</p>

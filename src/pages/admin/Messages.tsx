@@ -115,7 +115,7 @@ const Messages = () => {
 
             if (error) throw error;
             setMessages(prev => prev.map(m => ({ ...m, is_read: true })));
-            window.dispatchEvent(new Event('message-read'));
+            window.dispatchEvent(new Event('messages-all-read'));
             toast({
                 title: content?.admin?.messages?.success?.allRead || "Označeno jako přečtené",
                 description: content?.admin?.messages?.success?.allRead || "Všechny zprávy byly označeny jako přečtené.",

@@ -1035,6 +1035,37 @@ const ContentManagement = () => {
                                     className="data-[state=checked]:bg-primary scale-125"
                                 />
                             </div>
+
+                            <div className="flex flex-col gap-6 p-8 rounded-[2rem] bg-white border border-background shadow-sm group transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
+                                <div className="space-y-1">
+                                    <Label className="text-lg font-black font-display uppercase tracking-tight text-olive-dark">Příjemci automatických měsíčních reportů</Label>
+                                    <p className="text-sm text-olive/40 font-bold uppercase tracking-widest text-[10px]">
+                                        Nastavte e-mailové adresy, na které se budou automaticky na začátku každého měsíce odesílat souhrnné reporty objednávek.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-background">
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">Hlavní E-mail Příjemce</Label>
+                                        <Input
+                                            type="email"
+                                            value={(localContent as any).reportRecipientEmail || ""}
+                                            onChange={(e) => updateField(['reportRecipientEmail'], e.target.value)}
+                                            className="h-12 rounded-xl border-olive/10 font-bold text-olive-dark focus-visible:ring-primary shadow-sm"
+                                            placeholder="např. ucetni@drinkboostup.cz"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-olive-dark/60 pl-1">E-maily v kopii (CC, oddělené čárkou)</Label>
+                                        <Input
+                                            type="text"
+                                            value={(localContent as any).reportRecipientCc || ""}
+                                            onChange={(e) => updateField(['reportRecipientCc'], e.target.value)}
+                                            className="h-12 rounded-xl border-olive/10 font-bold text-olive-dark focus-visible:ring-primary shadow-sm"
+                                            placeholder="např. admin@drinkboostup.cz, info@drinkboostup.cz"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </TabsContent>

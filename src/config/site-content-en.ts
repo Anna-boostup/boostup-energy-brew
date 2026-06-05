@@ -5,6 +5,8 @@
  */
 
 export const SITE_CONTENT_EN = {
+    reportRecipientEmail: "objednavky@drinkboostup.cz",
+    reportRecipientCc: "",
     navigation: [
         { label: "Our Mission", href: "/#mise" },
         { label: "Products", href: "/#produkty" },

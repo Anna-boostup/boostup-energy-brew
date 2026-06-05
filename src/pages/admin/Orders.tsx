@@ -38,6 +38,7 @@ import {
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 import { ManualOrderForm } from "@/components/admin/ManualOrderForm";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 
 const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => {
@@ -126,42 +127,97 @@ const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange
                 <div className="flex gap-2">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button size="icon" variant="outline" className="rounded-xl h-11 w-11 border-olive/10 hover:bg-olive-dark hover:text-white transition-all">
-                                <Eye className="w-5 h-5" />
-                            </Button>
+                            <div>
+                                <TooltipProvider delayDuration={200}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button size="icon" variant="outline" className="rounded-xl h-11 w-11 border-olive/10 hover:bg-olive-dark hover:text-white transition-all">
+                                                <Eye className="w-5 h-5" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                            {content.admin.orders.viewDetail || "Detail objednávky"}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
                         </DialogTrigger>
                         <OrderDetailDialog order={order} />
                     </Dialog>
                     {order.status === 'pending' && (
-                        <Button size="icon" onClick={() => onStatusChange(order.id, 'paid')} className="bg-lime text-olive-dark hover:bg-lime/80 rounded-xl h-11 w-11 shadow-lg shadow-lime/20" aria-label={content.admin.orders.markAsPaid}>
-                            <CheckCircle className="w-5 h-5" />
-                        </Button>
+                        <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size="icon" onClick={() => onStatusChange(order.id, 'paid')} className="bg-lime text-olive-dark hover:bg-lime/80 rounded-xl h-11 w-11 shadow-lg shadow-lime/20" aria-label={content.admin.orders.markAsPaid}>
+                                        <CheckCircle className="w-5 h-5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                    {content.admin.orders.markAsPaid}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     )}
                     {(order.status === 'paid' || order.status === 'processing') && (
-                        <Button size="icon" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-11 w-11" aria-label={content.admin.orders.markAsShipped}>
-                            <Truck className="w-5 h-5" />
-                        </Button>
+                        <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size="icon" onClick={() => onStatusChange(order.id, 'shipped')} className="bg-olive-dark text-white hover:bg-black rounded-xl h-11 w-11" aria-label={content.admin.orders.markAsShipped}>
+                                        <Truck className="w-5 h-5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                    {content.admin.orders.markAsShipped}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     )}
                     {order.status === 'shipped' && (
-                        <Button size="icon" onClick={() => onStatusChange(order.id, 'completed')} className="bg-black text-white hover:bg-black/80 rounded-xl h-11 w-11 shadow-xl shadow-black/20" aria-label={content.admin.orders.markAsCompleted}>
-                            <CheckCircle className="w-5 h-5" />
-                        </Button>
+                        <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size="icon" onClick={() => onStatusChange(order.id, 'completed')} className="bg-black text-white hover:bg-black/80 rounded-xl h-11 w-11 shadow-xl shadow-black/20" aria-label={content.admin.orders.markAsCompleted}>
+                                        <CheckCircle className="w-5 h-5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                    {content.admin.orders.markAsCompleted}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     )}
                     {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
-                        <Button 
-                            size="icon" 
-                            onClick={() => onStatusChange(order.id, 'completed')} 
-                            className="bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl h-11 w-11 shadow-lg shadow-emerald-600/20" 
-                            title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
-                            aria-label={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
-                        >
-                            <CheckSquare className="w-5 h-5" />
-                        </Button>
+                        <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button 
+                                        size="icon" 
+                                        onClick={() => onStatusChange(order.id, 'completed')} 
+                                        className="bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl h-11 w-11 shadow-lg shadow-emerald-600/20" 
+                                        aria-label={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                                    >
+                                        <CheckSquare className="w-5 h-5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                    {content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     )}
                     <InvoiceModal order={order}>
-                        <Button size="icon" variant="ghost" className="h-11 w-11 p-0 text-olive-dark/60 hover:text-olive-dark hover:bg-admin-canvas/80 rounded-xl" aria-label={content.admin.orders.viewInvoice}>
-                            <FileText className="h-5 h-5" />
-                        </Button>
+                        <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size="icon" variant="ghost" className="h-11 w-11 p-0 text-olive-dark/60 hover:text-olive-dark hover:bg-admin-canvas/80 rounded-xl" aria-label={content.admin.orders.viewInvoice}>
+                                        <FileText className="w-5 h-5" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                    {content.admin.orders.viewInvoice}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     </InvoiceModal>
                 </div>
             </div>
@@ -325,124 +381,209 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                 <TableCell className="text-right pr-4 whitespace-nowrap min-w-max">
                                     <div className="flex justify-end gap-2">
                                         <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline" className="h-10 w-10 p-0 rounded-xl border-olive/10 hover:bg-olive-dark hover:text-white transition-all shadow-sm">
-                                                    <Eye className="w-5 h-5" />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <OrderDetailDialog order={order} />
-                                        </Dialog>
+                                             <DialogTrigger asChild>
+                                                 <div>
+                                                     <TooltipProvider delayDuration={200}>
+                                                         <Tooltip>
+                                                             <TooltipTrigger asChild>
+                                                                 <Button size="sm" variant="outline" className="h-10 w-10 p-0 rounded-xl border-olive/10 hover:bg-olive-dark hover:text-white transition-all shadow-sm">
+                                                                     <Eye className="w-5 h-5" />
+                                                                 </Button>
+                                                             </TooltipTrigger>
+                                                             <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                                 {content.admin.orders.viewDetail || "Detail objednávky"}
+                                                             </TooltipContent>
+                                                         </Tooltip>
+                                                     </TooltipProvider>
+                                                 </div>
+                                             </DialogTrigger>
+                                             <OrderDetailDialog order={order} />
+                                         </Dialog>
 
-                                        {order.status === 'pending' && (
-                                            <Button
-                                                size="sm"
-                                                onClick={() => onStatusChange(order.id, 'paid')}
-                                                className="h-10 w-10 p-0 bg-lime text-olive-dark hover:bg-lime/80 rounded-xl shadow-lg shadow-lime/20"
-                                                title={content.admin.orders.markAsPaid}
-                                            >
-                                                <CheckCircle className="w-5 h-5" />
-                                            </Button>
-                                        )}
-                                        {order.status === 'paid' && (
-                                            <Button
-                                                size="sm"
-                                                onClick={() => onStatusChange(order.id, 'processing')}
-                                                className="h-10 w-10 p-0 bg-[#3d5a2f] text-white hover:bg-[#2d4422] rounded-xl shadow-lg shadow-[#3d5a2f]/20"
-                                                title={content.admin.orders.markAsProcessing}
-                                            >
-                                                <Clock className="w-5 h-5" />
-                                            </Button>
-                                        )}
-                                        {(order.status === 'paid' || order.status === 'processing') && (
-                                            <Button
-                                                size="sm"
-                                                onClick={() => onStatusChange(order.id, 'shipped')}
-                                                className="h-10 w-10 p-0 bg-olive-dark text-white hover:bg-black rounded-xl shadow-lg shadow-olive-dark/20"
-                                                title={content.admin.orders.markAsShipped}
-                                            >
-                                                <Truck className="w-5 h-5" />
-                                            </Button>
-                                        )}
-                                        {order.status === 'shipped' && (
-                                            <Button
-                                                size="sm"
-                                                onClick={() => onStatusChange(order.id, 'completed')}
-                                                className="h-10 w-10 p-0 bg-black text-white hover:bg-black/80 rounded-xl shadow-lg shadow-black/20"
-                                                title={content.admin.orders.markAsCompleted}
-                                            >
-                                                <CheckCircle className="w-5 h-5" />
-                                            </Button>
-                                        )}
-                                        {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
-                                            <Button
-                                                size="sm"
-                                                onClick={() => onStatusChange(order.id, 'completed')}
-                                                className="h-10 w-10 p-0 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-600/20"
-                                                title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
-                                            >
-                                                <CheckSquare className="w-5 h-5" />
-                                            </Button>
-                                        )}
+                                         {order.status === 'pending' && (
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button
+                                                             size="sm"
+                                                             onClick={() => onStatusChange(order.id, 'paid')}
+                                                             className="h-10 w-10 p-0 bg-lime text-olive-dark hover:bg-lime/80 rounded-xl shadow-lg shadow-lime/20"
+                                                             title={content.admin.orders.markAsPaid}
+                                                         >
+                                                             <CheckCircle className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.markAsPaid}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         )}
+                                         {order.status === 'paid' && (
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button
+                                                             size="sm"
+                                                             onClick={() => onStatusChange(order.id, 'processing')}
+                                                             className="h-10 w-10 p-0 bg-[#3d5a2f] text-white hover:bg-[#2d4422] rounded-xl shadow-lg shadow-[#3d5a2f]/20"
+                                                             title={content.admin.orders.markAsProcessing}
+                                                         >
+                                                             <Clock className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.markAsProcessing}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         )}
+                                         {(order.status === 'paid' || order.status === 'processing') && (
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button
+                                                             size="sm"
+                                                             onClick={() => onStatusChange(order.id, 'shipped')}
+                                                             className="h-10 w-10 p-0 bg-olive-dark text-white hover:bg-black rounded-xl shadow-lg shadow-olive-dark/20"
+                                                             title={content.admin.orders.markAsShipped}
+                                                         >
+                                                             <Truck className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.markAsShipped}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         )}
+                                         {order.status === 'shipped' && (
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button
+                                                             size="sm"
+                                                             onClick={() => onStatusChange(order.id, 'completed')}
+                                                             className="h-10 w-10 p-0 bg-black text-white hover:bg-black/80 rounded-xl shadow-lg shadow-black/20"
+                                                             title={content.admin.orders.markAsCompleted}
+                                                         >
+                                                             <CheckCircle className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.markAsCompleted}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         )}
+                                         {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button
+                                                             size="sm"
+                                                             onClick={() => onStatusChange(order.id, 'completed')}
+                                                             className="h-10 w-10 p-0 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-600/20"
+                                                             title={content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                                                         >
+                                                             <CheckSquare className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.markAsCompletedDirect || "Označit rovnou jako vyřízené"}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         )}
 
-                                        {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-xl"
-                                                        title={content.admin.orders.cancelDialog.title}
-                                                    >
-                                                        <XCircle className="w-5 h-5" />
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent className="rounded-[2.5rem] border-none shadow-2xl">
-                                                    <DialogHeader>
-                                                        <DialogTitle className="flex items-center gap-3 text-red-600 font-black uppercase text-lg tracking-tight">
-                                                            <AlertTriangle className="w-6 h-6" />
-                                                            {content.admin.orders.cancelDialog.title}
-                                                        </DialogTitle>
-                                                        <div className="pt-6 space-y-4">
-                                                            <div className="text-sm font-black text-olive-dark uppercase tracking-tight">{content.admin.orders.cancelDialog.question}</div>
-                                                            <div className="p-5 bg-olive-dark/5 rounded-[1.5rem] border border-olive/5">
-                                                                <div className="font-mono text-xs font-black text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 12)}</div>
-                                                                <div className="text-xs font-black text-olive-dark uppercase tracking-tight">{order.customer.name}</div>
-                                                            </div>
-                                                            <p className="text-xs text-olive-dark/70 font-bold leading-relaxed px-1">
-                                                                {content.admin.orders.cancelDialog.warning}
-                                                            </p>
-                                                        </div>
-                                                    </DialogHeader>
-                                                    <DialogFooter className="gap-3 mt-8">
-                                                        <DialogClose asChild>
-                                                            <Button variant="ghost" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest text-olive-dark/40 hover:text-olive-dark transition-all">{content.admin.orders.cancelDialog.back}</Button>
-                                                        </DialogClose>
-                                                        <DialogClose asChild>
-                                                            <Button variant="destructive" className="rounded-xl bg-red-600 hover:bg-red-700 px-8 font-black uppercase text-[10px] tracking-widest text-white shadow-xl shadow-red-600/20" onClick={() => onStatusChange(order.id, 'cancelled')}>
-                                                                {content.admin.orders.cancelDialog.confirmLabel}
-                                                            </Button>
-                                                        </DialogClose>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
-                                        )}
+                                         {order.status !== 'shipped' && order.status !== 'completed' && order.status !== 'cancelled' && (
+                                             <Dialog>
+                                                 <DialogTrigger asChild>
+                                                     <div>
+                                                         <TooltipProvider delayDuration={200}>
+                                                             <Tooltip>
+                                                                 <TooltipTrigger asChild>
+                                                                     <Button
+                                                                         size="sm"
+                                                                         variant="ghost"
+                                                                         className="h-10 w-10 p-0 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-xl"
+                                                                         title={content.admin.orders.cancelDialog.title}
+                                                                     >
+                                                                         <XCircle className="w-5 h-5" />
+                                                                     </Button>
+                                                                 </TooltipTrigger>
+                                                                 <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-red-600 text-white border-none p-3 shadow-xl">
+                                                                     {content.admin.orders.cancelDialog.title || "Stornovat objednávku"}
+                                                                 </TooltipContent>
+                                                             </Tooltip>
+                                                         </TooltipProvider>
+                                                     </div>
+                                                 </DialogTrigger>
+                                                 <DialogContent className="rounded-[2.5rem] border-none shadow-2xl">
+                                                     <DialogHeader>
+                                                         <DialogTitle className="flex items-center gap-3 text-red-600 font-black uppercase text-lg tracking-tight">
+                                                             <AlertTriangle className="w-6 h-6" />
+                                                             {content.admin.orders.cancelDialog.title}
+                                                         </DialogTitle>
+                                                         <div className="pt-6 space-y-4">
+                                                             <div className="text-sm font-black text-olive-dark uppercase tracking-tight">{content.admin.orders.cancelDialog.question}</div>
+                                                             <div className="p-5 bg-olive-dark/5 rounded-[1.5rem] border border-olive/5">
+                                                                 <div className="font-mono text-xs font-black text-white bg-olive-dark px-3 py-1.5 rounded-xl w-fit mb-2">#{order.id.slice(0, 12)}</div>
+                                                                 <div className="text-xs font-black text-olive-dark uppercase tracking-tight">{order.customer.name}</div>
+                                                             </div>
+                                                             <p className="text-xs text-olive-dark/70 font-bold leading-relaxed px-1">
+                                                                 {content.admin.orders.cancelDialog.warning}
+                                                             </p>
+                                                         </div>
+                                                     </DialogHeader>
+                                                     <DialogFooter className="gap-3 mt-8">
+                                                         <DialogClose asChild>
+                                                             <Button variant="ghost" className="rounded-xl px-6 font-black uppercase text-[10px] tracking-widest text-olive-dark/40 hover:text-olive-dark transition-all">{content.admin.orders.cancelDialog.back}</Button>
+                                                         </DialogClose>
+                                                         <DialogClose asChild>
+                                                             <Button variant="destructive" className="rounded-xl bg-red-600 hover:bg-red-700 px-8 font-black uppercase text-[10px] tracking-widest text-white shadow-xl shadow-red-600/20" onClick={() => onStatusChange(order.id, 'cancelled')}>
+                                                                 {content.admin.orders.cancelDialog.confirmLabel}
+                                                             </Button>
+                                                         </DialogClose>
+                                                     </DialogFooter>
+                                                 </DialogContent>
+                                             </Dialog>
+                                         )}
 
-                                        {order.packeta_barcode && (
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                className="h-10 w-10 p-0 text-olive-dark border-olive/10 hover:bg-olive-dark hover:text-white rounded-xl transition-all"
-                                                title={content.admin.orders.packetaLabel}
-                                                onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
-                                            >
-                                                <Printer className="w-5 h-5" />
-                                            </Button>
-                                        )}
-                                        <InvoiceModal order={order}>
-                                            <Button size="sm" variant="outline" className="h-10 w-10 p-0 text-olive-dark/70 border-olive-dark/10 hover:text-olive-dark hover:bg-admin-canvas rounded-xl transition-all" title={content.admin.orders.viewInvoice}>
-                                                <FileText className="w-5 h-5" />
-                                            </Button>
-                                        </InvoiceModal>
+                                         {order.packeta_barcode && (
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button
+                                                             size="sm"
+                                                             variant="outline"
+                                                             className="h-10 w-10 p-0 text-olive-dark border-olive/10 hover:bg-olive-dark hover:text-white rounded-xl transition-all"
+                                                             title={content.admin.orders.packetaLabel}
+                                                             onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
+                                                         >
+                                                             <Printer className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.packetaLabel}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         )}
+                                         <InvoiceModal order={order}>
+                                             <TooltipProvider delayDuration={200}>
+                                                 <Tooltip>
+                                                     <TooltipTrigger asChild>
+                                                         <Button size="sm" variant="outline" className="h-10 w-10 p-0 text-olive-dark/70 border-olive-dark/10 hover:text-olive-dark hover:bg-admin-canvas rounded-xl transition-all" title={content.admin.orders.viewInvoice}>
+                                                             <FileText className="w-5 h-5" />
+                                                         </Button>
+                                                     </TooltipTrigger>
+                                                     <TooltipContent className="rounded-xl font-black uppercase text-[10px] tracking-widest bg-olive-dark text-white border-none p-3 shadow-xl">
+                                                         {content.admin.orders.viewInvoice}
+                                                     </TooltipContent>
+                                                 </Tooltip>
+                                             </TooltipProvider>
+                                         </InvoiceModal>
                                     </div>
                                 </TableCell>
                             </TableRow>
