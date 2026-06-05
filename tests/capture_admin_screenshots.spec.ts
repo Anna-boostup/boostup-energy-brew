@@ -4,6 +4,7 @@ import { test } from './fixtures';
 test.use({ storageState: 'playwright/.auth/admin.json' });
 
 const pagesToCapture = [
+    { name: 'dashboard', path: '/admin' },
     { name: 'content-management', path: '/admin/content' },
     { name: 'blog', path: '/admin/blog' },
     { name: 'emails', path: '/admin/emails' },
@@ -14,6 +15,7 @@ const pagesToCapture = [
     { name: 'pricing', path: '/admin/pricing' },
     { name: 'promo-codes', path: '/admin/promo-codes' },
     { name: 'users', path: '/admin/users' },
+    { name: 'insights', path: '/admin/insights' },
 ];
 
 test('Capture Admin Screenshots', async ({ page }) => {

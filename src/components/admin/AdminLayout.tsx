@@ -375,7 +375,7 @@ const AdminLayout = () => {
                     ))}
                 </div>
 
-                <div className={`p-8 border-t border-white/5 space-y-4 ${!isExpanded ? 'p-4 flex flex-col items-center' : ''}`}>
+                <div className={`border-t border-white/5 space-y-4 ${isExpanded ? 'p-8' : 'p-4 flex flex-col items-center'}`}>
                     {/* Pin Logic in text for better UX */}
                     {isExpanded && (
                         <div className="flex items-center justify-between px-4">
@@ -391,10 +391,16 @@ const AdminLayout = () => {
 
                     <Link 
                         to="/admin/profile" 
-                        className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5' : 'p-0 w-12 h-12 justify-center rounded-2xl mx-auto'}`}
+                        className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5 w-full' : 'p-0 w-12 h-12 justify-center rounded-2xl'}`}
                     >
-                        <div className={`rounded-2xl bg-lime overflow-hidden flex items-center justify-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 ${isExpanded ? 'w-12 h-12 min-w-[3rem] text-sm' : 'w-full h-full text-xl'}`}>
-                            <span className="leading-none select-none">{profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}</span>
+                        <div className={`rounded-2xl bg-lime overflow-hidden flex items-center justify-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 w-12 h-12 ${isExpanded ? 'min-w-[3rem] text-sm' : 'text-xl'}`}>
+                            {profile?.address?.avatar_url ? (
+                                <img src={profile.address.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="leading-none select-none">
+                                    {profile?.address?.avatar_text || profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
+                                </span>
+                            )}
                         </div>
                         {isExpanded && (
                             <div className="flex flex-col min-w-0 animate-in slide-in-from-left-2 duration-300">
@@ -407,7 +413,7 @@ const AdminLayout = () => {
                     <Button
                         variant="ghost"
                         size="sm"
-                        className={`w-full justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 px-6 ${!isExpanded ? 'px-0 justify-center w-12' : ''}`}
+                        className={`justify-start text-red-400/60 hover:text-red-400 hover:bg-red-400/10 rounded-2xl h-12 ${isExpanded ? 'w-full px-6' : 'px-0 justify-center w-12'}`}
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 shrink-0" />
