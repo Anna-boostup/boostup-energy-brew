@@ -19,6 +19,24 @@ const AdminLayout = () => {
     const location = useLocation();
 
     const { user, profile, loading, signOut } = useAuth();
+
+    const getInitials = () => {
+        if (profile?.address?.avatar_text) {
+            return profile.address.avatar_text.toUpperCase();
+        }
+        if (profile?.full_name) {
+            const parts = profile.full_name.trim().split(/\s+/);
+            if (parts.length >= 2) {
+                return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+            }
+            return parts[0].charAt(0).toUpperCase();
+        }
+        if (user?.email) {
+            return user.email.charAt(0).toUpperCase();
+        }
+        return "A";
+    };
+
     const { materials } = useManufacture();
     const { content } = useContent();
     // Fetch unread messages count
@@ -398,7 +416,7 @@ const AdminLayout = () => {
                                 <img src={profile.address.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                             ) : (
                                 <span className="leading-none select-none">
-                                    {profile?.address?.avatar_text || profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "A"}
+                                    {getInitials()}
                                 </span>
                             )}
                         </div>
