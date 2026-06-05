@@ -76,6 +76,16 @@ export interface StockMovement {
     };
 }
 
+export interface PackagingRule {
+    id: string;
+    pack_size: number;
+    material_id: string;
+    quantity_required: number;
+    created_at?: string;
+    material_name?: string;
+    material_unit?: string;
+}
+
 interface InventoryContextType {
     stock: Record<SKU, number>;
     products: Product[];
@@ -89,6 +99,11 @@ interface InventoryContextType {
     updateOrderStatus: (orderId: string, status: Order['status']) => void;
     updateProduct: (sku: string, updates: Partial<Product>) => Promise<void>;
     updateOrderPacketaInfo: (orderId: string, barcode: string, packetId: string) => Promise<void>;
+    packagingRules: PackagingRule[];
+    fetchPackagingRules: () => Promise<void>;
+    addPackagingRule: (rule: Omit<PackagingRule, 'id' | 'created_at'>) => Promise<boolean>;
+    updatePackagingRule: (id: string, updates: Partial<PackagingRule>) => Promise<boolean>;
+    deletePackagingRule: (id: string) => Promise<boolean>;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -99,12 +114,14 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [orders, setOrders] = useState<Order[]>([]);
     const [movements, setMovements] = useState<StockMovement[]>([]);
     const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
+    const [packagingRules, setPackagingRules] = useState<PackagingRule[]>([]);
 
     // 1. Initial Fetch
     useEffect(() => {
         fetchInventory();
         fetchMovements();
         fetchOrders(); // We can migrate orders later, but let's keep it here
+        fetchPackagingRules();
     }, []);
 
     // 2. Realtime Subscriptions
@@ -305,6 +322,156 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return stock[sku] || 0;
     };
 
+    const deductPackagingForOrder = async (order: Order, isReturn: boolean) => {
+        if (!supabase) return;
+        
+        console.log(`[Packaging] Starting packaging update for order ${order.id}. isReturn=${isReturn}`);
+
+        const packCounts: Record<number, number> = {};
+
+        order.items.forEach(item => {
+            let packSize = 1;
+            if (item.mixConfiguration) {
+                packSize = (item.mixConfiguration.lemon || 0) + (item.mixConfiguration.red || 0) + (item.mixConfiguration.silky || 0);
+            } else if (item.sku) {
+                const parts = item.sku.split('-');
+                packSize = parseInt(parts[parts.length - 1]) || 1;
+            }
+
+            packCounts[packSize] = (packCounts[packSize] || 0) + item.quantity;
+        });
+
+        const { data: rules, error: rulesError } = await supabase
+            .from('packaging_rules')
+            .select('*');
+
+        if (rulesError) {
+            console.error('[Packaging] Error loading packaging rules:', rulesError);
+            return;
+        }
+
+        if (!rules || rules.length === 0) {
+            console.log('[Packaging] No packaging rules found in database. Skipping subtraction.');
+            return;
+        }
+
+        const multiplier = isReturn ? 1 : -1;
+        const type = isReturn ? 'restock' : 'use';
+
+        for (const [packSizeStr, qty] of Object.entries(packCounts)) {
+            const packSize = parseInt(packSizeStr);
+            const matchingRules = rules.filter(r => r.pack_size === packSize);
+
+            for (const rule of matchingRules) {
+                const totalAmount = qty * Number(rule.quantity_required);
+                const movementAmount = totalAmount * multiplier;
+                const note = isReturn 
+                    ? `Storno obj. ${order.id} - vrácení obalu` 
+                    : `Odpis obalu pro obj. ${order.id}`;
+
+                console.log(`[Packaging] Updating manufacture inventory: material_id=${rule.material_id}, amount=${movementAmount}, type=${type}, note="${note}"`);
+
+                const { error: rpcError } = await supabase.rpc('handle_manufacture_movement', {
+                    p_material_id: rule.material_id,
+                    p_type: type,
+                    p_amount: movementAmount,
+                    p_note: note
+                });
+
+                if (rpcError) {
+                    console.error(`[Packaging] RPC error for material ${rule.material_id}:`, rpcError);
+                }
+            }
+        }
+    };
+
+    const fetchPackagingRules = async () => {
+        if (!supabase) return;
+        const { data, error } = await supabase
+            .from('packaging_rules')
+            .select(`
+                *,
+                manufacture_inventory:material_id (
+                    name,
+                    unit
+                )
+            `)
+            .order('pack_size');
+
+        if (error) {
+            console.error('Error fetching packaging rules:', error);
+            return;
+        }
+
+        if (data) {
+            const mapped: PackagingRule[] = data.map((r: any) => ({
+                id: r.id,
+                pack_size: r.pack_size,
+                material_id: r.material_id,
+                quantity_required: Number(r.quantity_required),
+                created_at: r.created_at,
+                material_name: r.manufacture_inventory?.name || 'Neznámý materiál',
+                material_unit: r.manufacture_inventory?.unit || 'ks'
+            }));
+            setPackagingRules(mapped);
+        }
+    };
+
+    const addPackagingRule = async (rule: Omit<PackagingRule, 'id' | 'created_at'>) => {
+        if (!supabase) return false;
+        const { data, error } = await supabase
+            .from('packaging_rules')
+            .insert([rule])
+            .select();
+
+        if (error) {
+            console.error('Error adding packaging rule:', error);
+            return false;
+        }
+
+        if (data) {
+            await fetchPackagingRules();
+            return true;
+        }
+        return false;
+    };
+
+    const updatePackagingRule = async (id: string, updates: Partial<PackagingRule>) => {
+        if (!supabase) return false;
+        const cleanUpdates = { ...updates };
+        delete cleanUpdates.material_name;
+        delete cleanUpdates.material_unit;
+
+        const { error } = await supabase
+            .from('packaging_rules')
+            .update(cleanUpdates)
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error updating packaging rule:', error);
+            return false;
+        }
+
+        setPackagingRules(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+        return true;
+    };
+
+    const deletePackagingRule = async (id: string) => {
+        if (!supabase) return false;
+        const { error } = await supabase
+            .from('packaging_rules')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error deleting packaging rule:', error);
+            return false;
+        }
+
+        setPackagingRules(prev => prev.filter(r => r.id !== id));
+        return true;
+    };
+
     const addOrder = async (order: Order) => {
         // Double check uniqueness before insert
         const { data: existing } = await supabase
@@ -335,6 +502,15 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (error) {
             console.error('Error adding order:', error);
             return false;
+        }
+
+        // Deduct packaging materials on successful order insert
+        if (order.status !== 'cancelled') {
+            try {
+                await deductPackagingForOrder(order, false);
+            } catch (e) {
+                console.error('Failed to deduct packaging materials for new order:', e);
+            }
         }
         return true;
     };
@@ -376,6 +552,13 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 console.error('Error updating order status:', error);
                 alert("Chyba při aktualizaci stavu: " + error.message);
                 return;
+            }
+
+            // Deduct or return packaging materials
+            try {
+                await deductPackagingForOrder(currentOrder, isNowCancelling);
+            } catch (err) {
+                console.error('Error handling packaging subtraction/return on status update:', err);
             }
 
             // Calculate total bottles in order to avoid multiple movements per flavor
@@ -486,7 +669,12 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             addOrder,
             updateOrderStatus,
             updateProduct,
-            updateOrderPacketaInfo
+            updateOrderPacketaInfo,
+            packagingRules,
+            fetchPackagingRules,
+            addPackagingRule,
+            updatePackagingRule,
+            deletePackagingRule
         }}>
             {children}
         </InventoryContext.Provider>
