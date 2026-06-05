@@ -50,7 +50,7 @@ export const CartItemRow = React.memo(({ item, updateQuantity, removeFromCart }:
             </p>
             <div className="flex items-center gap-3 mt-3">
                 <button
-                    onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                    onClick={() => updateQuantity(item.cartItemId || item.id, Math.max(1, item.quantity - 1))}
                     className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
                     aria-label="Snížit množství"
                 >
@@ -60,7 +60,7 @@ export const CartItemRow = React.memo(({ item, updateQuantity, removeFromCart }:
                     {item.quantity}
                 </span>
                 <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.cartItemId || item.id, item.quantity + 1)}
                     className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
                     aria-label="Zvýšit množství"
                 >
@@ -69,7 +69,7 @@ export const CartItemRow = React.memo(({ item, updateQuantity, removeFromCart }:
             </div>
         </div>
         <button
-            onClick={() => removeFromCart(item.id)}
+            onClick={() => removeFromCart(item.cartItemId || item.id)}
             className="p-2 text-muted-foreground hover:text-destructive transition-colors"
             aria-label="Odebrat z košíku"
         >

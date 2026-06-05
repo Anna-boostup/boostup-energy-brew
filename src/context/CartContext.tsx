@@ -20,7 +20,17 @@ export interface CartItem {
         silky: number;
     };
     subscriptionInterval?: 'monthly' | 'bimonthly';
+    cartItemId?: string;
 }
+
+export const getCartItemId = (item: CartItem): string => {
+    const sub = item.subscriptionInterval || 'onetime';
+    const mix = item.mixConfiguration 
+        ? `-${item.mixConfiguration.lemon}-${item.mixConfiguration.red}-${item.mixConfiguration.silky}` 
+        : '';
+    const flavorStr = item.flavor ? `-${item.flavor.replace(/\s+/g, '')}` : '';
+    return `${item.id}${flavorStr}-${item.pack || ''}-${sub}${mix}`;
+};
 
 interface CartState {
     items: CartItem[];
@@ -50,37 +60,30 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
     switch (action.type) {
-        case 'ADD_TO_CART':
-            // Create a unique key for comparison including mix config AND subscription
-            const newItemKey = JSON.stringify({
-                mix: action.payload.mixConfiguration || {},
-                sub: action.payload.subscriptionInterval || null
-            });
-
+        case 'ADD_TO_CART': {
+            const itemWithCartId = {
+                ...action.payload,
+                cartItemId: action.payload.cartItemId || getCartItemId(action.payload)
+            };
             const existingItemIndex = state.items.findIndex(
-                item => item.id === action.payload.id &&
-                    item.flavor === action.payload.flavor &&
-                    item.pack === action.payload.pack &&
-                    JSON.stringify({
-                        mix: item.mixConfiguration || {},
-                        sub: item.subscriptionInterval || null
-                    }) === newItemKey
+                item => item.cartItemId === itemWithCartId.cartItemId
             );
             if (existingItemIndex > -1) {
                 const newItems = [...state.items];
-                newItems[existingItemIndex].quantity += action.payload.quantity;
+                newItems[existingItemIndex].quantity += itemWithCartId.quantity;
                 return { ...state, items: newItems };
             }
-            return { ...state, items: [...state.items, action.payload] };
+            return { ...state, items: [...state.items, itemWithCartId] };
+        }
 
         case 'REMOVE_FROM_CART':
-            return { ...state, items: state.items.filter(item => item.id !== action.payload) };
+            return { ...state, items: state.items.filter(item => item.cartItemId !== action.payload) };
 
         case 'UPDATE_QUANTITY':
             return {
                 ...state,
                 items: state.items.map(item =>
-                    item.id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item
+                    item.cartItemId === action.payload.id ? { ...item, quantity: action.payload.quantity } : item
                 )
             };
 
@@ -95,7 +98,19 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, { items: [] }, (initial) => {
         const localData = localStorage.getItem('boostup_cart');
-        return localData ? { items: JSON.parse(localData) } : initial;
+        if (localData) {
+            try {
+                const parsed = JSON.parse(localData) as CartItem[];
+                const migrated = parsed.map(item => ({
+                    ...item,
+                    cartItemId: item.cartItemId || getCartItemId(item)
+                }));
+                return { items: migrated };
+            } catch {
+                return initial;
+            }
+        }
+        return initial;
     });
 
     const [appliedPromoCode, setAppliedPromoCode] = useState<{ code: string; discount: number } | null>(null);

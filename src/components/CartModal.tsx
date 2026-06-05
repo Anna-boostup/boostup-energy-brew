@@ -62,7 +62,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                 <div className="space-y-4">
                                     {cart.map((item) => (
                                         <CartItemRow
-                                            key={item.id}
+                                            key={item.cartItemId || item.id}
                                             item={item}
                                             updateQuantity={updateQuantity}
                                             removeFromCart={removeFromCart}
