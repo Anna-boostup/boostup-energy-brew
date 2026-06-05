@@ -97,11 +97,16 @@ const AdminLayout = () => {
         const handleMessageRead = () => {
             setUnreadCount(prev => Math.max(0, prev - 1));
         };
+        const handleMessagesAllRead = () => {
+            setUnreadCount(0);
+        };
         window.addEventListener('message-read', handleMessageRead);
+        window.addEventListener('messages-all-read', handleMessagesAllRead);
 
         return () => {
             clearInterval(interval);
             window.removeEventListener('message-read', handleMessageRead);
+            window.removeEventListener('messages-all-read', handleMessagesAllRead);
         };
     }, [user, profile, orders.length]);
 
