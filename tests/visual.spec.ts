@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // Které stránky chceme vizuálně hlídat
 const PAGES_TO_TEST = [

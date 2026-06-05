@@ -1,5 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
-import { test as boostupTest } from './fixtures';
+import { Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 /**
  * FULL E2E Stripe Payment Test
@@ -428,7 +428,7 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   });
 
   // ── Test 1: Úspěšná platba testovací kartou ──────────────────────────────────
-  boostupTest('Úspěšná platba — karta 4000 (Stripe Test Mode)', async ({ page }) => {
+  test('Úspěšná platba — karta 4000 (Stripe Test Mode)', async ({ page }) => {
     const testEmail = `stripe-e2e-${Date.now()}@test.drinkboostup.cz`;
     const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
@@ -568,7 +568,7 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
   });
 
   // ── Test 2: Zamítnutá karta ──────────────────────────────────────────────────
-  boostupTest('Zamítnutá platba — karta 4000 0000 0000 9995', async ({ page }) => {
+  test('Zamítnutá platba — karta 4000 0000 0000 9995', async ({ page }) => {
     const testEmail = `stripe-fail-${Date.now()}@test.drinkboostup.cz`;
     const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:5173';
     const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
