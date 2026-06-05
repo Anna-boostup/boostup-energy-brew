@@ -34,6 +34,60 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   await page.locator('input:visible').first().waitFor({ state: 'visible', timeout: 30000 });
   await page.waitForTimeout(1500);
 
+  // 1b. Zkontrolovat, zda je na stránce výběr platební metody "Card" (karta) a případně na ni kliknout.
+  // V některých Stripe configurations může být platební metoda "Card" zobrazená jako radio button
+  // nebo jako tabulátor. Pokud není vybraná, pole pro kartu se nezobrazí.
+  const cardRadioSelectors = [
+    'input[type="radio"][value="card"]',
+    'input[type="radio"]#payment-method-accordion-item-title-card',
+    'input[type="radio"]#payment-method-card',
+    'label:has-text("Card")',
+    'label:has-text("Karta")',
+    'text=/^Card$|^Karta$|^Platební karta$/i'
+  ];
+
+  console.log('ℹ️ Kontroluji přítomnost výběru platební metody "Card"...');
+  let paymentMethodSelected = false;
+  for (const selector of cardRadioSelectors) {
+    const el = page.locator(selector).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      // Zkontrolujeme, zda je radio button už označen (pokud je to input)
+      const isChecked = await el.evaluate((node) => (node as HTMLInputElement).checked).catch(() => false);
+      if (!isChecked) {
+        console.log(`✅ Klikám na volbu platby kartou pomocí: ${selector}`);
+        await el.click({ force: true });
+        await page.waitForTimeout(2000); // Počkáme na načtení iframe pro kartu
+      } else {
+        console.log(`ℹ️ Volba platby kartou je již vybrána (${selector})`);
+      }
+      paymentMethodSelected = true;
+      break;
+    }
+  }
+
+  if (!paymentMethodSelected) {
+    // Prohledáme i všechny frames, zda tam není volba platby kartou
+    for (const frame of page.frames()) {
+      if (frame === page.mainFrame()) continue;
+      for (const selector of cardRadioSelectors) {
+        try {
+          const el = frame.locator(selector).first();
+          if (await el.isVisible({ timeout: 1500 }).catch(() => false)) {
+            const isChecked = await el.evaluate((node) => (node as HTMLInputElement).checked).catch(() => false);
+            if (!isChecked) {
+              console.log(`✅ Klikám na volbu platby kartou v iframe pomocí: ${selector}`);
+              await el.click({ force: true });
+              await page.waitForTimeout(2000);
+            }
+            paymentMethodSelected = true;
+            break;
+          }
+        } catch { /* ignore */ }
+      }
+      if (paymentMethodSelected) break;
+    }
+  }
+
   // 2. Vyplnit email (pokud je viditelný)
   const emailInput = page.locator('input[type="email"][name="email"], input[autocomplete="email"]').first();
   if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
@@ -83,7 +137,7 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   await page.waitForTimeout(1000);
 
   // ── Strategie 1: Nový unifikovaný Payment Element (jeden iframe) ──────────
-  // Stripe nový design – hledáme jakýkoliv iframe který obsahuje pole pro kartu
+  // Znovu načteme seznam framů, abychom viděli nově načtený iframe pro kartu
   const allFrames = page.frames();
   let cardFilled = false;
 
