@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
 import { supabase } from "@/lib/supabase";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint, MapPin, CreditCard, Phone, Loader2 } from "lucide-react";
+import { User, Lock, Save, Shield, ShoppingBag, RefreshCw, Mail, Fingerprint, MapPin, CreditCard, Phone, Loader2, Upload } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountOrders from "@/pages/account/Orders";
 import Subscriptions from "@/pages/account/Subscriptions";
@@ -34,6 +34,66 @@ const AdminProfile = () => {
     const [phone, setPhone] = useState(profile?.address?.delivery?.phone || "");
     const [avatarText, setAvatarText] = useState(profile?.address?.avatar_text || "");
     const [avatarUrl, setAvatarUrl] = useState(profile?.address?.avatar_url || "");
+    const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const avatarFileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleAvatarUpload = async (file: File) => {
+        if (!file || !user) return;
+        setIsUploadingAvatar(true);
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `avatar-${user.id}-${Date.now()}.${fileExt}`;
+            
+            // Try uploading to 'avatars' bucket first
+            let uploadBucket = 'avatars';
+            let uploadError = null;
+            
+            try {
+                const { error } = await supabase.storage
+                    .from(uploadBucket)
+                    .upload(fileName, file, { upsert: true });
+                if (error) {
+                    uploadError = error;
+                }
+            } catch (err) {
+                uploadError = err;
+            }
+            
+            // If it failed, fallback to 'product-images' bucket
+            if (uploadError) {
+                console.log("Failed to upload to 'avatars' bucket, falling back to 'product-images'", uploadError);
+                uploadBucket = 'product-images';
+                const { error: fallbackError } = await supabase.storage
+                    .from(uploadBucket)
+                    .upload(fileName, file, { upsert: true });
+                if (fallbackError) throw fallbackError;
+            }
+            
+            const { data: { publicUrl } } = supabase.storage
+                .from(uploadBucket)
+                .getPublicUrl(fileName);
+                
+            setAvatarUrl(publicUrl);
+            toast({
+                title: "Obrázek nahrán",
+                description: "Profilový obrázek byl úspěšně nahrán.",
+            });
+        } catch (error: any) {
+            console.error("Avatar upload error:", error);
+            toast({
+                title: "Chyba při nahrávání",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsUploadingAvatar(false);
+        }
+    };
+
+    const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) handleAvatarUpload(file);
+    };
     
     // Address state
     const [deliveryStreet, setDeliveryStreet] = useState(profile?.address?.delivery?.street || "");
@@ -248,25 +308,66 @@ const AdminProfile = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                                    <div className="md:col-span-2 space-y-3">
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Profilová fotka</Label>
+                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-white shadow-xl shadow-background/50 border border-transparent">
+                                            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-olive-dark/10 bg-olive-dark flex items-center justify-center shrink-0 relative">
+                                                {avatarUrl ? (
+                                                    <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+                                                ) : avatarText ? (
+                                                    <span className="text-xl font-black text-lime font-display uppercase tracking-tight">{avatarText}</span>
+                                                ) : (
+                                                    <User className="w-6 h-6 text-white/40" />
+                                                )}
+                                                {isUploadingAvatar && (
+                                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                        <Loader2 className="w-5 h-5 animate-spin text-lime" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col gap-1.5">
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        type="button"
+                                                        size="sm"
+                                                        disabled={isUploadingAvatar}
+                                                        onClick={() => avatarFileInputRef.current?.click()}
+                                                        className="h-9 px-3 bg-olive-dark hover:bg-black text-primary font-black uppercase text-[9px] tracking-wider rounded-lg shadow-sm transition-all"
+                                                    >
+                                                        <Upload className="w-3.5 h-3.5 mr-1.5" />
+                                                        Nahrát
+                                                    </Button>
+                                                    {avatarUrl && (
+                                                        <Button
+                                                            type="button"
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            onClick={() => setAvatarUrl("")}
+                                                            className="h-9 px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10 font-black uppercase text-[9px] tracking-wider rounded-lg transition-all"
+                                                        >
+                                                            Smazat
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                                <input
+                                                    ref={avatarFileInputRef}
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleAvatarFileChange}
+                                                    className="hidden"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="space-y-3">
-                                        <Label htmlFor="avatarText" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Vlastní iniciály / Emoji</Label>
+                                        <Label htmlFor="avatarText" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Iniciály / Emoji</Label>
                                         <Input
                                             id="avatarText"
                                             value={avatarText}
                                             onChange={(e) => setAvatarText(e.target.value.slice(0, 2))}
-                                            placeholder="Z (max 2 znaky)"
-                                            className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-base sm:text-lg text-olive-dark"
-                                        />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label htmlFor="avatarUrl" className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">URL profilového obrázku</Label>
-                                        <Input
-                                            id="avatarUrl"
-                                            value={avatarUrl}
-                                            onChange={(e) => setAvatarUrl(e.target.value)}
-                                            placeholder="https://..."
-                                            className="h-14 sm:h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-medium text-olive-dark"
+                                            placeholder="Z"
+                                            className="h-16 px-6 rounded-2xl border-2 border-transparent bg-white shadow-xl shadow-background/50 focus-visible:ring-lime focus-visible:border-lime transition-all font-display font-black text-base sm:text-lg text-olive-dark"
                                         />
                                     </div>
                                 </div>
