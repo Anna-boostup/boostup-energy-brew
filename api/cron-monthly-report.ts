@@ -18,6 +18,74 @@ const escapeCsv = (str: any) => {
     return s;
 };
 
+const processOrders = (ordersList: any[]) => {
+    let totalRevenue = 0;
+    let totalsByFlavor = { lemon: 0, red: 0, silky: 0 };
+    let paidOrdersCount = 0;
+    let cancelledOrdersCount = 0;
+
+    let csvContent = '\uFEFF'; // BOM for Excel UTF-8 support
+    csvContent += 'ID,Datum,Status,Zákazník,Email,Suma_Kč,Položky,Ulice,Město,PSČ,Doprava,Platba\n';
+
+    for (const order of ordersList) {
+        if (order.status === 'cancelled') {
+            cancelledOrdersCount++;
+        } else {
+            paidOrdersCount++;
+            totalRevenue += order.total || 0;
+
+            // Count flavors for paid/completed orders
+            const items = order.items || [];
+            items.forEach((item: any) => {
+                const qty = item.quantity || 1;
+                if (item.mixConfiguration) {
+                    totalsByFlavor.lemon += (item.mixConfiguration.lemon || 0) * qty;
+                    totalsByFlavor.red += (item.mixConfiguration.red || 0) * qty;
+                    totalsByFlavor.silky += (item.mixConfiguration.silky || 0) * qty;
+                } else if (item.sku) {
+                    const sku = item.sku.toLowerCase();
+                    let packs = 1;
+                    if (sku.endsWith('-3')) packs = 3;
+                    if (sku.endsWith('-12')) packs = 12;
+
+                    if (sku.includes('lemon')) totalsByFlavor.lemon += qty * packs;
+                    else if (sku.includes('red')) totalsByFlavor.red += qty * packs;
+                    else if (sku.includes('silky')) totalsByFlavor.silky += qty * packs;
+                }
+            });
+        }
+
+        // Generate CSV Row
+        const itemsStr = (order.items || []).map((i: any) => `${i.quantity}x ${i.name || i.sku}`).join('; ');
+        const delInfo = order.delivery_info || {};
+        
+        const row = [
+            order.id,
+            new Date(order.created_at).toLocaleDateString('cs-CZ'),
+            order.status,
+            order.customer_name || '',
+            order.customer_email || '',
+            order.total || 0,
+            itemsStr,
+            delInfo.street || '',
+            delInfo.city || '',
+            delInfo.zip || '',
+            delInfo.deliveryMethod || '',
+            delInfo.paymentMethod || ''
+        ];
+
+        csvContent += row.map(escapeCsv).join(',') + '\n';
+    }
+
+    return {
+        totalRevenue,
+        totalsByFlavor,
+        paidOrdersCount,
+        cancelledOrdersCount,
+        csvContent
+    };
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Basic protection against unwanted calls.
     // Vercel cron jobs pass an Authorization header starting with "Bearer " and the CRON_SECRET
@@ -52,69 +120,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const reportOrders = orders || [];
 
-        // Compute statistics
-        let totalRevenue = 0;
-        let totalsByFlavor = { lemon: 0, red: 0, silky: 0 };
-        let paidOrdersCount = 0;
-        let cancelledOrdersCount = 0;
+        // Split orders into web purchases and manual orders
+        const webOrders = reportOrders.filter(o => !o.id.startsWith('MAN-'));
+        const manualOrders = reportOrders.filter(o => o.id.startsWith('MAN-'));
 
-        // Generate CSV header
-        let csvContent = '\uFEFF'; // BOM for Excel UTF-8 support
-        csvContent += 'ID,Datum,Status,Zákazník,Email,Suma_Kč,Položky,Ulice,Město,PSČ,Doprava,Platba\n';
-
-        for (const order of reportOrders) {
-            if (order.status === 'cancelled') {
-                cancelledOrdersCount++;
-            } else {
-                paidOrdersCount++;
-                totalRevenue += order.total || 0;
-
-                // Count flavors for paid/completed orders
-                const items = order.items || [];
-                items.forEach((item: any) => {
-                    const qty = item.quantity || 1;
-                    if (item.mixConfiguration) {
-                        totalsByFlavor.lemon += (item.mixConfiguration.lemon || 0) * qty;
-                        totalsByFlavor.red += (item.mixConfiguration.red || 0) * qty;
-                        totalsByFlavor.silky += (item.mixConfiguration.silky || 0) * qty;
-                    } else if (item.sku) {
-                        const sku = item.sku.toLowerCase();
-                        let packs = 1;
-                        if (sku.endsWith('-3')) packs = 3;
-                        if (sku.endsWith('-12')) packs = 12;
-
-                        if (sku.includes('lemon')) totalsByFlavor.lemon += qty * packs;
-                        else if (sku.includes('red')) totalsByFlavor.red += qty * packs;
-                        else if (sku.includes('silky')) totalsByFlavor.silky += qty * packs;
-                    }
-                });
-            }
-
-            // Generate CSV Row
-            const itemsStr = (order.items || []).map((i: any) => `${i.quantity}x ${i.name || i.sku}`).join('; ');
-            const delInfo = order.delivery_info || {};
-            
-            const row = [
-                order.id,
-                new Date(order.created_at).toLocaleDateString('cs-CZ'),
-                order.status,
-                order.customer_name || '',
-                order.customer_email || '',
-                order.total || 0,
-                itemsStr,
-                delInfo.street || '',
-                delInfo.city || '',
-                delInfo.zip || '',
-                delInfo.deliveryMethod || '',
-                delInfo.paymentMethod || ''
-            ];
-
-            csvContent += row.map(escapeCsv).join(',') + '\n';
-        }
+        // Process both groups
+        const webReport = processOrders(webOrders);
+        const manualReport = processOrders(manualOrders);
 
         const monthName = firstDayOfPrevMonth.toLocaleString('cs-CZ', { month: 'long' });
         const year = firstDayOfPrevMonth.getFullYear();
-        const reportTitle = `Report objednávek - ${monthName} ${year}`;
+
+        const webReportTitle = `Report webových objednávek - ${monthName} ${year}`;
+        const manualReportTitle = `Report manuálních objednávek - ${monthName} ${year}`;
 
         // Send Email
         const resendApiKey = process.env.RESEND_API_KEY;
@@ -126,23 +144,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const emailTo = process.env.REPORT_EMAIL || 'objednavky@drinkboostup.cz';
         const ccEmails = process.env.REPORT_EMAIL_CC ? process.env.REPORT_EMAIL_CC.split(',').map((e:string) => e.trim()) : [];
 
-        const htmlContent = `
+        // Web orders HTML content
+        const webHtmlContent = `
             <div style="font-family: sans-serif; max-w-2xl; margin: 0 auto; padding: 20px; color: #1f2937;">
-                <h1 style="color: #3a572c;">${reportTitle}</h1>
-                <p>V příloze naleznete automaticky vygenerovaný export objednávek z e-shopu BoostUp za uplynulý měsíc pro vaše účetnictví.</p>
+                <h1 style="color: #3a572c;">${webReportTitle}</h1>
+                <p>V příloze naleznete automaticky vygenerovaný export nákupů na webu (e-shopu) BoostUp za uplynulý měsíc pro vaše účetnictví.</p>
                 
                 <h2 style="margin-top: 30px;">Základní přehled:</h2>
                 <ul style="font-size: 16px; line-height: 1.6;">
-                    <li><strong>Celkem objednávek (bez storen):</strong> ${paidOrdersCount}</li>
-                    <li><strong>Stornováno:</strong> ${cancelledOrdersCount}</li>
-                    <li><strong>Celkový obrat (vč. DPH):</strong> ${totalRevenue.toLocaleString('cs-CZ')} Kč</li>
+                    <li><strong>Celkem objednávek (bez storen):</strong> ${webReport.paidOrdersCount}</li>
+                    <li><strong>Stornováno:</strong> ${webReport.cancelledOrdersCount}</li>
+                    <li><strong>Celkový obrat (vč. DPH):</strong> ${webReport.totalRevenue.toLocaleString('cs-CZ')} Kč</li>
                 </ul>
 
                 <h2 style="margin-top: 30px;">Prodané kusy (lahve):</h2>
                 <ul style="font-size: 16px; line-height: 1.6;">
-                    <li><strong>Lemon Blast:</strong> ${totalsByFlavor.lemon} ks</li>
-                    <li><strong>Red Rush:</strong> ${totalsByFlavor.red} ks</li>
-                    <li><strong>Silky Leaf:</strong> ${totalsByFlavor.silky} ks</li>
+                    <li><strong>Lemon Blast:</strong> ${webReport.totalsByFlavor.lemon} ks</li>
+                    <li><strong>Red Rush:</strong> ${webReport.totalsByFlavor.red} ks</li>
+                    <li><strong>Silky Leaf:</strong> ${webReport.totalsByFlavor.silky} ks</li>
                 </ul>
 
                 <p style="margin-top: 40px; font-size: 14px; color: #6b7280;">
@@ -151,29 +170,79 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             </div>
         `;
 
+        // Manual orders HTML content
+        const manualHtmlContent = `
+            <div style="font-family: sans-serif; max-w-2xl; margin: 0 auto; padding: 20px; color: #1f2937;">
+                <h1 style="color: #3a572c;">${manualReportTitle}</h1>
+                <p>V příloze naleznete automaticky vygenerovaný export manuálně vytvořených objednávek BoostUp za uplynulý měsíc pro vaše účetnictví.</p>
+                
+                <h2 style="margin-top: 30px;">Základní přehled:</h2>
+                <ul style="font-size: 16px; line-height: 1.6;">
+                    <li><strong>Celkem objednávek (bez storen):</strong> ${manualReport.paidOrdersCount}</li>
+                    <li><strong>Stornováno:</strong> ${manualReport.cancelledOrdersCount}</li>
+                    <li><strong>Celkový obrat (vč. DPH):</strong> ${manualReport.totalRevenue.toLocaleString('cs-CZ')} Kč</li>
+                </ul>
+
+                <h2 style="margin-top: 30px;">Prodané kusy (lahve):</h2>
+                <ul style="font-size: 16px; line-height: 1.6;">
+                    <li><strong>Lemon Blast:</strong> ${manualReport.totalsByFlavor.lemon} ks</li>
+                    <li><strong>Red Rush:</strong> ${manualReport.totalsByFlavor.red} ks</li>
+                    <li><strong>Silky Leaf:</strong> ${manualReport.totalsByFlavor.silky} ks</li>
+                </ul>
+
+                <p style="margin-top: 40px; font-size: 14px; color: #6b7280;">
+                    Tento e-mail byl vygenerován automaticky ze systému BoostUp Admin.
+                </p>
+            </div>
+        `;
+
+        // Send Web report email
         await resend.emails.send({
             from: 'BoostUp Systém <info@drinkboostup.cz>',
             to: emailTo,
             cc: ccEmails.length > 0 ? ccEmails : undefined,
-            subject: reportTitle,
-            html: htmlContent,
+            subject: webReportTitle,
+            html: webHtmlContent,
             attachments: [
                 {
-                    filename: `boostup-objednavky-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
-                    content: Buffer.from(csvContent, 'utf-8')
+                    filename: `boostup-webove-objednavky-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
+                    content: Buffer.from(webReport.csvContent, 'utf-8')
+                }
+            ]
+        });
+
+        // Send Manual report email
+        await resend.emails.send({
+            from: 'BoostUp Systém <info@drinkboostup.cz>',
+            to: emailTo,
+            cc: ccEmails.length > 0 ? ccEmails : undefined,
+            subject: manualReportTitle,
+            html: manualHtmlContent,
+            attachments: [
+                {
+                    filename: `boostup-manualni-objednavky-${firstDayOfPrevMonth.getMonth() + 1}-${year}.csv`,
+                    content: Buffer.from(manualReport.csvContent, 'utf-8')
                 }
             ]
         });
 
         return res.status(200).json({
             success: true,
-            report: {
+            reports: {
                 month: monthName,
                 year,
-                paidOrdersCount,
-                cancelledOrdersCount,
-                totalRevenue,
-                totalsByFlavor
+                web: {
+                    paidOrdersCount: webReport.paidOrdersCount,
+                    cancelledOrdersCount: webReport.cancelledOrdersCount,
+                    totalRevenue: webReport.totalRevenue,
+                    totalsByFlavor: webReport.totalsByFlavor
+                },
+                manual: {
+                    paidOrdersCount: manualReport.paidOrdersCount,
+                    cancelledOrdersCount: manualReport.cancelledOrdersCount,
+                    totalRevenue: manualReport.totalRevenue,
+                    totalsByFlavor: manualReport.totalsByFlavor
+                }
             }
         });
 
