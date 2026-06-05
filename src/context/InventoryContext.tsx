@@ -86,6 +86,19 @@ export interface PackagingRule {
     material_unit?: string;
 }
 
+export interface B2BCustomer {
+    id: string;
+    company_name: string;
+    ico: string;
+    dic?: string;
+    email?: string;
+    phone?: string;
+    street?: string;
+    city?: string;
+    zip?: string;
+    created_at?: string;
+}
+
 interface InventoryContextType {
     stock: Record<SKU, number>;
     products: Product[];
@@ -104,6 +117,11 @@ interface InventoryContextType {
     addPackagingRule: (rule: Omit<PackagingRule, 'id' | 'created_at'>) => Promise<boolean>;
     updatePackagingRule: (id: string, updates: Partial<PackagingRule>) => Promise<boolean>;
     deletePackagingRule: (id: string) => Promise<boolean>;
+    b2bCustomers: B2BCustomer[];
+    fetchB2BCustomers: () => Promise<void>;
+    addB2BCustomer: (customer: Omit<B2BCustomer, 'id' | 'created_at'>) => Promise<boolean>;
+    updateB2BCustomer: (id: string, updates: Partial<B2BCustomer>) => Promise<boolean>;
+    deleteB2BCustomer: (id: string) => Promise<boolean>;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
@@ -115,6 +133,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [movements, setMovements] = useState<StockMovement[]>([]);
     const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
     const [packagingRules, setPackagingRules] = useState<PackagingRule[]>([]);
+    const [b2bCustomers, setB2bCustomers] = useState<B2BCustomer[]>([]);
 
     // 1. Initial Fetch
     useEffect(() => {
@@ -122,6 +141,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMovements();
         fetchOrders(); // We can migrate orders later, but let's keep it here
         fetchPackagingRules();
+        fetchB2BCustomers();
     }, []);
 
     // 2. Realtime Subscriptions
@@ -179,11 +199,27 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             })
             .subscribe();
 
+        const customersSubscription = supabase
+            .channel('customers_channel')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'customers' }, (payload) => {
+                if (payload.eventType === 'INSERT') {
+                    setB2bCustomers(prev => [...prev, payload.new as B2BCustomer]);
+                } else if (payload.eventType === 'UPDATE') {
+                    const updated = payload.new as B2BCustomer;
+                    setB2bCustomers(prev => prev.map(c => c.id === updated.id ? updated : c));
+                } else if (payload.eventType === 'DELETE') {
+                    const deleted = payload.old as { id: string };
+                    setB2bCustomers(prev => prev.filter(c => c.id !== deleted.id));
+                }
+            })
+            .subscribe();
+
         return () => {
             if (supabase) {
                 supabase.removeChannel(inventorySubscription);
                 supabase.removeChannel(movementsSubscription);
                 supabase.removeChannel(ordersSubscription);
+                supabase.removeChannel(customersSubscription);
             }
         };
     }, []);
@@ -656,6 +692,54 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setOrders(prev => prev.map(o => o.id === orderId ? { ...o, packeta_barcode: barcode, packeta_packet_id: packetId } : o));
     };
 
+    const fetchB2BCustomers = async () => {
+        if (!supabase) return;
+        const { data, error } = await supabase.from('customers').select('*').order('company_name');
+        if (error) {
+            console.error('Error fetching B2B customers:', error);
+            return;
+        }
+        if (data) {
+            setB2bCustomers(data);
+        }
+    };
+
+    const addB2BCustomer = async (customer: Omit<B2BCustomer, 'id' | 'created_at'>) => {
+        if (!supabase) return false;
+        const { data, error } = await supabase.from('customers').insert([customer]).select();
+        if (error) {
+            console.error('Error adding B2B customer:', error);
+            return false;
+        }
+        if (data) {
+            await fetchB2BCustomers();
+            return true;
+        }
+        return false;
+    };
+
+    const updateB2BCustomer = async (id: string, updates: Partial<B2BCustomer>) => {
+        if (!supabase) return false;
+        const { error } = await supabase.from('customers').update(updates).eq('id', id);
+        if (error) {
+            console.error('Error updating B2B customer:', error);
+            return false;
+        }
+        setB2bCustomers(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
+        return true;
+    };
+
+    const deleteB2BCustomer = async (id: string) => {
+        if (!supabase) return false;
+        const { error } = await supabase.from('customers').delete().eq('id', id);
+        if (error) {
+            console.error('Error deleting B2B customer:', error);
+            return false;
+        }
+        setB2bCustomers(prev => prev.filter(c => c.id !== id));
+        return true;
+    };
+
     return (
         <InventoryContext.Provider value={{
             stock,
@@ -674,7 +758,12 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             fetchPackagingRules,
             addPackagingRule,
             updatePackagingRule,
-            deletePackagingRule
+            deletePackagingRule,
+            b2bCustomers,
+            fetchB2BCustomers,
+            addB2BCustomer,
+            updateB2BCustomer,
+            deleteB2BCustomer
         }}>
             {children}
         </InventoryContext.Provider>

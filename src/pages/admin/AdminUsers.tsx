@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Loader2, Search, Users, Shield, Tag, Calendar, UserPlus } from "lucide-react";
+import { Loader2, Search, Users, Shield, Tag, Calendar, UserPlus, Building, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useInventory, B2BCustomer } from "@/context/InventoryContext";
+import { B2BCustomerDialog } from "@/components/admin/B2BCustomerDialog";
 
 interface Profile {
     id: string;
@@ -28,11 +31,16 @@ interface PromoCode {
 }
 
 const AdminUsers = () => {
+    const { b2bCustomers, deleteB2BCustomer } = useInventory();
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+    // Dialog state for B2B Customers CRUD
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState<B2BCustomer | null>(null);
 
     const fetchData = async () => {
         try {
@@ -93,9 +101,31 @@ const AdminUsers = () => {
         }
     };
 
+    const handleDeleteB2B = async (id: string, companyName: string) => {
+        if (confirm(`Opravdu chcete partnera ${companyName} smazat?`)) {
+            try {
+                const success = await deleteB2BCustomer(id);
+                if (success) {
+                    toast.success("B2B partner byl úspěšně smazán.");
+                } else {
+                    throw new Error("Smazání se nezdařilo.");
+                }
+            } catch (err: any) {
+                toast.error(err.message || "Chyba při mazání partnera.");
+            }
+        }
+    };
+
     const filteredProfiles = profiles.filter(p => 
         (p.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (p.email || "").toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const filteredB2B = b2bCustomers.filter(c =>
+        c.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.ico.includes(searchQuery) ||
+        (c.email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (c.city || "").toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -108,7 +138,7 @@ const AdminUsers = () => {
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                         <p className="text-olive-dark/70 font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px] leading-none">
-                            Správa registrovaných uživatelů a jejich slev
+                            Správa uživatelských profilů a B2B partnerů
                         </p>
                     </div>
                 </div>
@@ -116,103 +146,219 @@ const AdminUsers = () => {
                 <div className="relative w-full sm:w-80 group">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-olive-dark/40" />
                     <Input 
-                        placeholder="Hledat jméno nebo email..." 
+                        placeholder="Hledat jméno, email, IČO..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-12 bg-admin-canvas border-olive-dark/10 rounded-2xl pl-12 font-bold"
+                        className="h-12 bg-admin-canvas border-olive-dark/10 rounded-2xl pl-12 font-bold focus:ring-lime"
                     />
                 </div>
             </div>
 
-            <Card className="border-none shadow-2xl rounded-[2.5rem] bg-admin-canvas shadow-olive/10 overflow-hidden">
-                <CardHeader className="bg-olive-dark p-8 sm:p-10">
-                    <div className="flex items-center gap-4">
-                        <div className="p-2 bg-white/10 rounded-xl">
-                            <Users className="w-5 h-5 text-lime" />
-                        </div>
-                        <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">Seznam uživatelů</CardTitle>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center p-24 gap-6">
-                            <Loader2 data-testid="admin-loader" className="h-12 w-12 animate-spin text-olive-dark" />
-                            <p className="text-olive-dark font-black uppercase text-xs tracking-widest">Načítání uživatelů...</p>
-                        </div>
-                    ) : filteredProfiles.length > 0 ? (
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader className="bg-admin-canvas/60 border-b border-olive/8">
-                                    <TableRow className="hover:bg-transparent">
-                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">Zákazník</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Role / Typ</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Registrace</TableHead>
-                                        <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Přiřazený Slevový Kód</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {filteredProfiles.map((user) => {
-                                        const registeredAt = user.created_at || user.updated_at;
+            <Tabs defaultValue="users" className="w-full space-y-6">
+                <TabsList className="bg-admin-canvas border border-olive/8 p-1 rounded-2xl inline-flex">
+                    <TabsTrigger value="users" className="rounded-xl px-6 py-2.5 font-bold uppercase tracking-wider text-[10px] sm:text-xs data-[state=active]:bg-olive-dark data-[state=active]:text-white">
+                        <Users className="w-4 h-4 mr-2 inline" /> Registered Users
+                    </TabsTrigger>
+                    <TabsTrigger value="b2b" className="rounded-xl px-6 py-2.5 font-bold uppercase tracking-wider text-[10px] sm:text-xs data-[state=active]:bg-olive-dark data-[state=active]:text-white">
+                        <Building className="w-4 h-4 mr-2 inline" /> B2B Partners
+                    </TabsTrigger>
+                </TabsList>
 
-                                        return (
-                                            <TableRow key={user.id} className="hover:bg-admin-canvas transition-colors border-b border-olive/8 group">
-                                                <TableCell className="py-6 px-10">
-                                                    <div className="flex flex-col">
-                                                        <span className="font-black text-olive-dark uppercase text-sm tracking-tight">{user.full_name || "Host"}</span>
-                                                        <span className="text-[10px] font-bold text-olive-dark/50">{user.email}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className="flex items-center gap-2">
-                                                        {user.role === 'admin' ? (
-                                                            <Badge className="bg-olive-dark text-white border-none rounded-lg text-[8px] uppercase font-black px-2">Admin</Badge>
-                                                        ) : (
-                                                            <Badge className="bg-olive-dark/5 text-olive-dark border-none rounded-lg text-[8px] uppercase font-black px-2">User</Badge>
-                                                        )}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className="flex items-center gap-2 text-[10px] font-bold text-olive-dark/60 uppercase">
-                                                        <Calendar className="w-3 h-3" />
-                                                        {registeredAt ? format(new Date(registeredAt), "d. MMMM yyyy", { locale: cs }) : "-"}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="pr-10">
-                                                    <div className="flex items-center gap-3">
-                                                        <Select
-                                                            disabled={updatingId === user.id}
-                                                            value={user.assigned_promo_code || "none"}
-                                                            onValueChange={(val) => handleUpdatePersonalCode(user.id, val)}
-                                                        >
-                                                            <SelectTrigger className="w-48 h-10 bg-white/50 border-olive-dark/10 text-olive-dark font-black uppercase text-[10px] rounded-xl focus:ring-lime">
-                                                                <SelectValue placeholder="Bez slevy" />
-                                                            </SelectTrigger>
-                                                            <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark font-bold uppercase text-[10px] rounded-xl">
-                                                                <SelectItem value="none">Bez slevy</SelectItem>
-                                                                {promoCodes.map(code => (
-                                                                    <SelectItem key={code.id} value={code.code}>
-                                                                        {code.code} (-{code.discount_percent}%)
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                        {updatingId === user.id && <Loader2 className="w-4 h-4 animate-spin text-olive-dark" />}
-                                                    </div>
-                                                </TableCell>
+                <TabsContent value="users" className="m-0">
+                    <Card className="border-none shadow-2xl rounded-[2.5rem] bg-admin-canvas shadow-olive/10 overflow-hidden">
+                        <CardHeader className="bg-olive-dark p-8 sm:p-10">
+                            <div className="flex items-center gap-4">
+                                <div className="p-2 bg-white/10 rounded-xl">
+                                    <Users className="w-5 h-5 text-lime" />
+                                </div>
+                                <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">Seznam uživatelů</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            {loading ? (
+                                <div className="flex flex-col items-center justify-center p-24 gap-6">
+                                    <Loader2 data-testid="admin-loader" className="h-12 w-12 animate-spin text-olive-dark" />
+                                    <p className="text-olive-dark font-black uppercase text-xs tracking-widest">Načítání uživatelů...</p>
+                                </div>
+                            ) : filteredProfiles.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader className="bg-admin-canvas/60 border-b border-olive/8">
+                                            <TableRow className="hover:bg-transparent">
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">Zákazník</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Role</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Registrace</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Přiřazený Slevový Kód</TableHead>
                                             </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
-                             <Users className="w-16 h-16 mb-4" />
-                             <p className="font-black uppercase tracking-widest text-xs">Žádní uživatelé nenalezeni</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {filteredProfiles.map((user) => {
+                                                const registeredAt = user.created_at || user.updated_at;
+
+                                                return (
+                                                    <TableRow key={user.id} className="hover:bg-admin-canvas transition-colors border-b border-olive/8 group">
+                                                        <TableCell className="py-6 px-10">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-black text-olive-dark uppercase text-sm tracking-tight">{user.full_name || "Host"}</span>
+                                                                <span className="text-[10px] font-bold text-olive-dark/50">{user.email}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center gap-2">
+                                                                {user.role === 'admin' ? (
+                                                                    <Badge className="bg-olive-dark text-white border-none rounded-lg text-[8px] uppercase font-black px-2">Admin</Badge>
+                                                                ) : (
+                                                                    <Badge className="bg-olive-dark/5 text-olive-dark border-none rounded-lg text-[8px] uppercase font-black px-2">User</Badge>
+                                                                )}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center gap-2 text-[10px] font-bold text-olive-dark/60 uppercase">
+                                                                <Calendar className="w-3 h-3" />
+                                                                {registeredAt ? format(new Date(registeredAt), "d. MMMM yyyy", { locale: cs }) : "-"}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="pr-10">
+                                                            <div className="flex items-center gap-3">
+                                                                <Select
+                                                                    disabled={updatingId === user.id}
+                                                                    value={user.assigned_promo_code || "none"}
+                                                                    onValueChange={(val) => handleUpdatePersonalCode(user.id, val)}
+                                                                >
+                                                                    <SelectTrigger className="w-48 h-10 bg-white/50 border-olive-dark/10 text-olive-dark font-black uppercase text-[10px] rounded-xl focus:ring-lime">
+                                                                        <SelectValue placeholder="Bez slevy" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark font-bold uppercase text-[10px] rounded-xl">
+                                                                        <SelectItem value="none">Bez slevy</SelectItem>
+                                                                        {promoCodes.map(code => (
+                                                                            <SelectItem key={code.id} value={code.code}>
+                                                                                {code.code} (-{code.discount_percent}%)
+                                                                            </SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                {updatingId === user.id && <Loader2 className="w-4 h-4 animate-spin text-olive-dark" />}
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
+                                     <Users className="w-16 h-16 mb-4" />
+                                     <p className="font-black uppercase tracking-widest text-xs">Žádní uživatelé nenalezeni</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="b2b" className="m-0">
+                    <Card className="border-none shadow-2xl rounded-[2.5rem] bg-admin-canvas shadow-olive/10 overflow-hidden">
+                        <CardHeader className="bg-olive-dark p-8 sm:p-10 flex flex-row items-center justify-between flex-wrap gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="p-2 bg-white/10 rounded-xl">
+                                    <Building className="w-5 h-5 text-lime" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-xl sm:text-2xl font-black text-white font-display uppercase italic">B2B Odběratelé</CardTitle>
+                                    <CardDescription className="text-white/60 text-xs">Správa obchodních partnerů s možností rychlé tvorby objednávek</CardDescription>
+                                </div>
+                            </div>
+                            <Button 
+                                onClick={() => {
+                                    setSelectedCustomer(null);
+                                    setIsDialogOpen(true);
+                                }}
+                                className="bg-lime text-olive-dark hover:bg-lime/80 gap-2 font-bold px-6 py-6 rounded-2xl border-none shadow-lg shadow-lime/20"
+                            >
+                                <UserPlus className="w-4 h-4" /> Nový partner
+                            </Button>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            {filteredB2B.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader className="bg-admin-canvas/60 border-b border-olive/8">
+                                            <TableRow className="hover:bg-transparent">
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">Společnost</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Identifikační čísla</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Kontakt</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4">Sídlo</TableHead>
+                                                <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 text-right pr-10">Akce</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {filteredB2B.map((partner) => (
+                                                <TableRow key={partner.id} className="hover:bg-admin-canvas transition-colors border-b border-olive/8 group">
+                                                    <TableCell className="py-6 px-10 font-black text-olive-dark uppercase text-sm tracking-tight">
+                                                        {partner.company_name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-col text-xs font-bold text-olive-dark/70">
+                                                            <span>IČO: {partner.ico}</span>
+                                                            {partner.dic && <span className="text-[10px] text-olive-dark/50">DIČ: {partner.dic}</span>}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-col text-xs font-bold text-olive-dark/70">
+                                                            {partner.email && <span className="underline">{partner.email}</span>}
+                                                            {partner.phone && <span className="text-[10px] text-olive-dark/50">{partner.phone}</span>}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-col text-[11px] font-bold text-olive-dark/60">
+                                                            <span>{partner.street}</span>
+                                                            <span>{partner.zip} {partner.city}</span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="text-right pr-10">
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => {
+                                                                    setSelectedCustomer(partner);
+                                                                    setIsDialogOpen(true);
+                                                                }}
+                                                                className="h-8 w-8 hover:bg-olive/10 text-olive-dark"
+                                                            >
+                                                                <Edit className="w-4 h-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => handleDeleteB2B(partner.id, partner.company_name)}
+                                                                className="h-8 w-8 hover:bg-red-50 text-red-500 hover:text-red-700"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
+                                     <Building className="w-16 h-16 mb-4" />
+                                     <p className="font-black uppercase tracking-widest text-xs">Žádní partneři nenalezeni</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+
+            <B2BCustomerDialog 
+                isOpen={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                customer={selectedCustomer}
+            />
         </div>
     );
 };
