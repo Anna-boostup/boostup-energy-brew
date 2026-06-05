@@ -30,192 +30,179 @@ async function fillStripeCheckout(page: Page, email: string, cardNumber: string 
   // Wait for Stripe checkout page to fully load
   await page.waitForLoadState('domcontentloaded', { timeout: 30000 });
 
-  // 1. Počkáme, až se na stránce objeví jakékoliv viditelné vstupní pole (záruka načtení formuláře, např. jméno, adresa atd. - email může být prefilled jako read-only div)
+  // 1. Počkáme, až se na stránce objeví jakékoliv viditelné vstupní pole
   await page.locator('input:visible').first().waitFor({ state: 'visible', timeout: 30000 });
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1500);
 
-  // 2. Pokud ještě není zobrazeno pole pro číslo karty, zkusíme kliknout na metodu "Card"
-  const cardLoadSelector = 'iframe[title="Secure card number input frame"]:visible, iframe[name="__privateStripeFrame5"]:visible, iframe[src*="js.stripe.com"][src*="card-number"]:visible, input#cardNumber:visible, input[name="cardNumber"]:visible, input[autocomplete="cc-number"]:visible';
-  
-  const isCardFormVisible = await page.locator(cardLoadSelector).first().isVisible({ timeout: 3000 }).catch(() => false);
-  if (!isCardFormVisible) {
-    // Pokusíme se najít jak viditelný text "Card" / "Karta", tak případný button (i když je visually hidden)
-    const cardTextSelector = 'text=/^Card$|^Karta$|^Platba kartou$/i';
-    const cardBtnSelector = '[data-testid="card-accordion-item-button"], button[aria-label="Pay with card"], button[aria-label="Platba kartou"]';
-    
-    const textLabel = page.locator(cardTextSelector).first();
-    const nativeBtn = page.locator(cardBtnSelector).first();
-    
-    // Počkáme, až bude aspoň jeden z nich přítomen/viditelný
-    await Promise.race([
-      textLabel.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
-      nativeBtn.waitFor({ state: 'attached', timeout: 10000 }).catch(() => {})
-    ]);
-    
-    // Zkusíme na element kliknout (s force:true) a čekáme, zda se rozbalí formulář karty
-    await expect(async () => {
-      if (await textLabel.isVisible().catch(() => false)) {
-        await textLabel.click({ force: true });
-      } else {
-        await nativeBtn.click({ force: true });
-      }
-      await expect(page.locator(cardLoadSelector).first()).toBeVisible({ timeout: 2000 });
-    }).toPass({
-      intervals: [1000, 2000],
-      timeout: 20000
-    });
-    await page.waitForTimeout(1000);
-  }
-
-  // 3. Počkáme, až se fyzicky načte a zobrazí jakékoliv pole pro kartu (buď iframe, nebo direct input)
-  await page.locator(cardLoadSelector).first().waitFor({ state: 'visible', timeout: 15000 });
-
-  // 4. Vyplníme email (pokud je pole zobrazeno a není předvyplněno)
+  // 2. Vyplnit email (pokud je viditelný)
   const emailInput = page.locator('input[type="email"][name="email"], input[autocomplete="email"]').first();
-  if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+  if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
     await emailInput.clear();
     await emailInput.fill(email);
+    console.log('✅ Email vyplněn na Stripe Checkout');
   }
 
-  // 4b. Doručovací údaje a adresa (pokud je Stripe vyžaduje - např. u fyzických produktů)
-  // Stripe Hosted Checkout používá placeholder-based inputy bez name atributů
-  const shippingName = page.locator(
-    'input[name="shippingName"], input[autocomplete="name"], input#shippingName, ' +
-    'input[placeholder*="Name" i], input[placeholder*="Jméno" i]'
-  ).first();
+  // 3. Doručovací/billing adresa (Stripe Hosted Checkout může vyžadovat)
+  await page.waitForTimeout(500);
   const addressLine1 = page.locator(
-    'input[name="shippingAddressLine1"], input[autocomplete="address-line1"], input#shippingAddressLine1, ' +
-    'input[name="address-line1"], input[placeholder*="Address line 1" i], input[placeholder*="Adresa" i]'
+    'input[name="shippingAddressLine1"], input[autocomplete="address-line1"], ' +
+    'input[placeholder*="Address line 1" i], input[placeholder*="Adresa" i], ' +
+    'input[name="address-line1"]'
   ).first();
-  
-  // Čekáme na adresní pole s delším timeoutem (Stripe dynamicky renderuje sekce)
-  await page.waitForTimeout(1000);
-  
-  // Pokud je v DOMu přítomen element pro adresu, vyčkáme na jeho viditelnost a vyplníme údaje
-  const hasShipping = await addressLine1.isVisible({ timeout: 5000 }).catch(() => false);
+  const hasShipping = await addressLine1.isVisible({ timeout: 4000 }).catch(() => false);
   if (hasShipping) {
-    if (await shippingName.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const shippingName = page.locator(
+      'input[name="shippingName"], input[autocomplete="name"], ' +
+      'input[placeholder*="Name" i], input[placeholder*="Jméno" i]'
+    ).first();
+    if (await shippingName.isVisible({ timeout: 2000 }).catch(() => false)) {
       await shippingName.fill('Stripe E2E Test');
     }
-    
     await addressLine1.fill('Testovací 123');
-    
     const cityInput = page.locator(
-      'input[name="shippingLocality"], input[autocomplete="address-level2"], ' +
-      'input#shippingLocality, input[name="locality"], input[placeholder*="City" i], input[placeholder*="Město" i]'
+      'input[autocomplete="address-level2"], input[placeholder*="City" i], input[placeholder*="Město" i]'
     ).first();
-    if (await cityInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+    if (await cityInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await cityInput.fill('Brno');
     }
-    
-    const shippingPostal = page.locator(
-      'input[name="shippingPostalCode"], input[autocomplete="postal-code"], ' +
-      'input#shippingPostalCode, input[name="postal-code"], input[name="postal"], ' +
-      'input[placeholder*="Postal" i], input[placeholder*="PSČ" i]'
+    const postalInput = page.locator(
+      'input[autocomplete="postal-code"], input[placeholder*="Postal" i], input[placeholder*="PSČ" i]'
     ).first();
-    if (await shippingPostal.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await shippingPostal.fill('62300');
+    if (await postalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await postalInput.fill('62300');
     }
-    
     console.log('✅ Shipping adresa vyplněna na Stripe Checkout');
-  } else {
-    console.log('ℹ️ Stripe Checkout nevyžaduje shipping adresu (digitální produkt nebo jiný formát)');
   }
 
-  // ── Card number ──────────────────────────────────────────────────────────────
-  // Stripe uses iframes for PCI compliance. Try both new and legacy selector patterns.
-  const cardFrameSelectors = [
-    'iframe[title="Secure card number input frame"]',
-    'iframe[name="__privateStripeFrame5"]',
-    'iframe[src*="js.stripe.com"][src*="card-number"]',
-  ];
+  // ── Karta ────────────────────────────────────────────────────────────────────
+  // Stripe Hosted Checkout (nový design): jeden unifikovaný Payment Element iframe.
+  // Starší Stripe Elements: 3 oddělené iframy pro číslo, datum, CVC.
+  // Spolehlivé vyplnění probíhá přes type() (keyboard events), ne fill(),
+  // protože cross-origin iframe musí přijmout input jako reálné keyeventy.
 
+  await page.waitForTimeout(1000);
+
+  // ── Strategie 1: Nový unifikovaný Payment Element (jeden iframe) ──────────
+  // Stripe nový design – hledáme jakýkoliv iframe který obsahuje pole pro kartu
+  const allFrames = page.frames();
   let cardFilled = false;
-  for (const sel of cardFrameSelectors) {
-    const frame = page.frameLocator(sel);
-    const input = frame.locator('input[name="cardnumber"], input[autocomplete="cc-number"], input[data-elements-stable-field-name="cardNumber"]');
-    if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await input.fill(cardNumber);
-      cardFilled = true;
-      break;
+
+  // Zkusíme všechny framy na stránce hledat pole pro číslo karty
+  for (const frame of allFrames) {
+    // Přeskočit hlavní frame
+    if (frame === page.mainFrame()) continue;
+
+    try {
+      const cardInput = frame.locator(
+        'input[name="cardnumber"], ' +
+        'input[autocomplete="cc-number"], ' +
+        'input[data-elements-stable-field-name="cardNumber"], ' +
+        'input[placeholder*="1234" i], ' +
+        'input[placeholder*="Card number" i], ' +
+        'input[placeholder*="Číslo karty" i]'
+      ).first();
+
+      if (await cardInput.isVisible({ timeout: 1500 }).catch(() => false)) {
+        await cardInput.click();
+        await cardInput.type(cardNumber, { delay: 50 });
+        console.log(`✅ Číslo karty vyplněno (frame: ${frame.url().substring(0, 60)})`);
+
+        // Expiry
+        const expiryInput = frame.locator(
+          'input[name="exp-date"], input[autocomplete="cc-exp"], ' +
+          'input[data-elements-stable-field-name="cardExpiry"], ' +
+          'input[placeholder*="MM" i], input[placeholder*="Expiry" i]'
+        ).first();
+        if (await expiryInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await expiryInput.click();
+          await expiryInput.type('1229', { delay: 50 });
+          console.log('✅ Datum expirace vyplněno');
+        }
+
+        // CVC
+        const cvcInput = frame.locator(
+          'input[name="cvc"], input[autocomplete="cc-csc"], ' +
+          'input[data-elements-stable-field-name="cardCvc"], ' +
+          'input[placeholder*="CVC" i], input[placeholder*="CVV" i], input[placeholder*="Security" i]'
+        ).first();
+        if (await cvcInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await cvcInput.click();
+          await cvcInput.type('123', { delay: 50 });
+          console.log('✅ CVC vyplněno');
+        }
+
+        cardFilled = true;
+        break;
+      }
+    } catch {
+      // Tento frame neobsahuje karta pole, pokračujeme
     }
   }
 
-  // Fallback: Stripe's newer unified checkout might have direct inputs
+  // ── Strategie 2: frameLocator selektory (fallback) ────────────────────────
   if (!cardFilled) {
-    const directCardInput = page.locator('input#cardNumber, input[name="cardNumber"], input[autocomplete="cc-number"], [data-testid="card-number-input"]');
-    if (await directCardInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await directCardInput.fill(cardNumber);
+    const frameSelectors = [
+      'iframe[title="Secure card number input frame"]',
+      'iframe[title*="card number" i]',
+      'iframe[title*="Payment information" i]',
+      'iframe[name*="privateStripeFrame"]',
+      'iframe[src*="js.stripe.com"]',
+    ];
+
+    for (const sel of frameSelectors) {
+      try {
+        const frame = page.frameLocator(sel);
+        const cardInput = frame.locator('input').first();
+        if (await cardInput.isVisible({ timeout: 1500 }).catch(() => false)) {
+          await cardInput.click();
+          await cardInput.type(cardNumber, { delay: 50 });
+          console.log(`✅ Číslo karty vyplněno přes frameLocator (${sel})`);
+          cardFilled = true;
+          break;
+        }
+      } catch { /* skip */ }
+    }
+  }
+
+  // ── Strategie 3: Přímé inputy bez iframu (některé Stripe integrace) ───────
+  if (!cardFilled) {
+    const directCard = page.locator('input#cardNumber, input[name="cardNumber"], input[autocomplete="cc-number"]').first();
+    if (await directCard.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await directCard.type(cardNumber, { delay: 50 });
+      const directExpiry = page.locator('input#cardExpiry, input[name="cardExpiry"], input[autocomplete="cc-exp"]').first();
+      if (await directExpiry.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await directExpiry.type('1229', { delay: 50 });
+      }
+      const directCvc = page.locator('input#cardCvc, input[name="cardCvc"], input[autocomplete="cc-csc"]').first();
+      if (await directCvc.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await directCvc.type('123', { delay: 50 });
+      }
       cardFilled = true;
+      console.log('✅ Číslo karty vyplněno přes přímý input');
     }
   }
 
   if (!cardFilled) {
-    throw new Error('Could not find Stripe card number input. The Stripe checkout UI may have changed.');
+    // Výpis všech framů pro debug
+    const frameUrls = page.frames().map(f => f.url()).join('\n  ');
+    throw new Error(
+      `Nelze najít pole pro číslo karty na Stripe Checkout.\n` +
+      `Dostupné framy:\n  ${frameUrls}\n` +
+      `Pravděpodobně se změnilo UI Stripe.`
+    );
   }
 
-  // ── Expiry ───────────────────────────────────────────────────────────────────
-  const expiryFrameSelectors = [
-    'iframe[title="Secure expiration date input frame"]',
-    'iframe[name="__privateStripeFrame6"]',
-    'iframe[src*="js.stripe.com"][src*="card-expiry"]',
-  ];
-  let expiryFilled = false;
-  for (const sel of expiryFrameSelectors) {
-    const frame = page.frameLocator(sel);
-    const input = frame.locator('input[name="exp-date"], input[autocomplete="cc-exp"], input[data-elements-stable-field-name="cardExpiry"]');
-    if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await input.fill('1229');
-      expiryFilled = true;
-      break;
-    }
-  }
-
-  // Fallback: Direct expiry input
-  if (!expiryFilled) {
-    const directExpiryInput = page.locator('input#cardExpiry, input[name="cardExpiry"], input[autocomplete="cc-exp"]');
-    if (await directExpiryInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await directExpiryInput.fill('1229');
-    }
-  }
-
-  // ── CVC ──────────────────────────────────────────────────────────────────────
-  const cvcFrameSelectors = [
-    'iframe[title="Secure CVC input frame"]',
-    'iframe[name="__privateStripeFrame7"]',
-    'iframe[src*="js.stripe.com"][src*="card-cvc"]',
-  ];
-  let cvcFilled = false;
-  for (const sel of cvcFrameSelectors) {
-    const frame = page.frameLocator(sel);
-    const input = frame.locator('input[name="cvc"], input[autocomplete="cc-csc"], input[data-elements-stable-field-name="cardCvc"]');
-    if (await input.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await input.fill('123');
-      cvcFilled = true;
-      break;
-    }
-  }
-
-  // Fallback: Direct CVC input
-  if (!cvcFilled) {
-    const directCvcInput = page.locator('input#cardCvc, input[name="cardCvc"], input[autocomplete="cc-csc"]');
-    if (await directCvcInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await directCvcInput.fill('123');
-    }
-  }
-
-  // ── Cardholder name (some Stripe themes show this) ────────────────────────────
-  const nameInput = page.locator('input[name="name"], input[autocomplete="cc-name"], input[placeholder*="jmén" i], input[placeholder*="name" i]').first();
-  if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+  // Cardholder name (některé Stripe šablony)
+  const nameInput = page.locator('input[name="name"], input[autocomplete="cc-name"]').first();
+  if (await nameInput.isVisible({ timeout: 1500 }).catch(() => false)) {
     await nameInput.fill('Stripe E2E Test');
   }
 
-  // ── Billing postal code (US Stripe forms may ask) ────────────────────────────
-  const postalInput = page.locator('input[name="postal"], input[autocomplete="postal-code"]').first();
-  if (await postalInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await postalInput.fill('11000');
-  }
+  await page.waitForTimeout(500);
 }
+
+
+
 
 // Helper pro zpracování Stripe 3D Secure (SCA) výzvy
 // Poznámka: karta 4242424242424242 3DS nevyžaduje. Tento helper slouží jako fallback pro jiné karty.
