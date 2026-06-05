@@ -461,7 +461,8 @@ const CheckoutPage = () => {
               orderNumber: newOrder.id,
               customerEmail: formData.email,
               total: newOrder.total,
-              items: newOrder.items
+              items: newOrder.items,
+              origin: window.location.origin,
             }),
           });
 

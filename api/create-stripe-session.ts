@@ -33,7 +33,7 @@ export default async function handler(req: Request) {
 
     try {
         const body = await req.json();
-        const { orderNumber, items, customerEmail, total } = body;
+        const { orderNumber, items, customerEmail, total, origin: bodyOrigin } = body;
 
         console.log(`[Stripe Checkout] Creating session for order ${orderNumber}`);
 
@@ -44,7 +44,11 @@ export default async function handler(req: Request) {
              });
         }
 
-        const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
+        // Prefer origin sent by the browser (always correct), fall back to request headers
+        const origin = bodyOrigin
+            || req.headers.get('origin')
+            || req.headers.get('referer')?.replace(/\/[^/]*$/, '')
+            || 'https://drinkboostup.cz';
 
         // TEST MODE BYPASS
         if (process.env.IS_TEST_MODE === 'true') {
