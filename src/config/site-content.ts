@@ -645,6 +645,42 @@ export const SITE_CONTENT = {
                         errorDesc: "Nepodařilo se uložit položku."
                     }
                 }
+            },
+            stock: {
+                restock: {
+                    titleIn: "Naskladnit",
+                    titleOut: "Vyskladnit",
+                    tabIn: "Doskladnit",
+                    tabOut: "Odebrat / Korekce",
+                    currentLabel: "Aktuální stav zásob",
+                    countLabelIn: "Počet lahví k naskladnění",
+                    countLabelOut: "Počet lahví k odebrání",
+                    nextTotal: "Nový stav",
+                    negativeWarning: "Upozornění: Celkové množství bude záporné!",
+                    noteLabel: "Poznámka",
+                    notePlaceholderIn: "např. Dodávka od dodavatele #123",
+                    notePlaceholderOut: "např. Likvidace poškozených kusů",
+                    defaultNoteIn: "Doskladnění lahví",
+                    defaultNoteOut: "Odebrání / Korekce zásob",
+                    unit: "ks",
+                },
+                history: {
+                    title: "Historie pohybů:",
+                    empty: "Žádné pohyby pro tuto položku.",
+                    systemUser: "Systém",
+                    table: {
+                        date: "Datum",
+                        user: "Uživatel",
+                        type: "Typ",
+                        change: "Změna",
+                        note: "Poznámka",
+                    },
+                    types: {
+                        restock: "Naskladnění",
+                        sale: "Prodej",
+                        correction: "Korekce",
+                    }
+                }
             }
         },
         invoices: {

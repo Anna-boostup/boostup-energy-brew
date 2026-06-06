@@ -83,6 +83,15 @@ IF NOT EXISTS (
 ALTER TABLE public.inventory
 ADD COLUMN image_url text;
 END IF;
+IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_name = 'inventory'
+        AND column_name = 'restock_batch_size'
+) THEN
+ALTER TABLE public.inventory
+ADD COLUMN restock_batch_size integer DEFAULT 1000;
+END IF;
 END $$;
 -- 2. KONTROLA TABULKY A SLOUPCŮ (orders)
 DO $$ BEGIN IF NOT EXISTS (
