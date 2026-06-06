@@ -121,7 +121,32 @@
     }, true);
 
     window.addEventListener('unhandledrejection', function(event) {
-      injectEmergencyLog('Promise Rejection', event.reason);
+      var reason = event.reason;
+      if (reason) {
+        var msg = '';
+        if (typeof reason === 'string') {
+          msg = reason;
+        } else if (reason.message) {
+          msg = reason.message;
+        } else if (reason.name) {
+          msg = reason.name;
+        } else {
+          try {
+            msg = reason.toString();
+          } catch (e) {}
+        }
+        
+        // Ignore harmless Web Locks / Abort errors (e.g. Safari multi-tab conflict)
+        if (msg && (
+            msg.indexOf('Lock was stolen') !== -1 || 
+            msg.indexOf('lock request was aborted') !== -1 || 
+            msg.indexOf('stolen by another request') !== -1
+        )) {
+          console.warn('Unhandled promise rejection ignored (Web Lock / AbortError):', reason);
+          return;
+        }
+      }
+      injectEmergencyLog('Promise Rejection', reason);
     });
 
     // 3. Mount Watchdog (Auto-Recovery)
