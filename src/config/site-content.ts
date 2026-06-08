@@ -996,6 +996,25 @@ export const SITE_CONTENT = {
                 errorTitle: "Chyba při ukládání",
                 currency: "Kč"
             },
+            stats: {
+                ordersTitle: "Objem objednávek",
+                ordersSubtitle: "Počet objednávek za posledních 30 dní.",
+                unitsTitle: "Prodáno kusů",
+                unitsSubtitle: "Prodané lahve podle příchutí.",
+                ordersLabel: "Objednávky",
+                onlineSales: "Prodeje přes net",
+                promoGifts: "Promo dárky",
+                manualOrders: "Dopsané objednávky",
+                totalOrders: "Celkem",
+                revenueLabel: "Obrat",
+                ordersCountLabel: "Objednávek",
+                unitsCountLabel: "Kusů",
+                flavors: {
+                    lemon: "Lemon Rush",
+                    red: "Red Dragon",
+                    silky: "Silky Breeze"
+                }
+            },
             charts: {
                 revenue: "Obrat (CZK)",
                 orders: "Počet objednávek",
