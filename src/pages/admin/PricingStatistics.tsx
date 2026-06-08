@@ -113,6 +113,9 @@ const PricingStatistics = () => {
                 date,
                 label: format(parseISO(date), 'd. MMM', { locale: content?.lang === 'cs' ? cs : undefined }),
                 orders: 0,
+                onlineOrders: 0,
+                promoOrders: 0,
+                manualOrders: 0,
                 lemon: 0,
                 red: 0,
                 silky: 0,
@@ -125,6 +128,14 @@ const PricingStatistics = () => {
             if (dataMap.has(orderDate)) {
                 const dayData = dataMap.get(orderDate);
                 dayData.orders += 1;
+
+                const isPromo = order.delivery_info?.paymentMethod === 'promo';
+                const isManual = order.id?.startsWith('MAN-') && !isPromo;
+                const isOnline = !order.id?.startsWith('MAN-') && !isPromo;
+
+                if (isOnline) dayData.onlineOrders += 1;
+                else if (isPromo) dayData.promoOrders += 1;
+                else if (isManual) dayData.manualOrders += 1;
                 
                 order.items.forEach(item => {
                     const sku = item.sku.toLowerCase();
@@ -153,6 +164,59 @@ const PricingStatistics = () => {
         return Array.from(dataMap.values());
     }, [orders, content]);
 
+    // Compute lifetime category totals (excluding cancelled orders)
+    const categoryTotals = useMemo(() => {
+        let onlineCount = 0;
+        let onlineRevenue = 0;
+        let onlineUnits = 0;
+
+        let promoCount = 0;
+        let promoRevenue = 0;
+        let promoUnits = 0;
+
+        let manualCount = 0;
+        let manualRevenue = 0;
+        let manualUnits = 0;
+
+        orders.forEach(order => {
+            if (order.status === 'cancelled') return;
+
+            const isPromo = order.delivery_info?.paymentMethod === 'promo';
+            const isManual = order.id?.startsWith('MAN-') && !isPromo;
+            const isOnline = !order.id?.startsWith('MAN-') && !isPromo;
+
+            let orderUnits = 0;
+            order.items.forEach(item => {
+                const sku = item.sku.toLowerCase();
+                const sizeMatch = sku.match(/-(\d+)$/);
+                const unitsPerPack = sizeMatch ? parseInt(sizeMatch[1]) : 1;
+                orderUnits += item.quantity * unitsPerPack;
+            });
+
+            const totalValue = Number(order.total) || 0;
+
+            if (isOnline) {
+                onlineCount++;
+                onlineRevenue += totalValue;
+                onlineUnits += orderUnits;
+            } else if (isPromo) {
+                promoCount++;
+                promoRevenue += totalValue;
+                promoUnits += orderUnits;
+            } else if (isManual) {
+                manualCount++;
+                manualRevenue += totalValue;
+                manualUnits += orderUnits;
+            }
+        });
+
+        return {
+            online: { count: onlineCount, revenue: onlineRevenue, units: onlineUnits },
+            promo: { count: promoCount, revenue: promoRevenue, units: promoUnits },
+            manual: { count: manualCount, revenue: manualRevenue, units: manualUnits }
+        };
+    }, [orders]);
+
     const isLoading = inventoryLoading || contentLoading;
 
     if (isLoading) {
@@ -180,6 +244,140 @@ const PricingStatistics = () => {
                         {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                         {content?.admin?.pricing?.card?.saveTitle || "Save Prices"}
                     </Button>
+                </div>
+            </div>
+
+            {/* Category Breakdown Cards */}
+            <div className="space-y-4">
+                <div className="flex items-center gap-3 px-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#3d5a2f]">
+                        {content?.lang === 'cs' ? "Přehled podle typu prodeje" : "Overview by sales channel"}
+                    </h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
+                    {/* Online Card */}
+                    <Card className="border border-white/40 shadow-sm rounded-[2rem] bg-admin-canvas/50 backdrop-blur-sm p-6 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/5 blur-[40px] -translate-y-1/2 translate-x-1/2" />
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3d5a2f]/70">
+                                    {content?.admin?.pricing?.stats?.onlineSales || "Prodeje přes net"}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-lg bg-sky-500/10 text-sky-600 text-[8px] font-black uppercase tracking-widest">
+                                    E-shop
+                                </span>
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-3xl font-black font-display text-[#3d5a2f]">
+                                    {categoryTotals.online.revenue.toLocaleString(content?.lang === 'cs' ? 'cs-CZ' : 'en-US')} {content?.admin?.pricing?.card?.currency || "Kč"}
+                                </span>
+                                <span className="block text-[9px] text-[#3d5a2f]/50 font-black uppercase tracking-widest">
+                                    {content?.admin?.pricing?.stats?.revenueLabel || "Obrat"}
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-olive/5">
+                                <div>
+                                    <span className="block text-lg font-black text-[#3d5a2f]">
+                                        {categoryTotals.online.count}
+                                    </span>
+                                    <span className="block text-[8px] text-[#3d5a2f]/40 font-black uppercase tracking-widest">
+                                        {content?.admin?.pricing?.stats?.ordersCountLabel || "Objednávek"}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="block text-lg font-black text-[#3d5a2f]">
+                                        {categoryTotals.online.units}
+                                    </span>
+                                    <span className="block text-[8px] text-[#3d5a2f]/40 font-black uppercase tracking-widest">
+                                        {content?.admin?.pricing?.stats?.unitsCountLabel || "Kusů"}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Manual Orders Card */}
+                    <Card className="border border-white/40 shadow-sm rounded-[2rem] bg-admin-canvas/50 backdrop-blur-sm p-6 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 blur-[40px] -translate-y-1/2 translate-x-1/2" />
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3d5a2f]/70">
+                                    {content?.admin?.pricing?.stats?.manualOrders || "Dopsané objednávky"}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-lg bg-orange-500/10 text-orange-600 text-[8px] font-black uppercase tracking-widest">
+                                    Manuální
+                                </span>
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-3xl font-black font-display text-[#3d5a2f]">
+                                    {categoryTotals.manual.revenue.toLocaleString(content?.lang === 'cs' ? 'cs-CZ' : 'en-US')} {content?.admin?.pricing?.card?.currency || "Kč"}
+                                </span>
+                                <span className="block text-[9px] text-[#3d5a2f]/50 font-black uppercase tracking-widest">
+                                    {content?.admin?.pricing?.stats?.revenueLabel || "Obrat"}
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-olive/5">
+                                <div>
+                                    <span className="block text-lg font-black text-[#3d5a2f]">
+                                        {categoryTotals.manual.count}
+                                    </span>
+                                    <span className="block text-[8px] text-[#3d5a2f]/40 font-black uppercase tracking-widest">
+                                        {content?.admin?.pricing?.stats?.ordersCountLabel || "Objednávek"}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="block text-lg font-black text-[#3d5a2f]">
+                                        {categoryTotals.manual.units}
+                                    </span>
+                                    <span className="block text-[8px] text-[#3d5a2f]/40 font-black uppercase tracking-widest">
+                                        {content?.admin?.pricing?.stats?.unitsCountLabel || "Kusů"}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Promo Gifts Card */}
+                    <Card className="border border-white/40 shadow-sm rounded-[2rem] bg-admin-canvas/50 backdrop-blur-sm p-6 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-lime/10 blur-[40px] -translate-y-1/2 translate-x-1/2" />
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#3d5a2f]/70">
+                                    {content?.admin?.pricing?.stats?.promoGifts || "Promo dárky"}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-lg bg-lime/20 text-[#3d5a2f] text-[8px] font-black uppercase tracking-widest">
+                                    Promo
+                                </span>
+                            </div>
+                            <div className="space-y-1">
+                                <span className="text-3xl font-black font-display text-[#3d5a2f]">
+                                    {categoryTotals.promo.units} <span className="text-sm font-bold opacity-60">ks</span>
+                                </span>
+                                <span className="block text-[9px] text-[#3d5a2f]/50 font-black uppercase tracking-widest">
+                                    {content?.admin?.pricing?.stats?.unitsCountLabel || "Kusů"} rozdáno
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-olive/5">
+                                <div>
+                                    <span className="block text-lg font-black text-[#3d5a2f]">
+                                        {categoryTotals.promo.count}
+                                    </span>
+                                    <span className="block text-[8px] text-[#3d5a2f]/40 font-black uppercase tracking-widest">
+                                        {content?.admin?.pricing?.stats?.ordersCountLabel || "Objednávek"}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="block text-lg font-black text-[#3d5a2f]">
+                                        {categoryTotals.promo.revenue.toLocaleString(content?.lang === 'cs' ? 'cs-CZ' : 'en-US')} {content?.admin?.pricing?.card?.currency || "Kč"}
+                                    </span>
+                                    <span className="block text-[8px] text-[#3d5a2f]/40 font-black uppercase tracking-widest">
+                                        Hodnota
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
                 </div>
             </div>
 
@@ -289,14 +487,49 @@ const PricingStatistics = () => {
                                     }}
                                     cursor={{ stroke: '#C4F135', strokeWidth: 2, strokeDasharray: '5 5' }}
                                 />
+                                <Legend 
+                                    iconType="circle" 
+                                    iconSize={8}
+                                    wrapperStyle={{ paddingTop: '10px', fontWeight: '900', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }} 
+                                />
                                 <Line 
                                     type="monotone" 
                                     dataKey="orders" 
-                                    name={content?.admin?.pricing?.stats?.ordersLabel}
+                                    name={content?.admin?.pricing?.stats?.totalOrders || "Celkem"}
                                     stroke="#3d5a2f" 
-                                    strokeWidth={6}
+                                    strokeWidth={4}
                                     dot={{ r: 0 }}
-                                    activeDot={{ r: 8, strokeWidth: 0, fill: '#d4f45d' }}
+                                    activeDot={{ r: 6, strokeWidth: 0, fill: '#3d5a2f' }}
+                                    animationDuration={2000}
+                                />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="onlineOrders" 
+                                    name={content?.admin?.pricing?.stats?.onlineSales || "Prodeje přes net"}
+                                    stroke="#0284c7" 
+                                    strokeWidth={3}
+                                    dot={{ r: 0 }}
+                                    activeDot={{ r: 6, strokeWidth: 0, fill: '#0284c7' }}
+                                    animationDuration={2000}
+                                />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="manualOrders" 
+                                    name={content?.admin?.pricing?.stats?.manualOrders || "Dopsané objednávky"}
+                                    stroke="#ea580c" 
+                                    strokeWidth={3}
+                                    dot={{ r: 0 }}
+                                    activeDot={{ r: 6, strokeWidth: 0, fill: '#ea580c' }}
+                                    animationDuration={2000}
+                                />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="promoOrders" 
+                                    name={content?.admin?.pricing?.stats?.promoGifts || "Promo dárky"}
+                                    stroke="#84cc16" 
+                                    strokeWidth={3}
+                                    dot={{ r: 0 }}
+                                    activeDot={{ r: 6, strokeWidth: 0, fill: '#84cc16' }}
                                     animationDuration={2000}
                                 />
                             </LineChart>

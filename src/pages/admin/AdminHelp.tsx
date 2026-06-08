@@ -16,6 +16,7 @@ import {
 import { useContent } from "@/context/ContentContext";
 
 interface HelpItem {
+    id?: string;
     label: string;
     description: string;
 }
@@ -36,9 +37,124 @@ const COLORS = {
     secondary: '#4b5563',
 };
 
-const AdminMockup = ({ id }: { id: string }) => {
+const AdminMockup = ({ id, activeItemId }: { id: string, activeItemId?: string }) => {
     switch (id) {
         case "dashboard":
+            if (activeItemId === "emergency_stop") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Dashboard {"->"} Vypínač prodeje</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-3 p-3 bg-[#2a1b18] rounded-xl border border-[#482823] text-center">
+                            <span className="font-bold text-[#ff7d70] block text-[10px] animate-pulse">🔴 NOUZOVÝ VYPÍNAČ AKTIVNÍ</span>
+                            <p className="text-[8px] text-[#ff7d70]/80">E-shop je zablokován a nepřijímá objednávky.</p>
+                            <div className="flex justify-center">
+                                <div className="w-8 h-4 bg-[#482823] rounded-full p-0.5 flex justify-start items-center">
+                                    <div className="w-3 h-3 bg-red-500 rounded-full shadow" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "workflow") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Dashboard {"->"} Workflow</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="grid grid-cols-4 gap-1.5 text-center">
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] cursor-pointer hover:border-lime">
+                                <span className="block text-[6px] opacity-60">Nové</span>
+                                <span className="font-bold text-lime text-xs">3</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] cursor-pointer hover:border-lime">
+                                <span className="block text-[6px] opacity-60">Příprava</span>
+                                <span className="font-bold text-lime text-xs">5</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] cursor-pointer hover:border-lime">
+                                <span className="block text-[6px] opacity-60">Odeslané</span>
+                                <span className="font-bold text-[#b4cfa6] text-xs">82</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] cursor-pointer hover:border-lime">
+                                <span className="block text-[6px] opacity-60">Storno</span>
+                                <span className="font-bold text-[#b4cfa6] text-xs">1</span>
+                            </div>
+                        </div>
+                        <div className="mt-2 text-[6px] opacity-50 text-center uppercase tracking-wider">
+                            Kliknutím na stav přejdete na filtrovaný seznam
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "quick_stock") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Dashboard {"->"} Rychlý stav skladu</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between items-center">
+                                <span>Lemon Rush</span>
+                                <span className="bg-lime/10 text-lime px-1.5 py-0.5 rounded text-[7px] font-bold">120 ks (OK)</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between items-center">
+                                <span>Red Dragon</span>
+                                <span className="bg-orange/15 text-orange px-1.5 py-0.5 rounded text-[7px] font-bold">35 ks (Nízký)</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-red-500/30 flex justify-between items-center">
+                                <span>Silky Breeze</span>
+                                <span className="bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded text-[7px] font-bold animate-pulse">8 ks (KRITICKÝ)</span>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "mobile_setup") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Instalace na mobil a PWA</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-2 text-center p-2">
+                            <div className="w-10 h-10 bg-[#23311f] rounded-xl flex items-center justify-center mx-auto border border-[#32452c] shadow">
+                                <Zap className="w-5 h-5 text-lime" />
+                            </div>
+                            <span className="font-bold text-[#b4cfa6] block">Aplikace BoostUp</span>
+                            <p className="text-[7px] opacity-80 leading-normal">Přidejte e-shop na plochu svého telefonu pro rychlý přístup a okamžité push notifikace o objednávkách.</p>
+                            <div className="inline-flex items-center gap-1.5 bg-[#32452c] text-lime px-2.5 py-1 rounded-full text-[7px] font-bold">
+                                <Bell className="w-2.5 h-2.5 animate-bounce" />
+                                Notifikace Aktivní
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
             return (
                 <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
                     <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
@@ -244,6 +360,127 @@ const AdminMockup = ({ id }: { id: string }) => {
             );
 
         case "inventory":
+            if (activeItemId === "manual_restock") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Sklad {"->"} Manuální naskladnění</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-2 p-1.5 bg-[#23311f] rounded-lg border border-[#32452c]">
+                            <span className="font-bold text-[#b4cfa6] block text-[8px]">UPRAVIT STAV ZÁSOB</span>
+                            <div className="grid grid-cols-2 gap-2 text-[7px]">
+                                <div>
+                                    <span className="opacity-50 block">Změna množství:</span>
+                                    <div className="bg-[#1b2518] px-1.5 py-1 rounded text-lime font-bold border border-[#303f2a]">+120 ks</div>
+                                </div>
+                                <div>
+                                    <span className="opacity-50 block">Důvod / Poznámka:</span>
+                                    <div className="bg-[#1b2518] px-1.5 py-1 rounded text-[#b4cfa6] border border-[#303f2a] truncate">Závoz z výroby</div>
+                                </div>
+                            </div>
+                            <div className="bg-lime text-[#1b2518] font-bold text-center py-1 rounded text-[7px] uppercase tracking-widest font-display">
+                                Uložit pohyb
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "warning_limit") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Sklad {"->"} Varovné Limity</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                                <span>Nastavení limitu (Silky Breeze)</span>
+                                <span className="text-lime font-bold">20 ks</span>
+                            </div>
+                            <div className="p-2 bg-[#2d1b19] border border-red-500/20 rounded-lg flex items-start gap-2 text-red-400">
+                                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                                <div className="text-[7px] leading-tight">
+                                    <span className="font-bold block">UPOZORNĚNÍ NA SKLAD</span>
+                                    Zásoby Silky Breeze klesly na 10 ks (Limit je 20 ks).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "movement_history") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Sklad {"->"} Historie Pohybů</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between text-[6px]">
+                                <span>Dnes, 14:20</span>
+                                <span className="text-lime font-bold">+120 (Závoz)</span>
+                                <span className="opacity-50">admin@db.cz</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between text-[6px]">
+                                <span>Včera, 18:05</span>
+                                <span className="text-[#ff7d70] font-bold">-12 (Prodej #128)</span>
+                                <span className="opacity-50">Systém</span>
+                            </div>
+                            <div className="bg-[#23311f] p-1.5 rounded border border-[#32452c] flex justify-between text-[6px]">
+                                <span>3.6., 09:15</span>
+                                <span className="text-lime font-bold">+60 (Naskladnění)</span>
+                                <span className="opacity-50">admin@db.cz</span>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "quick_restock_batch") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Sklad {"->"} Rychlé doskladnění</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-2.5">
+                            <div className="bg-[#23311f] p-2 rounded-lg border border-[#32452c] flex justify-between items-center">
+                                <div className="space-y-0.5">
+                                    <span className="font-bold text-[#b4cfa6] block">Lemon Blast</span>
+                                    <span className="text-[6px] opacity-50">Skladem: 12 ks (Kritický)</span>
+                                </div>
+                                <button className="bg-lime hover:bg-lime/90 text-[#1b2518] text-[7px] font-black uppercase tracking-wider px-2 py-1.5 rounded-md flex items-center gap-1 shadow">
+                                    <Zap className="w-2.5 h-2.5" />
+                                    Doskladnit 120 ks
+                                </button>
+                            </div>
+                            <div className="text-[6px] opacity-50 text-center uppercase tracking-wider leading-relaxed">
+                                Naskladní 120 ks vybrané příchutě jedním kliknutím bez dialogů
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
             return (
                 <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
                     <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
@@ -324,6 +561,94 @@ const AdminMockup = ({ id }: { id: string }) => {
             );
 
         case "pricing":
+            if (activeItemId === "global_prices") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Cenotvorba {"->"} Globální Ceny</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                                <span>Balení 3 ks</span>
+                                <span className="font-bold text-lime">229 Kč</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                                <span>Balení 12 ks</span>
+                                <span className="font-bold text-lime">849 Kč</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-[#23311f] p-1.5 rounded border border-[#32452c]">
+                                <span>Balení 21 ks</span>
+                                <span className="font-bold text-lime">1 399 Kč</span>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "financial_overview") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Cenotvorba {"->"} Finanční přehled</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-2 text-center">
+                            <div className="bg-[#23311f] p-2.5 rounded border border-[#32452c] grid grid-cols-2 gap-2">
+                                <div>
+                                    <span className="block text-[6px] opacity-50 uppercase">Obraty celkem</span>
+                                    <span className="font-bold text-lime text-xs">16 600 Kč</span>
+                                </div>
+                                <div>
+                                    <span className="block text-[6px] opacity-50 uppercase">Průměrná hodnota</span>
+                                    <span className="font-bold text-[#b4cfa6] text-xs">830 Kč</span>
+                                </div>
+                            </div>
+                            <div className="text-[6px] opacity-50 uppercase tracking-widest">
+                                Statistický přehled všech dokončených transakcí
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            if (activeItemId === "order_categories") {
+                return (
+                    <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ff5f56]" />
+                                <span className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
+                                <span className="w-2 h-2 rounded-full bg-[#27c93f]" />
+                            </div>
+                            <span className="text-[8px] opacity-60">Cenotvorba {"->"} Typy Objednávek</span>
+                            <span className="w-4" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <div className="p-1.5 bg-sky-950/40 border border-sky-800/30 rounded flex justify-between text-[7px] items-center">
+                                <span>🛒 Prodej přes net</span>
+                                <span className="text-sky-400 font-bold">12 400 Kč</span>
+                            </div>
+                            <div className="p-1.5 bg-orange-950/40 border border-orange-800/30 rounded flex justify-between text-[7px] items-center">
+                                <span>📝 Dopsaná objednávka</span>
+                                <span className="text-orange-400 font-bold">4 200 Kč</span>
+                            </div>
+                            <div className="p-1.5 bg-lime/10 border border-lime/20 rounded flex justify-between text-[7px] items-center">
+                                <span>🎁 Promo dárek</span>
+                                <span className="text-lime font-bold">0 Kč (24 ks)</span>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
             return (
                 <div className="w-full bg-[#1b2518] rounded-2xl p-4 border border-[#303f2a] shadow-inner font-mono text-[9px] text-[#8ea682] mb-6">
                     <div className="flex items-center justify-between border-b border-[#303f2a] pb-2 mb-3">
@@ -474,12 +799,11 @@ const AdminMockup = ({ id }: { id: string }) => {
         default:
             return null;
     }
-};
-
-const AdminHelp = () => {
+};const AdminHelp = () => {
     const { content, loading } = useContent();
     const navigate = useNavigate();
     const [viewMode, setViewMode] = React.useState<Record<string, 'mockup' | 'screenshot'>>({});
+    const [activeItems, setActiveItems] = React.useState<Record<string, string>>({});
 
     if (loading) {
         return (
@@ -498,10 +822,11 @@ const AdminHelp = () => {
             description: "Hlavní řídicí panel e-shopu, stav prodeje a přehledy",
             path: "/admin",
             items: [
-                { label: "Vypínač prodeje (Emergency Stop)", description: "Jak to funguje:\nHlavní přepínač v horní části plochy. Pokud jej přepnete do stavu VYPNUTO, e-shop okamžitě přestane přijímat objednávky. V košíku a na pokladně se zákazníkům zobrazí výrazné červené upozornění a tlačítka k dokončení platby budou zablokována.\n\nPoužití:\nVyužijte při nečekaném výpadku dodávek, inventuře nebo technické údržbě." },
-                { label: "Pracovní tok objednávek (Workflow)", description: "Jak to funguje:\nVizualizace stavů objednávek v reálném čase. Ukazuje počty nových, rozpracovaných, odeslaných a stornovaných objednávek.\n\nRychlá akce:\nKliknutím na jakékoli číslo v tomto panelu budete ihned přesměrováni do sekce Objednávky s automaticky nastaveným filtrem pro daný stav (např. kliknutím na 'Nové' uvidíte pouze nevyřízené objednávky)." },
-                { label: "Rychlý stav skladu", description: "Jak to funguje:\nOkamžitý přehled stavu zásob hlavních produktů (lahví) přímo na hlavní ploše.\n\nIndikátory:\nZelený pruh značí bezpečný stav, oranžový varuje před poklesem a červený s textem 'Nízký stav' signalizuje nutnost okamžitého naskladnění." },
+                { id: 'emergency_stop', label: "Vypínač prodeje (Emergency Stop)", description: "Jak to funguje:\nHlavní přepínač v horní části plochy. Pokud jej přepnete do stavu VYPNUTO, e-shop okamžitě přestane přijímat objednávky. V košíku a na pokladně se zákazníkům zobrazí výrazné červené upozornění a tlačítka k dokončení platby budou zablokována.\n\nPoužití:\nVyužijte při nečekaném výpadku dodávek, inventuře nebo technické údržbě." },
+                { id: 'workflow', label: "Pracovní tok objednávek (Workflow)", description: "Jak to funguje:\nVizualizace stavů objednávek v reálném čase. Ukazuje počty nových, rozpracovaných, odeslaných a stornovaných objednávek.\n\nRychlá akce:\nKliknutím na jakékoli číslo v tomto panelu budete ihned přesměrováni do sekce Objednávky s automaticky nastaveným filtrem pro daný stav (např. kliknutím na 'Nové' uvidíte pouze nevyřízené objednávky)." },
+                { id: 'quick_stock', label: "Rychlý stav skladu", description: "Jak to funguje:\nOkamžitý přehled stavu zásob hlavních produktů (lahví) přímo na hlavní ploše.\n\nIndikátory:\nZelený pruh značí bezpečný stav, oranžový varuje před poklesem a červený s textem 'Nízký stav' signalizuje nutnost okamžitého naskladnění." },
                 { 
+                    id: 'mobile_setup',
                     label: content?.lang === 'en' ? "Mobile Installation & Notifications Setup" : "Instalace na mobil a nastavení oznámení", 
                     description: content?.lang === 'en' 
                         ? "Mobile App Installation:\n1. **iOS (iPhone/iPad):** Open the e-shop in **Safari**. Tap the **Share** icon (square with an up arrow) in the bottom bar and choose **Add to Home Screen**.\n2. **Android:** Open the e-shop in **Chrome**, tap the three dots icon in the top right corner and choose **Install App** or **Add to Home Screen**.\n\nEnabling notifications on your phone:\n1. Launch the **BoostUp** app from your home screen and log in as administrator.\n2. Přejděte do sekce **Objednávky** or **Příchozí zprávy**.\n3. Click the flashing orange **Allow notifications** button (with a bell icon) in the header.\n4. Approve the system permission prompt by tapping **Allow**.\n\nHow it works:\nThe app will send you native push notifications with a sound whenever a new order or customer message arrives, even when the app is closed or the device is locked."
@@ -516,11 +841,11 @@ const AdminHelp = () => {
             description: "Správa textů, ingrediencí, konceptů a domovské stránky",
             path: "/admin/content",
             items: [
-                { label: "Úprava hlavní sekce (Hero Banner)", description: "Postup:\nV záložce 'Obsah webu' najdete formulář pro úpravu úvodního banneru. Můžete přepsat hlavní nadpis (rozdělený na Část 1 a Část 2), zvýrazněný text (např. 'MOZEK ⚡') a podnadpisy.\n\nUložení:\nKaždá změna se projeví okamžitě po kliknutí na 'Uložit změny'." },
-                { label: "Správa 3B Konceptu (Brain, Body, Balance)", description: "Postup:\nUmožňuje editovat textový obsah tří hlavních pilířů naší filozofie. Upravovat můžete jak texty na samotných kartách na úvodní straně, tak i detailní informace, které se zobrazí v popup okně po kliknutí zákazníka na tlačítko 'Zjistit více'." },
-                { label: "Editace ingrediencí a složení", description: "Postup:\nZde spravujete seznam funkčních složek BoostUp nápoje. U každé ingredience (např. L-theanin, kofein, adaptogeny) můžete upravit název, množství na plechovku, doprovodnou ikonu a podrobný vědecky podložený popis jejích účinků." },
-                { label: "Správa příchutí a produktů", description: "Postup:\nUmožňuje přizpůsobit vzhled produktových karet pro jednotlivé příchutě (Lemon Blast, Red Dragon, Silky Breeze). Můžete nastavit barvu pozadí karty (pomocí hex kódu), upravit název, popisek chuti a energetického profilu." },
-                { label: "Nastavení vyskakovacího slevového popupu", description: "Postup:\nGlobální nastavení chování webu. Můžete zde aktivovat nebo deaktivovat uvítací popup okno se slevou pro nové návštěvníky, změnit text slevy a nastavit zpoždění (v sekundách), po kterém se okno uživateli zobrazí." }
+                { id: 'hero_banner', label: "Úprava hlavní sekce (Hero Banner)", description: "Postup:\nV záložce 'Obsah webu' najdete formulář pro úpravu úvodního banneru. Můžete přepsat hlavní nadpis (rozdělený na Část 1 a Část 2), zvýrazněný text (např. 'MOZEK ⚡') a podnadpisy.\n\nUložení:\nKaždá změna se projeví okamžitě po kliknutí na 'Uložit změny'." },
+                { id: 'concept_3b', label: "Správa 3B Konceptu (Brain, Body, Balance)", description: "Postup:\nUmožňuje editovat textový obsah tří hlavních pilířů naší filozofie. Upravovat můžete jak texty na samotných kartách na úvodní straně, tak i detailní informace, které se zobrazí v popup okně po kliknutí zákazníka na tlačítko 'Zjistit více'." },
+                { id: 'ingredients', label: "Editace ingrediencí a složení", description: "Postup:\nZde spravujete seznam funkčních složek BoostUp nápoje. U každé ingredience (např. L-theanin, kofein, adaptogeny) můžete upravit název, množství na plechovku, doprovodnou ikonu a podrobný vědecky podložený popis jejích účinků." },
+                { id: 'flavors', label: "Správa příchutí a produktů", description: "Postup:\nUmožňuje přizpůsobit vzhled produktových karet pro jednotlivé příchutě (Lemon Blast, Red Dragon, Silky Breeze). Můžete nastavit barvu pozadí karty (pomocí hex kódu), upravit název, popisek chuti a energetického profilu." },
+                { id: 'discount_popup', label: "Nastavení vyskakovacího slevového popupu", description: "Postup:\nGlobální nastavení chování webu. Můžete zde aktivovat nebo deaktivovat uvítací popup okno se slevou pro nové návštěvníky, změnit text slevy a nastavit zpoždění (v sekundách), po kterém se okno uživateli zobrazí." }
             ]
         },
         {
@@ -530,9 +855,9 @@ const AdminHelp = () => {
             description: "Publikační systém, bohatý textový editor a SEO nastavení",
             path: "/admin/blog",
             items: [
-                { label: "Vytvoření a publikace nového článku", description: "Postup:\n1. Přejděte do sekce 'Blog' a klikněte na '+ Nový článek'.\n2. Zadejte název (systém automaticky vygeneruje čisté URL neboli 'slug').\n3. Napište obsah v bohatém editoru (podporuje formátování textu, nadpisy, seznamy a vkládání obrázků).\n4. Zvolte stav (Koncept pro rozepsané / Zveřejněno pro okamžité publikování) a uložte." },
-                { label: "Výběr designové šablony (Layout)", description: "Postup:\nU každého článku můžete určit vizuální styl jeho zobrazení zákazníkům. Vyberte:\n- **Modern** (velký úvodní obrázek, široký sloupec textu)\n- **Centered** (nadpis a text vycentrované na střed)\n- **Minimal** (čistý text bez úvodního obrázku pro technická oznámení)" },
-                { label: "SEO optimalizace článku", description: "Postup:\nPro zvýšení návštěvnosti z vyhledávačů vyplňte SEO parametry článku:\n- **Meta titulek**: Titulek pro vyhledávače (doporučeno do 60 znaků).\n- **Meta popis (Perex)**: Krátký shrnující text (doporučeno do 160 znaků), který se zobrazí ve výsledcích vyhledávání.\n- **Klíčová slova**: Témata článku oddělená čárkami." }
+                { id: 'create_article', label: "Vytvoření a publikace nového článku", description: "Postup:\n1. Přejděte do sekce 'Blog' a klikněte na '+ Nový článek'.\n2. Zadejte název (systém automaticky vygeneruje čisté URL neboli 'slug').\n3. Napište obsah v bohatém editoru (podporuje formátování textu, nadpisy, seznamy a vkládání obrázků).\n4. Zvolte stav (Koncept pro rozepsané / Zveřejněno pro okamžité publikování) a uložte." },
+                { id: 'layout_template', label: "Výběr designové šablony (Layout)", description: "Postup:\nU každého článku můžete určit vizuální styl jeho zobrazení zákazníkům. Vyberte:\n- **Modern** (velký úvodní obrázek, široký sloupec textu)\n- **Centered** (nadpis a text vycentrované na střed)\n- **Minimal** (čistý text bez úvodního obrázku pro technická oznámení)" },
+                { id: 'seo_optimization', label: "SEO optimalizace článku", description: "Postup:\nPro zvýšení návštěvnosti z vyhledávačů vyplňte SEO parametry článku:\n- **Meta titulek**: Titulek pro vyhledávače (doporučeno do 60 znaků).\n- **Meta popis (Perex)**: Krátký shrnující text (doporučeno do 160 znaků), který se zobrazí ve výsledcích vyhledávání.\n- **Klíčová slova**: Témata článku oddělená čárkami." }
             ]
         },
         {
@@ -542,11 +867,11 @@ const AdminHelp = () => {
             description: "Transakční e-maily, dynamické proměnné a rozesílka",
             path: "/admin/emails",
             items: [
-                { label: "Úprava transakčních e-mailů", description: "Postup:\nPřejděte do sekce E-maily, kde najdete seznam systémových zpráv (potvrzení objednávky, potvrzení platby, expedice). Kliknutím na šablonu otevřete editor, kde můžete přepsat předmět a tělo e-mailu. Tyto e-maily odesílá systém automaticky." },
-                { label: "Použití dynamických značek (Placeholders)", description: "Postup:\nDo šablon můžete vkládat značky v dvojitých složených závorkách, které systém při odeslání nahradí skutečnými údaji o zákazníkovi a nákupu:\n- `{{customerName}}` - Celé jméno zákazníka\n- `{{orderNumber}}` - Unikátní číslo objednávky\n- `{{total}}` - Celková cena v Kč\n- `{{itemsHtml}}` - Přehledná tabulka nakoupených položek s cenami." },
-                { label: "Master Šablona (Layout)", description: "Postup:\nPřepínač 'Zabalit do Master šablony' automaticky obalí váš upravovaný text do značkového BoostUp HTML layoutu, který obsahuje oficiální hlavičku s logem a patičku s kontaktními údaji a povinným odkazem pro odhlášení z newsletteru." },
-                { label: "Odesílání newsletter kampaní", description: "Postup:\n1. Přejděte na záložku 'Rozesílka'.\n2. Vyberte připravenou marketingovou šablonu.\n3. Uvidíte celkový počet aktivních odběratelů.\n4. Kliknutím na 'Spustit kampaň' systém začne rozesílat e-maily na pozadí v bezpečné rychlosti, abychom nespadli do spamu." },
-                { label: "Odeslání zkušebního e-mailu", description: "Postup:\nPřed uložením změn nebo spuštěním hromadné kampaně klikněte na 'Odeslat testovací e-mail'. Zadejte svůj administrátorský e-mail a ověřte si, že e-mail vypadá v doručené poště správně." }
+                { id: 'transactional_emails', label: "Úprava transakčních e-mailů", description: "Postup:\nPřejděte do sekce E-maily, kde najdete seznam systémových zpráv (potvrzení objednávky, potvrzení platby, expedice). Kliknutím na šablonu otevřete editor, kde můžete přepsat předmět a tělo e-mailu. Tyto e-maily odesílá systém automaticky." },
+                { id: 'dynamic_placeholders', label: "Použití dynamických značek (Placeholders)", description: "Postup:\nDo šablon můžete vkládat značky v dvojitých složených závorkách, které systém při odeslání nahradí skutečnými údaji o zákazníkovi a nákupu:\n- `{{customerName}}` - Celé jméno zákazníka\n- `{{orderNumber}}` - Unikátní číslo objednávky\n- `{{total}}` - Celková cena v Kč\n- `{{itemsHtml}}` - Přehledná tabulka nakoupených položek s cenami." },
+                { id: 'master_template', label: "Master Šablona (Layout)", description: "Postup:\nPřepínač 'Zabalit do Master šablony' automaticky obalí váš upravovaný text do značkového BoostUp HTML layoutu, který obsahuje oficiální hlavičku s logem a patičku s kontaktními údaji a povinným odkazem pro odhlášení z newsletteru." },
+                { id: 'newsletter_campaigns', label: "Odesílání newsletter kampaní", description: "Postup:\n1. Přejdete na záložku 'Rozesílka'.\n2. Vyberte připravenou marketingovou šablonu.\n3. Uvidíte celkový počet aktivních odběratelů.\n4. Kliknutím na 'Spustit kampaň' systém začne rozesílat e-maily na pozadí v bezpečné rychlosti, abychom nespadli do spamu." },
+                { id: 'test_email', label: "Odeslání zkušebního e-mailu", description: "Postup:\nPřed uložením změn nebo spuštěním hromadné kampaně klikněte na 'Odeslat testovací e-mail'. Zadejte svůj administrátorský e-mail a ověřte si, že e-mail vypadá v doručené poště správně." }
             ]
         },
         {
@@ -556,8 +881,8 @@ const AdminHelp = () => {
             description: "Správa zákaznických dotazů z kontaktního formuláře",
             path: "/admin/messages",
             items: [
-                { label: "Zpracování a správa příchozích zpráv", description: "Postup:\nVšechny zprávy odeslané z kontaktního formuláře na e-shopu se řadí do této schránky. Nepřečtené zprávy svítí oranžově s označením 'NOVÉ'. U ikony zpráv v levém menu se také zobrazuje červené číslo s počtem nevyřízených dotazů." },
-                { label: "Odpovídání zákazníkům přímo z administrace", description: "Postup:\nKliknutím na zprávu otevřete její detail. Přímo z administrace můžete napsat odpověď do textového pole a kliknout na 'Odeslat odpověď'. Systém odešle e-mail zákazníkovi pod hlavičkou e-shopu a zprávu automaticky označí jako vyřízenou." }
+                { id: 'incoming_messages', label: "Zpracování a správa příchozích zpráv", description: "Postup:\nVšechny zprávy odeslané z kontaktního formuláře na e-shopu se řadí do této schránky. Nepřečtené zprávy svítí oranžově s označením 'NOVÉ'. U ikony zpráv v levém menu se také zobrazuje červené číslo s počtem nevyřízených dotazů." },
+                { id: 'reply_to_customers', label: "Odpovídání zákazníkům přímo z administrace", description: "Postup:\nKliknutím na zprávu otevřete její detail. Přímo z administrace můžete napsat odpověď do textového pole a kliknout na 'Odeslat odpověď'. Systém odešle e-mail zákazníkovi pod hlavičkou e-shopu a zprávu automaticky označí jako vyřízenou." }
             ]
         },
         {
@@ -567,11 +892,11 @@ const AdminHelp = () => {
             description: "Kompletní správa objednávek, vygenerování štítků a manuální nákupy",
             path: "/admin/orders",
             items: [
-                { label: "Filtrování, vyhledávání a detaily", description: "Postup:\nV tabulce můžete vyhledávat objednávky podle jména, e-mailu nebo čísla objednávky. Pomocí záložek v horní části tabulky můžete filtrovat objednávky podle jejich aktuálního stavu (Nové, Zaplacené, Zpracovávané, Odeslané, Stornované)." },
-                { label: "Změna stavu objednávky", description: "Postup:\nKliknutím na řádek objednávky otevřete pravý panel s jejím detailem. Zde můžete v pravém horním rohu kliknout na rozbalovací menu a změnit stav (např. z 'paid' na 'shipped' po odeslání balíku). Změna stavu může automaticky odeslat informační e-mail zákazníkovi." },
-                { label: "Vytvoření ruční (manuální) objednávky", description: "Postup:\n1. Klikněte na '+ Nová objednávka'.\n2. Vyplňte dodací a fakturační údaje zákazníka.\n3. V tabulce položek přidejte požadované produkty a jejich množství.\n4. Zvolte stav platby a objednávku uložte.\n\nVyužití:\nTelefonické objednávky nebo B2B prodeje." },
-                { label: "Hromadné zpracování objednávek", description: "Postup:\nZaškrtnutím políček u více objednávek v levém sloupci aktivujete hromadné menu. Můžete najednou stornovat více objednávek, změnit jim stav nebo vygenerovat hromadný tisk štítků (tiskne více štítků na jeden arch A4 pro úsporu papíru)." },
-                { label: "Generování štítků Zásilkovny (Packeta API)", description: "Postup:\nU objednávek se zvoleným doručením na výdejní místo Zásilkovny se v detailu zobrazí tlačítko 'Odeslat do Zásilkovny'. Kliknutím odešlete data balíku na servery Zásilkovny, která vám vrátí trasovací číslo. Následně kliknutím na 'Vytisknout štítek' stáhnete PDF k tisku." }
+                { id: 'filter_search', label: "Filtrování, vyhledávání a detaily", description: "Postup:\nV tabulce můžete vyhledávat objednávky podle jména, e-mailu nebo čísla objednávky. Pomocí záložek v horní části tabulky můžete filtrovat objednávky podle jejich aktuálního stavu (Nové, Zaplacené, Zpracovávané, Odeslané, Stornované)." },
+                { id: 'change_status', label: "Změna stavu objednávky", description: "Postup:\nKliknutím na řádek objednávky otevřete pravý panel s jejím detailem. Zde můžete v pravém horním rohu kliknout na rozbalovací menu a změnit stav (např. z 'paid' na 'shipped' po odeslání balíku). Změna stavu může automaticky odeslat informační e-mail zákazníkovi." },
+                { id: 'create_manual_order', label: "Vytvoření ruční (manuální) objednávky", description: "Postup:\n1. Klikněte na '+ Nová objednávka'.\n2. Vyplňte dodací a fakturační údaje zákazníka.\n3. V tabulce položek přidejte požadované produkty a jejich množství.\n4. Zvolte stav platby a objednávku uložte.\n\nVyužití:\nTelefonické objednávky nebo B2B prodeje." },
+                { id: 'bulk_processing', label: "Hromadné zpracování objednávek", description: "Postup:\nZaškrtnutím políček u více objednávek v levém sloupci aktivujete hromadné menu. Můžete najednou stornovat více objednávek, změnit jim stav nebo vygenerovat hromadný tisk štítků (tiskne více štítků na jeden arch A4 pro úsporu papíru)." },
+                { id: 'packeta_shipping', label: "Generování štítků Zásilkovny (Packeta API)", description: "Postup:\nU objednávek se zvoleným doručením na výdejní místo Zásilkovny se v detailu zobrazí tlačítko 'Odeslat do Zásilkovny'. Kliknutím odešlete data balíku na servery Zásilkovny, která vám vrátí trasovací číslo. Následně kliknutím na 'Vytisknout štítek' stáhnete PDF k tisku." }
             ]
         },
         {
@@ -581,9 +906,10 @@ const AdminHelp = () => {
             description: "Správa stavu produktů, historie pohybů a hlídání limitů",
             path: "/admin/inventory",
             items: [
-                { label: "Manuální naskladnění a odpisy", description: "Postup:\n1. V seznamu produktů najděte požadovanou položku a klikněte na 'Upravit stav'.\n2. Zadejte množství (např. 120 pro přičtení nového závozu, nebo -5 pro odpis poškozených kusů).\n3. Vyplňte povinnou poznámku zdůvodňující pohyb (např. 'Závoz z výroby').\n4. Klikněte na 'Uložit'." },
-                { label: "Hlídání minimálního limitu zásob", description: "Postup:\nV detailu produktu můžete nastavit hodnotu 'Varovný limit'. Pokud fyzický stav skladu klesne pod tuto hodnotu, produkt se v administraci označí červeným vykřičníkem a systém zobrazí globální varovnou ikonu. To vás včas upozorní na nutnost zadat novou výrobu." },
-                { label: "Podrobná historie skladových pohybů", description: "Postup:\nKaždý pohyb (nákup zákazníkem, manuální naskladnění, systémový odpis) se zapisuje do auditního logu v dolní části stránky. V logu vidíte přesné datum, SKU, typ pohybu, změnu množství, poznámku a e-mail administrátora, který pohyb provedl." }
+                { id: 'manual_restock', label: "Manuální naskladnění a odpisy", description: "Postup:\n1. V seznamu produktů najděte požadovanou položku a klikněte na 'Upravit stav'.\n2. Zadejte množství (např. 120 pro přičtení nového závozu, nebo -5 pro odpis poškozených kusů).\n3. Vyplňte povinnou poznámku zdůvodňující pohyb (např. 'Závoz z výroby').\n4. Klikněte na 'Uložit'." },
+                { id: 'warning_limit', label: "Hlídání minimálního limitu zásob", description: "Postup:\nV detailu produktu můžete nastají hodnotu 'Varovný limit'. Pokud fyzický stav skladu klesne pod tuto hodnotu, produkt se v administraci označí červeným vykřičníkem a systém zobrazí globální varovnou ikonu. To vás včas upozorní na nutnost zadat novou výrobu." },
+                { id: 'movement_history', label: "Podrobná historie skladových pohybů", description: "Postup:\nKaždý pohyb (nákup zákazníkem, manuální naskladnění, systémový odpis) se zapisuje do auditního logu v dolní části stránky. V logu vidíte přesné datum, SKU, typ pohybu, změnu množství, poznámku a e-mail administrátora, který pohyb provedl." },
+                { id: 'quick_restock_batch', label: "Rychlá doskladňovací várka", description: "Jak to funguje:\nU každé příchutě várky je k dispozici rychlé tlačítko pro okamžité doskladnění definovaného množství. Jedním kliknutím tak můžete provést naskladnění např. 120 ks bez nutnosti ručního zadávání množství.\n\nPoužití:\nVyužijte pro urychlení práce při pravidelném doskladňování celých standardních várek." }
             ]
         },
         {
@@ -593,8 +919,8 @@ const AdminHelp = () => {
             description: "Surovinový sklad plechovek, víček, etiket a tekutiny",
             path: "/admin/manufacture",
             items: [
-                { label: "Správa a naskladnění výrobních surovin", description: "Postup:\nV sekci Výroba spravujete stav základních materiálů: prázdné plechovky, hliníková víčka, etikety příchutí, papírové krabice a namíchaný nápoj (v litrech). Naskladnění a odpisy surovin probíhají stejně jako u produktů zadáním množství a poznámky." },
-                { label: "Historie a audit spotřeby surovin", description: "Postup:\nKaždé doskladnění surovin nebo jejich odpis (např. spotřeba při plnění plechovek) je detailně logováno s datem, množstvím, poznámkou a autorem záznamu pro stoprocentní přehled o výrobních nákladech." }
+                { id: 'materials_management', label: "Správa a naskladnění výrobních surovin", description: "Postup:\nV sekci Výroba spravujete stav základních materiálů: prázdné plechovky, hliníková víčka, etikety příchutí, papírové krabice a namíchaný nápoj (v litrech). Naskladnění a odpisy surovin probíhají stejně jako u produktů zadáním množství a poznámky." },
+                { id: 'materials_history', label: "Historie a audit spotřeby surovin", description: "Postup:\nKaždé doskladnění surovin nebo jejich odpis (např. spotřeba při plnění plechovek) je detailně logováno s datem, množstvím, poznámkou a autorem záznamu pro stoprocentní přehled o výrobních nákladech." }
             ]
         },
         {
@@ -604,8 +930,9 @@ const AdminHelp = () => {
             description: "Nastavení cen produktů a balení pro celý e-shop",
             path: "/admin/pricing",
             items: [
-                { label: "Globální nastavení cen", description: "Postup:\nUmožňuje centrálně měnit prodejní ceny produktů a výhodných balení (3-pack, 12-pack, 21-pack). Změněná cena se okamžitě přepíše na e-shopu, v nákupním košíku i v platebním rozhraní Stripe. Ceny zadávejte jako koncové ceny pro zákazníka (včetně DPH)." },
-                { label: "Finanční přehledy prodejů", description: "Postup:\nV dolní části cenotvorby naleznete statistické grafy ukazující celkový objem tržeb v čase, průměrnou hodnotu objednávky a podíl jednotlivých příchutí na celkových prodejích." }
+                { id: 'global_prices', label: "Globální nastavení cen", description: "Postup:\nUmožňuje centrálně měnit prodejní ceny produktů a výhodných balení (3-pack, 12-pack, 21-pack). Změněná cena se okamžitě přepíše na e-shopu, v nákupním košíku i v platebním rozhraní Stripe. Ceny zadávejte jako koncové ceny pro zákazníka (včetně DPH)." },
+                { id: 'financial_overview', label: "Finanční přehledy prodejů", description: "Postup:\nV dolní části cenotvorby naleznete statistické grafy ukazující celkový objem tržeb v čase, průměrnou hodnotu objednávky a podíl jednotlivých příchutí na celkových prodejích." },
+                { id: 'order_categories', label: "Rozlišení typů objednávek ve statistikách", description: "Jak to funguje:\nStatistiky cenotvorby a prodejů automaticky rozlišují tři hlavní kategorie objednávek:\n1. **Prodej přes net**: Běžné objednávky z e-shopu.\n2. **Dopsaná objednávka**: Manuálně zadané objednávky v administraci.\n3. **Promo dárek**: Objednávky s platební metodou \"promo\" (hodnota 0 Kč, eviduje se pouze spotřebovaný počet kusů).\n\nZobrazení:\nKaždá kategorie má v grafech vlastní křivku a v souhrnech vlastní dlaždici pro přesný finanční i kusový audit." }
             ]
         },
         {
@@ -615,9 +942,9 @@ const AdminHelp = () => {
             description: "Tvorba slevových kódů, pravidla platnosti a limity",
             path: "/admin/promo-codes",
             items: [
-                { label: "Vytvoření nového slevového kódu", description: "Postup:\n1. Klikněte na '+ Nový slevový kód'.\n2. Zadejte text kódu (např. 'BOOST20' - doporučujeme velká písmena bez diakritiky).\n3. Nastavte výši slevy v procentech (např. 20).\n4. Zvolte stav (Aktivní/Neaktivní) a uložte. Kód mohou zákazníci ihned uplatnit v košíku." },
-                { label: "Nastavení uvítací dárkové brány", description: "Postup:\nSpráva speciálního slevového kódu, který se automaticky nabídne novým návštěvníkům webu ve vyskakovacím okně po načtení stránky. Můžete určit, který kód z databáze se v popupu zobrazí a upravit jeho text." },
-                { label: "Omezení a pravidla platnosti kódů", description: "Postup:\nU každého kódu můžete definovat omezení, například platnost od-do (pro časově omezené akce) nebo minimální hodnotu objednávky, od které lze kód uplatnit (např. sleva platí pouze při nákupu nad 1000 Kč)." }
+                { id: 'create_promo', label: "Vytvoření nového slevového kódu", description: "Postup:\n1. Klikněte na '+ Nový slevový kód'.\n2. Zadejte text kódu (např. 'BOOST20' - doporučujeme velká písmena bez diakritiky).\n3. Nastavte výši slevy v procentech (např. 20).\n4. Zvolte stav (Aktivní/Neaktivní) a uložte. Kód mohou zákazníci ihned uplatnit v košíku." },
+                { id: 'welcome_gate', label: "Nastavení uvítací dárkové brány", description: "Postup:\nSpráva speciálního slevového kódu, který se automaticky nabídne novým návštěvníkům webu ve vyskakovacím okně po načtení stránky. Můžete určit, který kód z databáze se v popupu zobrazí a upravit jeho text." },
+                { id: 'promo_rules', label: "Omezení a pravidla platnosti kódů", description: "Postup:\nU každého kódu můžete definovat omezení, například platnost od-do (pro časově omezené akce) nebo minimální hodnotu objednávky, od které lze kód uplatnit (např. sleva platí pouze při nákupu nad 1000 Kč)." }
             ]
         },
         {
@@ -627,9 +954,9 @@ const AdminHelp = () => {
             description: "Správa registrovaných uživatelů, zákazníků a admin práv",
             path: "/admin/users",
             items: [
-                { label: "Seznam a vyhledávání registrovaných osob", description: "Postup:\nPřehledná tabulka všech uživatelů. Můžete vyhledávat podle jména, e-mailu nebo řadit podle data registrace. Zobrazuje se také informace, zda má uživatel roli Admin (přístup do administrace) nebo Zákazník." },
-                { label: "Přiřazení a správa administrátorských práv", description: "Postup:\nChcete-li udělit přístup do této administrace kolegovi:\n1. Vyhledejte ho v seznamu.\n2. V pravém sloupci klikněte na 'Změnit roli'.\n3. Zvolte možnost 'Admin' a potvrďte. Uživatel se při příštím přihlášení dostane do administrace." },
-                { label: "Detail zákazníka a nákupní historie", description: "Postup:\nKliknutím na jméno uživatele otevřete jeho osobní kartu. Zde vidíte celkový počet jeho objednávek, celkovou utracenou částku, dodací adresu a seznam všech zakoupených položek pro individuální zákaznickou péči." }
+                { id: 'users_list', label: "Seznam a vyhledávání registrovaných osob", description: "Postup:\nPřehledná tabulka všech uživatelů. Můžete vyhledávat podle jména, e-mailu nebo řadit podle data registrace. Zobrazuje se také informace, zda má uživatel roli Admin (přístup do administrace) nebo Zákazník." },
+                { id: 'admin_rights', label: "Přiřazení a správa administrátorských práv", description: "Postup:\nChcete-li udělit přístup do této administrace kolegovi:\n1. Vyhledejte ho v seznamu.\n2. V pravém sloupci klikněte na 'Změnit roli'.\n3. Zvolte možnost 'Admin' a potvrďte. Uživatel se při příštím přihlášení dostane do administrace." },
+                { id: 'customer_detail', label: "Detail zákazníka a nákupní historie", description: "Postup:\nKliknutím na jméno uživatele otevřete jeho osobní kartu. Zde vidíte celkový počet jeho objednávek, celkovou utracenou částku, dodací adresu a seznam všech zakoupených položek pro individuální zákaznickou péči." }
             ]
         },
         {
@@ -639,9 +966,9 @@ const AdminHelp = () => {
             description: "Podklady pro účetní systémy a automatické měsíční exporty",
             path: "/admin/orders",
             items: [
-                { label: "Manuální export objednávek do CSV (Pohoda / iDoklad)", description: "Postup:\nV horní části tabulky Objednávek najdete tlačítko 'Export dat'. Zde zvolte časové rozmezí (např. minulý měsíc) a klikněte na 'Stáhnout CSV'. Tento soubor splňuje standardy pro přímý import do účetních programů." },
-                { label: "Automatický měsíční report pro účetní", description: "Postup:\nV nastavení exportu můžete zadat e-mail vašeho účetního oddělení. Každý první den v měsíci systém na tuto adresu automaticky odešle kompletní přehled prodejů a CSV soubor za předchozí kalendářní měsíc." },
-                { label: "Časové filtry pro daňová přiznání", description: "Postup:\nExporty dat lze filtrovat za jakékoli vlastní období (měsíc, kvartál, rok), což usnadňuje přípravu podkladů pro přiznání k DPH nebo roční účetní uzávěrku." }
+                { id: 'csv_export', label: "Manuální export objednávek do CSV (Pohoda / iDoklad)", description: "Postup:\nManuální export objednávek do CSV (Pohoda / iDoklad) umožní stažení podkladů pro účetnictví. Zadejte časové období a stáhněte." },
+                { id: 'monthly_report', label: "Automatický měsíční report pro účetní", description: "Postup:\nZadejte e-mail svého účetního oddělení a systém bude automaticky odesílat měsíční reporty." },
+                { id: 'tax_filters', label: "Časové filtry pro daňová přiznání", description: "Postup:\nExporty lze filtrovat za libovolné období pro snadnou přípravu daňových podkladů." }
             ]
         },
         {
@@ -651,9 +978,9 @@ const AdminHelp = () => {
             description: "Sledování návštěvnosti, konverzní trychtýř a live event stream",
             path: "/admin/insights",
             items: [
-                { label: "Sledování trendů návštěvnosti", description: "Postup:\nHorní graf zobrazuje denní počty zobrazení stránek a unikátních návštěvníků v 14-denním okně. Pomáhá měřit okamžitou úspěšnost marketingových kampaní a sledovat dny s největší aktivitou." },
-                { label: "Analýza konverzního trychtýře (Funnel)", description: "Postup:\nVizualizace cesty zákazníka od první návštěvy až po dokončení platby. Ukazuje poměr uživatelů, kteří vstoupili na web, přešli na pokladnu a úspěšně nakoupili, což vám umožní odhalit, kde zákazníci nejvíce odcházejí." },
-                { label: "Živý proud událostí (Live Activity Log)", description: "Postup:\nV reálném čase aktualizovaný výpis všech akcí na webu. Uvidíte přesný čas zobrazení stránky, cestu (např. `/checkout`), typ zařízení (mobil/desktop), použitý operační systém, prohlížeč a zdroj návštěvy (např. Google, Facebook)." }
+                { id: 'traffic_trends', label: "Sledování trendů návštěvnosti", description: "Postup:\nHorní graf zobrazuje denní počty zobrazení stránek a unikátních návštěvníků v 14-denním okně. Pomáhá měřit okamžitou úspěšnost marketingových kampaní a sledovat dny s největší aktivitou." },
+                { id: 'funnel_analysis', label: "Analýza konverzního trychtýře (Funnel)", description: "Postup:\nVizualizace cesty zákazníka od první návštěvy až po dokončení platby. Ukazuje poměr uživatelů, kteří vstoupili na web, přešli na pokladnu a úspěšně nakoupili, což vám umožní odhalit, kde zákazníci nejvíce odcházejí." },
+                { id: 'live_activity', label: "Živý proud událostí (Live Activity Log)", description: "Postup:\nV reálném čase aktualizovaný výpis všech akcí na webu. Uvidíte přesný čas zobrazení stránky, cestu (např. `/checkout`), typ zařízení (mobil/desktop), použitý operační systém, prohlížeč a zdroj návštěvy (např. Google, Facebook)." }
             ]
         }
     ];
@@ -682,11 +1009,22 @@ const AdminHelp = () => {
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                             <div className="grid gap-4">
-                                <Accordion type="single" collapsible className="w-full">
+                                <Accordion 
+                                    type="single" 
+                                    collapsible 
+                                    className="w-full"
+                                    value={activeItems[section.id] || ""}
+                                    onValueChange={(val) => {
+                                        setActiveItems(prev => ({
+                                            ...prev,
+                                            [section.id]: val
+                                        }));
+                                    }}
+                                >
                                     {section.items.map((item, id) => (
                                         <AccordionItem 
                                             key={id} 
-                                            value={`item-${idx}-${id}`}
+                                            value={item.id || `item-${idx}-${id}`}
                                             className="border-none bg-white font-bold rounded-2xl sm:rounded-3xl mb-4 shadow-sm hover:shadow-md transition-all overflow-hidden"
                                         >
                                             <AccordionTrigger className="px-6 sm:px-8 py-5 sm:py-6 hover:no-underline group">
@@ -734,16 +1072,24 @@ const AdminHelp = () => {
 
                                     <div className="flex-1 flex flex-col justify-center">
                                         {(viewMode[section.id] || 'mockup') === 'mockup' ? (
-                                            <AdminMockup id={section.id} />
+                                            <AdminMockup id={section.id} activeItemId={activeItems[section.id]} />
                                         ) : (
                                             <div className="relative aspect-video rounded-xl overflow-hidden border border-olive-dark/15 shadow-inner bg-white flex items-center justify-center">
                                                 <img 
-                                                    src={`/admin-guide/${section.id === 'content' ? 'content-management' : section.id === 'promos' ? 'promo-codes' : section.id === 'users' ? 'users' : section.id}.png`} 
+                                                    src={activeItems[section.id]
+                                                        ? `/admin-guide/${section.id}-${activeItems[section.id]}.png`
+                                                        : `/admin-guide/${section.id === 'content' ? 'content-management' : section.id === 'promos' ? 'promo-codes' : section.id === 'users' ? 'users' : section.id}.png`
+                                                    } 
                                                     alt={section.title} 
                                                     className="w-full h-full object-cover object-top"
                                                     onError={(e) => {
-                                                        e.currentTarget.style.display = 'none';
-                                                        setViewMode(prev => ({ ...prev, [section.id]: 'mockup' }));
+                                                        const currentSrc = e.currentTarget.src;
+                                                        const defaultFile = `${section.id === 'content' ? 'content-management' : section.id === 'promos' ? 'promo-codes' : section.id === 'users' ? 'users' : section.id}.png`;
+                                                        if (!currentSrc.endsWith(defaultFile)) {
+                                                            e.currentTarget.src = `/admin-guide/${defaultFile}`;
+                                                        } else {
+                                                            setViewMode(prev => ({ ...prev, [section.id]: 'mockup' }));
+                                                        }
                                                     }}
                                                 />
                                             </div>
