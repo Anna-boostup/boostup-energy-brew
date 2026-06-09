@@ -60,7 +60,7 @@ export default async function handler(req: Request) {
         
         // Extract address details
         const sidlo = data.sidlo || {};
-        let street = sidlo.nazevUlice || sidlo.nazevObce || '';
+        const street = sidlo.nazevUlice || sidlo.nazevObce || '';
         const houseNum = sidlo.cisloDomovni || '';
         const orientNum = sidlo.cisloOrientacni || '';
         

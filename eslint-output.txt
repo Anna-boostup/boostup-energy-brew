@@ -1,0 +1,144 @@
+
+> vite_react_shadcn_ts@0.0.0 lint
+> eslint .
+
+
+/Users/zdenekdias/boostup-energy-brew/api/create-gopay-payment.ts
+  98:45  error  Unexpected control character(s) in regular expression: \x00  no-control-regex
+
+/Users/zdenekdias/boostup-energy-brew/src/components/Header.tsx
+  72:29  error  Empty block statement  no-empty
+
+/Users/zdenekdias/boostup-energy-brew/src/components/admin/AdminLayout.tsx
+  111:8   warning  React Hook useEffect has a missing dependency: 'orders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  451:22  error    Unexpected constant condition                                                                              no-constant-condition
+
+/Users/zdenekdias/boostup-energy-brew/src/components/admin/B2BCustomerDialog.tsx
+  43:63  error  Unnecessary escape character: \/  no-useless-escape
+
+/Users/zdenekdias/boostup-energy-brew/src/components/admin/ManualOrderForm.tsx
+  118:63  error  Unnecessary escape character: \/  no-useless-escape
+
+/Users/zdenekdias/boostup-energy-brew/src/components/stripe/StripeExpressButtons.tsx
+   73:51  error    Unnecessary escape character: \/                                                                                                                           no-useless-escape
+  184:6   warning  React Hook useEffect has missing dependencies: 'addOrder', 'clearCart', 'decrementStock', and 'toast'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/badge.tsx
+  29:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/button.tsx
+  54:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/form.tsx
+  129:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/navigation-menu.tsx
+  112:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/sidebar.tsx
+  636:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/sonner.tsx
+  27:19  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/components/ui/toggle.tsx
+  37:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/AuthContext.tsx
+  133:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/CartContext.tsx
+   26:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components            react-refresh/only-export-components
+  142:8   warning  React Hook useEffect has a missing dependency: 'appliedPromoCode'. Either include it or remove the dependency array                       react-hooks/exhaustive-deps
+  142:39  warning  React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+  279:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components            react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/ContentContext.tsx
+  127:11  warning  The 'baseEN' object makes the dependencies of useMemo Hook (at line 130) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'baseEN' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  190:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                      react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/CookieContext.tsx
+  94:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/InventoryContext.tsx
+  816:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/LanguageContext.tsx
+  34:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/context/ManufactureContext.tsx
+  177:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/CheckoutPage.tsx
+  177:6   warning  React Hook useEffect has a missing dependency: 'formData.email'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  505:39  error    Unexpected control character(s) in regular expression: \x00                                                        no-control-regex
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/PaymentSuccess.tsx
+  79:8  warning  React Hook useEffect has missing dependencies: 'clearCart' and 'consent?.marketing'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/Profile.tsx
+  19:8  warning  React Hook useEffect has a missing dependency: 'getProfile'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/account/Subscriptions.tsx
+  29:8  warning  React Hook useEffect has a missing dependency: 'fetchSubscriptions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/AdminProfile.tsx
+   33:37  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                 react-hooks/rules-of-hooks
+   34:31  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+   35:41  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+   36:39  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+   37:55  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+   38:32  error  React Hook "useRef" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?    react-hooks/rules-of-hooks
+   99:49  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  100:59  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  101:45  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  102:43  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  105:43  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  106:39  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  107:49  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  108:41  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  109:41  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  110:47  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  111:57  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  112:43  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  113:41  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  115:51  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  118:51  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  119:43  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  120:51  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  121:57  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/BlogEditor.tsx
+  68:6  warning  React Hook useEffect has missing dependencies: 'fetchPost' and 'isEditing'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/EmailManagement.tsx
+  167:8  warning  React Hook useEffect has a missing dependency: 'testEmails'. Either include it or remove the dependency array        react-hooks/exhaustive-deps
+  175:8  warning  React Hook useEffect has a missing dependency: 'fetchTemplates'. Either include it or remove the dependency array    react-hooks/exhaustive-deps
+  210:8  warning  React Hook useEffect has a missing dependency: 'SYSTEM_TEMPLATES'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  256:8  warning  React Hook useEffect has a missing dependency: 'SYSTEM_TEMPLATES'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/Inventory.tsx
+  150:43  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  151:41  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  152:35  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/Messages.tsx
+  91:8  warning  React Hook useEffect has a missing dependency: 'fetchMessages'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/Orders.tsx
+  646:5   error  React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  895:65  error  React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render   react-hooks/rules-of-hooks
+
+/Users/zdenekdias/boostup-energy-brew/src/pages/admin/PromoCodes.tsx
+  55:8  warning  React Hook useEffect has a missing dependency: 'fetchCodes'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/zdenekdias/boostup-energy-brew/tests/fixtures.ts
+  16:7   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                    @typescript-eslint/ban-ts-comment
+  54:11  error  React Hook "use" is called in function "page" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use"  react-hooks/rules-of-hooks
+
+/Users/zdenekdias/boostup-energy-brew/tests/unit/utils.test.ts
+  15:29  error  Unexpected constant truthiness on the left-hand side of a `&&` expression                                            no-constant-binary-expression
+  33:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+✖ 71 problems (40 errors, 31 warnings)
+

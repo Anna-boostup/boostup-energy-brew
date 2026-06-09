@@ -12,8 +12,7 @@ export const test = base.extend({
         get: () => undefined,
       });
 
-      // Bot evasion: Overwrite chrome object
-      // @ts-ignore
+      // @ts-expect-error - Bot evasion requires writing to readonly window properties
       window.chrome = { runtime: {} };
 
       // Bot evasion: Overwrite languages
@@ -51,6 +50,7 @@ export const test = base.extend({
         }
       });
     }
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(page);
   },
 });

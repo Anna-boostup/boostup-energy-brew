@@ -120,6 +120,11 @@ const Inventory = () => {
     const { toast } = useToast();
     const { stock, products, updateProduct, addMovement, loading } = useInventory();
 
+    // Dialog States
+    const [restockData, setRestockData] = useState<{ sku: SKU; mode: "in" | "out" } | null>(null);
+    const [historySku, setHistorySku] = useState<SKU | null>(null);
+    const [editSku, setEditSku] = useState<SKU | null>(null);
+
     const handleQuickRestock = async (sku: SKU, product: any) => {
         const batchSize = product?.restock_batch_size ?? 1000;
         try {
@@ -145,11 +150,6 @@ const Inventory = () => {
             </div>
         );
     }
-
-    // Dialog States
-    const [restockData, setRestockData] = useState<{ sku: SKU; mode: "in" | "out" } | null>(null);
-    const [historySku, setHistorySku] = useState<SKU | null>(null);
-    const [editSku, setEditSku] = useState<SKU | null>(null);
 
     // Show only base flavor SKUs (lemon, red, silky)
     const sortedStock = Object.entries(stock)
