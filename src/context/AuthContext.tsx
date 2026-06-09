@@ -52,15 +52,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         // 2. Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log("AUTH_TRACE: onAuthStateChange event:", event, "session:", !!session);
             setSession(session);
             setUser(session?.user ?? null);
 
             if (session?.user) {
-                // Fetch profile in background without triggering global loading 
-                // if we are already past the initial load
-                fetchProfile(session.user.id);
+                // If it's a new sign-in, we need to show global loading to prevent RoleGuard from bouncing us
+                if (event === 'SIGNED_IN') {
+                    console.log("AUTH_TRACE: SIGNED_IN event, setting loading=true and fetching profile");
+                    setLoading(true);
+                    fetchProfile(session.user.id);
+                } else {
+                    console.log("AUTH_TRACE: non-SIGNED_IN event, not fetching profile automatically");
+                }
             } else {
+                console.log("AUTH_TRACE: no session user, setting profile=null");
                 setProfile(null);
                 setLoading(false);
             }

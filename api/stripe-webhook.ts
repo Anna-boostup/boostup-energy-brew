@@ -10,9 +10,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const config = {
-    // Vercel edge functions do not support raw body parsing easily for Stripe Webhooks, 
-    // we need runtime: 'nodejs' for standard request streams, but 'edge' might work with text()
-    runtime: 'edge', 
+    runtime: 'nodejs', 
 };
 
 const corsHeaders = {
@@ -29,7 +27,9 @@ export default async function handler(req: Request) {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
     }
 
-    const payload = await req.text();
+    // Use ArrayBuffer to prevent UTF-8 string encoding from corrupting the raw payload bytes
+    const arrayBuffer = await req.arrayBuffer();
+    const payload = Buffer.from(arrayBuffer);
     const signature = req.headers.get('stripe-signature');
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 

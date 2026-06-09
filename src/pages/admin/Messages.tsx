@@ -250,17 +250,17 @@ const Messages = () => {
                         <p className="text-[9px] sm:text-xs text-olive-dark/60 font-black uppercase tracking-[0.2em] mt-1.5">{content?.admin?.messages?.description}</p>
                     </div>
                     {unreadCount > 0 && (
-                        <Badge className="bg-lime text-olive-dark font-black ml-4 px-3 sm:px-4 py-1.5 rounded-xl text-[9px] sm:text-[10px] tracking-widest border-none shadow-lg shadow-lime/20">
+                        <Badge className="bg-lime text-olive-dark font-black ml-3 px-3.5 py-1 rounded-full text-xs sm:text-sm border border-olive/10 shadow-sm">
                             {unreadCount}
                         </Badge>
                     )}
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="relative flex-1 md:w-72 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-olive-dark/40 transition-colors group-focus-within:text-olive-dark" />
+                <div className="flex items-center gap-2">
+                    <div className="relative flex-1 md:w-64 group">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-olive-dark/40 transition-colors group-focus-within:text-olive-dark" />
                         <Input 
                             placeholder={content?.admin?.messages?.search || "Search..."} 
-                            className="h-12 sm:h-14 pl-11 bg-admin-canvas/80 border-none rounded-2xl shadow-sm focus-visible:ring-olive-dark/20 focus-visible:ring-offset-0 text-sm font-bold placeholder:text-olive-dark/40"
+                            className="h-10 sm:h-11 pl-10 bg-admin-canvas/80 border-none rounded-xl shadow-sm focus-visible:ring-olive-dark/20 focus-visible:ring-offset-0 text-sm font-bold placeholder:text-olive-dark/40"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -272,13 +272,13 @@ const Messages = () => {
                             onClick={handleMarkAllAsRead} 
                             disabled={loading} 
                             title={content?.admin?.messages?.actions?.markAllRead || "Mark all as read"}
-                            className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0 text-primary hover:text-primary/80"
+                            className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0 text-primary hover:text-primary/80"
                         >
-                            <CheckCheck className="w-5 h-5" />
+                            <CheckCheck className="w-4 h-4" />
                         </Button>
                     )}
-                    <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
-                        <RefreshCcw className={`w-5 h-5 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
+                    <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
+                        <RefreshCcw className={`w-4 h-4 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
                 </div>
             </div>
@@ -287,48 +287,48 @@ const Messages = () => {
                 {/* List Sidebar */}
                 <div className="w-full md:w-80 lg:w-[400px] border-r border-background flex flex-col bg-background/20">
                     <ScrollArea className="flex-1">
-                        <div className="p-6 space-y-3">
+                        <div className="p-4 space-y-3">
                             {filteredMessages.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-32 text-center px-10">
-                                    <div className="p-8 bg-admin-canvas rounded-[2.5rem] shadow-inner mb-6">
-                                        <Inbox className="w-10 h-10 text-olive-dark/20" />
+                                    <div className="p-6 bg-admin-canvas rounded-2xl shadow-inner mb-4">
+                                        <Inbox className="w-8 h-8 text-olive-dark/20" />
                                     </div>
-                                    <p className="text-olive-dark font-black text-lg font-display uppercase tracking-tight"> {content?.admin?.messages?.empty || "Inbox empty"}</p>
-                                    <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest mt-2">{content?.admin?.messages?.allResolved}</p>
+                                    <p className="text-olive-dark font-black text-base font-display uppercase tracking-tight"> {content?.admin?.messages?.empty || "Inbox empty"}</p>
+                                    <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest mt-1.5">{content?.admin?.messages?.allResolved}</p>
                                 </div>
                             ) : (
                                 filteredMessages.map((msg) => (
                                     <button
                                         key={msg.id}
                                         onClick={() => handleSelectMessage(msg.id)}
-                                        className={`w-full text-left p-6 rounded-[2rem] transition-all duration-500 relative group border-2 ${
+                                        className={`w-full text-left p-4 rounded-2xl transition-all duration-300 relative group border border-olive/10 shadow-sm ${
                                             selectedMessageId === msg.id 
-                                                ? "bg-admin-canvas border-primary shadow-2xl shadow-primary/10 translate-x-2" 
-                                                : "bg-transparent border-transparent hover:bg-olive-dark/5 hover:border-olive-dark/10"
+                                                ? "bg-white border-primary shadow-md translate-x-1" 
+                                                : "bg-white/60 hover:bg-white hover:border-olive-dark/25"
                                         }`}
                                     >
                                         {!msg.is_read && (
-                                            <div className="absolute top-6 right-6 w-3 h-3 bg-primary rounded-full ring-4 ring-primary/20 animate-pulse" />
+                                            <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-primary rounded-full ring-4 ring-primary/20 animate-pulse" />
                                         )}
-                                        <div className="flex flex-col gap-3">
+                                        <div className="flex flex-col gap-1.5">
                                             <div className="flex justify-between items-start">
-                                                <span className={`text-[10px] uppercase font-black tracking-[0.15em] ${msg.is_read ? 'text-olive-dark/50' : 'text-primary'}`}>
+                                                <span className={`text-[10px] uppercase font-black tracking-widest ${msg.is_read ? 'text-olive-dark/50' : 'text-primary'}`}>
                                                     {format(new Date(msg.created_at), "d. MMM · HH:mm", { locale: cs })}
                                                 </span>
                                             </div>
-                                            <div className="space-y-1">
-                                                <h3 className={`text-sm font-black uppercase tracking-tight line-clamp-1 ${selectedMessageId === msg.id ? 'text-olive-dark' : 'text-olive-dark'}`}>
+                                            <div className="space-y-0.5">
+                                                <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight line-clamp-1 text-olive-dark">
                                                     {msg.subject}
                                                 </h3>
-                                                <p className={`text-[11px] font-black ${selectedMessageId === msg.id ? 'text-olive-dark/70' : 'text-olive-dark/60'} uppercase tracking-widest`}>
+                                                <p className={`text-[10px] font-black ${selectedMessageId === msg.id ? 'text-olive-dark/70' : 'text-olive-dark/60'} uppercase tracking-widest`}>
                                                     {msg.from_name || msg.from_email.split('@')[0]}
                                                 </p>
                                             </div>
-                                            <p className="text-xs text-olive-dark/60 line-clamp-2 leading-relaxed font-black italic opacity-85">
+                                            <p className="text-xs text-olive-dark/65 line-clamp-2 leading-relaxed font-black italic opacity-90">
                                                 "{msg.body_text}"
                                             </p>
                                             {msg.replied_at && (
-                                                <div className="mt-1 flex items-center gap-1.5 pt-2 border-t border-background">
+                                                <div className="mt-1 flex items-center gap-1.5 pt-2 border-t border-olive/5">
                                                     <CheckCheck className="w-3 h-3 text-primary" />
                                                     <span className="text-[9px] font-black text-primary uppercase tracking-widest">{content?.admin?.messages?.status?.replied || "Replied"}</span>
                                                 </div>
@@ -385,20 +385,20 @@ const Messages = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-3 w-full sm:w-auto">
+                                        <div className="flex gap-2 w-full sm:w-auto">
                                             {!isReplyMode && (
                                                 <Button 
                                                     onClick={() => setIsReplyMode(true)}
-                                                    className="h-12 sm:h-14 flex-1 sm:flex-initial px-6 sm:px-8 bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] sm:text-xs tracking-widest rounded-2xl shadow-xl shadow-lime/20"
+                                                    className="h-10 sm:h-11 flex-1 sm:flex-initial px-5 sm:px-6 bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-[10px] sm:text-xs tracking-wider rounded-xl shadow-md shadow-lime/10"
                                                 >
-                                                    <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                                                    <Mail className="w-4 h-4 mr-2" />
                                                     {content?.admin?.messages?.actions?.reply || "Reply"}
                                                 </Button>
                                             )}
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl bg-admin-canvas border border-background text-olive-dark/30 hover:text-red-500 hover:bg-red-500/10 transition-all">
-                                                        <Trash2 className="w-5 h-5" />
+                                                    <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas border border-background text-olive-dark/30 hover:text-red-500 hover:bg-red-500/10 transition-all">
+                                                        <Trash2 className="w-4 h-4" />
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent className="rounded-[2.5rem] border-none p-10 shadow-2xl">

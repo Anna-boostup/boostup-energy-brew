@@ -32,7 +32,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
         tooltip: "",
         is_on_sale: false,
         is_active: true,
-        image_url: ""
+        image_url: "",
+        restock_batch_size: 1000
     });
 
     useEffect(() => {
@@ -43,7 +44,8 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                 tooltip: product.tooltip || "",
                 is_on_sale: product.is_on_sale || false,
                 is_active: product.is_active !== false, // Default to true
-                image_url: product.image_url || ""
+                image_url: product.image_url || "",
+                restock_batch_size: product.restock_batch_size ?? 1000
             });
             setImageError(false);
         }
@@ -204,6 +206,24 @@ export const ProductEditDialog = ({ isOpen, onClose, product }: ProductEditDialo
                                 rows={2}
                             />
                         </div>
+
+                        {/* Restock Batch Size */}
+                        {!isMixProduct && (
+                            <div className="space-y-1.5">
+                                <Label htmlFor="restock_batch_size" className="text-sm font-semibold">
+                                    {content?.admin?.inventory?.restock_batch_size || "Velikost várky pro rychlé doskladnění (ks)"}
+                                </Label>
+                                <Input
+                                    id="restock_batch_size"
+                                    type="number"
+                                    min="1"
+                                    value={formData.restock_batch_size || ""}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, restock_batch_size: parseInt(e.target.value) || 0 }))}
+                                    className="text-sm"
+                                    required
+                                />
+                            </div>
+                        )}
 
                         {/* Image upload — only for non-mix products */}
                         {!isMixProduct && (

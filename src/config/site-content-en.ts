@@ -865,6 +865,13 @@ export const SITE_CONTENT_EN = {
                 unitsTitle: "Sold Units",
                 unitsSubtitle: "Sold bottles by flavors.",
                 ordersLabel: "Orders",
+                onlineSales: "Online Sales",
+                promoGifts: "Promo Gifts",
+                manualOrders: "Manual Orders",
+                totalOrders: "Total",
+                revenueLabel: "Revenue",
+                ordersCountLabel: "Orders",
+                unitsCountLabel: "Units",
                 flavors: {
                     lemon: "Lemon Rush",
                     red: "Red Dragon",

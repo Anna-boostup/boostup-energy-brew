@@ -645,6 +645,42 @@ export const SITE_CONTENT = {
                         errorDesc: "Nepodařilo se uložit položku."
                     }
                 }
+            },
+            stock: {
+                restock: {
+                    titleIn: "Naskladnit",
+                    titleOut: "Vyskladnit",
+                    tabIn: "Doskladnit",
+                    tabOut: "Odebrat / Korekce",
+                    currentLabel: "Aktuální stav zásob",
+                    countLabelIn: "Počet lahví k naskladnění",
+                    countLabelOut: "Počet lahví k odebrání",
+                    nextTotal: "Nový stav",
+                    negativeWarning: "Upozornění: Celkové množství bude záporné!",
+                    noteLabel: "Poznámka",
+                    notePlaceholderIn: "např. Dodávka od dodavatele #123",
+                    notePlaceholderOut: "např. Likvidace poškozených kusů",
+                    defaultNoteIn: "Doskladnění lahví",
+                    defaultNoteOut: "Odebrání / Korekce zásob",
+                    unit: "ks",
+                },
+                history: {
+                    title: "Historie pohybů:",
+                    empty: "Žádné pohyby pro tuto položku.",
+                    systemUser: "Systém",
+                    table: {
+                        date: "Datum",
+                        user: "Uživatel",
+                        type: "Typ",
+                        change: "Změna",
+                        note: "Poznámka",
+                    },
+                    types: {
+                        restock: "Naskladnění",
+                        sale: "Prodej",
+                        correction: "Korekce",
+                    }
+                }
             }
         },
         invoices: {
@@ -959,6 +995,25 @@ export const SITE_CONTENT = {
                 successDesc: "Nové ceny byly úspěšně propagovány do systému.",
                 errorTitle: "Chyba při ukládání",
                 currency: "Kč"
+            },
+            stats: {
+                ordersTitle: "Objem objednávek",
+                ordersSubtitle: "Počet objednávek za posledních 30 dní.",
+                unitsTitle: "Prodáno kusů",
+                unitsSubtitle: "Prodané lahve podle příchutí.",
+                ordersLabel: "Objednávky",
+                onlineSales: "Prodeje přes net",
+                promoGifts: "Promo dárky",
+                manualOrders: "Dopsané objednávky",
+                totalOrders: "Celkem",
+                revenueLabel: "Obrat",
+                ordersCountLabel: "Objednávek",
+                unitsCountLabel: "Kusů",
+                flavors: {
+                    lemon: "Lemon Rush",
+                    red: "Red Dragon",
+                    silky: "Silky Breeze"
+                }
             },
             charts: {
                 revenue: "Obrat (CZK)",

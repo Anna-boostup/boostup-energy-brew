@@ -14,6 +14,7 @@ export interface Product {
     tooltip?: string;
     is_on_sale?: boolean;
     is_active?: boolean;
+    restock_batch_size?: number;
 }
 
 export interface Order {
@@ -158,10 +159,14 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                     }
                     setProducts(prev => {
                         const existing = prev.find(p => p.sku === updatedItem.sku);
+                        const localBatchSize = localStorage.getItem(`restock_batch_size_${updatedItem.sku}`);
+                        const restock_batch_size = localBatchSize !== null
+                            ? parseInt(localBatchSize)
+                            : ((updatedItem as any).restock_batch_size ?? existing?.restock_batch_size ?? 1000);
                         if (existing) {
-                            return prev.map(p => p.sku === updatedItem.sku ? { ...existing, ...updatedItem } : p);
+                            return prev.map(p => p.sku === updatedItem.sku ? { ...existing, ...updatedItem, restock_batch_size } : p);
                         }
-                        return [...prev, updatedItem as Product];
+                        return [...prev, { ...updatedItem, restock_batch_size } as Product];
                     });
                 }
             })
@@ -233,9 +238,14 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const productsList: Product[] = [];
             data.forEach((item: any) => {
                 stockMap[item.sku] = item.quantity;
+                const localBatchSize = localStorage.getItem(`restock_batch_size_${item.sku}`);
+                const restock_batch_size = localBatchSize !== null 
+                    ? parseInt(localBatchSize) 
+                    : (item.restock_batch_size ?? 1000);
                 productsList.push({
                     ...item,
-                    is_active: item.is_active ?? true // Default to true if null
+                    is_active: item.is_active ?? true, // Default to true if null
+                    restock_batch_size
                 });
             });
             setStock(stockMap);
@@ -659,12 +669,45 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         });
 
         // 2. Perform DB Update
-        const { error } = await supabase
-            .from('inventory')
-            .update(updates)
-            .eq('sku', sku);
+        const dbUpdates = { ...updates };
+        const hasBatchSize = 'restock_batch_size' in dbUpdates;
+        
+        try {
+            const { error } = await supabase
+                .from('inventory')
+                .update(dbUpdates)
+                .eq('sku', sku);
 
-        if (error) {
+            if (error) {
+                // If column doesn't exist, handle fallback
+                if (hasBatchSize && (error.message?.includes('column') || error.code === 'PGRST102' || error.message?.includes('restock_batch_size'))) {
+                    console.warn(`[Inventory] Column restock_batch_size does not exist in DB. Falling back to localStorage.`);
+                    
+                    // Save to localStorage
+                    if (updates.restock_batch_size !== undefined) {
+                        localStorage.setItem(`restock_batch_size_${sku}`, updates.restock_batch_size.toString());
+                    }
+
+                    // Retry without restock_batch_size
+                    const retryUpdates = { ...dbUpdates };
+                    delete retryUpdates.restock_batch_size;
+
+                    if (Object.keys(retryUpdates).length > 0) {
+                        const { error: retryError } = await supabase
+                            .from('inventory')
+                            .update(retryUpdates)
+                            .eq('sku', sku);
+
+                        if (retryError) throw retryError;
+                    }
+                } else {
+                    throw error;
+                }
+            } else {
+                // If it succeeded, clear any localstorage fallback override
+                localStorage.removeItem(`restock_batch_size_${sku}`);
+            }
+        } catch (error) {
             console.error('Error updating product:', error);
             // 3. Rollback on failure
             if (previousProduct) {

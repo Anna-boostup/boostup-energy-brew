@@ -3,12 +3,13 @@ import { useInventory, SKU } from "@/context/InventoryContext";
 import { useContent } from "@/context/ContentContext";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Minus, History, Edit, Loader2 } from "lucide-react";
+import { Plus, Minus, History, Edit, Loader2, Zap } from "lucide-react";
 import { RestockDialog } from "@/components/admin/RestockDialog";
 import { StockHistoryDialog } from "@/components/admin/StockHistoryDialog";
 import { ProductEditDialog } from "@/components/admin/ProductEditDialog";
 import { Switch } from "@/components/ui/switch";
 import { FLAVORS, FlavorType } from "@/config/product-data";
+import { useToast } from "@/hooks/use-toast";
 
 const PACK_SIZES = [3, 12, 21] as const;
 
@@ -44,7 +45,7 @@ const PackBreakdown = ({ bottles, content }: { bottles: number, content: any }) 
     </div>
 );
 
-const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, content, updateProduct }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onEdit: () => void, content: any, updateProduct: (sku: string, data: any) => Promise<void> }) => (
+const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onQuickRestock, onEdit, content, updateProduct }: { sku: string, product?: any, qty: number, onHistory: () => void, onRestock: () => void, onQuickRestock: () => void, onEdit: () => void, content: any, updateProduct: (sku: string, data: any) => Promise<void> }) => (
     <div className="glass-card rounded-[2.2rem] p-5 sm:p-8 space-y-5 sm:space-y-8 mb-6 border-none animate-in fade-in slide-in-from-bottom-6 min-w-0">
         <div className="flex justify-between items-start gap-4">
             <div className="min-w-0 flex-1">
@@ -96,7 +97,15 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, 
                 <Edit className="h-5 w-5" />
             </Button>
             <Button
-                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 rounded-2xl font-black flex-1 shadow-xl shadow-lime/20 transition-all"
+                className="bg-green-600 hover:bg-green-700 text-white h-14 rounded-2xl font-black flex-1 shadow-xl shadow-green-600/20 transition-all text-xs"
+                onClick={onQuickRestock}
+                aria-label={`Rychlé naskladnění várky (${product?.restock_batch_size ?? 1000} ks)`}
+            >
+                <Zap className="h-4 w-4 mr-1 inline-block" />
+                Várka (+{product?.restock_batch_size ?? 1000})
+            </Button>
+            <Button
+                className="bg-lime hover:bg-lime/80 text-olive-dark h-14 rounded-2xl font-black flex-1 shadow-xl shadow-lime/20 transition-all shrink-0"
                 onClick={onRestock}
                 aria-label={content?.admin?.inventory?.addStock}
             >
@@ -108,7 +117,25 @@ const MobileInventoryCard = ({ sku, product, qty, onHistory, onRestock, onEdit, 
 
 const Inventory = () => {
     const { content } = useContent();
-    const { stock, products, updateProduct, loading } = useInventory();
+    const { toast } = useToast();
+    const { stock, products, updateProduct, addMovement, loading } = useInventory();
+
+    const handleQuickRestock = async (sku: SKU, product: any) => {
+        const batchSize = product?.restock_batch_size ?? 1000;
+        try {
+            await addMovement(sku, batchSize, 'restock', `Rychlé doskladnění várky (+${batchSize} ks)`);
+            toast({
+                title: "Várka doskladněna",
+                description: `Doskladněno ${batchSize} ks příchutě ${product?.name || sku}.`,
+            });
+        } catch (error: any) {
+            toast({
+                title: "Chyba při doskladnění",
+                description: error.message,
+                variant: "destructive"
+            });
+        }
+    };
 
     if (loading) {
         return (
@@ -222,6 +249,15 @@ const Inventory = () => {
                                             </Button>
                                             <Button
                                                 size="sm"
+                                                className="bg-green-600 hover:bg-green-700 text-white h-10 px-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all duration-200 ml-1 flex items-center gap-1.5"
+                                                onClick={() => handleQuickRestock(sku as SKU, product)}
+                                                title={`Naskladnit várku (+${product?.restock_batch_size ?? 1000} ks)`}
+                                            >
+                                                <Zap className="h-3.5 w-3.5" />
+                                                Várka (+{product?.restock_batch_size ?? 1000})
+                                            </Button>
+                                            <Button
+                                                size="sm"
                                                 className="bg-olive-dark hover:bg-olive text-white h-10 px-5 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md transition-all duration-200 ml-1"
                                                 onClick={() => setRestockData({ sku: sku as SKU, mode: "in" })}
                                                 title={content?.admin?.inventory?.addStock}
@@ -248,6 +284,10 @@ const Inventory = () => {
                         qty={qty}
                         onHistory={() => setHistorySku(sku)}
                         onRestock={() => setRestockData({ sku: sku as SKU, mode: "in" })}
+                        onQuickRestock={() => {
+                            const p = products.find(prod => prod.sku === sku);
+                            handleQuickRestock(sku as SKU, p);
+                        }}
                         onEdit={() => setEditSku(sku)}
                         content={content}
                         updateProduct={updateProduct}
