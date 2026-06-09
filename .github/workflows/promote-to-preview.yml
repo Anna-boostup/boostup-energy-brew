@@ -1,13 +1,21 @@
 name: "🔄 Promote to Preview (Staging)"
 
 on:
+  workflow_run:
+    workflows: ["🧪 BoostUp Test Pipeline"]
+    types:
+      - completed
+    branches:
+      - development
   workflow_dispatch:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   Promote-to-Preview:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     name: "🔄 Promote to Preview"
     runs-on: ubuntu-latest
     steps:
@@ -31,7 +39,12 @@ jobs:
           git reset --hard origin/preview
           
           # Merge the development branch into preview
-          git merge origin/development --no-ff -m "chore: promote development to preview via manual trigger"
+          git merge origin/development --no-ff -m "chore: promote development to preview via automatic trigger"
           
-          # Push to trigger the Deploy-Preview pipeline
+          # Push the changes
           git push origin preview
+
+          # Manually trigger the preview pipeline via GitHub CLI because GITHUB_TOKEN pushes don't trigger push events
+          gh workflow run preview-deploy.yml --ref preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

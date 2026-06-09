@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
 import { supabase } from "@/lib/supabase";
@@ -20,14 +20,7 @@ const AdminProfile = () => {
     const { content, loading: contentLoading } = useContent();
     const { toast } = useToast();
 
-    if (authLoading || contentLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
-                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám profil..."}</p>
-            </div>
-        );
-    }
+    // Early return pro loading je posunut dolů kvůli pravidlům React hooks
 
     // Profile info state
     const [fullName, setFullName] = useState(profile?.full_name || "");
@@ -119,6 +112,29 @@ const AdminProfile = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+
+    useEffect(() => {
+        if (profile) {
+            setFullName(profile.full_name || "");
+            setPhone(profile.address?.delivery?.phone || "");
+            setAvatarText(profile.address?.avatar_text || "");
+            setAvatarUrl(profile.address?.avatar_url || "");
+            setDeliveryStreet(profile.address?.delivery?.street || "");
+            setDeliveryHouseNumber(profile.address?.delivery?.houseNumber || "");
+            setDeliveryCity(profile.address?.delivery?.city || "");
+            setDeliveryZip(profile.address?.delivery?.zip || "");
+            setBillingSame(profile.address?.billing?.isSame !== false);
+            setIsCompany(profile.address?.billing?.isCompany === true);
+            setBillingCompany(profile.address?.billing?.company || "");
+            setBillingICO(profile.address?.billing?.ico || "");
+            setBillingDIC(profile.address?.billing?.dic || "");
+            setBillingStreet(profile.address?.billing?.street || "");
+            setBillingHouseNumber(profile.address?.billing?.houseNumber || "");
+            setBillingCity(profile.address?.billing?.city || "");
+            setBillingZip(profile.address?.billing?.zip || "");
+        }
+    }, [profile]);
 
     const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -225,6 +241,15 @@ const AdminProfile = () => {
             setIsChangingPassword(false);
         }
     };
+
+    if (authLoading || contentLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-olive-dark" />
+                <p className="text-olive-dark font-black uppercase tracking-[0.4em] animate-pulse">{content?.admin?.general?.loading || "Načítám profil..."}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-16 pb-32 animate-in fade-in duration-1000">

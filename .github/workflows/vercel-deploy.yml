@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,6 +41,14 @@ jobs:
         run: |
           npm ci
           npm install --global vercel@latest
+          
+      - name: Static Analysis (Lint & TypeCheck)
+        run: |
+          npm run lint
+          npx tsc --noEmit
+
+      - name: Unit Tests (Vitest)
+        run: npm run test
         
       - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
@@ -90,3 +99,12 @@ jobs:
         if: failure()
         run: |
           curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *CI/CD PIPELINE FAILED!* (Deploy to Test)\nBranch: ${{ github.ref }}\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  Trigger-Preview:
+    needs: Deploy-to-Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Promote to Preview
+        run: gh workflow run promote-to-preview.yml --ref development --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

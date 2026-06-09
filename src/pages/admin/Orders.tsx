@@ -633,14 +633,7 @@ const Orders = () => {
     const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
     const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
-    if (!content || !orders) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
-                <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
-            </div>
-        );
-    }
+    const [isBulkCancelDialogOpen, setIsBulkCancelDialogOpen] = useState(false);
 
     // Auto-sync payments on mount
     useEffect(() => {
@@ -656,6 +649,16 @@ const Orders = () => {
         };
         syncPayments();
     }, []);
+
+    if (!content || !orders) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <Loader2 data-testid="admin-loader" className="w-12 h-12 animate-spin text-white" />
+                <p className="text-muted-foreground font-medium animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
+            </div>
+        );
+    }
+
 
     const requestNotificationPermission = async () => {
         if (typeof window === 'undefined' || typeof Notification === 'undefined') return;
@@ -892,7 +895,6 @@ const Orders = () => {
         setSelectedOrders(new Set());
     };
 
-    const [isBulkCancelDialogOpen, setIsBulkCancelDialogOpen] = useState(false);
 
     const handleBulkCancel = () => {
         handleBulkStatusChange('cancelled');

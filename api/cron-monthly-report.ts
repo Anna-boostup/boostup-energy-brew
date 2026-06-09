@@ -20,7 +20,7 @@ const escapeCsv = (str: any) => {
 
 const processOrders = (ordersList: any[]) => {
     let totalRevenue = 0;
-    let totalsByFlavor = { lemon: 0, red: 0, silky: 0 };
+    const totalsByFlavor = { lemon: 0, red: 0, silky: 0 };
     let paidOrdersCount = 0;
     let cancelledOrdersCount = 0;
 

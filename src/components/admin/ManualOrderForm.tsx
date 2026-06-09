@@ -115,7 +115,7 @@ export function ManualOrderForm({ onSuccess }: { onSuccess: () => void }) {
             // Split street and houseNumber if street contains digits at the end, otherwise keep it combined in street
             let streetStr = partner.street || "";
             let houseNumberStr = "";
-            const streetMatch = streetStr.match(/(.*?)\s+(\d+[\/\d]*\w*)$/);
+            const streetMatch = streetStr.match(/(.*?)\s+(\d+[/\d]*\w*)$/);
             if (streetMatch) {
                 streetStr = streetMatch[1];
                 houseNumberStr = streetMatch[2];

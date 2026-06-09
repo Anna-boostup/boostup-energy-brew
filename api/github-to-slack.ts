@@ -21,7 +21,7 @@ export default async function handler(req: Request) {
             return new Response('Webhook URL missing', { status: 500 });
         }
 
-        let slackMessage: any = { blocks: [] };
+        const slackMessage: any = { blocks: [] };
 
         // 1. Zpracování PUSH eventu
         if (event === 'push') {

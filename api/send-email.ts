@@ -437,7 +437,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
 
     // Use requested content HTML if provided (from Admin UI Test/Campaign), otherwise fallback to DB template
-    let baseContentHtml = reqContentHtml || (dbTemplate ? dbTemplate.content_html : contentHtml);
+    const baseContentHtml = reqContentHtml || (dbTemplate ? dbTemplate.content_html : contentHtml);
 
     if (baseContentHtml) {
         // If DB template exists, we also override subject
@@ -664,7 +664,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     welcomeContentHtml = inlineQuillStyles(replacePlaceholders(defaultWelcome.content_html, welcomeTemplateData));
                 }
 
-                let welcomeEmailHtml = `
+                const welcomeEmailHtml = `
                     <!DOCTYPE html>
                     <html>
                     <head>
