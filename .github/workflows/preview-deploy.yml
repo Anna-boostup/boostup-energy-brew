@@ -30,8 +30,12 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install --global vercel@latest
+      - name: Unit Tests (Vitest)
+        run: npm run test
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
@@ -53,7 +57,7 @@ jobs:
         run: npx playwright install chromium
 
       - name: Run E2E Tests
-        run: npx playwright test tests/smoke.spec.ts tests/form_validation.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts tests/payment_e2e.spec.ts
+        run: npx playwright test tests/smoke.spec.ts tests/form_validation.spec.ts tests/checkout_scenarios.spec.ts tests/admin.spec.ts tests/mobile.spec.ts tests/admin-mobile.spec.ts tests/payment_e2e.spec.ts --project=smoke-desktop --project=smoke-mobile --project=admin-desktop --project=admin-mobile --project=checkout --project=payment-e2e --project=layout-and-a11y
         env:
           PLAYWRIGHT_TEST_BASE_URL: https://preview.drinkboostup.cz
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}

@@ -40,6 +40,14 @@ jobs:
         run: |
           npm ci
           npm install --global vercel@latest
+          
+      - name: Static Analysis (Lint & TypeCheck)
+        run: |
+          npm run lint
+          npx tsc --noEmit
+
+      - name: Unit Tests (Vitest)
+        run: npm run test
         
       - name: Pull Vercel Env
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
