@@ -105,6 +105,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Promote to Preview
-        run: gh workflow run promote-to-preview.yml --ref development
+        run: gh workflow run promote-to-preview.yml --ref development --repo ${{ github.repository }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
