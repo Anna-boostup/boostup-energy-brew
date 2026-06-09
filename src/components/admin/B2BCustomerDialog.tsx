@@ -40,7 +40,7 @@ export const B2BCustomerDialog = ({ isOpen, onClose, customer }: Props) => {
             // Try to split street and houseNumber if there's a house number at the end
             let streetStr = customer.street || "";
             let houseNumberStr = "";
-            const streetMatch = streetStr.match(/(.*?)\s+(\d+[\/\d]*\w*)$/);
+            const streetMatch = streetStr.match(/(.*?)\s+(\d+[/\d]*\w*)$/);
             if (streetMatch) {
                 streetStr = streetMatch[1];
                 houseNumberStr = streetMatch[2];

@@ -496,7 +496,7 @@ const EmailManagement = () => {
     const handleInsertPlaceholder = (tag: string) => {
         if (quillRef.current) {
             const editor = quillRef.current.getEditor();
-            let range = editor.getSelection();
+            const range = editor.getSelection();
             
             if (!range) {
                 const length = editor.getLength();

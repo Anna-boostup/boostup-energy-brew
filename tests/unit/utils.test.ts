@@ -12,7 +12,8 @@ describe('utils.ts - cn', () => {
   });
 
   it('should filter out falsy values', () => {
-    expect(cn('bg-red-500', false && 'text-white', null, undefined, 'p-4')).toBe('bg-red-500 p-4');
+    const conditionValue = 1 === 2;
+    expect(cn('bg-red-500', conditionValue && 'text-white', null, undefined, 'p-4')).toBe('bg-red-500 p-4');
   });
 });
 
@@ -30,7 +31,7 @@ describe('utils.ts - formatPrice', () => {
   });
 
   it('should handle undefined or null value safely', () => {
-    // @ts-ignore
+    // @ts-expect-error - Testing invalid input gracefully
     const result = formatPrice(null).replace(/\u00a0/g, ' ').replace(/\u202f/g, ' ');
     expect(result).toMatch(/0\s*Kč/);
   });

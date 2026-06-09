@@ -448,30 +448,24 @@ const AdminLayout = () => {
             {/* Main Content */}
             <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-24'}`}>
                 <div className="max-w-[1600px] mx-auto">
-                    {false ? (
-                        <div className="flex">
-                            {/* Removed old loader from here as it's now handled by higher-level guard */}
-                        </div>
-                    ) : (
-                        <AdminErrorBoundary>
-                            <Suspense fallback={
-                                <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                                    <Loader2 data-testid="admin-loader" className="w-8 h-8 animate-spin text-olive-dark/20" />
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/20 animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
-                                </div>
-                            }>
-                                {content ? <Outlet /> : (
-                                    <div data-testid="admin-loader" className="flex flex-col items-center justify-center min-h-[60vh] animate-pulse">
-                                        <div className="w-12 h-12 bg-olive-dark/5 rounded-2xl flex items-center justify-center mb-6">
-                                            <Sparkles className="w-6 h-6 text-olive-dark/10" />
-                                        </div>
-                                        <div className="h-4 w-48 bg-olive-dark/5 rounded-full mb-3" />
-                                        <div className="h-3 w-32 bg-olive-dark/5 rounded-full" />
+                    <AdminErrorBoundary>
+                        <Suspense fallback={
+                            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                                <Loader2 data-testid="admin-loader" className="w-8 h-8 animate-spin text-olive-dark/20" />
+                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark/20 animate-pulse">{content?.admin?.auth?.verifying || "Loading..."}</p>
+                            </div>
+                        }>
+                            {content ? <Outlet /> : (
+                                <div data-testid="admin-loader" className="flex flex-col items-center justify-center min-h-[60vh] animate-pulse">
+                                    <div className="w-12 h-12 bg-olive-dark/5 rounded-2xl flex items-center justify-center mb-6">
+                                        <Sparkles className="w-6 h-6 text-olive-dark/10" />
                                     </div>
-                                )}
-                            </Suspense>
-                        </AdminErrorBoundary>
-                    )}
+                                    <div className="h-4 w-48 bg-olive-dark/5 rounded-full mb-3" />
+                                    <div className="h-3 w-32 bg-olive-dark/5 rounded-full" />
+                                </div>
+                            )}
+                        </Suspense>
+                    </AdminErrorBoundary>
                 </div>
             </main>
         </div>

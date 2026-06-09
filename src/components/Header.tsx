@@ -69,7 +69,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                 try {
                     const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
                     audio.play().catch(() => {});
-                } catch (e) {}
+                } catch (e) {
+                    // Ignore audio playback errors
+                }
             }
             
             setUnreadCount(newCount);

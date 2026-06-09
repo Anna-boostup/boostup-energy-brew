@@ -502,6 +502,7 @@ const CheckoutPage = () => {
             total: newOrder.total,
             items: newOrder.items.map(item => ({
               ...item,
+              // eslint-disable-next-line no-control-regex
               name: item.name.replace(/[^\x00-\xFF\u0100-\u017F]/g, '').trim()
             }))
           }),

@@ -95,6 +95,7 @@ export default async function handler(req: Request) {
             order_description: `Objednavka ${orderNumber}`,
             items: [
                 ...items.map((item: any) => ({
+                    // eslint-disable-next-line no-control-regex
                     name: item.name.replace(/[^\x00-\xFF\u0100-\u017F]/g, '').trim(),
                     amount: Math.round(item.price * item.quantity * 100),
                     count: item.quantity

@@ -70,7 +70,7 @@ const StripeExpressButtons = () => {
         // Helper specifically for Czech address formats
         const parseAddressLine = (line: string) => {
           if (!line) return { street: '', houseNumber: '' };
-          const match = line.match(/^(.*?)\s*(\d+[\/\w]*)$/);
+          const match = line.match(/^(.*?)\s*(\d+[/\w]*)$/);
           if (match) {
             return { street: match[1].trim(), houseNumber: match[2].trim() };
           }
