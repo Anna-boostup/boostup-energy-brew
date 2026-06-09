@@ -4,8 +4,8 @@ import path from 'path';
 const authDir = path.join(import.meta.dirname || '', '../playwright/.auth');
 
 setup('authenticate as company', async ({ page }) => {
-  const email = process.env.TEST_COMPANY_EMAIL;
-  const password = process.env.TEST_COMPANY_PASSWORD;
+  const email = process.env.TEST_COMPANY_EMAIL?.trim();
+  const password = process.env.TEST_COMPANY_PASSWORD?.trim();
 
   if (!email || !password) {
     console.log('Skipping setup for company: Credentials missing.');
@@ -20,6 +20,12 @@ setup('authenticate as company', async ({ page }) => {
   page.on('requestfailed', request => {
       console.error('NETWORK ERROR (company):', request.url(), request.failure()?.errorText);
   });
+  page.on('response', response => {
+      if (response.status() >= 400 && response.url().includes('supabase')) {
+          console.error('SUPABASE ERROR (company): ', response.url(), response.status(), response.statusText());
+      }
+  });
+
 
   try {
     await page.goto('/login', { waitUntil: 'load', timeout: 60000 });
