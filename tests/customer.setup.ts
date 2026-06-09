@@ -4,8 +4,8 @@ import path from 'path';
 const authDir = path.join(import.meta.dirname || '', '../playwright/.auth');
 
 setup('authenticate as customer', async ({ page }) => {
-  const email = process.env.TEST_BASIC_EMAIL;
-  const password = process.env.TEST_BASIC_PASSWORD;
+  const email = process.env.TEST_BASIC_EMAIL?.trim();
+  const password = process.env.TEST_BASIC_PASSWORD?.trim();
 
   if (!email || !password) {
     console.log('Skipping setup for customer: Credentials missing.');
@@ -15,11 +15,17 @@ setup('authenticate as customer', async ({ page }) => {
   console.log(`Setup: Logging in as customer (${email})`);
   
   page.on('console', msg => {
-      if (msg.type() === 'error') console.error('BROWSER ERROR (customer):', msg.text());
+      console.log('BROWSER CONSOLE:', msg.text());
   });
   page.on('requestfailed', request => {
       console.error('NETWORK ERROR (customer):', request.url(), request.failure()?.errorText);
   });
+  page.on('response', response => {
+      if (response.status() >= 400 && response.url().includes('supabase')) {
+          console.error('SUPABASE ERROR (customer): ', response.url(), response.status(), response.statusText());
+      }
+  });
+
 
   try {
     await page.goto('/login', { waitUntil: 'load', timeout: 60000 });

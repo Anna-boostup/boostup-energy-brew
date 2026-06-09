@@ -35,16 +35,19 @@ const Login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("LOGIN_TRACE: handleLogin called!");
         setLoading(true);
         setSuccessMessage(null);
 
         const trimmedEmail = email.trim();
+        console.log("LOGIN_TRACE: Calling signInWithPassword for", trimmedEmail);
 
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: trimmedEmail,
                 password,
             });
+            console.log("LOGIN_TRACE: signInWithPassword returned. Error:", error?.message);
 
             if (error) throw error;
 
@@ -54,6 +57,9 @@ const Login = () => {
             });
 
             if (data.user) {
+                // Give AuthContext time to update session state via onAuthStateChange
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('account_type, role')
