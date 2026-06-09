@@ -100,8 +100,11 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"🚨 *CI/CD PIPELINE FAILED!* (Deploy to Test)\nBranch: ${{ github.ref }}\nCheck results: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  Trigger-Preview:
+    needs: Deploy-to-Test
+    runs-on: ubuntu-latest
+    steps:
       - name: Trigger Promote to Preview
-        if: success()
         run: gh workflow run promote-to-preview.yml --ref development
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
