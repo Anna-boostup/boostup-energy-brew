@@ -11,8 +11,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // --- SECURITY CHECK ---
     const authHeader = req.headers.authorization;
     const cronSecret = process.env.CRON_SECRET;
-    
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    let isAuthorized = false;
+
+    // 1. Check if it's a valid CRON request
+    if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+        isAuthorized = true;
+    }
+
+    // 2. Check if it's a valid authenticated user (Admin dashboard)
+    if (!isAuthorized && authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (user && !error) {
+            isAuthorized = true;
+        }
+    }
+
+    if (!isAuthorized) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 

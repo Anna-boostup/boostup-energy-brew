@@ -849,7 +849,12 @@ const Orders = () => {
     const handleSyncPacketa = async () => {
         setIsSyncing(true);
         try {
-            const res = await fetch('/api/sync-packeta-status');
+            const { data: { session } } = await supabase.auth.getSession();
+            const res = await fetch('/api/sync-packeta-status', {
+                headers: {
+                    'Authorization': `Bearer ${session?.access_token}`
+                }
+            });
             const data = await res.json();
 
             if (res.ok) {
