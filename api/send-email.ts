@@ -140,8 +140,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const resend = new Resend(apiKey);
 
-    let {
-        to,
+    let { to } = req.body;
+    const {
         type = 'order_confirmation',
         customerName = 'zákazníku',
         orderNumber,
