@@ -137,8 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const resend = new Resend(apiKey);
 
-    // eslint-disable-next-line prefer-const
-    let {
+    const {
         to,
         type = 'order_confirmation',
         customerName = 'zákazníku',
@@ -148,8 +147,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         trackingNumber,
         message, // For contact auto-reply
         subscription_id, // For unsubscribe link
-        content_html: reqContentHtml,
     } = req.body;
+    let reqContentHtml = req.body.content_html;
 
     // --- ENFORCE SECURITY RULES FOR UNAUTHENTICATED REQUESTS ---
     if (!isAuthenticated) {
