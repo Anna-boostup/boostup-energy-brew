@@ -7,6 +7,7 @@ import "./index.css";
 if (import.meta.env.VITE_SENTRY_DSN) {
     Sentry.init({
         dsn: import.meta.env.VITE_SENTRY_DSN,
+        release: typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'unknown',
         integrations: [
             Sentry.browserTracingIntegration(),
             Sentry.replayIntegration({

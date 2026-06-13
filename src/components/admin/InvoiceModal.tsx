@@ -73,9 +73,12 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                         <Button 
                             variant="outline" 
                             size="sm" 
+                            asChild
                             className="flex-1 sm:flex-initial h-12 sm:h-10 rounded-xl sm:rounded-lg gap-2 font-black uppercase text-[10px] tracking-widest border-zinc-200 hover:bg-zinc-50"
                         >
-                            <Download className="w-4 h-4" /> {t.actions.save}
+                            <a href={`/api/generate-invoice?orderId=${order.id}`} target="_blank" rel="noopener noreferrer">
+                                <Download className="w-4 h-4" /> {t.actions.save}
+                            </a>
                         </Button>
                     </div>
                 </div>

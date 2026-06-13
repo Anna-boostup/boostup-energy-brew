@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -187,6 +187,7 @@ const AdminLayout = () => {
             icon: Megaphone,
             items: [
                 { icon: PenTool, label: "Blog", path: "/admin/blog" },
+                { icon: MessageSquareQuote, label: "Recenze", path: "/admin/reviews" },
                 { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
                 { icon: Mail, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
                 { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
@@ -341,7 +342,7 @@ const AdminLayout = () => {
                     )}
                 </div>
 
-                <div className={`pt-4 pb-4 flex justify-center w-full px-4`}>
+                <div className={`pt-8 pb-4 flex justify-center w-full px-4`}>
                     <Link to="/" className={`flex items-center gap-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'justify-center w-12 h-12 p-0' : 'w-full px-6 py-4'}`}>
                         <Home className="w-5 h-5 shrink-0" />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}

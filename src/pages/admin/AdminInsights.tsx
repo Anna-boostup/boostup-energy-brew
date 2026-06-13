@@ -178,6 +178,41 @@ const AdminInsights = () => {
         return { chartData, totalVisits, totalOrders, avgConversion, funnelData };
     }, [trafficData, orders]);
 
+    const additionalStats = useMemo(() => {
+        const customerMap = new Map<string, { email: string, name: string, totalSpent: number, orderCount: number }>();
+        const productMap = new Map<string, { name: string, quantity: number, revenue: number }>();
+
+        orders.forEach(o => {
+            if (o.status === 'cancelled' || o.status === 'pending') return;
+
+            // Customer Stats
+            if (o.customerEmail) {
+                const existing = customerMap.get(o.customerEmail) || { email: o.customerEmail, name: o.customerName || 'Neznámý', totalSpent: 0, orderCount: 0 };
+                existing.totalSpent += o.total || 0;
+                existing.orderCount += 1;
+                customerMap.set(o.customerEmail, existing);
+            }
+
+            // Product Stats
+            if (o.items && Array.isArray(o.items)) {
+                o.items.forEach((item: any) => {
+                    const itemName = item.name || 'Neznámý produkt';
+                    const qty = item.quantity || 1;
+                    const price = item.price || 0;
+                    const existing = productMap.get(itemName) || { name: itemName, quantity: 0, revenue: 0 };
+                    existing.quantity += qty;
+                    existing.revenue += (qty * price);
+                    productMap.set(itemName, existing);
+                });
+            }
+        });
+
+        const topCustomers = Array.from(customerMap.values()).sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 10);
+        const topProducts = Array.from(productMap.values()).sort((a, b) => b.quantity - a.quantity);
+
+        return { topCustomers, topProducts };
+    }, [orders]);
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -350,6 +385,71 @@ const AdminInsights = () => {
                         <p className="text-[9px] text-center text-white/40 font-black uppercase tracking-widest leading-loose px-4">
                             Konverzní cesta je stabilní. Zaměřte se na optimalizaci kroku "Pokladna" pro zvýšení celkových prodejů.
                         </p>
+                    </div>
+                </Card>
+            </div>
+
+            {/* Top Customers & Products Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                {/* LTV */}
+                <Card className="bg-white/40 border-white/60 shadow-xl rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-12 h-12 bg-olive-dark/10 rounded-2xl flex items-center justify-center text-olive-dark">
+                            <Users className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <CardTitle className="text-xl font-black uppercase tracking-widest text-olive-dark">Žebříček Zákazníků</CardTitle>
+                            <CardDescription className="text-olive-dark/60 font-medium">Nejvyšší Lifetime Value (LTV)</CardDescription>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        {additionalStats.topCustomers.length > 0 ? additionalStats.topCustomers.map((c, i) => (
+                            <div key={i} className="flex items-center justify-between p-4 bg-white/50 rounded-2xl border border-white/60">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-olive-dark text-lime flex items-center justify-center font-bold text-xs">
+                                        {i + 1}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-olive-dark">{c.name}</p>
+                                        <p className="text-[10px] text-olive-dark/60">{c.email} ({c.orderCount} objednávek)</p>
+                                    </div>
+                                </div>
+                                <div className="font-black text-terracotta">{c.totalSpent.toLocaleString()} Kč</div>
+                            </div>
+                        )) : (
+                            <p className="text-sm text-olive-dark/50">Žádná data</p>
+                        )}
+                    </div>
+                </Card>
+
+                {/* Product Performance */}
+                <Card className="bg-white/40 border-white/60 shadow-xl rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-12 h-12 bg-terracotta/10 rounded-2xl flex items-center justify-center text-terracotta">
+                            <ShoppingBag className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <CardTitle className="text-xl font-black uppercase tracking-widest text-olive-dark">Prodejnost Produktů</CardTitle>
+                            <CardDescription className="text-olive-dark/60 font-medium">Kusy a celkové tržby</CardDescription>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        {additionalStats.topProducts.length > 0 ? additionalStats.topProducts.map((p, i) => (
+                            <div key={i} className="flex items-center justify-between p-4 bg-white/50 rounded-2xl border border-white/60">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center font-bold text-xs">
+                                        #{i + 1}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-olive-dark">{p.name}</p>
+                                        <p className="text-[10px] text-olive-dark/60">{p.quantity} prodaných kusů</p>
+                                    </div>
+                                </div>
+                                <div className="font-black text-olive-dark">{p.revenue.toLocaleString()} Kč</div>
+                            </div>
+                        )) : (
+                            <p className="text-sm text-olive-dark/50">Žádná data</p>
+                        )}
                     </div>
                 </Card>
             </div>

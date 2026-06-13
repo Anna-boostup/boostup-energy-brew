@@ -982,6 +982,20 @@ const AdminMockup = ({ id, activeItemId }: { id: string, activeItemId?: string }
                 { id: 'funnel_analysis', label: "Analýza konverzního trychtýře (Funnel)", description: "Postup:\nVizualizace cesty zákazníka od první návštěvy až po dokončení platby. Ukazuje poměr uživatelů, kteří vstoupili na web, přešli na pokladnu a úspěšně nakoupili, což vám umožní odhalit, kde zákazníci nejvíce odcházejí." },
                 { id: 'live_activity', label: "Živý proud událostí (Live Activity Log)", description: "Postup:\nV reálném čase aktualizovaný výpis všech akcí na webu. Uvidíte přesný čas zobrazení stránky, cestu (např. `/checkout`), typ zařízení (mobil/desktop), použitý operační systém, prohlížeč a zdroj návštěvy (např. Google, Facebook)." }
             ]
+        },
+        {
+            id: 'new_features',
+            icon: Zap,
+            title: "Nové Funkce (Červen 2026)",
+            description: "Recenze, Referral program, Upsell, PDF Faktury a Feedy",
+            path: "/admin",
+            items: [
+                { id: 'reviews', label: "1. Zákaznické recenze", description: "Správa:\nV záložce 'Recenze' vidíte všechna nová hodnocení od zákazníků. Výchozí stav nové recenze je 'Čekající'. Aby se recenze zobrazila na webu, musíte jí v administraci schválit.\nZapnutí funkce:\nV sekci Dashboard -> Nastavení funkcí zapněte 'Recenze na webu'." },
+                { id: 'referral', label: "2. Doporučovací program (Referral)", description: "Funkce:\nKaždý registrovaný zákazník má ve svém účtu unikátní odkaz. Pokud přes něj nakoupí jeho známý, získá odměnu na další nákup.\nZapnutí funkce:\nV sekci Dashboard -> Nastavení funkcí zapněte 'Referral program'." },
+                { id: 'upsell', label: "3. Upsell v košíku", description: "Funkce:\nVysouvací košík nabídne zákazníkovi těsně před placením produkt 'Mohlo by se hodit', pokud ho ještě nemá v košíku.\nZapnutí funkce:\nV sekci Dashboard -> Nastavení funkcí zapněte 'Upselling'." },
+                { id: 'pdf_invoices', label: "4. Automatické PDF Faktury", description: "Funkce:\nZákazník i administrátor si mohou u každé zaplacené objednávky stáhnout automaticky generovanou PDF fakturu. V administraci tlačítko najdete v detailu objednávky v pravém horním rohu pod ikonkou stahování." },
+                { id: 'xml_feeds', label: "5. XML Feedy (Heureka, Google)", description: "Funkce:\nSystém generuje dynamické produktové feedy na adresách:\n- Heureka: `/api/feed-heureka`\n- Google: `/api/feed-google`\nStačí tyto odkazy zkopírovat do příslušných platforem." }
+            ]
         }
     ];
 
