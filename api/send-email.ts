@@ -137,6 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const resend = new Resend(apiKey);
 
+    // eslint-disable-next-line prefer-const
     let {
         to,
         type = 'order_confirmation',
