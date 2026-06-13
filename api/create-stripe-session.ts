@@ -1,4 +1,5 @@
 import { Stripe } from 'stripe';
+import { calculateSecureOrderTotal } from './secure-calculator';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16', // Add a default API version to avoid warnings
@@ -37,8 +38,23 @@ export default async function handler(req: Request) {
 
         console.log(`[Stripe Checkout] Creating session for order ${orderNumber}`);
 
-        if (!orderNumber || !items || !total) {
+        if (!orderNumber || !items) {
              return new Response(JSON.stringify({ error: 'Missing required order details' }), {
+                 status: 400,
+                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+             });
+        }
+
+        // --- BEZPEČNÝ PŘEPOČET CENY ---
+        let finalTotal = total || 0;
+        let secureItems = items;
+        try {
+            const secureData = await calculateSecureOrderTotal(orderNumber, items);
+            finalTotal = secureData.finalTotal;
+            secureItems = secureData.secureItems;
+        } catch (err: any) {
+             console.error('[Stripe Secure Calc Error]', err);
+             return new Response(JSON.stringify({ error: 'Failed to validate order pricing' }), {
                  status: 400,
                  headers: { ...corsHeaders, 'Content-Type': 'application/json' },
              });
@@ -62,10 +78,10 @@ export default async function handler(req: Request) {
         }
         
         // Check if there is a subscription item
-        const isSubscription = items.some((item: any) => item.subscriptionInterval);
+        const isSubscription = secureItems.some((item: any) => item.subscriptionInterval);
         
         // Map items to Stripe line_items
-        const lineItems = items.map((item: any) => {
+        const lineItems = secureItems.map((item: any) => {
             const isRecurring = !!item.subscriptionInterval;
             
             return {
@@ -88,15 +104,15 @@ export default async function handler(req: Request) {
         // Add shipping for one-time payments if needed
         // Note: For pure subscriptions, Stripe handles shipping differently if it's recurring.
         // For simplicity, we add it as a one-time line item in the first invoice.
-        const itemsTotal = items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
-        if (total > itemsTotal) {
+        const itemsTotal = secureItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
+        if (finalTotal > itemsTotal) {
             lineItems.push({
                 price_data: {
                     currency: 'czk',
                     product_data: {
                         name: 'Doprava',
                     },
-                    unit_amount: Math.round((total - itemsTotal) * 100),
+                    unit_amount: Math.round((finalTotal - itemsTotal) * 100),
                 },
                 quantity: 1,
             });
@@ -111,7 +127,7 @@ export default async function handler(req: Request) {
             customer_email: customerEmail,
             line_items: lineItems,
             mode: isSubscription ? 'subscription' : 'payment',
-            success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${total}`,
+            success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${finalTotal}`,
             cancel_url: `${origin}/checkout`,
             metadata: {
                 orderId: orderNumber,

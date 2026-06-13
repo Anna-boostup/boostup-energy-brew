@@ -16,7 +16,7 @@ const AuthButton = ({ user, profile }: AuthButtonProps) => {
     };
 
     return (
-      <Button asChild variant="ghost" size="icon" className="h-10 w-10 hover:bg-accent hover:text-accent-foreground" title={profile?.role === 'admin' ? "Admin Menu" : profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
+      <Button asChild variant="ghost" size="icon" className="h-10 w-10 hover:bg-accent hover:text-accent-foreground" title={profile?.role === 'admin' ? "Admin Menu" : profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"} aria-label={profile?.role === 'admin' ? "Admin Menu" : profile?.account_type === 'company' ? "Firemní účet" : "Můj profil"}>
         <Link to={getProfileLink()}>
           <User className="w-5 h-5" />
         </Link>

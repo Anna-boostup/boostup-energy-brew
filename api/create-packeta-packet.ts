@@ -1,10 +1,31 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
 
 const PACKETA_API_URL = 'https://www.zasilkovna.cz/api/rest';
+
+// Initialize Supabase Admin client
+const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseAdmin = createClient(supabaseUrl, supabaseKey, { 
+    auth: { autoRefreshToken: false, persistSession: false } 
+});
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // 0. Security check - must be authenticated Admin
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Unauthorized: Missing authorization header' });
+    }
+    
+    const token = (typeof authHeader === 'string' ? authHeader : authHeader[0]).replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    
+    if (!user || authError) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
 
     const apiPassword = process.env.PACKETA_API_PASSWORD;

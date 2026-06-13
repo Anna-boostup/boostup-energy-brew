@@ -7,6 +7,10 @@ interface SEOProps {
     url?: string;
     type?: string;
     googleVerification?: string;
+    article?: {
+        publishedTime: string;
+        authorName: string;
+    };
 }
 
 export const SEO = ({
@@ -15,7 +19,8 @@ export const SEO = ({
     image = "https://www.drinkboostup.cz/hero-vse.jpg",
     url = "https://www.drinkboostup.cz",
     type = "website",
-    googleVerification = "ZUV9w82flSkJabmd855ZDSmaKWNTzQDlsWHOuPKwEYw"
+    googleVerification = "ZUV9w82flSkJabmd855ZDSmaKWNTzQDlsWHOuPKwEYw",
+    article
 }: SEOProps) => {
     const siteTitle = "BoostUp Supplements";
     const fullTitle = `${title} | ${siteTitle}`;
@@ -119,6 +124,28 @@ export const SEO = ({
             }
         ]
     };
+
+    if (type === 'article' && article) {
+        structuredData["@graph"].push({
+            "@type": "Article",
+            "@id": `${url}#article`,
+            "headline": title,
+            "description": description,
+            "image": image,
+            "datePublished": article.publishedTime,
+            "author": {
+                "@type": "Person",
+                "name": article.authorName
+            },
+            "publisher": {
+                "@id": "https://www.drinkboostup.cz/#organization"
+            },
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": url
+            }
+        } as any);
+    }
 
     return (
         <Helmet>
