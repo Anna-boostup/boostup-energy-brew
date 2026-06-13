@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { downloadPacketaLabel } from "@/lib/packeta";
 
 const AdminDashboard = () => {
