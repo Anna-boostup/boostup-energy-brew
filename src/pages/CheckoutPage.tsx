@@ -57,6 +57,7 @@ const sendOrderConfirmationEmail = async (
 };
 
 import { useContent } from '@/context/ContentContext';
+import { trackBeginCheckout } from '@/lib/analytics';
 
 const CheckoutPage = () => {
   const { content } = useContent();
@@ -120,6 +121,20 @@ const CheckoutPage = () => {
     };
   }, []);
 
+  // Track Begin Checkout
+  useEffect(() => {
+    if (cart.length > 0) {
+      const items = cart.map(item => ({
+        item_id: item.id,
+        item_name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        item_category: 'Energy Brew'
+      }));
+      trackBeginCheckout(items, cartTotal);
+    }
+  }, [cart.length]);
+
   // Pre-fill data from profile
   useEffect(() => {
     if (!user) return;
@@ -175,6 +190,31 @@ const CheckoutPage = () => {
 
     fetchProfile();
   }, [user]);
+
+  // Sync abandoned cart
+  useEffect(() => {
+    if (!formData.email || !formData.email.includes('@') || cart.length === 0) return;
+
+    const syncCart = async () => {
+      try {
+        await fetch('/api/abandoned-cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            cart: cart,
+            total: cartTotal,
+            action: 'upsert'
+          })
+        });
+      } catch (e) {
+        console.warn('Abandoned cart sync failed:', e);
+      }
+    };
+
+    const debounceId = setTimeout(syncCart, 2000);
+    return () => clearTimeout(debounceId);
+  }, [formData.email, cart, cartTotal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -407,6 +447,17 @@ const CheckoutPage = () => {
           setIsProcessing(false);
         });
         return;
+      }
+
+      // Mark abandoned cart as recovered
+      try {
+        await fetch('/api/abandoned-cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, action: 'recover' })
+        });
+      } catch (e) {
+        console.warn('Failed to recover abandoned cart:', e);
       }
 
       const isSubscription = cart.some(item => item.subscriptionInterval);

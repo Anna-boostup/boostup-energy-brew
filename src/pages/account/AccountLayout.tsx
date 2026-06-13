@@ -1,19 +1,38 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { User, Package, LogOut, RefreshCw } from "lucide-react";
+import { User, Package, LogOut, RefreshCw, Gift } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
+import { supabase } from "@/lib/supabase";
+import { useState, useEffect } from "react";
 
 const AccountLayout = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { signOut } = useAuth();
 
+    const [referralsEnabled, setReferralsEnabled] = useState(false);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const { data } = await supabase
+                .from('app_settings')
+                .select('value')
+                .eq('key', 'referrals_enabled')
+                .single();
+            if (data?.value === 'true' || data?.value === true) {
+                setReferralsEnabled(true);
+            }
+        };
+        fetchSettings();
+    }, []);
+
     const navigation = [
         { name: "Můj profil", href: "/account/profile", icon: User },
         { name: "Moje objednávky", href: "/account/orders", icon: Package },
         { name: "Moje předplatné", href: "/account/subscriptions", icon: RefreshCw },
+        ...(referralsEnabled ? [{ name: "Získej odměnu", href: "/account/referrals", icon: Gift }] : [])
     ];
 
     return (

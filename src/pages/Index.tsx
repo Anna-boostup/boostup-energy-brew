@@ -11,6 +11,7 @@ const CTASection = lazy(() => import("@/components/CTASection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
 const Footer = lazy(() => import("@/components/Footer"));
 const DiscountModal = lazy(() => import("@/components/DiscountModal"));
+const ProductReviews = lazy(() => import("@/components/ProductReviews"));
 
 import { SEO } from "@/components/SEO";
 
@@ -58,6 +59,10 @@ const Index = () => {
             <ContactSection />
           </Suspense>
         </div>
+
+        <Suspense fallback={null}>
+          <ProductReviews />
+        </Suspense>
       </main>
       
       <Suspense fallback={null}>

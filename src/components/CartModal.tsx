@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartItemRow } from './cart/CartItemRow';
 import { EmptyCart } from './cart/EmptyCart';
 import { CartFooter } from './cart/CartFooter';
+import { UpsellWidget } from './cart/UpsellWidget';
 
 interface CartModalProps {
     isOpen: boolean;
@@ -68,6 +69,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                             removeFromCart={removeFromCart}
                                         />
                                     ))}
+                                    <UpsellWidget />
                                 </div>
                             )}
                         </div>

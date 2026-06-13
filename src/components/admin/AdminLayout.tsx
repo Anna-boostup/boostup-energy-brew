@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -187,6 +187,7 @@ const AdminLayout = () => {
             icon: Megaphone,
             items: [
                 { icon: PenTool, label: "Blog", path: "/admin/blog" },
+                { icon: MessageSquareQuote, label: "Recenze", path: "/admin/reviews" },
                 { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
                 { icon: Mail, label: content?.admin?.navigation?.emails, path: "/admin/emails" },
                 { icon: FileText, label: content?.admin?.navigation?.content, path: "/admin/content" },
@@ -311,7 +312,7 @@ const AdminLayout = () => {
                         : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`pt-10 pb-8 shrink-0 relative flex items-center justify-center`}>
+                <div className={`pt-10 pb-6 shrink-0 relative flex flex-col items-center justify-center`}>
                     <Link to="/" className="flex items-center group">
                         <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white text-center'}`}>
                             {isExpanded ? (
@@ -322,7 +323,7 @@ const AdminLayout = () => {
                         </span>
                     </Link>
                     {isExpanded && (
-                        <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500 absolute -bottom-4 left-10">
+                        <div className="flex items-center gap-2 mt-3 animate-in fade-in duration-500">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
                         </div>
@@ -334,7 +335,7 @@ const AdminLayout = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => setIsPinned(!isPinned)}
-                            className="absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500"
+                            className="absolute top-6 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500"
                         >
                             {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
                         </Button>
