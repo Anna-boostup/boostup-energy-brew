@@ -577,7 +577,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             bccRecipient = ADMIN_EMAIL;
 
             // Identify Test Orders
-            const isTestOrder = String(orderNumber).toUpperCase().startsWith('TEST') || 
+            const isTestEnv = String(BASE_URL).includes('test.') || 
+                              String(BASE_URL).includes('preview.') || 
+                              process.env.VERCEL_ENV === 'preview' || 
+                              process.env.VERCEL_ENV === 'development';
+                              
+            const isTestOrder = isTestEnv ||
+                                String(orderNumber).toUpperCase().startsWith('TEST') || 
                                 String(customerName).toLowerCase().includes('test') || 
                                 String(to).toLowerCase().includes('test');
                                 
