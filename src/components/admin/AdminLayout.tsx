@@ -162,7 +162,6 @@ const AdminLayout = () => {
         {
             title: "OBCHOD",
             icon: Store,
-            color: "text-lime",
             items: [
                 { icon: LayoutDashboard, label: content?.admin?.navigation?.dashboard, path: "/admin" },
                 { icon: ShoppingCart, label: content?.admin?.navigation?.orders, path: "/admin/orders" },
@@ -172,7 +171,6 @@ const AdminLayout = () => {
         {
             title: "SKLAD & VÝROBA",
             icon: Boxes,
-            color: "text-orange-400",
             items: [
                 { icon: Package, label: content?.admin?.navigation?.inventory, path: "/admin/inventory" },
                 {
@@ -187,7 +185,6 @@ const AdminLayout = () => {
         {
             title: "MARKETING & OBSAH",
             icon: Megaphone,
-            color: "text-sky-400",
             items: [
                 { icon: PenTool, label: "Blog", path: "/admin/blog" },
                 { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
@@ -198,7 +195,6 @@ const AdminLayout = () => {
         {
             title: "SYSTÉM",
             icon: Settings,
-            color: "text-purple-400",
             items: [
                 { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
                 { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
@@ -240,7 +236,7 @@ const AdminLayout = () => {
                                 {navGroups.map((group, gIdx) => (
                                     <div key={group.title} className={gIdx > 0 ? "pt-6" : ""}>
                                         <div className="flex items-center gap-2 px-4 mb-4 opacity-50">
-                                            <group.icon className={`w-3.5 h-3.5 ${group.color}`} />
+                                            <group.icon className="w-3.5 h-3.5 text-white" />
                                             <p className="text-[9px] font-black tracking-[0.3em] uppercase text-white">{group.title}</p>
                                         </div>
                                         <div className="space-y-1">
@@ -357,12 +353,12 @@ const AdminLayout = () => {
                         <div key={group.title} className={`${gIdx > 0 ? "pt-8" : "pt-4"} pb-2 relative`}>
                             {isExpanded ? (
                                 <div className="flex items-center gap-2 px-10 mb-4 opacity-40">
-                                    <group.icon className={`w-3.5 h-3.5 ${group.color}`} />
+                                    <group.icon className="w-3.5 h-3.5 text-white" />
                                     <p className="text-[9px] font-black tracking-[0.4em] uppercase text-white">{group.title}</p>
                                 </div>
                             ) : (
                                 <div className="flex justify-center mb-4 opacity-40" title={group.title}>
-                                    <group.icon className={`w-4 h-4 ${group.color}`} />
+                                    <group.icon className="w-4 h-4 text-white" />
                                 </div>
                             )}
                             <ul className="space-y-1 w-full" role="list">
