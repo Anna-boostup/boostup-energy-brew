@@ -312,7 +312,7 @@ const AdminLayout = () => {
                         : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`pt-10 pb-8 shrink-0 relative flex items-center justify-center`}>
+                <div className={`pt-10 pb-6 shrink-0 relative flex flex-col items-center justify-center`}>
                     <Link to="/" className="flex items-center group">
                         <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white text-center'}`}>
                             {isExpanded ? (
@@ -323,7 +323,7 @@ const AdminLayout = () => {
                         </span>
                     </Link>
                     {isExpanded && (
-                        <div className="flex items-center gap-2 mt-2 animate-in fade-in duration-500 absolute -bottom-4 left-10">
+                        <div className="flex items-center gap-2 mt-3 animate-in fade-in duration-500">
                             <div className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" />
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 truncate">{content?.admin?.terminalLabel || "ADMIN TERMINAL"}</p>
                         </div>
@@ -335,14 +335,14 @@ const AdminLayout = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => setIsPinned(!isPinned)}
-                            className="absolute top-8 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500"
+                            className="absolute top-6 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500"
                         >
                             {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
                         </Button>
                     )}
                 </div>
 
-                <div className={`pt-8 pb-4 flex justify-center w-full px-4`}>
+                <div className={`pt-4 pb-4 flex justify-center w-full px-4`}>
                     <Link to="/" className={`flex items-center gap-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'justify-center w-12 h-12 p-0' : 'w-full px-6 py-4'}`}>
                         <Home className="w-5 h-5 shrink-0" />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}

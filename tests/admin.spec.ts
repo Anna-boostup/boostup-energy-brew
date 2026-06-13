@@ -10,6 +10,13 @@ test.describe('Admin Dashboard Audit', () => {
       return;
     }
 
+    // Capture console errors
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        console.error(`BROWSER ERROR [${msg.location().url}]: ${msg.text()}`);
+      }
+    });
+
     // 1. Audit all pages listed in AdminLayout
     // Since we are using storageState, we start already logged in.
     await page.goto('/admin');
@@ -32,13 +39,6 @@ test.describe('Admin Dashboard Audit', () => {
         { path: '/admin/profile', title: 'Můj Profil' },
         { path: '/admin/help', title: 'Centrum Nápovědy' },
     ];
-
-    // Capture console errors
-    page.on('console', msg => {
-      if (msg.type() === 'error') {
-        console.error(`BROWSER ERROR [${msg.location().url}]: ${msg.text()}`);
-      }
-    });
 
     for (const adminPage of adminPages) {
       await test.step(`Audit ${adminPage.path}`, async () => {
