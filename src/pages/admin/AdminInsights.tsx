@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { TrendingUp, Users, MousePointer2, Target, ArrowUpRight, ArrowDownRight, Activity, Calendar, Zap, Loader2, Smartphone, Monitor, Shield, Globe } from "lucide-react";
+import { TrendingUp, Users, MousePointer2, Target, ArrowUpRight, ArrowDownRight, Activity, Calendar, Zap, Loader2, Smartphone, Monitor, Shield, Globe, ShoppingBag } from "lucide-react";
 import { useInventory } from "@/context/InventoryContext";
 import { useContent } from "@/context/ContentContext";
 import { supabase } from "@/lib/supabase";
