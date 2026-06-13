@@ -34,3 +34,12 @@ Tento release přináší zásadní rozšíření administrace pro velkoobchod, 
 *   **Absolutní spolehlivost prodeje:** Implementovali jsme obrovský robustní testovací stroj pro simulaci "živých nákupů". Systém nyní sám přes **Playwright** zkouší klikat v e-shopu a testuje zaplacení přes **Stripe** i **GoPay** (včetně 3D Secure ověření a zamítnutých karet). Pokud by v budoucnu platební brána selhala, dozvíme se to ještě před nasazením k lidem.
 *   **Vizuální & A11y testy:** Nasazena AI detekce neviditelných vizuálních chyb a zajištění plné přístupnosti webu (Aria štítky) – což mimo jiné zvyšuje **SEO hodnocení** na Googlu.
 *   **Fixy:** Opraveno nesprávné přesměrování u Stripe (pokud zákazník platbu zrušil, vracel se na neexistující adresu). Stabilizováno sledování více produktů ve stejném košíku. Aplikovány bezpečnostní filtry proti injekcím XSS.
+
+#### 📈 Marketing a Zákaznická zkušenost (Novinky)
+*   **Zákaznické recenze (UGC):** Zákazníci nyní mohou psát a udělovat hvězdičková hodnocení produktů. Recenze prochází schvalováním v administraci.
+*   **Referral Program:** Zákazníci mohou sdílet svůj unikátní odkaz z uživatelského účtu a získat odměnu na další nákup, pokud přes něj někdo nakoupí.
+*   **Upsell v košíku:** Inteligentní návrh produktů typu "Mohlo by se hodit" se nyní zobrazuje přímo v nákupním košíku, což zvyšuje průměrnou hodnotu objednávky.
+*   **Automatické PDF Faktury:** Zákazníkům i administrátorům jsou nyní okamžitě po platbě generovány krásné účetní PDF doklady ke stažení na jeden klik.
+*   **XML Feedy:** Propojení na Zbožáky! Byly vytvořeny živé datové výstupy `feed-heureka` a `feed-google` pro napojení kampaní Heureky a Google Merchant.
+*   **Analytika (GA4 & Meta):** E-shop nyní automaticky do marketingu reportuje přesné hodnoty nákupů a události typu `add_to_cart` či `purchase`.
+*   **Verzování Aplikace:** V zápatí webu najdete vždy přesnou verzi nasazeného kódu, která se zároveň předává do systému pro chytání případných chyb, což zrychlí jejich opravu.
