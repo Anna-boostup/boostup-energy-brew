@@ -36,6 +36,8 @@ jobs:
           npm install --global vercel@latest
       - name: Unit Tests (Vitest)
         run: npm run test
+      - name: Typecheck API (Vercel Serverless)
+        run: npm run lint:api
       - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
       - name: Build
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}

@@ -1,6 +1,6 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { createPacketaPacket } from './_packeta-helper';
+import { createPacketaPacket } from './_packeta-helper.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16',

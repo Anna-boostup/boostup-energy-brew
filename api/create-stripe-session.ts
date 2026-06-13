@@ -1,5 +1,5 @@
 import { Stripe } from 'stripe';
-import { calculateSecureOrderTotal } from './secure-calculator';
+import { calculateSecureOrderTotal } from './secure-calculator.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16', // Add a default API version to avoid warnings

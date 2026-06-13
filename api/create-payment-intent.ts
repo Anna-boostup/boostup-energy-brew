@@ -1,6 +1,6 @@
 // Triggering deploy after Stripe key update - v6
 import { Stripe } from 'stripe';
-import { calculateSecureOrderTotal } from './secure-calculator';
+import { calculateSecureOrderTotal } from './secure-calculator.js';
 
 const secretKey = process.env.STRIPE_SECRET_KEY || '';
 // Diagnostic log outside was only on init
