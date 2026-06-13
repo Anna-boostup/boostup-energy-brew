@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -161,6 +161,7 @@ const AdminLayout = () => {
     const navGroups = [
         {
             title: "OBCHOD",
+            icon: Store,
             items: [
                 { icon: LayoutDashboard, label: content?.admin?.navigation?.dashboard, path: "/admin" },
                 { icon: ShoppingCart, label: content?.admin?.navigation?.orders, path: "/admin/orders" },
@@ -169,6 +170,7 @@ const AdminLayout = () => {
         },
         {
             title: "SKLAD & VÝROBA",
+            icon: Boxes,
             items: [
                 { icon: Package, label: content?.admin?.navigation?.inventory, path: "/admin/inventory" },
                 {
@@ -182,6 +184,7 @@ const AdminLayout = () => {
         },
         {
             title: "MARKETING & OBSAH",
+            icon: Megaphone,
             items: [
                 { icon: PenTool, label: "Blog", path: "/admin/blog" },
                 { icon: Sparkles, label: content?.admin?.navigation?.promoCodes, path: "/admin/promo-codes" },
@@ -191,6 +194,7 @@ const AdminLayout = () => {
         },
         {
             title: "SYSTÉM",
+            icon: Settings,
             items: [
                 { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
                 { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
@@ -231,7 +235,10 @@ const AdminLayout = () => {
                             <ul className="space-y-2" role="list">
                                 {navGroups.map((group, gIdx) => (
                                     <div key={group.title} className={gIdx > 0 ? "pt-6" : ""}>
-                                        <p className="px-4 text-[9px] font-black tracking-[0.3em] text-white/20 mb-4 uppercase">{group.title}</p>
+                                        <div className="flex items-center gap-2 px-4 mb-4 opacity-50">
+                                            <group.icon className="w-3.5 h-3.5 text-white" />
+                                            <p className="text-[9px] font-black tracking-[0.3em] uppercase text-white">{group.title}</p>
+                                        </div>
                                         <div className="space-y-1">
                                             {group.items.map((item) => {
                                                 const Icon = item.icon;
@@ -345,9 +352,14 @@ const AdminLayout = () => {
                     {navGroups.map((group, gIdx) => (
                         <div key={group.title} className={`${gIdx > 0 ? "pt-8" : "pt-4"} pb-2 relative`}>
                             {isExpanded ? (
-                                <p className="px-10 text-[9px] font-black tracking-[0.4em] text-white/20 mb-4 uppercase">{group.title}</p>
+                                <div className="flex items-center gap-2 px-10 mb-4 opacity-40">
+                                    <group.icon className="w-3.5 h-3.5 text-white" />
+                                    <p className="text-[9px] font-black tracking-[0.4em] uppercase text-white">{group.title}</p>
+                                </div>
                             ) : (
-                                <div className="h-px bg-white/5 mx-4 mb-4" />
+                                <div className="flex justify-center mb-4 opacity-40" title={group.title}>
+                                    <group.icon className="w-4 h-4 text-white" />
+                                </div>
                             )}
                             <ul className="space-y-1 w-full" role="list">
                                 {group.items.map((item) => {
