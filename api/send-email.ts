@@ -576,15 +576,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (type === 'order_confirmation') {
             bccRecipient = ADMIN_EMAIL;
 
+            // Identify Test Orders
+            const isTestEnv = String(BASE_URL).includes('test.') || 
+                              String(BASE_URL).includes('preview.') || 
+                              process.env.VERCEL_ENV === 'preview' || 
+                              process.env.VERCEL_ENV === 'development';
+                              
+            const isTestOrder = isTestEnv ||
+                                String(orderNumber).toUpperCase().startsWith('TEST') || 
+                                String(customerName).toLowerCase().includes('test') || 
+                                String(to).toLowerCase().includes('test');
+                                
+            const orderIcon = isTestOrder ? '🧪' : '🚀';
+            const orderTitlePrefix = isTestOrder ? 'Nová TESTOVACÍ objednávka' : 'Nová objednávka';
+            const orderTitle = `${orderIcon} ${orderTitlePrefix}: ${orderNumber}`;
+
             // Send to Slack
-            const slackWebhookUrl = process.env.SLACK_ORDERS_WEBHOOK_URL;
+            const slackWebhookUrl = isTestOrder && process.env.SLACK_DEV_WEBHOOK_URL 
+                ? process.env.SLACK_DEV_WEBHOOK_URL 
+                : process.env.SLACK_ORDERS_WEBHOOK_URL;
+                
             if (slackWebhookUrl) {
                 try {
                     const slackMessage = {
                         blocks: [
                             {
                                 type: "header",
-                                text: { type: "plain_text", text: `🚀 Nová objednávka: ${orderNumber}` }
+                                text: { type: "plain_text", text: orderTitle }
                             },
                             {
                                 type: "section",
@@ -613,7 +631,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     console.error('Failed to prepare Slack notification:', slackErr);
                 }
             } else {
-                console.warn('SLACK_ORDERS_WEBHOOK_URL is not set; skipping order Slack notification.');
+                console.warn('Slack Webhook URL is not set; skipping order notification.');
             }
 
             // Send to Pushover (iPhone / Mac Push Notifications)
@@ -626,7 +644,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     const formData = new URLSearchParams();
                     formData.append('token', pushoverAppToken);
                     formData.append('user', pushoverUserKey);
-                    formData.append('title', `🚀 Nová objednávka: ${orderNumber}`);
+                    formData.append('title', orderTitle);
                     formData.append('message', pushoverMessage);
                     formData.append('sound', 'cashregister'); // Zvuk pokladny pro novou objednávku
 
