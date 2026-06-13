@@ -8,6 +8,14 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const PACKETA_API_URL = 'https://www.zasilkovna.cz/api/rest';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // --- SECURITY CHECK ---
+    const authHeader = req.headers.authorization;
+    const cronSecret = process.env.CRON_SECRET;
+    
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     const apiPassword = process.env.PACKETA_API_PASSWORD;
     if (!apiPassword) return res.status(500).json({ error: 'Missing Packeta password' });
 

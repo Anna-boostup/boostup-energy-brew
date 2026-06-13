@@ -30,7 +30,7 @@ const processOrders = (ordersList: any[]) => {
     for (const order of ordersList) {
         if (order.status === 'cancelled') {
             cancelledOrdersCount++;
-        } else {
+        } else if (order.status === 'paid' || order.status === 'shipped' || order.status === 'completed') {
             paidOrdersCount++;
             totalRevenue += order.total || 0;
 
@@ -180,7 +180,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     <h2 style="color: #3d5a2f; margin-top: 0; font-size: 18px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">📊 Celkový přehled (všechny objednávky)</h2>
                     <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.8;">
                         <tr>
-                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Celkem objednávek (bez stornovaných):</td>
+                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Zaplacené/Dokončené objednávky:</td>
                             <td style="font-weight: 800; text-align: right; color: #111827;">${totalReport.paidOrdersCount}</td>
                         </tr>
                         <tr>
@@ -207,7 +207,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     <h2 style="color: #3d5a2f; margin-top: 0; font-size: 18px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">🛒 Za E-shop (web + běžné prodeje)</h2>
                     <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.8;">
                         <tr>
-                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Celkem objednávek (bez stornovaných):</td>
+                            <td style="font-weight: bold; color: #4b5563; width: 60%;">Zaplacené/Dokončené objednávky:</td>
                             <td style="font-weight: 800; text-align: right; color: #111827;">${eshopReport.paidOrdersCount}</td>
                         </tr>
                         <tr>

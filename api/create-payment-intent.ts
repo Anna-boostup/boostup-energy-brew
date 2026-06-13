@@ -1,5 +1,6 @@
 // Triggering deploy after Stripe key update - v6
 import { Stripe } from 'stripe';
+import { calculateSecureOrderTotal } from './secure-calculator';
 
 const secretKey = process.env.STRIPE_SECRET_KEY || '';
 // Diagnostic log outside was only on init
@@ -32,22 +33,31 @@ export default async function handler(req: Request) {
  
         console.log(`[Stripe PaymentIntent] Creating intent for order ${orderNumber} using key type: ${secretKey.startsWith('sk_test') ? 'sk_test_***' : secretKey.startsWith('sk_live') ? 'sk_live_***' : 'unknown/missing'}`);
 
-        if (!orderNumber || !total) {
-             const missingFields = [];
-             if (!orderNumber) missingFields.push('orderNumber');
-             if (!total) missingFields.push('total');
-
+        if (!orderNumber) {
              return new Response(JSON.stringify({ 
-                 error: `Missing required order details: ${missingFields.join(', ')}`,
-                 debug: { orderNumber, total } 
+                 error: `Missing required order details: orderNumber`,
+                 debug: { orderNumber } 
              }), {
                  status: 400,
                  headers: { ...corsHeaders, 'Content-Type': 'application/json' },
              });
         }
 
+        // --- BEZPEČNÝ PŘEPOČET CENY ---
+        let finalTotal = total || 0;
+        try {
+            const secureData = await calculateSecureOrderTotal(orderNumber);
+            finalTotal = secureData.finalTotal;
+        } catch (err: any) {
+             console.error('[Stripe Secure Calc Error]', err);
+             return new Response(JSON.stringify({ error: 'Failed to validate order pricing' }), {
+                 status: 400,
+                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+             });
+        }
+
         // Amount must be in the smallest currency unit (cents/haléře)
-        const amount = Math.round(total * 100);
+        const amount = Math.round(finalTotal * 100);
 
         // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({

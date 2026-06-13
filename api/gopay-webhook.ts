@@ -3,6 +3,7 @@ export const config = {
 };
 
 import { createClient } from '@supabase/supabase-js';
+import { createPacketaPacket } from './_packeta-helper';
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
@@ -75,6 +76,23 @@ export default async function handler(req: Request) {
         if (paymentData.state === 'PAID') {
             const orderNumber = paymentData.order_number;
 
+            // 0. Zjistit aktuální stav objednávky
+            const { data: currentOrder, error: fetchError } = await supabaseAdmin
+                .from('orders')
+                .select('status')
+                .eq('id', orderNumber)
+                .single();
+            
+            if (fetchError || !currentOrder) {
+                console.error('[GoPay Webhook] Could not fetch order:', fetchError);
+                throw new Error('Order not found or DB error');
+            }
+
+            if (currentOrder.status !== 'pending') {
+                console.log(`[GoPay Webhook] Order ${orderNumber} is already ${currentOrder.status}. Skipping update to avoid downgrading status.`);
+                return new Response('OK', { status: 200, headers: corsHeaders });
+            }
+
             // 1. Update status in DB
             const { error: updateError } = await supabaseAdmin
                 .from('orders')
@@ -109,6 +127,29 @@ export default async function handler(req: Request) {
                 } catch (msgErr) {
                     console.error('[GoPay Webhook] Failed to log message:', msgErr);
                     // Don't throw here, the order status was already updated
+                }
+
+                // 3. Zásilkovna - create packet
+                const { data: fullOrder } = await supabaseAdmin.from('orders').select('*').eq('id', orderNumber).single();
+                if (fullOrder?.delivery_info?.deliveryMethod === 'zasilkovna' && fullOrder?.delivery_info?.packetaPointId && !fullOrder?.packeta_barcode) {
+                    try {
+                        const packet = await createPacketaPacket({
+                            orderNumber: fullOrder.id,
+                            firstName: fullOrder.delivery_info.firstName,
+                            lastName: fullOrder.delivery_info.lastName,
+                            email: fullOrder.customer.email,
+                            phone: fullOrder.delivery_info.phone,
+                            packetaPointId: fullOrder.delivery_info.packetaPointId,
+                            total: fullOrder.total,
+                        });
+                        await supabaseAdmin.from('orders').update({
+                            packeta_barcode: packet.barcode,
+                            packeta_packet_id: packet.packetId
+                        }).eq('id', orderNumber);
+                        console.log(`[GoPay Webhook] Packeta packet created for order ${orderNumber}`);
+                    } catch (err) {
+                        console.error(`[GoPay Webhook] Packeta packet creation failed for order ${orderNumber}:`, err);
+                    }
                 }
             }
         }

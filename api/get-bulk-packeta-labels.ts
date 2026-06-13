@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { PDFDocument } from 'pdf-lib';
 
+import { createClient } from '@supabase/supabase-js';
+
 const PACKETA_API_URL = 'https://www.zasilkovna.cz/api/rest';
 
 async function fetchIndividualLabel(packetId: string, apiPassword: string): Promise<{ buffer: Buffer | null; error?: string }> {
@@ -66,6 +68,32 @@ async function fetchIndividualLabel(packetId: string, apiPassword: string): Prom
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // Handling CORS preflight for fetch requests
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
+        return res.status(200).end();
+    }
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
+
+    // --- SECURITY CHECK ---
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Missing Authorization header' });
+    }
+    const token = authHeader.replace('Bearer ', '');
+
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+         return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     const { ids, format } = req.query;
 
     if (!ids || typeof ids !== 'string') {

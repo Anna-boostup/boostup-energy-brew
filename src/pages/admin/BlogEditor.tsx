@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
+import DOMPurify from 'dompurify';
 import { useNavigate, useParams } from "react-router-dom";
 import { 
   ArrowLeft, Save, Globe, Eye, Image as ImageIcon, 
@@ -585,7 +586,7 @@ export default function BlogEditor() {
 
                 <div className="max-w-3xl mx-auto">
                   <div className="prose prose-lg prose-olive mx-auto mb-20 blog-content-premium">
-                    <div dangerouslySetInnerHTML={{ __html: formData.content || '<p className="text-olive-dark/20 italic">Zatím žádný obsah...</p>' }} className="text-olive-dark/80" />
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formData.content) || '<p className="text-olive-dark/20 italic">Zatím žádný obsah...</p>' }} className="text-olive-dark/80" />
                   </div>
                 </div>
               </div>
@@ -625,7 +626,7 @@ export default function BlogEditor() {
 
                 <div className="max-w-3xl mx-auto">
                   <div className="prose prose-lg prose-olive mx-auto mb-20">
-                    <div dangerouslySetInnerHTML={{ __html: formData.content || '<p className="text-olive-dark/20 italic">Zatím žádný obsah...</p>' }} className="text-olive-dark/80" />
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formData.content) || '<p className="text-olive-dark/20 italic">Zatím žádný obsah...</p>' }} className="text-olive-dark/80" />
                   </div>
                 </div>
               </div>
@@ -669,7 +670,7 @@ export default function BlogEditor() {
                 <div className="container mx-auto px-8">
                   <div className="max-w-3xl mx-auto">
                     <div className="prose prose-lg prose-olive mx-auto mb-20 blog-content-premium">
-                      <div dangerouslySetInnerHTML={{ __html: formData.content || '<p className="text-olive-dark/20 italic">Zatím žádný obsah...</p>' }} className="text-olive-dark/80" />
+                      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formData.content) || '<p className="text-olive-dark/20 italic">Zatím žádný obsah...</p>' }} className="text-olive-dark/80" />
                     </div>
                   </div>
                 </div>

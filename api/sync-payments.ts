@@ -48,6 +48,28 @@ async function getGoPayToken() {
 export default async function handler(req: Request) {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+    // 0. Security check - must be Cron or authenticated Admin
+    const authHeader = req.headers.get('authorization');
+    const cronSecret = process.env.CRON_SECRET;
+    let isAuthorized = false;
+
+    if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+        isAuthorized = true;
+    } else if (authHeader) {
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (user && !error) {
+            isAuthorized = true;
+        }
+    }
+
+    if (!isAuthorized) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+
     try {
         console.log('[Sync Payments] Starting synchronization logic...');
         

@@ -11,7 +11,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const token = req.query.token || req.body?.token;
     const secureToken = process.env.MONEY_S3_TOKEN;
 
-    if (secureToken && token !== secureToken) {
+    // Fail-closed auth: if secureToken is not configured or doesn't match, return 401
+    if (!secureToken || token !== secureToken) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 

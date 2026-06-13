@@ -1,8 +1,34 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
 
 const PACKETA_API_URL = 'https://www.zasilkovna.cz/api/rest';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // Handling CORS preflight for fetch requests
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
+        return res.status(200).end();
+    }
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'authorization, x-client-info, apikey, content-type');
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Missing Authorization header' });
+    }
+    const token = authHeader.replace('Bearer ', '');
+
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+         return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     const { packetId, barcode } = req.query;
 
     // Accept either packetId or barcode as identifier

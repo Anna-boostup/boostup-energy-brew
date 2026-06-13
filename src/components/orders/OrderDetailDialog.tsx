@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 
 import { useInventory } from "@/context/InventoryContext";
 import { useContent } from "@/context/ContentContext";
+import { downloadPacketaLabel } from "@/lib/packeta";
+import { supabase } from "@/lib/supabase";
 
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { content } = useContent();
@@ -26,9 +28,13 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
     const handleCreatePacketaPacket = async () => {
         setIsCreatingPacket(true);
         try {
+            const { data: { session } } = await supabase.auth.getSession();
             const packetaRes = await fetch('/api/create-packeta-packet', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
+                },
                 body: JSON.stringify({
                     orderNumber: order.id,
                     firstName: order.delivery_info?.firstName || order.customer?.name?.split(' ')[0],
@@ -108,7 +114,7 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                                     variant="default"
                                     size="sm"
                                     className="h-9 bg-green-600 hover:bg-green-700 gap-2"
-                                    onClick={() => window.open(`/api/get-packeta-label?packetId=${order.packeta_packet_id}`, '_blank')}
+                                    onClick={() => downloadPacketaLabel(order.packeta_packet_id, false).catch(e => toast({ title: 'Chyba', description: e.message, variant: 'destructive' }))}
                                 >
                                     <Printer className="w-4 h-4" />
                                     {content.admin.orders.detail.label}

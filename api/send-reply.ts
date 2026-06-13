@@ -24,6 +24,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // --- SECURITY CHECK ---
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Missing Authorization header' });
+    }
+    const token = authHeader.replace('Bearer ', '');
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+         return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
         const { messageId, replyText, customerEmail, originalSubject, originalMessageId } = req.body;
 
