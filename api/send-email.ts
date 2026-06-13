@@ -41,8 +41,11 @@ const getBaseUrl = (req: VercelRequest) => {
     if (host.includes('test.drinkboostup.cz') || origin.includes('test.drinkboostup.cz')) {
         return 'https://test.drinkboostup.cz';
     }
-    if ((host.includes('drinkboostup.cz') && !host.includes('test.')) || 
-        (origin.includes('drinkboostup.cz') && !origin.includes('test.'))) {
+    if (host.includes('preview.drinkboostup.cz') || origin.includes('preview.drinkboostup.cz')) {
+        return 'https://preview.drinkboostup.cz';
+    }
+    if ((host.includes('drinkboostup.cz') && !host.includes('test.') && !host.includes('preview.')) || 
+        (origin.includes('drinkboostup.cz') && !origin.includes('test.') && !origin.includes('preview.'))) {
         return 'https://drinkboostup.cz';
     }
 

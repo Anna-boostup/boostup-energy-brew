@@ -106,6 +106,9 @@ const Footer = () => {
             {content.bottom.copyright}
           </p>
           <div className="flex gap-8">
+            <span className="text-primary-foreground/50 text-xs font-mono tracking-widest uppercase">
+              v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'}
+            </span>
             {(content.bottom.legal || []).map((link) => (
               <Link
                 key={link.label}

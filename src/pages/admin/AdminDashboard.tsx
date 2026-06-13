@@ -20,6 +20,29 @@ const AdminDashboard = () => {
     const { content, loading: contentLoading, refreshContent } = useContent();
     const { toast } = useToast();
     const [isUpdating, setIsUpdating] = useState(false);
+    const [abandonedCartsEnabled, setAbandonedCartsEnabled] = useState(false);
+    const [referralsEnabled, setReferralsEnabled] = useState(false);
+    const [reviewsEnabled, setReviewsEnabled] = useState(false);
+    const [upsellEnabled, setUpsellEnabled] = useState(false);
+    const [isUpdatingCarts, setIsUpdatingCarts] = useState(false);
+    const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const { data } = await supabase
+                .from('app_settings')
+                .select('key, value');
+            if (data) {
+                const settings: Record<string, string | boolean> = {};
+                data.forEach(item => settings[item.key] = item.value);
+                setAbandonedCartsEnabled(settings['abandoned_carts_enabled'] === true || settings['abandoned_carts_enabled'] === 'true');
+                setReferralsEnabled(settings['referrals_enabled'] === true || settings['referrals_enabled'] === 'true');
+                setReviewsEnabled(settings['reviews_enabled'] === true || settings['reviews_enabled'] === 'true');
+                setUpsellEnabled(settings['upsell_enabled'] === true || settings['upsell_enabled'] === 'true');
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const isLoading = inventoryLoading || contentLoading || !content;
 
@@ -68,6 +91,53 @@ const AdminDashboard = () => {
         }
     };
 
+    const toggleSetting = async (key: string, enabled: boolean, setter: (val: boolean) => void, titlePrefix: string, descOn: string, descOff: string) => {
+        setIsUpdatingSettings(true);
+        try {
+            const { error } = await supabase
+                .from('app_settings')
+                .upsert({ 
+                    key, 
+                    value: enabled.toString(),
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+
+            setter(enabled);
+            toast({
+                title: `${titlePrefix} ${enabled ? 'zapnuto' : 'vypnuto'}`,
+                description: enabled ? descOn : descOff,
+            });
+        } catch (error: any) {
+            toast({
+                title: "Chyba při ukládání",
+                description: error.message,
+                variant: "destructive"
+            });
+        } finally {
+            setIsUpdatingSettings(false);
+        }
+    };
+
+    const toggleAbandonedCarts = async (enabled: boolean) => {
+        setIsUpdatingCarts(true);
+        await toggleSetting('abandoned_carts_enabled', enabled, setAbandonedCartsEnabled, "Opuštěné košíky", "Zákazníkům se po 2 hodinách pošle upozornění.", "Upozornění nebudou odesílána.");
+        setIsUpdatingCarts(false);
+    };
+
+    const toggleReferrals = async (enabled: boolean) => {
+        await toggleSetting('referrals_enabled', enabled, setReferralsEnabled, "Referral program", "Zákazníci mohou doporučovat eshop.", "Doporučování bylo skryto.");
+    };
+
+    const toggleReviews = async (enabled: boolean) => {
+        await toggleSetting('reviews_enabled', enabled, setReviewsEnabled, "Recenze", "Zákazníci mohou psát recenze.", "Recenze byly skryty.");
+    };
+
+    const toggleUpsell = async (enabled: boolean) => {
+        await toggleSetting('upsell_enabled', enabled, setUpsellEnabled, "Upselling", "V košíku se nabídnou další produkty.", "Upselling byl vypnut.");
+    };
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -95,6 +165,7 @@ const AdminDashboard = () => {
                 
 
                 {/* Sales Toggle Control — conspicuous shop status */}
+                <div className="flex flex-row flex-wrap items-stretch sm:items-center gap-4">
                 <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
                     isSalesEnabled
                     ? 'bg-lime border-lime shadow-xl shadow-lime/20'
@@ -131,6 +202,114 @@ const AdminDashboard = () => {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Abandoned Carts Toggle Control */}
+                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    abandonedCartsEnabled
+                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                }`}>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                            E-maily:
+                        </span>
+                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                            Opuštěné
+                        </span>
+                    </div>
+                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
+                        {isUpdatingCarts ? (
+                            <div className="px-5 py-2">
+                                <Loader2 className="w-5 h-5 animate-spin text-olive-dark" />
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3 px-3 py-2">
+                                <Switch
+                                    checked={abandonedCartsEnabled}
+                                    onCheckedChange={toggleAbandonedCarts}
+                                    disabled={isUpdatingCarts}
+                                    className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Referral Control */}
+                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    referralsEnabled
+                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                }`}>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                            Funkce:
+                        </span>
+                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                            Referrals
+                        </span>
+                    </div>
+                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
+                        {isUpdatingSettings ? (
+                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                        ) : (
+                            <div className="flex items-center gap-3 px-3 py-2">
+                                <Switch checked={referralsEnabled} onCheckedChange={toggleReferrals} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+                
+                {/* Reviews Control */}
+                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    reviewsEnabled
+                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                }`}>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                            Funkce:
+                        </span>
+                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                            Recenze
+                        </span>
+                    </div>
+                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
+                        {isUpdatingSettings ? (
+                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                        ) : (
+                            <div className="flex items-center gap-3 px-3 py-2">
+                                <Switch checked={reviewsEnabled} onCheckedChange={toggleReviews} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Upsell Control */}
+                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    upsellEnabled
+                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                }`}>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                            Funkce:
+                        </span>
+                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                            Upsell
+                        </span>
+                    </div>
+                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
+                        {isUpdatingSettings ? (
+                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                        ) : (
+                            <div className="flex items-center gap-3 px-3 py-2">
+                                <Switch checked={upsellEnabled} onCheckedChange={toggleUpsell} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                            </div>
+                        )}
+                    </div>
+                </div>
                 </div>
             </div>
 

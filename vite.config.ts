@@ -11,6 +11,9 @@ export default defineConfig(({ mode }) => ({
     host: "127.0.0.1",
     port: 5174,
   },
+  define: {
+    '__APP_VERSION__': JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev-' + new Date().getTime().toString().slice(-6)),
+  },
   plugins: [
     react(), 
     mode === "development" && componentTagger(),

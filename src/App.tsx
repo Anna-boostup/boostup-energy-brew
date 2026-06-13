@@ -24,6 +24,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const AccountLayout = lazy(() => import("./pages/account/AccountLayout"));
 const AccountOrders = lazy(() => import("./pages/account/Orders"));
 const AccountProfile = lazy(() => import("./pages/account/Profile"));
+const ReferralProgram = lazy(() => import("./pages/account/ReferralProgram"));
 const CompanyProfile = lazy(() => import("./pages/account/CompanyProfile"));
 const Subscriptions = lazy(() => import("./pages/account/Subscriptions"));
 const CompanyAccountLayout = lazy(() => import("./pages/account/CompanyAccountLayout"));
@@ -45,6 +46,7 @@ const BlogEditor = lazy(() => import("./pages/admin/BlogEditor"));
 const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
 
 // Legal pages
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -163,6 +165,7 @@ const App = () => (
                             <Route path="profile" element={<AccountProfile />} />
                             <Route path="orders" element={<AccountOrders />} />
                             <Route path="subscriptions" element={<Subscriptions />} />
+                            <Route path="referrals" element={<ReferralProgram />} />
                           </Route>
 
                           {/* Company Account Routes */}
@@ -196,6 +199,7 @@ const App = () => (
                             <Route path="insights" element={<AdminInsights />} />
                             <Route path="messages" element={<Messages />} />
                             <Route path="users" element={<AdminUsers />} />
+                            <Route path="reviews" element={<AdminReviews />} />
                             <Route path="emails" element={<EmailManagement />} />
                             <Route path="blog" element={<BlogManagement />} />
                             <Route path="blog/new" element={<BlogEditor />} />
