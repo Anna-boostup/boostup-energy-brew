@@ -65,6 +65,7 @@ jobs:
           EVENT_BEFORE: ${{ github.event.before }}
           SHA: ${{ github.sha }}
         run: |
+          git config --global --add safe.directory '*'
           if [ "$EVENT_BEFORE" != "0000000000000000000000000000000000000000" ] && [ -n "$EVENT_BEFORE" ]; then
             LOG=$(git log --no-merges --pretty=format:"• %s" $EVENT_BEFORE..$SHA || git log -1 --pretty=format:"• %s")
           else
