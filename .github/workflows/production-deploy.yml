@@ -25,6 +25,8 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.49.1-noble
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
@@ -57,8 +59,27 @@ jobs:
 
       - name: Notify on Success (Slack)
         if: success()
+        env:
+          EVENT_BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
         run: |
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"✅ *PRODUCTION DEPLOYED SUCCESSFULLY!*\nWeb: https://drinkboostup.cz/\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+          if [ "$EVENT_BEFORE" != "0000000000000000000000000000000000000000" ] && [ -n "$EVENT_BEFORE" ]; then
+            LOG=$(git log --no-merges --pretty=format:"• %s" $EVENT_BEFORE..$SHA || git log -1 --pretty=format:"• %s")
+          else
+            LOG=$(git log -1 --pretty=format:"• %s")
+          fi
+          
+          if [ -z "$LOG" ]; then
+            LOG="• Nasazení bez popisu (force-push nebo prázdný merge)"
+          fi
+          
+          export LOG
+          node -e "
+            const fs = require('fs');
+            const text = '✅ *PRODUKCE ÚSPĚŠNĚ NASAZENA!*\\nWeb: https://drinkboostup.cz/\\n\\n*Co je nového v této verzi:*\\n' + process.env.LOG;
+            fs.writeFileSync('slack_payload.json', JSON.stringify({ text }));
+          "
+          curl -X POST -H 'Content-type: application/json' -d @slack_payload.json ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Notify on Failure (Slack)
         if: failure()
