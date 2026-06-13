@@ -235,9 +235,9 @@ const AdminLayout = () => {
                             <ul className="space-y-2" role="list">
                                 {navGroups.map((group, gIdx) => (
                                     <div key={group.title} className={gIdx > 0 ? "pt-6" : ""}>
-                                        <div className="flex items-center gap-2 px-4 mb-4 opacity-50">
-                                            <group.icon className="w-3.5 h-3.5 text-white" />
-                                            <p className="text-[9px] font-black tracking-[0.3em] uppercase text-white">{group.title}</p>
+                                        <div className="flex items-center gap-2 px-4 mb-4">
+                                            <group.icon className="w-3.5 h-3.5 text-olive-light" />
+                                            <p className="text-[9px] font-black tracking-[0.3em] uppercase text-olive-light/60">{group.title}</p>
                                         </div>
                                         <div className="space-y-1">
                                             {group.items.map((item) => {
@@ -352,13 +352,13 @@ const AdminLayout = () => {
                     {navGroups.map((group, gIdx) => (
                         <div key={group.title} className={`${gIdx > 0 ? "pt-8" : "pt-4"} pb-2 relative`}>
                             {isExpanded ? (
-                                <div className="flex items-center gap-2 px-10 mb-4 opacity-40">
-                                    <group.icon className="w-3.5 h-3.5 text-white" />
-                                    <p className="text-[9px] font-black tracking-[0.4em] uppercase text-white">{group.title}</p>
+                                <div className="flex items-center gap-2 px-10 mb-4">
+                                    <group.icon className="w-3.5 h-3.5 text-olive-light" />
+                                    <p className="text-[9px] font-black tracking-[0.4em] uppercase text-olive-light/60">{group.title}</p>
                                 </div>
                             ) : (
-                                <div className="flex justify-center mb-4 opacity-40" title={group.title}>
-                                    <group.icon className="w-4 h-4 text-white" />
+                                <div className="flex justify-center mb-4" title={group.title}>
+                                    <group.icon className="w-4 h-4 text-olive-light" />
                                 </div>
                             )}
                             <ul className="space-y-1 w-full" role="list">
