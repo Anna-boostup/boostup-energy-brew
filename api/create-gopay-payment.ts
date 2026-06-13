@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { calculateSecureOrderTotal } from './secure-calculator';
 
 // GoPay API URLs
 const GOPAY_URL_SANDBOX = 'https://gw.sandbox.gopay.com/api';
@@ -49,11 +50,26 @@ export default async function handler(req: Request) {
         
         const origin = req.headers.get('origin') || 'https://drinkboostup.cz';
 
+        // --- BEZPEČNÝ PŘEPOČET CENY ---
+        let finalTotal = total || 0;
+        let secureItems = items;
+        try {
+            const secureData = await calculateSecureOrderTotal(orderNumber, items);
+            finalTotal = secureData.finalTotal;
+            secureItems = secureData.secureItems;
+        } catch (err: any) {
+             console.error('[GoPay Secure Calc Error]', err);
+             return new Response(JSON.stringify({ error: 'Failed to validate order pricing' }), {
+                 status: 400,
+                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+             });
+        }
+
         // TEST MODE BYPASS
         if (process.env.IS_TEST_MODE === 'true') {
             console.log(`[GoPay] TEST MODE ACTIVE. Bypassing gateway for order ${orderNumber}`);
             return new Response(JSON.stringify({ 
-                gw_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay&status=paid_test`,
+                gw_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${finalTotal}&provider=gopay&status=paid_test`,
                 id: `TEST_${orderNumber}`,
                 paymentId: `TEST_${orderNumber}` 
             }), {
@@ -89,25 +105,25 @@ export default async function handler(req: Request) {
                 default_payment_instrument: 'PAYMENT_CARD',
                 allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT', 'APPLE_PAY', 'GPAY']
             },
-            amount: Math.round(total * 100),
+            amount: Math.round(finalTotal * 100),
             currency: 'CZK',
             order_number: orderNumber,
             order_description: `Objednavka ${orderNumber}`,
             items: [
-                ...items.map((item: any) => ({
+                ...secureItems.map((item: any) => ({
                     // eslint-disable-next-line no-control-regex
                     name: item.name.replace(/[^\x00-\xFF\u0100-\u017F]/g, '').trim(),
                     amount: Math.round(item.price * item.quantity * 100),
                     count: item.quantity
                 })),
-                ...(total > items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
+                ...(finalTotal > secureItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0) ? [{
                     name: 'Doprava',
-                    amount: Math.round((total - items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
+                    amount: Math.round((finalTotal - secureItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)) * 100),
                     count: 1
                 }] : [])
             ],
             callback: {
-                return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${total}&provider=gopay`,
+                return_url: `${origin}/payment/success?orderNumber=${orderNumber}&amount=${finalTotal}&provider=gopay`,
                 notification_url: `${origin}/api/gopay-webhook`
             },
             lang: 'CS'

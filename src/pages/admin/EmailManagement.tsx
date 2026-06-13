@@ -352,9 +352,13 @@ const EmailManagement = () => {
 
         try {
             setSendingTest(true);
+            const session = (await supabase.auth.getSession()).data.session;
             const response = await fetch('/api/send-email', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
+                },
                 body: JSON.stringify({
                     to: testEmails,
                     type: selectedTypeId,
@@ -429,11 +433,15 @@ const EmailManagement = () => {
         for (let i = 0; i < subscribers.length; i += batchSize) {
             const batch = subscribers.slice(i, i + batchSize);
             
+            const session = (await supabase.auth.getSession()).data.session;
             await Promise.all(batch.map(async (sub) => {
                 try {
                     await fetch('/api/send-email', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
+                        },
                         body: JSON.stringify({
                             to: sub.email,
                             type: selectedCampaignTemplate,

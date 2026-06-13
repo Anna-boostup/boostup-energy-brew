@@ -27,6 +27,8 @@ const ConfiguratorHero = ({ className }: ConfiguratorHeroProps) => {
             src={fallingBottles}
             alt="BoostUp Premium Falling Bottles"
             className="w-full h-auto select-none pointer-events-none object-contain"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>

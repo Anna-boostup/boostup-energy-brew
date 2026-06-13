@@ -114,6 +114,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // --- SECURITY CHECK ---
+    const authHeader = req.headers.authorization;
+    let isAuthenticated = false;
+    let userRole = 'anon';
+
+    if (authHeader) {
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (user && !error) {
+            isAuthenticated = true;
+            userRole = user.role || 'authenticated';
+        }
+    }
+
     const BASE_URL = getBaseUrl(req);
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
@@ -123,7 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const resend = new Resend(apiKey);
 
-    const {
+    let {
         to,
         type = 'order_confirmation',
         customerName = 'zákazníku',
@@ -135,6 +149,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         subscription_id, // For unsubscribe link
         content_html: reqContentHtml,
     } = req.body;
+
+    // --- ENFORCE SECURITY RULES FOR UNAUTHENTICATED REQUESTS ---
+    if (!isAuthenticated) {
+        // 1. Unauthenticated users cannot send arbitrary HTML
+        reqContentHtml = undefined;
+
+        // 2. Unauthenticated users can only trigger specific predefined email types
+        const allowedTypes = [
+            'confirm_signup', 
+            'reset_password', 
+            'magic_link', 
+            'contact_auto_reply', 
+            'contact_inquiry', 
+            'newsletter_signup', 
+            'order_confirmation',
+            'registration',
+            'shipping'
+        ];
+        
+        if (!allowedTypes.includes(type)) {
+            return res.status(403).json({ error: 'Forbidden email type for unauthenticated requests' });
+        }
+
+        // 3. For internal notifications, ignore user-provided 'to' address and force internal address
+        if (type === 'contact_inquiry' || type === 'newsletter_signup') {
+            to = 'info@drinkboostup.cz';
+        }
+    }
 
     if (!to) {
         return res.status(400).json({ error: 'Missing recipient email' });

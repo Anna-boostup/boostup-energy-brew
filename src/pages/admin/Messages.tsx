@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DOMPurify from 'dompurify';
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
@@ -168,9 +169,13 @@ const Messages = () => {
             // Include message_id if it exists in metadata
             const originalMessageId = selectedMessage.metadata?.message_id;
 
+            const session = (await supabase.auth.getSession()).data.session;
             const response = await fetch('/api/send-reply', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
+                },
                 body: JSON.stringify({
                     messageId: selectedMessage.id,
                     replyText: replyText,
@@ -453,7 +458,7 @@ const Messages = () => {
                                                 {selectedMessage.body_html ? (
                                                     <div 
                                                         className="prose prose-slate max-w-none prose-p:font-black prose-p:text-olive-dark/80 prose-headings:font-black text-sm sm:text-base"
-                                                        dangerouslySetInnerHTML={{ __html: selectedMessage.body_html }} 
+                                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedMessage.body_html) }} 
                                                     />
                                                 ) : (
                                                     <p className="whitespace-pre-wrap font-display font-black text-olive-dark text-lg leading-relaxed">

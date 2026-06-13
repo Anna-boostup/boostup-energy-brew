@@ -30,6 +30,7 @@ const CartButton = ({ cartCount, setIsCartOpen, mobile = false }: CartButtonProp
         size="icon"
         className="relative rounded-full flex-shrink-0 min-w-[40px] min-h-[40px]"
         onClick={handleClick}
+        aria-label="Otevřít košík"
       >
         <ShoppingCart className="w-6 h-6" />
         {cartCount > 0 && (

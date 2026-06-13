@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DOMPurify from 'dompurify';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import Header from "@/components/Header";
@@ -131,7 +132,7 @@ const BlogPost = () => {
                 transition={{ delay: 0.3 }}
                 className="prose prose-lg prose-olive mx-auto mb-20 blog-content-premium"
               >
-                <div dangerouslySetInnerHTML={{ __html: post.content || '' }} className="text-olive-dark/80" />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) || '' }} className="text-olive-dark/80" />
               </motion.div>
             </div>
           </div>
@@ -188,7 +189,7 @@ const BlogPost = () => {
                 transition={{ delay: 0.3 }}
                 className="prose prose-lg prose-olive mx-auto mb-20"
               >
-                <div dangerouslySetInnerHTML={{ __html: post.content || '' }} className="text-olive-dark/80" />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) || '' }} className="text-olive-dark/80" />
               </motion.div>
             </div>
           </div>
@@ -243,7 +244,7 @@ const BlogPost = () => {
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
                   className="prose prose-lg prose-olive mx-auto mb-20 blog-content-premium"
                 >
-                  <div dangerouslySetInnerHTML={{ __html: post.content || '' }} className="text-olive-dark/80" />
+                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) || '' }} className="text-olive-dark/80" />
                 </motion.div>
               </div>
             </div>
@@ -255,9 +256,15 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO 
-        title={`${post.title} - Blog BoostUp`} 
+        title={`${post.title}`} 
         description={post.excerpt}
         ogImage={post.featured_image_url}
+        url={`https://www.drinkboostup.cz/blog/${post.slug}`}
+        type="article"
+        article={{
+          publishedTime: post.published_at || new Date().toISOString(),
+          authorName: post.author_name || "Redakce BoostUp"
+        }}
       />
       <Header />
 

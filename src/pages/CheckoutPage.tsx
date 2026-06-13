@@ -376,6 +376,7 @@ const CheckoutPage = () => {
           deliveryMethod: formData.deliveryMethod,
           paymentMethod: formData.paymentMethod,
           packetaPointId: formData.packetaPointId,
+          promoCode: appliedPromoCode?.code || null,
         },
         items: cart.map(item => {
           const finalPrice = item.subscriptionInterval ? item.price * 0.85 : item.price;
@@ -392,31 +393,7 @@ const CheckoutPage = () => {
         is_subscription_order: cart.some(item => !!item.subscriptionInterval)
       };
 
-      if (formData.deliveryMethod === 'zasilkovna' && formData.packetaPointId) {
-        try {
-          const packetaRes = await fetch('/api/create-packeta-packet', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              orderNumber,
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              phone: formData.phone,
-              packetaPointId: formData.packetaPointId,
-              total: newOrder.total
-            })
-          });
-
-          const packetaData = await packetaRes.json();
-          if (packetaRes.ok && packetaData.barcode) {
-            newOrder.packeta_barcode = packetaData.barcode;
-            newOrder.packeta_packet_id = packetaData.packetId;
-          }
-        } catch (e) {
-          console.error('Packeta API call failed:', e);
-        }
-      }
+      // Vytváření štítků přesunuto do webhooků po úspěšném zaplacení
 
       const orderSaved = await addOrder(newOrder);
 

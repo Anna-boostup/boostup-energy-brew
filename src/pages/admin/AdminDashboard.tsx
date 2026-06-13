@@ -13,6 +13,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
 import { useState } from "react";
+import { downloadPacketaLabel } from "@/lib/packeta";
 
 const AdminDashboard = () => {
     const { orders = [], stock = {}, loading: inventoryLoading } = useInventory() || { orders: [], stock: {}, loading: true };
@@ -323,7 +324,7 @@ const AdminDashboard = () => {
                                                     <Button
                                                         variant="outline"
                                                         className="h-16 w-16 rounded-[1.5rem] bg-lime text-olive-dark border-none hover:bg-lime/80 transition-all duration-500 shadow-xl shadow-lime/20"
-                                                        onClick={() => window.open(`/api/get-packeta-label?packetId=${order.packeta_packet_id}`, '_blank')}
+                                                        onClick={() => downloadPacketaLabel(order.packeta_packet_id, false).catch(e => toast({ title: 'Chyba', description: e.message, variant: 'destructive' }))}
                                                         title={content?.admin?.orders?.packetaLabel}
                                                     >
                                                         <Printer className="h-6 w-6" />

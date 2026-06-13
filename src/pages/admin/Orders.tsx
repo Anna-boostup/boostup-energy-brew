@@ -25,6 +25,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { supabase } from "@/lib/supabase";
 import {
     Dialog,
     DialogTrigger,
@@ -39,6 +40,7 @@ import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
 import InvoiceModal from "@/components/admin/InvoiceModal";
 import { ManualOrderForm } from "@/components/admin/ManualOrderForm";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { downloadPacketaLabel } from "@/lib/packeta";
 
 
 const MobileOrderCard = ({ order, onStatusChange }: { order: any, onStatusChange: (id: string, status: Order['status']) => void }) => {
@@ -559,7 +561,7 @@ const OrderTable = ({ data, selectedOrders, toggleOrderSelection, onStatusChange
                                                              variant="outline"
                                                              className="h-10 w-10 p-0 text-olive-dark border-olive/10 hover:bg-olive-dark hover:text-white rounded-xl transition-all"
                                                              title={content.admin.orders.packetaLabel}
-                                                             onClick={() => window.open(`/api/get-packeta-label?barcode=${order.packeta_barcode}`, '_blank')}
+                                                             onClick={() => downloadPacketaLabel(order.packeta_barcode, true).catch(e => toast({ title: 'Chyba', description: e.message, variant: 'destructive' }))}
                                                          >
                                                              <Printer className="w-5 h-5" />
                                                          </Button>
@@ -639,7 +641,12 @@ const Orders = () => {
     useEffect(() => {
         const syncPayments = async () => {
             try {
-                await fetch('/api/sync-payments');
+                const { data: { session } } = await supabase.auth.getSession();
+                await fetch('/api/sync-payments', {
+                    headers: {
+                        'Authorization': `Bearer ${session?.access_token}`
+                    }
+                });
                 // We don't necessarily need to toast here to avoid being too noisy on every mount,
                 // but the DB will be updated and Realtime will refresh the list.
                 console.log('[Auto-Sync] Payments sync triggered.');
