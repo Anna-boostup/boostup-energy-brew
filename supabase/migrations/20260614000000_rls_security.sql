@@ -37,7 +37,7 @@ FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 CREATE POLICY "Users can view own orders" ON public.orders
 FOR SELECT USING (
-  customer_email = (SELECT email FROM auth.users WHERE id = auth.uid())
+  customer_email = (auth.jwt() ->> 'email')::text
 );
 
 DROP POLICY IF EXISTS "Admins can manage all orders" ON public.orders;
