@@ -8,7 +8,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
 // Sub-components
 import Logo from "./header/Logo";
@@ -119,8 +119,8 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <AuthButton user={user} profile={profile} />
 
             {profile?.role === 'admin' && (
-              <a 
-                href="/#/admin/messages" 
+              <Link 
+                to="/admin/messages" 
                 className="p-2 relative group hover:scale-110 transition-all"
                 title="Zprávy"
               >
@@ -130,7 +130,7 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
                     {unreadCount}
                   </Badge>
                 )}
-              </a>
+              </Link>
             )}
 
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
