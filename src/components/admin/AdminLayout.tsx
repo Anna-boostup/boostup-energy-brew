@@ -459,7 +459,7 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen ${isPinned ? 'md:ml-80' : 'md:ml-24'}`}>
+            <main className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] p-4 md:p-8 pt-24 md:pt-10 min-h-screen min-w-0 ${isPinned ? 'md:ml-80' : 'md:ml-24'}`}>
                 <div className="max-w-[1600px] mx-auto">
                     <AdminErrorBoundary>
                         <Suspense fallback={
