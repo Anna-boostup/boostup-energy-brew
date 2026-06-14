@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
       brotliSize: true,
     }),
     // Sentry plugin must be after other plugins
-    sentryVitePlugin({
+    process.env.SENTRY_AUTH_TOKEN ? sentryVitePlugin({
       org: "zdenek-dias",
       project: "boostup",
       authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -32,11 +32,26 @@ export default defineConfig(({ mode }) => ({
         assets: ["./dist/**"],
         filesToDeleteAfterUpload: ["./dist/**/*.map"],
       },
-    }),
+    }) : null,
     {
       name: 'html-transform',
       transformIndexHtml(html) {
-        return html.replace(/%VITE_GA_ID%/g, process.env.VITE_GA_ID || '');
+        const gaId = process.env.VITE_GA_ID;
+        const gaScript = gaId ? `
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '${gaId}', {
+      send_page_view: true,
+      cookie_domain: 'auto',
+      anonymize_ip: true
+    });
+  </script>` : '';
+        
+        return html.replace(/<!-- GOOGLE_ANALYTICS -->/g, gaScript);
       },
     },
   ].filter(Boolean),
