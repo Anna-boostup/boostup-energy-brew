@@ -66,9 +66,14 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Group all node_modules into a single robust vendor chunk to prevent 
-            // initialization race conditions on custom domains/CDNs.
-            return 'vendor';
+            if (id.includes('react-quill') || id.includes('quill')) return 'vendor-quill';
+            if (id.includes('recharts') || id.includes('d3')) return 'vendor-recharts';
+            if (id.includes('pdf-lib') || id.includes('@pdf-lib')) return 'vendor-pdf';
+            if (id.includes('@supabase')) return 'vendor-supabase';
+            if (id.includes('lucide-react')) return 'vendor-lucide';
+            if (id.includes('framer-motion')) return 'vendor-framer';
+            if (id.includes('@radix-ui') || id.includes('cmdk') || id.includes('embla-carousel')) return 'vendor-ui';
+            return 'vendor-core';
           }
           if (id.includes('src/pages/admin/')) return 'admin-suite';
           if (id.includes('src/pages/legal/')) return 'legal-suite';
