@@ -1018,9 +1018,9 @@ const Orders = () => {
                     </Dialog>
                 </div>
             </div>
-            <Tabs defaultValue="pending" className="w-full">
-                <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-hide pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8 sm:mb-12">
-                    <TabsList className="inline-flex flex-nowrap w-max min-w-max md:flex md:w-full md:grid md:grid-cols-6 bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5 gap-2 md:gap-0">
+            <Tabs defaultValue="pending" className="w-full max-w-[100vw] md:max-w-full">
+                <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-hide pb-4 mb-8 sm:mb-12">
+                    <TabsList className="inline-flex flex-nowrap w-max md:flex md:w-full md:grid md:grid-cols-6 bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5 gap-2 md:gap-0">
                         <TabsTrigger value="pending" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
                         <TabsTrigger value="paid" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPaid} ({filteredOrders.paid.length})</TabsTrigger>
                         <TabsTrigger value="processing" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
