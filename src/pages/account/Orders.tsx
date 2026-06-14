@@ -22,7 +22,7 @@ const AccountOrders = () => {
             const { data, error } = await supabase
                 .from('orders')
                 .select('*')
-                .eq('user_id', user.id)
+                .eq('customer_email', user.email)
                 // Use type assertion here if needed, or rely on TS inference. 
                 // Since we don't have exact DB types generated, manual mapping/casting is fine for now.
                 .order('created_at', { ascending: false });

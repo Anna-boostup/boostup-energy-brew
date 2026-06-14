@@ -28,7 +28,6 @@ FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 CREATE POLICY "Users can view own orders" ON public.orders
 FOR SELECT USING (
-  auth.uid() = user_id OR 
   customer_email = (SELECT email FROM auth.users WHERE id = auth.uid())
 );
 
