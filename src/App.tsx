@@ -62,7 +62,7 @@ import { useAuth } from "./context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 // Guard to enforce account type separation
-const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allowedType: 'personal' | 'company' }) => {
+const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allowedType: 'personal' | 'company' | 'admin' }) => {
   const { profile, loading } = useAuth();
 
   if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 data-testid="admin-loader" className="animate-spin text-primary" /></div>;
@@ -71,8 +71,15 @@ const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allow
 
   const currentType = profile.account_type || 'personal';
 
+  if (allowedType === 'admin') {
+      if (profile.role !== 'admin') {
+          return <Navigate to={currentType === 'company' ? "/company-account" : "/account"} replace />;
+      }
+      return <>{children}</>;
+  }
+
   // Admin should have access to everything or be redirected to admin
-  if (currentType === 'admin') {
+  if (profile.role === 'admin') {
     return <Navigate to="/admin" replace />;
   }
 
@@ -188,7 +195,7 @@ const App = () => (
                           <Route path="/payment/error" element={<PaymentError />} />
 
                           {/* Admin Routes */}
-                          <Route path="/admin" element={<AdminLayout />}>
+                          <Route path="/admin" element={<RoleGuard allowedType="admin"><AdminLayout /></RoleGuard>}>
                             <Route index element={<AdminDashboard />} />
                             <Route path="orders" element={<Orders />} />
                             <Route path="inventory" element={<Inventory />} />

@@ -110,9 +110,13 @@ const AdminDashboard = () => {
                 description: enabled ? descOn : descOff,
             });
         } catch (error: any) {
+            let errorMsg = error.message;
+            if (error.code === '42P01' || error.message?.includes('relation "public.app_settings" does not exist')) {
+                errorMsg = "Tabulka app_settings chybí v databázi. Spusťte SQL příkaz pro její vytvoření.";
+            }
             toast({
                 title: "Chyba při ukládání",
-                description: error.message,
+                description: errorMsg,
                 variant: "destructive"
             });
         } finally {

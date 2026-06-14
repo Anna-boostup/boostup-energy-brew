@@ -23,7 +23,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const token = authHeader.replace('Bearer ', '');
         const { data: { user }, error } = await supabase.auth.getUser(token);
         if (user && !error) {
-            isAuthorized = true;
+            // Check if user is admin
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single();
+            
+            if (profile?.role === 'admin') {
+                isAuthorized = true;
+            }
         }
     }
 
