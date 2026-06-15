@@ -7,14 +7,16 @@ import { ManufactureRestockDialog } from "@/components/admin/ManufactureRestockD
 import { ManufactureHistoryDialog } from "@/components/admin/ManufactureHistoryDialog";
 import { ManufactureEditDialog } from "@/components/admin/ManufactureEditDialog";
 import { PackagingRuleDialog } from "@/components/admin/PackagingRuleDialog";
+import { RecipeRuleDialog } from "@/components/admin/RecipeRuleDialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useContent } from "@/context/ContentContext";
+import { FLAVORS } from "@/config/product-data";
 
 const ManufactureInventory = () => {
     const { content } = useContent();
     const { materials, loading } = useManufacture();
-    const { packagingRules, deletePackagingRule } = useInventory();
+    const { packagingRules, deletePackagingRule, recipeRules, deleteRecipeRule } = useInventory();
 
     const [activeTab, setActiveTab] = useState<string>("materials");
 
@@ -27,6 +29,10 @@ const ManufactureInventory = () => {
     // Packaging Rules Dialog States
     const [ruleToEdit, setRuleToEdit] = useState<PackagingRule | null>(null);
     const [isRuleDialogOpen, setIsRuleDialogOpen] = useState(false);
+
+    // Recipe Rules Dialog States
+    const [recipeToEdit, setRecipeToEdit] = useState<any | null>(null);
+    const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState(false);
 
     if (loading) return <div className="p-8 flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
@@ -48,7 +54,9 @@ const ManufactureInventory = () => {
                         <h1 data-testid="admin-page-title" className="text-3xl sm:text-5xl font-black text-olive-dark tracking-tighter font-display uppercase italic leading-none">
                             {activeTab === "materials" 
                                 ? (content?.admin?.inventory?.manufacture?.title || "Staff Inventory")
-                                : "Pravidla obalů"
+                                : activeTab === "rules" 
+                                ? "Pravidla obalů"
+                                : "Receptury výroby"
                             }
                         </h1>
                         <div className="flex items-center gap-3">
@@ -56,7 +64,9 @@ const ManufactureInventory = () => {
                             <p className="text-olive-dark/70 font-black uppercase tracking-[0.4em] text-[8px] sm:text-[10px]">
                                 {activeTab === "materials"
                                     ? content?.admin?.inventory?.manufacture?.subtitle
-                                    : "Správa automatického odpisu krabic při objednávkách"
+                                    : activeTab === "rules"
+                                    ? "Správa automatického odpisu krabic při objednávkách"
+                                    : "Správa automatického odpisu surovin při naskladnění hotového produktu"
                                 }
                             </p>
                         </div>
@@ -71,7 +81,7 @@ const ManufactureInventory = () => {
                         <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
                         {content?.admin?.inventory?.manufacture?.newMaterial || "Nový materiál"}
                     </Button>
-                ) : (
+                ) : activeTab === "rules" ? (
                     <Button 
                         onClick={() => {
                             setRuleToEdit(null);
@@ -81,6 +91,17 @@ const ManufactureInventory = () => {
                     >
                         <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
                         Nové pravidlo
+                    </Button>
+                ) : (
+                    <Button 
+                        onClick={() => {
+                            setRecipeToEdit(null);
+                            setIsRecipeDialogOpen(true);
+                        }} 
+                        className="h-14 sm:h-16 px-8 sm:px-10 bg-olive-dark hover:bg-black text-white gap-4 font-black uppercase text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] rounded-2xl shadow-2xl shadow-olive/20 transition-all hover:scale-[1.05] active:scale-95 group w-full sm:w-auto"
+                    >
+                        <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
+                        Nová receptura
                     </Button>
                 )}
             </div>
@@ -101,6 +122,13 @@ const ManufactureInventory = () => {
                     >
                         <Box className="w-3.5 h-3.5" />
                         Pravidla obalů
+                    </TabsTrigger>
+                    <TabsTrigger 
+                        value="recipes" 
+                        className="rounded-xl px-6 py-3 text-[10px] font-black uppercase tracking-wider data-[state=active]:bg-olive-dark data-[state=active]:text-white text-olive-dark/60 transition-all gap-2"
+                    >
+                        <Beaker className="w-3.5 h-3.5" />
+                        Receptury
                     </TabsTrigger>
                 </TabsList>
 
@@ -178,7 +206,7 @@ const ManufactureInventory = () => {
                                                             </div>
                                                         </td>
                                                         <td className="px-10 py-8 text-right">
-                                                            <div className="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                                                            <div className="flex justify-end gap-3 transition-all duration-500">
                                                                 <Button
                                                                     size="icon"
                                                                     variant="ghost"
@@ -346,7 +374,7 @@ const ManufactureInventory = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-10 py-8 text-right">
-                                                        <div className="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                                                        <div className="flex justify-end gap-3 transition-all duration-500">
                                                             <Button
                                                                 size="icon"
                                                                 variant="ghost"
@@ -433,6 +461,161 @@ const ManufactureInventory = () => {
                         )}
                     </div>
                 </TabsContent>
+
+                {/* TAB 3: Receptury */}
+                <TabsContent value="recipes" className="space-y-6 mt-0 border-none p-0 outline-none">
+                    <div className="grid grid-cols-1 gap-6">
+                        {recipeRules.length === 0 ? (
+                            <div className="glass-card rounded-[3.5rem] p-24 text-center space-y-8">
+                                <div className="w-24 h-24 bg-olive-dark/5 rounded-[2.5rem] flex items-center justify-center mx-auto">
+                                    <Beaker className="w-10 h-10 text-olive-dark/20" />
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-2xl font-black text-olive-dark font-display uppercase italic">Zatím žádné receptury</p>
+                                    <p className="text-[10px] text-olive-dark/70 font-black uppercase tracking-widest">Přidejte pravidla pro odpisy surovin při výrobě příchutí.</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="glass-card rounded-[3.5rem] overflow-hidden border border-white/40 shadow-2xl">
+                                {/* Desktop View Table */}
+                                <div className="hidden md:block overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="border-b border-olive/10 bg-olive-dark">
+                                                <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/80">Příchuť</th>
+                                                <th className="px-10 py-8 text-left text-[10px] font-black uppercase tracking-[0.3em] text-white/80">Surovina k odečtení</th>
+                                                <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/80">Množství na 1 ks</th>
+                                                <th className="px-10 py-8 text-right text-[10px] font-black uppercase tracking-[0.3em] text-white/80">Akce</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-olive/5">
+                                            {recipeRules.map((rule) => {
+                                                const flavorName = FLAVORS.find(f => f.id === rule.product_sku)?.name || rule.product_sku;
+                                                return (
+                                                <tr key={rule.id} className="hover:bg-white/40 transition-colors group">
+                                                    <td className="px-10 py-8">
+                                                        <div className="flex items-center gap-6">
+                                                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center relative shadow-lg bg-olive-dark text-white font-display font-black text-xs uppercase italic">
+                                                                {rule.product_sku.substring(0,3)}
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                <p className="font-display font-black text-lg text-olive-dark uppercase italic leading-tight">
+                                                                    {flavorName}
+                                                                </p>
+                                                                <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest leading-none">
+                                                                    ID {rule.product_sku}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-10 py-8 text-left">
+                                                        <div className="space-y-1">
+                                                            <p className="font-bold text-olive-dark">{rule.material_name}</p>
+                                                            <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest leading-none">
+                                                                ID {rule.material_id.split('-')[0]}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-10 py-8 text-right">
+                                                        <div className="space-y-1">
+                                                            <div className="text-3xl font-black font-display italic leading-none text-olive-dark">
+                                                                {rule.quantity_required} <span className="text-sm font-black uppercase text-olive-dark/50">{rule.material_unit}</span>
+                                                            </div>
+                                                            <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-0.5 block">
+                                                                Na jednu lahvičku
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-10 py-8 text-right">
+                                                        <div className="flex justify-end gap-3 transition-all duration-500">
+                                                            <Button
+                                                                size="icon"
+                                                                variant="ghost"
+                                                                className="h-12 w-12 rounded-2xl bg-white border border-olive/5 text-olive-dark hover:bg-olive-dark hover:text-white transition-all"
+                                                                onClick={() => {
+                                                                    setRecipeToEdit(rule);
+                                                                    setIsRecipeDialogOpen(true);
+                                                                }}
+                                                            >
+                                                                <Edit className="h-5 w-5" />
+                                                            </Button>
+                                                            <Button
+                                                                size="icon"
+                                                                className="h-12 w-12 rounded-2xl bg-red-500/10 text-red-600 hover:bg-red-600 hover:text-white shadow-lg shadow-red-500/10 transition-all"
+                                                                onClick={() => {
+                                                                    if (confirm(`Opravdu chcete smazat recepturu pro ${flavorName}?`)) {
+                                                                        deleteRecipeRule(rule.id);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <Trash2 className="h-5 w-5" />
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )})}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Mobile View Card Grid */}
+                                <div className="md:hidden space-y-6">
+                                    {recipeRules.map((rule) => {
+                                        const flavorName = FLAVORS.find(f => f.id === rule.product_sku)?.name || rule.product_sku;
+                                        return (
+                                        <div key={rule.id} className="glass-card rounded-[2.5rem] p-6 sm:p-8 space-y-6 border-none shadow-xl animate-in fade-in slide-in-from-bottom-6">
+                                            <div className="flex justify-between items-start gap-4">
+                                                <div className="flex items-center gap-4 min-w-0">
+                                                    <div className="w-14 h-14 rounded-2xl bg-lime/10 text-olive-dark flex items-center justify-center font-display font-black text-xl italic shrink-0 shadow-md">
+                                                        {rule.product_sku.substring(0,3)}
+                                                    </div>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <p className="font-display font-black text-xl text-olive-dark uppercase italic leading-tight truncate">
+                                                            {flavorName}
+                                                        </p>
+                                                        <p className="text-[10px] text-olive-dark/60 font-black uppercase tracking-widest mt-1 truncate">{rule.material_name}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right shrink-0">
+                                                    <p className="text-3xl font-black font-display italic leading-none text-olive-dark">
+                                                        {rule.quantity_required} <span className="text-[11px] uppercase opacity-40">{rule.material_unit}</span>
+                                                    </p>
+                                                    <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-1.5 block">
+                                                        Na 1 ks
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex gap-2.5 pt-6 border-t border-olive/5">
+                                                <Button
+                                                    variant="outline"
+                                                    className="h-14 rounded-2xl border-olive/10 text-olive-dark hover:bg-olive-dark hover:text-white transition-all flex-1 text-xs uppercase font-black tracking-widest"
+                                                    onClick={() => {
+                                                        setRecipeToEdit(rule);
+                                                        setIsRecipeDialogOpen(true);
+                                                    }}
+                                                >
+                                                    <Edit className="h-4 w-4 mr-2" />
+                                                    Upravit
+                                                </Button>
+                                                <Button
+                                                    className="bg-red-500/10 hover:bg-red-600 text-red-600 hover:text-white h-14 rounded-2xl font-black shadow-xl shadow-red-500/5 transition-all text-xs uppercase tracking-widest px-6"
+                                                    onClick={() => {
+                                                        if (confirm(`Opravdu chcete smazat recepturu pro ${flavorName}?`)) {
+                                                            deleteRecipeRule(rule.id);
+                                                        }
+                                                    }}
+                                                >
+                                                    <Trash2 className="h-5 w-5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )})}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </TabsContent>
             </Tabs>
 
             {/* Dialogs */}
@@ -454,16 +637,19 @@ const ManufactureInventory = () => {
                     setEditId(null);
                     setIsAddOpen(false);
                 }}
-                material={editId ? materials.find(m => m.id === editId) || null : null}
+                material={materials.find(m => m.id === editId) || null}
             />
 
             <PackagingRuleDialog
                 isOpen={isRuleDialogOpen}
-                onClose={() => {
-                    setIsRuleDialogOpen(false);
-                    setRuleToEdit(null);
-                }}
+                onClose={() => setIsRuleDialogOpen(false)}
                 rule={ruleToEdit}
+            />
+
+            <RecipeRuleDialog
+                isOpen={isRecipeDialogOpen}
+                onClose={() => setIsRecipeDialogOpen(false)}
+                rule={recipeToEdit}
             />
         </div>
     );
