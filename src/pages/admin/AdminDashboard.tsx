@@ -321,26 +321,26 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-4">
                 <Card className="glass-dark rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group border-white/5 flex flex-col justify-center items-center text-center min-h-[200px]">
                     <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
                         <DollarSign className="w-48 h-48 text-white" />
                     </div>
-                    <CardHeader className="p-0 relative z-10 flex flex-col items-center">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">{content?.admin?.dashboard?.revenue}</CardTitle>
+                    <CardHeader className="p-0 relative z-10 flex flex-col items-center w-full">
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 break-words text-center">{content?.admin?.dashboard?.revenue}</CardTitle>
                     </CardHeader>
-                    <CardContent className="relative z-10 pt-4 p-0 flex flex-col items-center">
-                        <div className="text-3xl sm:text-5xl font-black text-white font-display tracking-tighter mb-1">
-                            {(totalRevenue || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-white text-lg sm:text-2xl ml-1">{content?.bankInfo?.currency}</span>
+                    <CardContent className="relative z-10 pt-4 p-0 flex flex-col items-center w-full">
+                        <div className="text-4xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-black text-white font-display tracking-tighter mb-1 break-words w-full px-2">
+                            {(totalRevenue || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-white text-lg xl:text-xl 2xl:text-2xl ml-1">{content?.bankInfo?.currency}</span>
                         </div>
-                        <div className="flex flex-col items-center gap-3 mt-2">
+                        <div className="flex flex-col items-center gap-3 mt-2 w-full">
                             <div className="w-8 h-[2px] bg-lime/30" />
-                            <p className="text-[9px] text-white/50 font-black uppercase tracking-[0.2em]">{content?.admin?.dashboard?.revenueDesc}</p>
+                            <p className="text-[9px] text-white/50 font-black uppercase tracking-[0.2em] break-words text-center">{content?.admin?.dashboard?.revenueDesc}</p>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-1 md:col-span-3 rounded-[2.5rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                <Card className="col-span-1 lg:col-span-3 rounded-[2.5rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
                     <CardHeader className="pb-4 pt-6 sm:pt-10 px-6 sm:px-10">
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-olive-dark" />
