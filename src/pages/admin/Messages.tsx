@@ -290,7 +290,7 @@ const Messages = () => {
 
             <div className="flex-1 flex overflow-hidden">
                 {/* List Sidebar */}
-                <div className="w-full md:w-80 lg:w-[400px] border-r border-background flex flex-col bg-background/20">
+                <div className={`${showDetailOnMobile ? 'hidden md:flex' : 'flex'} w-full md:w-80 lg:w-[400px] border-r border-background flex-col bg-background/20`}>
                     <ScrollArea className="flex-1">
                         <div className="p-4 space-y-3">
                             {filteredMessages.length === 0 ? (
