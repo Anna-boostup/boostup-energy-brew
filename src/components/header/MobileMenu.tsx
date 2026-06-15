@@ -44,7 +44,7 @@ const MobileMenu = ({
                   }
                   setIsMenuOpen(false);
                 }}
-                className="text-lg font-medium py-2 border-b border-border/50"
+                className="text-lg font-medium py-4 border-b border-border/50"
               >
                 {link.label}
               </a>
@@ -57,7 +57,7 @@ const MobileMenu = ({
             <Link
               to={profile?.role === 'admin' ? "/admin" : profile?.account_type === 'company' ? "/company-account/profile" : "/account/profile"}
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+              className="flex items-center gap-3 text-lg font-medium py-4 border-b border-border/50 text-foreground"
             >
               <User className="w-5 h-5" />
               {profile?.role === 'admin' ? "Admin Menu" : "Můj profil"}
@@ -67,7 +67,7 @@ const MobileMenu = ({
                 <Link
                   to={profile?.account_type === 'company' ? "/company-account/orders" : "/account/orders"}
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  className="flex items-center gap-3 text-lg font-medium py-4 border-b border-border/50 text-foreground"
                 >
                   <Package className="w-5 h-5" />
                   Moje objednávky
@@ -75,7 +75,7 @@ const MobileMenu = ({
                 <Link
                   to={profile?.account_type === 'company' ? "/company-account/subscriptions" : "/account/subscriptions"}
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  className="flex items-center gap-3 text-lg font-medium py-4 border-b border-border/50 text-foreground"
                 >
                   <CreditCard className="w-5 h-5" />
                   Moje předplatné
@@ -87,7 +87,7 @@ const MobileMenu = ({
           <Link
             to="/login"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-primary"
+            className="flex items-center gap-3 text-lg font-medium py-4 border-b border-border/50 text-primary"
           >
             <User className="w-5 h-5" />
             Přihlásit se
@@ -108,7 +108,7 @@ const MobileMenu = ({
             }
             setIsMenuOpen(false);
           }}
-          className="flex items-center gap-2 text-lg font-medium py-2 text-primary"
+          className="flex items-center gap-3 text-lg font-medium py-4 text-primary"
         >
           <ShoppingCart className="w-5 h-5" />
           {cartCount === 0 ? "Nakoupit" : `Košík (${cartCount})`}

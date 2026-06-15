@@ -214,7 +214,13 @@ const AdminLayout = () => {
                 </Link>
                 <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 -mr-2 rounded-2xl h-11 w-11 transition-all active:scale-90" data-testid="admin-mobile-menu-trigger">
+                        <Button variant="ghost" size="icon" className="relative text-white hover:bg-white/10 -mr-2 rounded-2xl h-11 w-11 transition-all active:scale-90" data-testid="admin-mobile-menu-trigger">
+                            {(unreadCount > 0 || hasLowStockAlert) && (
+                                <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-terracotta opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-terracotta border border-olive-dark"></span>
+                                </span>
+                            )}
                             <div className="flex flex-col gap-1.5 items-end pr-1">
                                 <div className="w-6 h-0.5 bg-white rounded-full" />
                                 <div className="w-4 h-0.5 bg-lime rounded-full" />
