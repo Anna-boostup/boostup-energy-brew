@@ -182,7 +182,8 @@ const AdminUsers = () => {
                                 </div>
                             ) : filteredProfiles.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <Table>
+                                    {/* Desktop Table */}
+                                    <Table className="hidden md:table">
                                         <TableHeader className="bg-admin-canvas/60 border-b border-olive/8">
                                             <TableRow className="hover:bg-transparent">
                                                 <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">Zákazník</TableHead>
@@ -245,6 +246,62 @@ const AdminUsers = () => {
                                             })}
                                         </TableBody>
                                     </Table>
+                                    
+                                    {/* Mobile Cards (Visible only on small screens) */}
+                                    <div className="md:hidden flex flex-col gap-4 p-4">
+                                        {filteredProfiles.map((user) => {
+                                            const registeredAt = user.created_at || user.updated_at;
+                                            return (
+                                                <div key={user.id} className="bg-white rounded-[2rem] p-6 shadow-sm border border-olive/10 flex flex-col gap-4 relative group">
+                                                    <div className="absolute top-6 right-6">
+                                                        {user.role === 'admin' ? (
+                                                            <Badge className="bg-olive-dark text-white border-none rounded-lg text-[8px] uppercase font-black px-2 py-0.5">Admin</Badge>
+                                                        ) : (
+                                                            <Badge className="bg-olive-dark/5 text-olive-dark border-none rounded-lg text-[8px] uppercase font-black px-2 py-0.5">User</Badge>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-black text-olive-dark uppercase text-base tracking-tight block pr-16">{user.full_name || "Host"}</span>
+                                                        <span className="text-[10px] font-bold text-olive-dark/50">{user.email}</span>
+                                                    </div>
+                                                    
+                                                    <div className="flex flex-col gap-3 pt-4 border-t border-olive/5">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-[9px] uppercase font-black text-olive-dark/40 tracking-widest">Registrace</span>
+                                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-olive-dark/80 uppercase">
+                                                                <Calendar className="w-3 h-3 text-olive-dark/40" />
+                                                                {registeredAt ? format(new Date(registeredAt), "d. MMMM yyyy", { locale: cs }) : "-"}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div className="flex flex-col gap-1.5">
+                                                            <span className="text-[9px] uppercase font-black text-olive-dark/40 tracking-widest">Slevový kód</span>
+                                                            <div className="flex items-center gap-3">
+                                                                <Select
+                                                                    disabled={updatingId === user.id}
+                                                                    value={user.assigned_promo_code || "none"}
+                                                                    onValueChange={(val) => handleUpdatePersonalCode(user.id, val)}
+                                                                >
+                                                                    <SelectTrigger className="w-full h-10 bg-admin-canvas border-olive-dark/10 text-olive-dark font-black uppercase text-[10px] rounded-xl focus:ring-lime shadow-none">
+                                                                        <SelectValue placeholder="Bez slevy" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent className="bg-admin-canvas border-olive-dark/10 text-olive-dark font-bold uppercase text-[10px] rounded-xl">
+                                                                        <SelectItem value="none">Bez slevy</SelectItem>
+                                                                        {promoCodes.map(code => (
+                                                                            <SelectItem key={code.id} value={code.code}>
+                                                                                {code.code} (-{code.discount_percent}%)
+                                                                            </SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                {updatingId === user.id && <Loader2 className="w-4 h-4 animate-spin text-olive-dark" />}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
@@ -281,7 +338,8 @@ const AdminUsers = () => {
                         <CardContent className="p-0">
                             {filteredB2B.length > 0 ? (
                                 <div className="overflow-x-auto">
-                                    <Table>
+                                    {/* Desktop Table */}
+                                    <Table className="hidden md:table">
                                         <TableHeader className="bg-admin-canvas/60 border-b border-olive/8">
                                             <TableRow className="hover:bg-transparent">
                                                 <TableHead className="font-black text-olive-dark uppercase text-[9px] tracking-widest py-4 px-10">Společnost</TableHead>
@@ -342,6 +400,60 @@ const AdminUsers = () => {
                                             ))}
                                         </TableBody>
                                     </Table>
+                                    
+                                    {/* Mobile Cards for B2B */}
+                                    <div className="md:hidden flex flex-col gap-4 p-4">
+                                        {filteredB2B.map((partner) => (
+                                            <div key={partner.id} className="bg-white rounded-[2rem] p-6 shadow-sm border border-olive/10 flex flex-col gap-4 relative group">
+                                                <div className="absolute top-4 right-4 flex gap-0.5">
+                                                    <Button
+                                                        variant="ghost" size="icon"
+                                                        onClick={() => { setSelectedCustomer(partner); setIsDialogOpen(true); }}
+                                                        className="h-8 w-8 hover:bg-olive/10 text-olive-dark"
+                                                    >
+                                                        <Edit className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost" size="icon"
+                                                        onClick={() => handleDeleteB2B(partner.id, partner.company_name)}
+                                                        className="h-8 w-8 hover:bg-red-50 text-red-500 hover:text-red-700"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                                
+                                                <div className="pr-16">
+                                                    <span className="font-black text-olive-dark uppercase text-base tracking-tight block leading-tight">{partner.company_name}</span>
+                                                </div>
+                                                
+                                                <div className="flex flex-col gap-3 pt-4 border-t border-olive/5">
+                                                    <div className="flex justify-between items-start">
+                                                        <span className="text-[9px] uppercase font-black text-olive-dark/40 tracking-widest mt-0.5">Identifikace</span>
+                                                        <div className="flex flex-col items-end text-xs font-bold text-olive-dark/80">
+                                                            <span>IČO: {partner.ico}</span>
+                                                            {partner.dic && <span className="text-[10px] text-olive-dark/50">DIČ: {partner.dic}</span>}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="flex justify-between items-start">
+                                                        <span className="text-[9px] uppercase font-black text-olive-dark/40 tracking-widest mt-0.5">Kontakt</span>
+                                                        <div className="flex flex-col items-end text-xs font-bold text-olive-dark/80">
+                                                            {partner.email && <span className="underline">{partner.email}</span>}
+                                                            {partner.phone && <span className="text-[10px] text-olive-dark/50">{partner.phone}</span>}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="flex justify-between items-start">
+                                                        <span className="text-[9px] uppercase font-black text-olive-dark/40 tracking-widest mt-0.5">Sídlo</span>
+                                                        <div className="flex flex-col items-end text-[11px] font-bold text-olive-dark/70 text-right">
+                                                            <span>{partner.street}</span>
+                                                            <span>{partner.zip} {partner.city}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
