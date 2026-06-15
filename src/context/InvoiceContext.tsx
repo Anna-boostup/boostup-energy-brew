@@ -176,7 +176,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-                let encoded = reader.result as string;
+                const encoded = reader.result as string;
                 // Remove data prefix
                 const base64 = encoded.split(',')[1];
                 resolve(base64);
@@ -235,7 +235,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             const isPdf = file.type === 'application/pdf';
             const mimeType = file.type;
 
-            let messages: any[] = [
+            const messages: any[] = [
                 {
                     "role": "system",
                     "content": "Jsi asistent pro vytěžování dat z faktur. Tvým úkolem je najít na faktuře seznam položek (surovin, materiálů), jejich množství a měrné jednotky. Vrať čistě JSON pole s objekty typu: { \"name\": \"název suroviny\", \"quantity\": číslo, \"unit\": \"kg/ks/l...\" }. Nepiš žádný text kolem, pouze platný JSON. Objekt může mít obalovou vlastnost 'items', ve které bude to pole."

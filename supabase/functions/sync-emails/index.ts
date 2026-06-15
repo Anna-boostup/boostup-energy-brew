@@ -38,13 +38,13 @@ serve(async (req) => {
 
             try {
                 await client.connect();
-                let lock = await client.getMailboxLock('INBOX');
+                const lock = await client.getMailboxLock('INBOX');
                 
                 try {
                     // Fetch unseen messages
                     const messages = client.fetch({ seen: false }, { source: true, uid: true });
                     
-                    for await (let msg of messages) {
+                    for await (const msg of messages) {
                         const parsed = await simpleParser(msg.source);
                         
                         // Handle attachments
