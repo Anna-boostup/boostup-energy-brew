@@ -16,8 +16,10 @@ import {
     Eye,
     EyeOff,
     Clock,
-    Loader2
+    Loader2,
+    X
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +62,7 @@ const Messages = () => {
     const [replyText, setReplyText] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [showDetailOnMobile, setShowDetailOnMobile] = useState(false);
+    const [selectedMessageIds, setSelectedMessageIds] = useState<string[]>([]);
     const replyEditorRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -71,6 +74,65 @@ const Messages = () => {
     }, [isReplyMode]);
     const { content } = useContent();
     const { toast } = useToast();
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedMessageIds(filteredMessages.map(m => m.id));
+        } else {
+            setSelectedMessageIds([]);
+        }
+    };
+
+    const toggleMessageSelection = (id: string) => {
+        setSelectedMessageIds(prev => 
+            prev.includes(id) ? prev.filter(msgId => msgId !== id) : [...prev, id]
+        );
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedMessageIds.length === 0) return;
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .delete()
+                .in('id', selectedMessageIds);
+
+            if (error) throw error;
+            setMessages(prev => prev.filter(m => !selectedMessageIds.includes(m.id)));
+            setSelectedMessageIds([]);
+            if (selectedMessageId && selectedMessageIds.includes(selectedMessageId)) {
+                setSelectedMessageId(null);
+            }
+            toast({
+                title: "Smazáno",
+                description: `Vybrané zprávy (${selectedMessageIds.length}) byly smazány.`,
+            });
+        } catch (error) {
+            console.error('Error deleting messages:', error);
+            toast({ title: "Chyba", description: "Nepodařilo se smazat vybrané zprávy.", variant: "destructive" });
+        }
+    };
+
+    const handleBulkMarkAsRead = async () => {
+        if (selectedMessageIds.length === 0) return;
+        try {
+            const { error } = await supabase
+                .from('messages')
+                .update({ is_read: true })
+                .in('id', selectedMessageIds);
+
+            if (error) throw error;
+            setMessages(prev => prev.map(m => selectedMessageIds.includes(m.id) ? { ...m, is_read: true } : m));
+            setSelectedMessageIds([]);
+            window.dispatchEvent(new Event('messages-all-read'));
+            toast({
+                title: "Přečteno",
+                description: `Vybrané zprávy (${selectedMessageIds.length}) byly označeny jako přečtené.`,
+            });
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
+    };
 
     const selectedMessage = messages.find(m => m.id === selectedMessageId);
 
@@ -270,36 +332,67 @@ const Messages = () => {
                     )}
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="relative flex-1 md:w-64 group">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-olive-dark/40 transition-colors group-focus-within:text-olive-dark" />
-                        <Input 
-                            placeholder={content?.admin?.messages?.search || "Search..."} 
-                            className="h-10 sm:h-11 pl-10 bg-admin-canvas/80 border-none rounded-xl shadow-sm focus-visible:ring-olive-dark/20 focus-visible:ring-offset-0 text-sm font-bold placeholder:text-olive-dark/40"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    {unreadCount > 0 && (
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={handleMarkAllAsRead} 
-                            disabled={loading} 
-                            title={content?.admin?.messages?.actions?.markAllRead || "Mark all as read"}
-                            className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0 text-primary hover:text-primary/80"
-                        >
-                            <CheckCheck className="w-4 h-4" />
-                        </Button>
+                    {selectedMessageIds.length > 0 ? (
+                        <div className="flex-1 flex items-center justify-end gap-2 sm:gap-4 bg-primary/10 rounded-2xl px-4 sm:px-6 py-2 border border-primary/20 shadow-sm">
+                            <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-olive-dark whitespace-nowrap">Vybráno: {selectedMessageIds.length}</span>
+                            <div className="w-px h-6 bg-olive-dark/10 mx-1 sm:mx-2" />
+                            <Button variant="ghost" size="sm" onClick={handleBulkMarkAsRead} className="h-8 sm:h-10 px-2 sm:px-4 text-[10px] sm:text-xs font-black uppercase text-olive-dark hover:bg-white/50 rounded-xl">
+                                <CheckCheck className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Přečíst</span>
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={handleBulkDelete} className="h-8 sm:h-10 px-2 sm:px-4 text-[10px] sm:text-xs font-black uppercase text-red-600 hover:bg-red-500/10 rounded-xl">
+                                <Trash2 className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Smazat</span>
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => setSelectedMessageIds([])} className="h-8 w-8 sm:h-10 sm:w-10 text-olive-dark/50 hover:text-olive-dark hover:bg-white/50 rounded-xl sm:ml-2">
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="relative flex-1 md:w-64 group">
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-olive-dark/40 transition-colors group-focus-within:text-olive-dark" />
+                                <Input 
+                                    placeholder={content?.admin?.messages?.search || "Search..."} 
+                                    className="h-10 sm:h-11 pl-10 bg-admin-canvas/80 border-none rounded-xl shadow-sm focus-visible:ring-olive-dark/20 focus-visible:ring-offset-0 text-sm font-bold placeholder:text-olive-dark/40"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            {unreadCount > 0 && (
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    onClick={handleMarkAllAsRead} 
+                                    disabled={loading} 
+                                    title={content?.admin?.messages?.actions?.markAllRead || "Mark all as read"}
+                                    className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0 text-primary hover:text-primary/80"
+                                >
+                                    <CheckCheck className="w-4 h-4" />
+                                </Button>
+                            )}
+                            <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
+                                <RefreshCcw className={`w-4 h-4 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
+                            </Button>
+                        </>
                     )}
-                    <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
-                        <RefreshCcw className={`w-4 h-4 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
-                    </Button>
                 </div>
             </div>
 
             <div className="flex-1 flex overflow-hidden">
                 {/* List Sidebar */}
                 <div className={`${showDetailOnMobile ? 'hidden md:flex' : 'flex'} w-full md:w-80 lg:w-[400px] border-r border-background flex-col bg-background/20`}>
+                    <div className="p-4 border-b border-background/50 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Checkbox 
+                                checked={filteredMessages.length > 0 && selectedMessageIds.length === filteredMessages.length}
+                                onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                                id="select-all"
+                                className="border-olive-dark/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                            />
+                            <label htmlFor="select-all" className="text-[10px] uppercase font-black tracking-widest text-olive-dark/60 cursor-pointer hover:text-olive-dark transition-colors">
+                                Vybrat vše
+                            </label>
+                        </div>
+                    </div>
                     <ScrollArea className="flex-1">
                         <div className="p-4 space-y-3">
                             {filteredMessages.length === 0 ? (
@@ -312,43 +405,54 @@ const Messages = () => {
                                 </div>
                             ) : (
                                 filteredMessages.map((msg) => (
-                                    <button
-                                        key={msg.id}
-                                        onClick={() => handleSelectMessage(msg.id)}
-                                        className={`w-full text-left p-4 rounded-2xl transition-all duration-300 relative group border border-olive/10 shadow-sm ${
-                                            selectedMessageId === msg.id 
-                                                ? "bg-white border-primary shadow-md translate-x-1" 
-                                                : "bg-white/60 hover:bg-white hover:border-olive-dark/25"
-                                        }`}
-                                    >
-                                        {!msg.is_read && (
-                                            <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-primary rounded-full ring-4 ring-primary/20 animate-pulse" />
-                                        )}
-                                        <div className="flex flex-col gap-1.5">
-                                            <div className="flex justify-between items-start">
-                                                <span className={`text-[10px] uppercase font-black tracking-widest ${msg.is_read ? 'text-olive-dark/50' : 'text-primary'}`}>
-                                                    {format(new Date(msg.created_at), "d. MMM · HH:mm", { locale: cs })}
-                                                </span>
-                                            </div>
-                                            <div className="space-y-0.5">
-                                                <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight line-clamp-1 text-olive-dark">
-                                                    {msg.subject}
-                                                </h3>
-                                                <p className={`text-[10px] font-black ${selectedMessageId === msg.id ? 'text-olive-dark/70' : 'text-olive-dark/60'} uppercase tracking-widest`}>
-                                                    {msg.from_name || msg.from_email.split('@')[0]}
-                                                </p>
-                                            </div>
-                                            <p className="text-xs text-olive-dark/65 line-clamp-2 leading-relaxed font-black italic opacity-90">
-                                                "{msg.body_text}"
-                                            </p>
-                                            {msg.replied_at && (
-                                                <div className="mt-1 flex items-center gap-1.5 pt-2 border-t border-olive/5">
-                                                    <CheckCheck className="w-3 h-3 text-primary" />
-                                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{content?.admin?.messages?.status?.replied || "Replied"}</span>
-                                                </div>
-                                            )}
+                                    <div key={msg.id} className="relative flex group items-stretch">
+                                        <div className="absolute left-4 top-5 z-10 flex items-center justify-center">
+                                            <Checkbox 
+                                                checked={selectedMessageIds.includes(msg.id)}
+                                                onCheckedChange={() => toggleMessageSelection(msg.id)}
+                                                className={`transition-opacity ${selectedMessageIds.includes(msg.id) ? 'opacity-100 bg-primary border-primary' : 'opacity-0 group-hover:opacity-100 bg-white/50 border-olive-dark/20'}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
                                         </div>
-                                    </button>
+                                        <button
+                                            onClick={() => handleSelectMessage(msg.id)}
+                                            className={`w-full text-left pl-11 pr-4 py-4 rounded-2xl transition-all duration-300 relative border shadow-sm ${
+                                                selectedMessageId === msg.id 
+                                                    ? "bg-white border-primary shadow-md translate-x-1" 
+                                                    : selectedMessageIds.includes(msg.id)
+                                                    ? "bg-white/80 border-primary/50"
+                                                    : "bg-white/60 border-olive/10 hover:bg-white hover:border-olive-dark/25"
+                                            }`}
+                                        >
+                                            {!msg.is_read && (
+                                                <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-primary rounded-full ring-4 ring-primary/20 animate-pulse" />
+                                            )}
+                                            <div className="flex flex-col gap-1.5">
+                                                <div className="flex justify-between items-start">
+                                                    <span className={`text-[10px] uppercase font-black tracking-widest ${msg.is_read ? 'text-olive-dark/50' : 'text-primary'}`}>
+                                                        {format(new Date(msg.created_at), "d. MMM · HH:mm", { locale: cs })}
+                                                    </span>
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight line-clamp-1 text-olive-dark pr-6">
+                                                        {msg.subject}
+                                                    </h3>
+                                                    <p className={`text-[10px] font-black ${selectedMessageId === msg.id ? 'text-olive-dark/70' : 'text-olive-dark/60'} uppercase tracking-widest`}>
+                                                        {msg.from_name || msg.from_email.split('@')[0]}
+                                                    </p>
+                                                </div>
+                                                <p className="text-xs text-olive-dark/65 line-clamp-2 leading-relaxed font-black italic opacity-90">
+                                                    "{msg.body_text}"
+                                                </p>
+                                                {msg.replied_at && (
+                                                    <div className="mt-1 flex items-center gap-1.5 pt-2 border-t border-olive/5">
+                                                        <CheckCheck className="w-3 h-3 text-primary" />
+                                                        <span className="text-[9px] font-black text-primary uppercase tracking-widest">{content?.admin?.messages?.status?.replied || "Replied"}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </button>
+                                    </div>
                                 ))
                             )}
                         </div>
@@ -501,33 +605,50 @@ const Messages = () => {
                                                 ref={replyEditorRef}
                                                 initial={{ opacity: 0, y: 30 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                className="space-y-6 pt-10 border-t border-background"
+                                                className="fixed inset-0 z-[100] bg-admin-canvas sm:relative sm:z-auto sm:bg-transparent flex flex-col sm:space-y-6 sm:pt-10 sm:border-t sm:border-background"
                                             >
-                                                <div className="flex justify-between items-center">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-1 h-4 bg-olive-dark rounded-full" />
-                                                        <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark">{content?.admin?.messages?.writeReply || "Write Reply"}</h3>
-                                                    </div>
-                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="px-4 h-8 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-olive-dark/60 hover:text-olive-dark rounded-xl">{content?.admin?.messages?.actions?.cancel || "Cancel"}</Button>
-                                                </div>
-                                                <textarea 
-                                                    className="w-full min-h-[200px] sm:min-h-[250px] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border-2 border-background bg-admin-canvas shadow-inner focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all outline-none font-display font-black text-lg sm:text-xl text-olive-dark placeholder:text-olive-dark/20"
-                                                    placeholder={content?.admin?.messages?.replyPlaceholder || "Type your reply..."}
-                                                    value={replyText}
-                                                    onChange={(e) => setReplyText(e.target.value)}
-                                                />
-                                                <div className="flex justify-end gap-4">
+                                                {/* Mobile Header for Reply Modal */}
+                                                <div className="sm:hidden flex items-center justify-between p-4 sm:p-6 border-b border-background bg-admin-canvas/90 backdrop-blur-md shadow-sm">
+                                                    <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="h-10 px-4 text-[10px] font-black uppercase tracking-widest text-olive-dark/60 hover:text-olive-dark rounded-xl">
+                                                        Zrušit
+                                                    </Button>
+                                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-olive-dark">Nová Odpověď</h3>
                                                     <Button 
                                                         onClick={handleSendReply}
                                                         disabled={isSending || !replyText.trim()}
-                                                        className="h-14 sm:h-16 px-8 sm:px-10 bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] rounded-2xl shadow-xl shadow-lime/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 w-full sm:w-auto"
+                                                        className="h-10 px-5 bg-lime text-olive-dark font-black uppercase text-[10px] tracking-wider rounded-xl shadow-md"
                                                     >
-                                                        {isSending ? (
-                                                            <><RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-3 animate-spin" /> {content?.admin?.messages?.actions?.saving || "Saving..."}</>
-                                                        ) : (
-                                                            <><Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-3" /> {content?.admin?.messages?.actions?.send || "Send"}</>
-                                                        )}
+                                                        {isSending ? "..." : "Odeslat"}
                                                     </Button>
+                                                </div>
+
+                                                <div className="flex-1 flex flex-col p-4 sm:p-0 bg-white/50 sm:bg-transparent h-full">
+                                                    <div className="hidden sm:flex justify-between items-center mb-6">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-1 h-4 bg-olive-dark rounded-full" />
+                                                            <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark">{content?.admin?.messages?.writeReply || "Write Reply"}</h3>
+                                                        </div>
+                                                        <Button variant="ghost" size="sm" onClick={() => setIsReplyMode(false)} className="px-4 h-8 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-olive-dark/60 hover:text-olive-dark rounded-xl">{content?.admin?.messages?.actions?.cancel || "Cancel"}</Button>
+                                                    </div>
+                                                    <textarea 
+                                                        className="flex-1 sm:flex-none w-full sm:min-h-[250px] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border-2 border-background sm:bg-admin-canvas bg-white shadow-inner focus:border-primary focus:ring-8 focus:ring-primary/5 transition-all outline-none font-display font-black text-lg sm:text-xl text-olive-dark placeholder:text-olive-dark/20 resize-none"
+                                                        placeholder={content?.admin?.messages?.replyPlaceholder || "Type your reply..."}
+                                                        value={replyText}
+                                                        onChange={(e) => setReplyText(e.target.value)}
+                                                    />
+                                                    <div className="hidden sm:flex justify-end gap-4 mt-6">
+                                                        <Button 
+                                                            onClick={handleSendReply}
+                                                            disabled={isSending || !replyText.trim()}
+                                                            className="h-14 sm:h-16 px-8 sm:px-10 bg-lime hover:bg-lime/90 text-olive-dark font-black uppercase text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] rounded-2xl shadow-xl shadow-lime/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 w-full sm:w-auto"
+                                                        >
+                                                            {isSending ? (
+                                                                <><RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-3 animate-spin" /> {content?.admin?.messages?.actions?.saving || "Saving..."}</>
+                                                            ) : (
+                                                                <><Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-3" /> {content?.admin?.messages?.actions?.send || "Send"}</>
+                                                            )}
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </motion.div>
                                         )}
