@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DOMPurify from 'dompurify';
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
@@ -60,6 +60,15 @@ const Messages = () => {
     const [replyText, setReplyText] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [showDetailOnMobile, setShowDetailOnMobile] = useState(false);
+    const replyEditorRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (isReplyMode && replyEditorRef.current) {
+            setTimeout(() => {
+                replyEditorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }, [isReplyMode]);
     const { content } = useContent();
     const { toast } = useToast();
 
@@ -489,6 +498,7 @@ const Messages = () => {
                                         {/* Reply Editor */}
                                         {isReplyMode && (
                                             <motion.div 
+                                                ref={replyEditorRef}
                                                 initial={{ opacity: 0, y: 30 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 className="space-y-6 pt-10 border-t border-background"
