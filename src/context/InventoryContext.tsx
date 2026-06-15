@@ -87,6 +87,16 @@ export interface PackagingRule {
     material_unit?: string;
 }
 
+export interface RecipeRule {
+    id: string;
+    product_sku: string;
+    material_id: string;
+    quantity_required: number;
+    created_at?: string;
+    material_name?: string;
+    material_unit?: string;
+}
+
 export interface B2BCustomer {
     id: string;
     company_name: string;
@@ -118,6 +128,11 @@ interface InventoryContextType {
     addPackagingRule: (rule: Omit<PackagingRule, 'id' | 'created_at'>) => Promise<boolean>;
     updatePackagingRule: (id: string, updates: Partial<PackagingRule>) => Promise<boolean>;
     deletePackagingRule: (id: string) => Promise<boolean>;
+    recipeRules: RecipeRule[];
+    fetchRecipeRules: () => Promise<void>;
+    addRecipeRule: (rule: Omit<RecipeRule, 'id' | 'created_at'>) => Promise<boolean>;
+    updateRecipeRule: (id: string, updates: Partial<RecipeRule>) => Promise<boolean>;
+    deleteRecipeRule: (id: string) => Promise<boolean>;
     b2bCustomers: B2BCustomer[];
     fetchB2BCustomers: () => Promise<void>;
     addB2BCustomer: (customer: Omit<B2BCustomer, 'id' | 'created_at'>) => Promise<boolean>;
@@ -134,6 +149,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [movements, setMovements] = useState<StockMovement[]>([]);
     const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
     const [packagingRules, setPackagingRules] = useState<PackagingRule[]>([]);
+    const [recipeRules, setRecipeRules] = useState<RecipeRule[]>([]);
     const [b2bCustomers, setB2bCustomers] = useState<B2BCustomer[]>([]);
 
     // 1. Initial Fetch
@@ -142,6 +158,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         fetchMovements();
         fetchOrders(); // We can migrate orders later, but let's keep it here
         fetchPackagingRules();
+        fetchRecipeRules();
         fetchB2BCustomers();
     }, []);
 
@@ -316,6 +333,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             // OKAMŽITÁ AKTUALIZACE LOKÁLNÍHO STAVU (Optimistický update)
             setStock(prev => ({ ...prev, [sku]: (prev[sku] || 0) + amount }));
             setProducts(prev => prev.map(p => p.sku === sku ? { ...p, quantity: (p.quantity || 0) + amount } : p));
+            deductRecipeMaterials(sku, amount, type);
             return;
         }
 
@@ -339,6 +357,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         // OKAMŽITÁ AKTUALIZACE LOKÁLNÍHO STAVU
         setStock(prev => ({ ...prev, [sku]: newQty }));
         setProducts(prev => prev.map(p => p.sku === sku ? { ...p, quantity: newQty } : p));
+        deductRecipeMaterials(sku, amount, type);
 
         // 3. Volitelný zápis historie
         try {
@@ -517,6 +536,123 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setPackagingRules(prev => prev.filter(r => r.id !== id));
         return true;
     };
+
+    const deductRecipeMaterials = async (sku: string, amount: number, type: StockMovement['type']) => {
+        if (!supabase) return;
+        // Only trigger raw material deduction if adding stock (production) via 'restock'
+        if (type !== 'restock' || amount <= 0) return;
+
+        const matchingRules = recipeRules.filter(r => r.product_sku === sku);
+        if (matchingRules.length === 0) return;
+
+        console.log(`[Recipes] Deducting materials for production of ${amount}x ${sku}`);
+
+        for (const rule of matchingRules) {
+            const movementAmount = -(amount * Number(rule.quantity_required));
+            const note = `Odpis surovin pro výrobu ${amount}x ${sku}`;
+
+            console.log(`[Recipes] Updating manufacture inventory: material_id=${rule.material_id}, amount=${movementAmount}, type=use, note="${note}"`);
+
+            const { error: rpcError } = await supabase.rpc('handle_manufacture_movement', {
+                p_material_id: rule.material_id,
+                p_type: 'use',
+                p_amount: movementAmount,
+                p_note: note
+            });
+
+            if (rpcError) {
+                console.error(`[Recipes] RPC error for material ${rule.material_id}:`, rpcError);
+            }
+        }
+    };
+
+    const fetchRecipeRules = async () => {
+        if (!supabase) return;
+        const { data, error } = await supabase
+            .from('recipe_rules')
+            .select(`
+                *,
+                manufacture_inventory:material_id (
+                    name,
+                    unit
+                )
+            `)
+            .order('product_sku');
+
+        if (error) {
+            console.error('Error fetching recipe rules:', error);
+            return;
+        }
+
+        if (data) {
+            const mapped: RecipeRule[] = data.map((r: any) => ({
+                id: r.id,
+                product_sku: r.product_sku,
+                material_id: r.material_id,
+                quantity_required: Number(r.quantity_required),
+                created_at: r.created_at,
+                material_name: r.manufacture_inventory?.name || 'Neznámý materiál',
+                material_unit: r.manufacture_inventory?.unit || 'ks'
+            }));
+            setRecipeRules(mapped);
+        }
+    };
+
+    const addRecipeRule = async (rule: Omit<RecipeRule, 'id' | 'created_at'>) => {
+        if (!supabase) return false;
+        const { data, error } = await supabase
+            .from('recipe_rules')
+            .insert([rule])
+            .select();
+
+        if (error) {
+            console.error('Error adding recipe rule:', error);
+            return false;
+        }
+
+        if (data) {
+            await fetchRecipeRules();
+            return true;
+        }
+        return false;
+    };
+
+    const updateRecipeRule = async (id: string, updates: Partial<RecipeRule>) => {
+        if (!supabase) return false;
+        const cleanUpdates = { ...updates };
+        delete cleanUpdates.material_name;
+        delete cleanUpdates.material_unit;
+
+        const { error } = await supabase
+            .from('recipe_rules')
+            .update(cleanUpdates)
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error updating recipe rule:', error);
+            return false;
+        }
+
+        setRecipeRules(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+        return true;
+    };
+
+    const deleteRecipeRule = async (id: string) => {
+        if (!supabase) return false;
+        const { error } = await supabase
+            .from('recipe_rules')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error deleting recipe rule:', error);
+            return false;
+        }
+
+        setRecipeRules(prev => prev.filter(r => r.id !== id));
+        return true;
+    };
+
 
     const addOrder = async (order: Order) => {
         // Double check uniqueness before insert
@@ -802,11 +938,16 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             addPackagingRule,
             updatePackagingRule,
             deletePackagingRule,
+            recipeRules,
+            fetchRecipeRules,
+            addRecipeRule,
+            updateRecipeRule,
+            deleteRecipeRule,
             b2bCustomers,
             fetchB2BCustomers,
             addB2BCustomer,
             updateB2BCustomer,
-            deleteB2BCustomer
+            deleteB2BCustomer,
         }}>
             {children}
         </InventoryContext.Provider>

@@ -996,6 +996,18 @@ const AdminMockup = ({ id, activeItemId }: { id: string, activeItemId?: string }
                 { id: 'pdf_invoices', label: "4. Automatické PDF Faktury", description: "Funkce:\nZákazník i administrátor si mohou u každé zaplacené objednávky stáhnout automaticky generovanou PDF fakturu. V administraci tlačítko najdete v detailu objednávky v pravém horním rohu pod ikonkou stahování." },
                 { id: 'xml_feeds', label: "5. XML Feedy (Heureka, Google)", description: "Funkce:\nSystém generuje dynamické produktové feedy na adresách:\n- Heureka: `/api/feed-heureka`\n- Google: `/api/feed-google`\nStačí tyto odkazy zkopírovat do příslušných platforem." }
             ]
+        },
+        {
+            id: 'emails',
+            icon: Mail,
+            title: "E-maily a Faktury (Novinka)",
+            description: "Propojení schránek s IMAP/SMTP, odpovídání na zprávy a AI čtení faktur",
+            path: "/admin/mailboxes",
+            items: [
+                { id: 'mailboxes_setup', label: "1. Nastavení e-mailových schránek", description: "Postup:\nV administraci (Systém -> Schránky) si můžete přidat libovolný e-mail (např. info@, dodavatele@). Stačí zadat IMAP a SMTP údaje vašeho poskytovatele a přiřadit schránce Účel (Běžná zpráva, Faktury apod.). Systém s nimi začne ihned komunikovat." },
+                { id: 'messages_reply', label: "2. Čtení a Odpovídání ze Zpráv", description: "Funkce:\nV sekci 'Zprávy' se nyní scházejí maily ze všech napojených schránek. Můžete si je filtrovat, a co je nejlepší – rovnou na ně odpovídat. Odpověď se odešle přesně z té e-mailové adresy, na kterou zákazník původně psal." },
+                { id: 'invoices_sync', label: "3. Automatické stahování faktur", description: "Funkce:\nSchránka s účelem 'Faktury' (např. dodavatele@) slouží k příjmu PDF faktur. V modulu Výroba -> Faktury klikněte na tlačítko 'Zkontrolovat email'. Systém stáhne nové zprávy, rozpozná v nich PDF, předá je AI k přečtení a ihned vám nabídne návrh naskladnění příslušných surovin." }
+            ]
         }
     ];
 

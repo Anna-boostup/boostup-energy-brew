@@ -51,10 +51,20 @@ interface Message {
     metadata: any;
     replied_at?: string;
     reply_text?: string;
+    mailbox_id?: string;
+    attachments?: any[];
+}
+
+interface Mailbox {
+    id: string;
+    email_address: string;
+    purpose: string;
 }
 
 const Messages = () => {
     const [messages, setMessages] = useState<Message[]>([]);
+    const [mailboxes, setMailboxes] = useState<Mailbox[]>([]);
+    const [selectedMailboxId, setSelectedMailboxId] = useState<string | 'all'>('all');
     const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -136,9 +146,19 @@ const Messages = () => {
 
     const selectedMessage = messages.find(m => m.id === selectedMessageId);
 
-    const fetchMessages = async () => {
+    const fetchMessagesAndMailboxes = async () => {
         setLoading(true);
         try {
+            // Fetch Mailboxes
+            const { data: mboxes, error: mbError } = await supabase
+                .from('mailboxes')
+                .select('id, email_address, purpose')
+                .eq('purpose', 'general');
+                
+            if (mbError && mbError.code !== '42P01') console.error('Error fetching mailboxes:', mbError);
+            if (mboxes) setMailboxes(mboxes);
+
+            // Fetch Messages
             const { data, error } = await supabase
                 .from('messages')
                 .select('*')
@@ -159,7 +179,7 @@ const Messages = () => {
     };
 
     useEffect(() => {
-        fetchMessages();
+        fetchMessagesAndMailboxes();
     }, []);
 
     const markAsRead = async (id: string) => {
@@ -237,28 +257,14 @@ const Messages = () => {
 
         setIsSending(true);
         try {
-            // Include message_id if it exists in metadata
-            const originalMessageId = selectedMessage.metadata?.message_id;
-
-            const session = (await supabase.auth.getSession()).data.session;
-            const response = await fetch('/api/send-reply', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
-                },
-                body: JSON.stringify({
+            const { error: replyError } = await supabase.functions.invoke('send-email-reply', {
+                body: {
                     messageId: selectedMessage.id,
-                    replyText: replyText,
-                    customerEmail: selectedMessage.from_email,
-                    originalSubject: selectedMessage.subject,
-                    originalMessageId: originalMessageId
-                })
+                    replyText: replyText
+                }
             });
 
-            const result = await response.json();
-
-            if (!response.ok) throw new Error(result.error || 'Failed to send reply');
+            if (replyError) throw replyError;
 
             toast({
                 title: content?.admin?.messages?.success?.replied || "Replied",
@@ -296,13 +302,17 @@ const Messages = () => {
         }
     };
 
-    const filteredMessages = messages.filter(m => 
-        (m.subject || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (m.from_email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (m.from_name && m.from_name.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const filteredMessages = messages.filter(m => {
+        const matchesSearch = (m.subject || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (m.from_email || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (m.from_name && m.from_name.toLowerCase().includes(searchQuery.toLowerCase()));
+        
+        const matchesMailbox = selectedMailboxId === 'all' || m.mailbox_id === selectedMailboxId;
+        
+        return matchesSearch && matchesMailbox;
+    });
 
-    const unreadCount = messages.filter(m => !m.is_read).length;
+    const unreadCount = messages.filter(m => !m.is_read && (selectedMailboxId === 'all' || m.mailbox_id === selectedMailboxId)).length;
 
     if (loading && messages.length === 0) {
         return (
@@ -357,6 +367,18 @@ const Messages = () => {
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
+                            {mailboxes.length > 0 && (
+                                <select 
+                                    className="h-10 sm:h-11 bg-admin-canvas/80 border-none rounded-xl shadow-sm focus-visible:ring-olive-dark/20 focus-visible:ring-offset-0 text-sm font-bold text-olive-dark px-4 outline-none cursor-pointer hidden md:block"
+                                    value={selectedMailboxId}
+                                    onChange={(e) => setSelectedMailboxId(e.target.value)}
+                                >
+                                    <option value="all">Všechny schránky</option>
+                                    {mailboxes.map(mb => (
+                                        <option key={mb.id} value={mb.id}>{mb.email_address}</option>
+                                    ))}
+                                </select>
+                            )}
                             {unreadCount > 0 && (
                                 <Button 
                                     variant="ghost" 
@@ -369,8 +391,8 @@ const Messages = () => {
                                     <CheckCheck className="w-4 h-4" />
                                 </Button>
                             )}
-                            <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
-                                <RefreshCcw className={`w-4 h-4 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
+                            <Button variant="ghost" size="icon" onClick={fetchMessagesAndMailboxes} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
+                                <RefreshCcw className={`h-5 w-5 ${loading ? "animate-spin text-olive" : "text-olive-dark"}`} />
                             </Button>
                         </>
                     )}
@@ -432,6 +454,11 @@ const Messages = () => {
                                                     <span className={`text-[10px] uppercase font-black tracking-widest ${msg.is_read ? 'text-olive-dark/50' : 'text-primary'}`}>
                                                         {format(new Date(msg.created_at), "d. MMM · HH:mm", { locale: cs })}
                                                     </span>
+                                                    {msg.mailbox_id && (
+                                                        <span className="text-[9px] uppercase font-bold tracking-wider text-olive-dark/40 bg-olive-dark/5 px-2 py-0.5 rounded-full">
+                                                            {mailboxes.find(m => m.id === msg.mailbox_id)?.email_address || 'Neznámá schránka'}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div className="space-y-0.5">
                                                     <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight line-clamp-1 text-olive-dark pr-6">
