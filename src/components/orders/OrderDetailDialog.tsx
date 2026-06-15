@@ -81,30 +81,30 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
     return (
         <DialogContent className="max-w-4xl h-[95vh] md:h-auto md:max-h-[90vh] p-0 overflow-hidden flex flex-col [&>button]:hidden">
             {/* Custom Sticky Header Toolbar */}
-            <div className="flex items-center justify-between p-5 border-b bg-white sticky top-0 z-50 shadow-sm">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 border-b bg-white sticky top-0 z-50 shadow-sm gap-4">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
                     <DialogClose asChild>
-                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors" aria-label={content.admin.orders.detail.closeLabel}>
+                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors shrink-0" aria-label={content.admin.orders.detail.closeLabel}>
                             <X className="h-5 w-5 text-slate-600" />
                         </Button>
                     </DialogClose>
-                    <div className="flex flex-col gap-0.5">
-                        <DialogTitle className="text-xl font-extrabold tracking-tight text-slate-900">{content.admin.orders.detail.title} #{order.id.slice(0, 8)}</DialogTitle>
-                        <p className="text-xs font-medium text-slate-600">{new Date(order.date || order.created_at).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}</p>
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                        <DialogTitle className="text-xl font-extrabold tracking-tight text-slate-900 truncate">{content.admin.orders.detail.title} #{order.id.slice(0, 8)}</DialogTitle>
+                        <p className="text-xs font-medium text-slate-600 truncate">{new Date(order.date || order.created_at).toLocaleString(content.lang === 'en' ? 'en-US' : 'cs-CZ')}</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <InvoiceModal order={order}>
-                        <Button variant="outline" size="sm" className="h-9 gap-2">
-                            <FileText className="w-4 h-4" />
-                            {content.admin.orders.detail.invoice}
+                        <Button variant="outline" size="sm" className="h-9 gap-2 flex-1 sm:flex-initial justify-center">
+                            <FileText className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{content.admin.orders.detail.invoice}</span>
                         </Button>
                     </InvoiceModal>
 
-                    <Button variant="outline" size="sm" className="h-9 gap-2" onClick={() => window.print()}>
-                        <Printer className="w-4 h-4" />
-                        {content.admin.orders.detail.print}
+                    <Button variant="outline" size="sm" className="h-9 gap-2 flex-1 sm:flex-initial justify-center" onClick={() => window.print()}>
+                        <Printer className="w-4 h-4 shrink-0" />
+                        <span className="truncate">{content.admin.orders.detail.print}</span>
                     </Button>
 
                     {order.delivery_info?.deliveryMethod === 'zasilkovna' && (
@@ -113,22 +113,22 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                                 <Button
                                     variant="default"
                                     size="sm"
-                                    className="h-9 bg-green-600 hover:bg-green-700 gap-2"
+                                    className="h-9 bg-green-600 hover:bg-green-700 gap-2 flex-1 sm:flex-initial justify-center"
                                     onClick={() => downloadPacketaLabel(order.packeta_packet_id, false).catch(e => toast({ title: 'Chyba', description: e.message, variant: 'destructive' }))}
                                 >
-                                    <Printer className="w-4 h-4" />
-                                    {content.admin.orders.detail.label}
+                                    <Printer className="w-4 h-4 shrink-0" />
+                                    <span className="truncate">{content.admin.orders.detail.label}</span>
                                 </Button>
                             ) : (
                                 <Button
                                     variant="default"
                                     size="sm"
-                                    className="h-9 bg-primary gap-2"
+                                    className="h-9 bg-primary gap-2 flex-1 sm:flex-initial justify-center"
                                     disabled={isCreatingPacket || !order.delivery_info?.packetaPointId}
                                     onClick={handleCreatePacketaPacket}
                                 >
-                                    {isCreatingPacket ? <Loader2 className="w-4 h-4 animate-spin" /> : <Package className="w-4 h-4" />}
-                                    {content.admin.orders.detail.createPacket}
+                                    {isCreatingPacket ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <Package className="w-4 h-4 shrink-0" />}
+                                    <span className="truncate">{content.admin.orders.detail.createPacket}</span>
                                 </Button>
                             )}
                         </>
