@@ -391,8 +391,8 @@ const Messages = () => {
                                     <CheckCheck className="w-4 h-4" />
                                 </Button>
                             )}
-                            <Button variant="ghost" size="icon" onClick={fetchMessages} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
-                                <RefreshCcw className={`w-4 h-4 text-olive-dark/60 ${loading ? 'animate-spin' : ''}`} />
+                            <Button variant="ghost" size="icon" onClick={fetchMessagesAndMailboxes} disabled={loading} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-admin-canvas/80 border-none shadow-sm hover:bg-admin-canvas transition-all active:scale-95 shrink-0">
+                                <RefreshCcw className={`h-5 w-5 ${loading ? "animate-spin text-olive" : "text-olive-dark"}`} />
                             </Button>
                         </>
                     )}
