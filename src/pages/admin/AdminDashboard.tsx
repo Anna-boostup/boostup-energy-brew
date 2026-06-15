@@ -168,48 +168,51 @@ const AdminDashboard = () => {
                 </div>
                 
 
-                {/* Sales Toggle Control — conspicuous shop status */}
-                <div className="flex flex-row flex-wrap items-stretch sm:items-center gap-4">
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    isSalesEnabled
-                    ? 'bg-lime border-lime shadow-xl shadow-lime/20'
-                    : 'bg-terracotta border-terracotta shadow-xl shadow-terracotta/20'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
-                            isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
-                        }`}>{content?.admin?.dashboard?.salesStatus}</span>
-                        <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
-                            isSalesEnabled ? 'text-olive-dark' : 'text-cream'
-                        }`}>
-                            {isSalesEnabled ? content?.admin?.dashboard?.salesActive : content?.admin?.dashboard?.salesPaused}
-                        </span>
-                    </div>
-                    <div className={`flex items-center p-1.5 rounded-[1.5rem] shadow-inner ${
-                        isSalesEnabled ? 'bg-olive-dark/20' : 'bg-cream/20'
+                {/* Toggles Control Section */}
+                <div className="flex flex-col gap-3 lg:items-end">
+                    {/* Sales Toggle Control — conspicuous shop status */}
+                    <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 w-full sm:w-auto ${
+                        isSalesEnabled
+                        ? 'bg-lime border-lime shadow-xl shadow-lime/20'
+                        : 'bg-terracotta border-terracotta shadow-xl shadow-terracotta/20'
                     }`}>
-                        {isUpdating ? (
-                            <div className="px-5 py-2">
-                                <Loader2 className={`w-5 h-5 animate-spin ${
-                                    isSalesEnabled ? 'text-olive-dark' : 'text-cream'
-                                }`} />
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch
-                                    id="sales-toggle"
-                                    checked={isSalesEnabled}
-                                    onCheckedChange={toggleSales}
-                                    disabled={isUpdating}
-                                    className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-cream/30 h-7 w-12"
-                                />
-                            </div>
-                        )}
+                        <div className="flex flex-col flex-1">
+                            <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
+                                isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
+                            }`}>{content?.admin?.dashboard?.salesStatus}</span>
+                            <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
+                                isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                            }`}>
+                                {isSalesEnabled ? content?.admin?.dashboard?.salesActive : content?.admin?.dashboard?.salesPaused}
+                            </span>
+                        </div>
+                        <div className={`flex items-center p-1.5 rounded-[1.5rem] shadow-inner shrink-0 ${
+                            isSalesEnabled ? 'bg-olive-dark/20' : 'bg-cream/20'
+                        }`}>
+                            {isUpdating ? (
+                                <div className="px-5 py-2">
+                                    <Loader2 className={`w-5 h-5 animate-spin ${
+                                        isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                                    }`} />
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-3 px-3 py-2">
+                                    <Switch
+                                        id="sales-toggle"
+                                        checked={isSalesEnabled}
+                                        onCheckedChange={toggleSales}
+                                        disabled={isUpdating}
+                                        className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-cream/30 h-7 w-12"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                {/* Abandoned Carts Toggle Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    {/* Secondary Features Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full sm:w-auto">
+                        {/* Abandoned Carts Toggle Control */}
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
                     abandonedCartsEnabled
                     ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
                     : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
@@ -241,79 +244,80 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Referral Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    referralsEnabled
-                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
-                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
-                            Funkce:
-                        </span>
-                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
-                            Referrals
-                        </span>
-                    </div>
-                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
-                        {isUpdatingSettings ? (
-                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch checked={referralsEnabled} onCheckedChange={toggleReferrals} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                            referralsEnabled
+                            ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                            : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                        }`}>
+                            <div className="flex flex-col flex-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                                    Funkce:
+                                </span>
+                                <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                                    Referrals
+                                </span>
                             </div>
-                        )}
-                    </div>
-                </div>
-                
-                {/* Reviews Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    reviewsEnabled
-                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
-                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
-                            Funkce:
-                        </span>
-                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
-                            Recenze
-                        </span>
-                    </div>
-                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
-                        {isUpdatingSettings ? (
-                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch checked={reviewsEnabled} onCheckedChange={toggleReviews} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                            <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5 shrink-0">
+                                {isUpdatingSettings ? (
+                                    <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                                ) : (
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <Switch checked={referralsEnabled} onCheckedChange={toggleReferrals} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </div>
+                        </div>
+                        
+                        {/* Reviews Control */}
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                            reviewsEnabled
+                            ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                            : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                        }`}>
+                            <div className="flex flex-col flex-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                                    Funkce:
+                                </span>
+                                <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                                    Recenze
+                                </span>
+                            </div>
+                            <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5 shrink-0">
+                                {isUpdatingSettings ? (
+                                    <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                                ) : (
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <Switch checked={reviewsEnabled} onCheckedChange={toggleReviews} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
-                {/* Upsell Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    upsellEnabled
-                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
-                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
-                            Funkce:
-                        </span>
-                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
-                            Upsell
-                        </span>
-                    </div>
-                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
-                        {isUpdatingSettings ? (
-                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch checked={upsellEnabled} onCheckedChange={toggleUpsell} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                        {/* Upsell Control */}
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                            upsellEnabled
+                            ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                            : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                        }`}>
+                            <div className="flex flex-col flex-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                                    Funkce:
+                                </span>
+                                <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                                    Upsell
+                                </span>
                             </div>
-                        )}
+                            <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5 shrink-0">
+                                {isUpdatingSettings ? (
+                                    <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                                ) : (
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <Switch checked={upsellEnabled} onCheckedChange={toggleUpsell} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
 
