@@ -28,6 +28,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
 
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (profile?.role !== 'admin') {
+        return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+
     const apiPassword = process.env.PACKETA_API_PASSWORD;
     if (!apiPassword) {
         return res.status(500).json({ error: 'PACKETA_API_PASSWORD not set' });

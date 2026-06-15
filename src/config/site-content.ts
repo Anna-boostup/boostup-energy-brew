@@ -785,6 +785,7 @@ export const SITE_CONTENT = {
             tabPaid: "Zaplacené",
             tabProcessing: "K zabalení",
             tabShipped: "V přepravě",
+            tabCompleted: "Vyřízené",
             tabCancelled: "Stornované",
             cancel: "Zrušit",
             confirmBulkCancel: "Potvrdit hromadné storno",

@@ -110,9 +110,13 @@ const AdminDashboard = () => {
                 description: enabled ? descOn : descOff,
             });
         } catch (error: any) {
+            let errorMsg = error.message;
+            if (error.code === '42P01' || error.message?.includes('relation "public.app_settings" does not exist')) {
+                errorMsg = "Tabulka app_settings chybí v databázi. Spusťte SQL příkaz pro její vytvoření.";
+            }
             toast({
                 title: "Chyba při ukládání",
-                description: error.message,
+                description: errorMsg,
                 variant: "destructive"
             });
         } finally {
@@ -164,48 +168,51 @@ const AdminDashboard = () => {
                 </div>
                 
 
-                {/* Sales Toggle Control — conspicuous shop status */}
-                <div className="flex flex-row flex-wrap items-stretch sm:items-center gap-4">
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    isSalesEnabled
-                    ? 'bg-lime border-lime shadow-xl shadow-lime/20'
-                    : 'bg-terracotta border-terracotta shadow-xl shadow-terracotta/20'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
-                            isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
-                        }`}>{content?.admin?.dashboard?.salesStatus}</span>
-                        <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
-                            isSalesEnabled ? 'text-olive-dark' : 'text-cream'
-                        }`}>
-                            {isSalesEnabled ? content?.admin?.dashboard?.salesActive : content?.admin?.dashboard?.salesPaused}
-                        </span>
-                    </div>
-                    <div className={`flex items-center p-1.5 rounded-[1.5rem] shadow-inner ${
-                        isSalesEnabled ? 'bg-olive-dark/20' : 'bg-cream/20'
+                {/* Toggles Control Section */}
+                <div className="flex flex-col gap-3 lg:items-end">
+                    {/* Sales Toggle Control — conspicuous shop status */}
+                    <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 w-full sm:w-auto ${
+                        isSalesEnabled
+                        ? 'bg-lime border-lime shadow-xl shadow-lime/20'
+                        : 'bg-terracotta border-terracotta shadow-xl shadow-terracotta/20'
                     }`}>
-                        {isUpdating ? (
-                            <div className="px-5 py-2">
-                                <Loader2 className={`w-5 h-5 animate-spin ${
-                                    isSalesEnabled ? 'text-olive-dark' : 'text-cream'
-                                }`} />
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch
-                                    id="sales-toggle"
-                                    checked={isSalesEnabled}
-                                    onCheckedChange={toggleSales}
-                                    disabled={isUpdating}
-                                    className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-cream/30 h-7 w-12"
-                                />
-                            </div>
-                        )}
+                        <div className="flex flex-col flex-1">
+                            <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
+                                isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
+                            }`}>{content?.admin?.dashboard?.salesStatus}</span>
+                            <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
+                                isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                            }`}>
+                                {isSalesEnabled ? content?.admin?.dashboard?.salesActive : content?.admin?.dashboard?.salesPaused}
+                            </span>
+                        </div>
+                        <div className={`flex items-center p-1.5 rounded-[1.5rem] shadow-inner shrink-0 ${
+                            isSalesEnabled ? 'bg-olive-dark/20' : 'bg-cream/20'
+                        }`}>
+                            {isUpdating ? (
+                                <div className="px-5 py-2">
+                                    <Loader2 className={`w-5 h-5 animate-spin ${
+                                        isSalesEnabled ? 'text-olive-dark' : 'text-cream'
+                                    }`} />
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-3 px-3 py-2">
+                                    <Switch
+                                        id="sales-toggle"
+                                        checked={isSalesEnabled}
+                                        onCheckedChange={toggleSales}
+                                        disabled={isUpdating}
+                                        className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-cream/30 h-7 w-12"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                {/* Abandoned Carts Toggle Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                    {/* Secondary Features Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full sm:w-auto">
+                        {/* Abandoned Carts Toggle Control */}
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
                     abandonedCartsEnabled
                     ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
                     : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
@@ -237,102 +244,103 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Referral Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    referralsEnabled
-                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
-                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
-                            Funkce:
-                        </span>
-                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
-                            Referrals
-                        </span>
-                    </div>
-                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
-                        {isUpdatingSettings ? (
-                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch checked={referralsEnabled} onCheckedChange={toggleReferrals} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                            referralsEnabled
+                            ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                            : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                        }`}>
+                            <div className="flex flex-col flex-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                                    Funkce:
+                                </span>
+                                <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                                    Referrals
+                                </span>
                             </div>
-                        )}
-                    </div>
-                </div>
-                
-                {/* Reviews Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    reviewsEnabled
-                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
-                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
-                            Funkce:
-                        </span>
-                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
-                            Recenze
-                        </span>
-                    </div>
-                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
-                        {isUpdatingSettings ? (
-                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch checked={reviewsEnabled} onCheckedChange={toggleReviews} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                            <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5 shrink-0">
+                                {isUpdatingSettings ? (
+                                    <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                                ) : (
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <Switch checked={referralsEnabled} onCheckedChange={toggleReferrals} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </div>
+                        </div>
+                        
+                        {/* Reviews Control */}
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                            reviewsEnabled
+                            ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                            : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                        }`}>
+                            <div className="flex flex-col flex-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                                    Funkce:
+                                </span>
+                                <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                                    Recenze
+                                </span>
+                            </div>
+                            <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5 shrink-0">
+                                {isUpdatingSettings ? (
+                                    <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                                ) : (
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <Switch checked={reviewsEnabled} onCheckedChange={toggleReviews} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
-                {/* Upsell Control */}
-                <div className={`flex items-center gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
-                    upsellEnabled
-                    ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
-                    : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
-                }`}>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
-                            Funkce:
-                        </span>
-                        <span className="text-xl font-black uppercase tracking-tighter leading-none">
-                            Upsell
-                        </span>
-                    </div>
-                    <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5">
-                        {isUpdatingSettings ? (
-                            <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
-                        ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                                <Switch checked={upsellEnabled} onCheckedChange={toggleUpsell} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                        {/* Upsell Control */}
+                        <div className={`flex items-center justify-between gap-5 p-3 pl-6 rounded-[2rem] border-2 transition-all duration-500 ${
+                            upsellEnabled
+                            ? 'bg-admin-canvas border-olive shadow-xl shadow-olive/5'
+                            : 'bg-cream/40 border-cream shadow-inner text-muted-foreground'
+                        }`}>
+                            <div className="flex flex-col flex-1">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 opacity-60">
+                                    Funkce:
+                                </span>
+                                <span className="text-xl font-black uppercase tracking-tighter leading-none">
+                                    Upsell
+                                </span>
                             </div>
-                        )}
+                            <div className="flex items-center p-1.5 rounded-[1.5rem] shadow-inner bg-black/5 shrink-0">
+                                {isUpdatingSettings ? (
+                                    <div className="px-5 py-2"><Loader2 className="w-5 h-5 animate-spin text-olive-dark" /></div>
+                                ) : (
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <Switch checked={upsellEnabled} onCheckedChange={toggleUpsell} disabled={isUpdatingSettings} className="data-[state=checked]:bg-olive-dark data-[state=unchecked]:bg-black/20 h-7 w-12" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
 
-            <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="glass-dark rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group border-white/5">
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-4">
+                <Card className="glass-dark rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group border-white/5 flex flex-col justify-center items-center text-center min-h-[200px]">
                     <div className="absolute -top-6 -right-6 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700">
                         <DollarSign className="w-48 h-48 text-white" />
                     </div>
-                    <CardHeader className="p-0 relative z-10">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">{content?.admin?.dashboard?.revenue}</CardTitle>
+                    <CardHeader className="p-0 relative z-10 flex flex-col items-center w-full">
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 break-words text-center">{content?.admin?.dashboard?.revenue}</CardTitle>
                     </CardHeader>
-                    <CardContent className="relative z-10 pt-4 p-0">
-                        <div className="text-3xl sm:text-5xl font-black text-white font-display tracking-tighter mb-1">
-                            {(totalRevenue || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-white text-lg sm:text-2xl ml-1">{content?.bankInfo?.currency}</span>
+                    <CardContent className="relative z-10 pt-4 p-0 flex flex-col items-center w-full">
+                        <div className="text-4xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-black text-white font-display tracking-tighter mb-1 break-words w-full px-2">
+                            {(totalRevenue || 0).toLocaleString(content?.lang === 'en' ? 'en-US' : 'cs-CZ')} <span className="text-white text-lg xl:text-xl 2xl:text-2xl ml-1">{content?.bankInfo?.currency}</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-col items-center gap-3 mt-2 w-full">
                             <div className="w-8 h-[2px] bg-lime/30" />
-                            <p className="text-[9px] text-white/50 font-black uppercase tracking-[0.2em]">{content?.admin?.dashboard?.revenueDesc}</p>
+                            <p className="text-[9px] text-white/50 font-black uppercase tracking-[0.2em] break-words text-center">{content?.admin?.dashboard?.revenueDesc}</p>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-1 md:col-span-3 rounded-[2.5rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
+                <Card className="col-span-1 lg:col-span-3 rounded-[2.5rem] glass-card overflow-hidden transition-all duration-500 hover:shadow-2xl">
                     <CardHeader className="pb-4 pt-6 sm:pt-10 px-6 sm:px-10">
                         <div className="flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-olive-dark" />
@@ -341,30 +349,30 @@ const AdminDashboard = () => {
                     </CardHeader>
                     <CardContent className="px-6 sm:px-10 pb-6 sm:pb-10">
                         <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-12">
-                            <div className="relative group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.newOrders}</p>
+                            <div className="relative group/stat flex flex-col items-center text-center">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3">{content?.admin?.dashboard?.newOrders}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{newOrdersCount}</div>
                                 <div className="mt-4 inline-flex items-center px-4 py-1.5 rounded-full bg-lime text-olive-dark text-[9px] font-black shadow-lg shadow-lime/20">
                                     +{todayOrders} {content?.admin?.dashboard?.todayLabel}
                                 </div>
                             </div>
-                            <div className="group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.processing}</p>
+                            <div className="group/stat flex flex-col items-center text-center">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3">{content?.admin?.dashboard?.processing}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{processingCount}</div>
                                 <div className="w-6 h-1 bg-olive/10 mt-5 rounded-full" />
                             </div>
-                            <div className="group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.shipped}</p>
+                            <div className="group/stat flex flex-col items-center text-center">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3">{content?.admin?.dashboard?.shipped}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{shippedCount}</div>
                                 <div className="w-6 h-1 bg-lime mt-5 rounded-full" />
                             </div>
-                            <div className="group/stat">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3 ml-1">{content?.admin?.dashboard?.completed}</p>
+                            <div className="group/stat flex flex-col items-center text-center">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/70 mb-3">{content?.admin?.dashboard?.completed}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none group-hover:scale-105 transition-transform duration-300">{completedCount}</div>
                                 <div className="w-6 h-1 bg-black mt-5 rounded-full" />
                             </div>
-                            <div className="group/stat opacity-60">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/80 mb-3 ml-1">{content?.admin?.dashboard?.cancelled}</p>
+                            <div className="group/stat opacity-60 flex flex-col items-center text-center">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/80 mb-3">{content?.admin?.dashboard?.cancelled}</p>
                                 <div className="text-4xl sm:text-5xl font-black text-olive-dark font-display leading-none">{cancelledCount}</div>
                             </div>
                         </div>
@@ -374,29 +382,29 @@ const AdminDashboard = () => {
                 <Card className="col-span-1 md:col-span-4 rounded-[2.5rem] glass-card border-none overflow-hidden shadow-2xl">
                     <CardContent className="p-0">
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-                            <div className="p-6 sm:p-10 border-b sm:border-b-0 sm:border-r border-olive/5 bg-olive-dark text-white flex flex-col justify-center">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-white flex items-center gap-3 mb-4">
+                            <div className="p-6 sm:p-10 border-b sm:border-b-0 sm:border-r border-olive/5 bg-olive-dark text-white flex flex-col justify-center items-center text-center">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-white flex items-center justify-center gap-3 mb-4">
                                     <Package className="w-4 h-4" /> {content?.admin?.dashboard?.inventory}
                                 </Label>
                                 <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-widest">{content?.admin?.inventory?.description}</p>
                             </div>
-                            <div className="p-6 sm:p-10 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
+                            <div className="p-6 sm:p-10 flex flex-col justify-center items-center text-center border-b sm:border-b-0 sm:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive-dark/60 mb-3">{content?.admin?.inventory?.lemon}</span>
-                                <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                                <div className="flex items-end justify-center gap-2 group-hover:scale-110 transition-transform duration-500 origin-center">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['lemon'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive-dark/40 mb-1">{content?.admin?.dashboard?.unitKs}</span>
                                 </div>
                             </div>
-                            <div className="p-6 sm:p-10 flex flex-col justify-center border-b md:border-b-0 md:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
+                            <div className="p-6 sm:p-10 flex flex-col justify-center items-center text-center border-b md:border-b-0 md:border-r border-olive/5 hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3 text-red-700">{content?.admin?.inventory?.red}</span>
-                                <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                                <div className="flex items-end justify-center gap-2 group-hover:scale-110 transition-transform duration-500 origin-center">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['red'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
                                 </div>
                             </div>
-                            <div className="p-6 sm:p-10 flex flex-col justify-center hover:bg-olive-dark/5 transition-all group">
+                            <div className="p-6 sm:p-10 flex flex-col justify-center items-center text-center hover:bg-olive-dark/5 transition-all group">
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-olive/40 mb-3">{content?.admin?.inventory?.silky}</span>
-                                <div className="flex items-end gap-2 group-hover:scale-110 transition-transform duration-500 origin-left">
+                                <div className="flex items-end justify-center gap-2 group-hover:scale-110 transition-transform duration-500 origin-center">
                                     <span className="text-3xl sm:text-5xl font-black text-olive-dark font-display leading-none">{stock['silky'] || 0}</span>
                                     <span className="text-[11px] font-black text-olive/30 mb-1">{content?.admin?.dashboard?.unitKs}</span>
                                 </div>

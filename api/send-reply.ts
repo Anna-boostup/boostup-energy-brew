@@ -36,6 +36,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
          return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (profile?.role !== 'admin') {
+        return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+
     try {
         const { messageId, replyText, customerEmail, originalSubject, originalMessageId } = req.body;
 

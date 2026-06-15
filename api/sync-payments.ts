@@ -59,7 +59,14 @@ export default async function handler(req: Request) {
         const token = authHeader.replace('Bearer ', '');
         const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
         if (user && !error) {
-            isAuthorized = true;
+            const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single();
+            if (profile?.role === 'admin') {
+                isAuthorized = true;
+            }
         }
     }
 

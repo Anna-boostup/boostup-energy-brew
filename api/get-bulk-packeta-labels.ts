@@ -86,12 +86,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const token = authHeader.replace('Bearer ', '');
 
     const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
-    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
          return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (profile?.role !== 'admin') {
+        return res.status(403).json({ error: 'Forbidden: Admin access required' });
     }
 
     const { ids, format } = req.query;

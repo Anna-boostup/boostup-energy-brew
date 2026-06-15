@@ -1018,14 +1018,15 @@ const Orders = () => {
                     </Dialog>
                 </div>
             </div>
-            <Tabs defaultValue="pending" className="w-full">
-                <div className="overflow-x-auto pb-6 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-8 sm:mb-12">
-                    <TabsList className="flex w-fit md:w-full md:grid md:grid-cols-5 min-w-max md:min-w-0 bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5">
-                        <TabsTrigger value="pending" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
-                        <TabsTrigger value="paid" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPaid} ({filteredOrders.paid.length})</TabsTrigger>
-                        <TabsTrigger value="processing" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
-                        <TabsTrigger value="shipped" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
-                        <TabsTrigger value="cancelled" className="px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
+            <Tabs defaultValue="pending" className="w-full max-w-[100vw] md:max-w-full">
+                <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-hide pb-4 mb-8 sm:mb-12">
+                    <TabsList className="inline-flex flex-nowrap w-max bg-admin-canvas/60 backdrop-blur-md p-2 sm:p-3 rounded-[2.5rem] h-auto border border-white/20 shadow-xl shadow-olive/5 gap-2">
+                        <TabsTrigger value="pending" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPending} ({filteredOrders.pending.length})</TabsTrigger>
+                        <TabsTrigger value="paid" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabPaid} ({filteredOrders.paid.length})</TabsTrigger>
+                        <TabsTrigger value="processing" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabProcessing} ({filteredOrders.processing.length})</TabsTrigger>
+                        <TabsTrigger value="shipped" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabShipped} ({filteredOrders.shipped.length})</TabsTrigger>
+                        <TabsTrigger value="completed" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCompleted || "Doručeno"} ({filteredOrders.completed.length})</TabsTrigger>
+                        <TabsTrigger value="cancelled" className="shrink-0 px-6 sm:px-10 py-3 sm:py-4 rounded-[1.8rem] sm:rounded-[2rem] data-[state=active]:bg-olive-dark data-[state=active]:text-lime data-[state=active]:shadow-2xl data-[state=active]:shadow-olive-dark/30 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.15em] transition-all duration-500 scale-95 data-[state=active]:scale-100">{content.admin.orders.tabCancelled} ({filteredOrders.cancelled.length})</TabsTrigger>
                     </TabsList>
                 </div>
 
@@ -1069,6 +1070,18 @@ const Orders = () => {
                 <TabsContent value="shipped" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
                     <OrderTable
                         data={filteredOrders.shipped}
+                        selectedOrders={selectedOrders}
+                        toggleOrderSelection={toggleOrderSelection}
+                        onStatusChange={handleStatusChange}
+                        setSelectedOrders={setSelectedOrders}
+                        onSort={handleSort}
+                        sortConfig={sortConfig}
+                    />
+                </TabsContent>
+
+                <TabsContent value="completed" className="mt-0 focus-visible:outline-none outline-none ring-0 animate-in fade-in slide-in-from-left-4 duration-500">
+                    <OrderTable
+                        data={filteredOrders.completed}
                         selectedOrders={selectedOrders}
                         toggleOrderSelection={toggleOrderSelection}
                         onStatusChange={handleStatusChange}

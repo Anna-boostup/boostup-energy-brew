@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
       brotliSize: true,
     }),
     // Sentry plugin must be after other plugins
-    sentryVitePlugin({
+    process.env.SENTRY_AUTH_TOKEN ? sentryVitePlugin({
       org: "zdenek-dias",
       project: "boostup",
       authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -32,11 +32,26 @@ export default defineConfig(({ mode }) => ({
         assets: ["./dist/**"],
         filesToDeleteAfterUpload: ["./dist/**/*.map"],
       },
-    }),
+    }) : null,
     {
       name: 'html-transform',
       transformIndexHtml(html) {
-        return html.replace(/%VITE_GA_ID%/g, process.env.VITE_GA_ID || '');
+        const gaId = process.env.VITE_GA_ID;
+        const gaScript = gaId ? `
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '${gaId}', {
+      send_page_view: true,
+      cookie_domain: 'auto',
+      anonymize_ip: true
+    });
+  </script>` : '';
+        
+        return html.replace(/<!-- GOOGLE_ANALYTICS -->/g, gaScript);
       },
     },
   ].filter(Boolean),
@@ -51,9 +66,14 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Group all node_modules into a single robust vendor chunk to prevent 
-            // initialization race conditions on custom domains/CDNs.
-            return 'vendor';
+            if (id.includes('react-quill') || id.includes('quill')) return 'vendor-quill';
+            if (id.includes('recharts') || id.includes('d3')) return 'vendor-recharts';
+            if (id.includes('pdf-lib') || id.includes('@pdf-lib')) return 'vendor-pdf';
+            if (id.includes('@supabase')) return 'vendor-supabase';
+            if (id.includes('lucide-react')) return 'vendor-lucide';
+            if (id.includes('framer-motion')) return 'vendor-framer';
+            if (id.includes('@radix-ui') || id.includes('cmdk') || id.includes('embla-carousel')) return 'vendor-ui';
+            return 'vendor-core';
           }
           if (id.includes('src/pages/admin/')) return 'admin-suite';
           if (id.includes('src/pages/legal/')) return 'legal-suite';
