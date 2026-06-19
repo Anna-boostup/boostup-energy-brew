@@ -58,9 +58,9 @@ CREATE POLICY "Admini spravují všechna doporučení"
     ));
 
 -- Výchozí hodnoty pro nová nastavení v app_settings
-INSERT INTO public.app_settings (key, value, description)
+INSERT INTO public.app_settings (key, value)
 VALUES 
-    ('referrals_enabled', 'false', 'Enable referral program'),
-    ('reviews_enabled', 'false', 'Enable customer product reviews'),
-    ('upsell_enabled', 'false', 'Enable cross-selling and up-selling in cart')
+    ('referrals_enabled', 'false'),
+    ('reviews_enabled', 'false'),
+    ('upsell_enabled', 'false')
 ON CONFLICT (key) DO NOTHING;
