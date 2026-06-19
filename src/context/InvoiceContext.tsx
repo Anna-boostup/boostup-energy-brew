@@ -40,12 +40,22 @@ export interface Invoice {
     processed_at: string | null;
 }
 
+export interface SystemSettings {
+    active_ai_provider: string;
+    openai_key: string | null;
+    gemini_key: string | null;
+    anthropic_key: string | null;
+}
+
 // Context
 interface InvoiceContextType {
     suppliers: Supplier[];
     aliases: MaterialAlias[];
     invoices: Invoice[];
     loading: boolean;
+    systemSettings: SystemSettings | null;
+    fetchSystemSettings: () => Promise<void>;
+    updateSystemSettings: (updates: Partial<SystemSettings>) => Promise<boolean>;
     
     // Suppliers
     fetchSuppliers: () => Promise<void>;
@@ -74,13 +84,41 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [aliases, setAliases] = useState<MaterialAlias[]>([]);
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(false);
+    const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
 
     // Load Data
     useEffect(() => {
+        fetchSystemSettings();
         fetchSuppliers();
         fetchAliases();
         fetchInvoices();
     }, []);
+
+    const fetchSystemSettings = async () => {
+        const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).single();
+        if (error) {
+            console.error("Error fetching system settings:", error);
+            // Setup defaults if not found
+            setSystemSettings({
+                active_ai_provider: 'openai',
+                openai_key: null,
+                gemini_key: null,
+                anthropic_key: null,
+            });
+            return;
+        }
+        setSystemSettings(data as SystemSettings);
+    };
+
+    const updateSystemSettings = async (updates: Partial<SystemSettings>) => {
+        const { error } = await supabase.from('system_settings').upsert({ id: 1, ...updates });
+        if (error) {
+            console.error("Error updating system settings:", error);
+            return false;
+        }
+        await fetchSystemSettings();
+        return true;
+    };
 
     const fetchSuppliers = async () => {
         const { data, error } = await supabase.from('suppliers').select('*').order('name');
@@ -319,7 +357,8 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     return (
         <InvoiceContext.Provider value={{
-            suppliers, aliases, invoices, loading,
+            suppliers, aliases, invoices, loading, systemSettings,
+            fetchSystemSettings, updateSystemSettings,
             fetchSuppliers, addSupplier, updateSupplier, deleteSupplier,
             fetchAliases, addAlias, deleteAlias,
             fetchInvoices, uploadAndParseInvoice, updateInvoiceStatus
