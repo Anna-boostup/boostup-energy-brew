@@ -61,6 +61,14 @@ CREATE POLICY "Allow admin delete to invoices" ON public.invoices FOR DELETE USI
 
 
 -- Triggers for updated_at
+CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = timezone('utc'::text, now());
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER set_timestamp_suppliers
 BEFORE UPDATE ON public.suppliers
 FOR EACH ROW
