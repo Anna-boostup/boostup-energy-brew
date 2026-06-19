@@ -12,11 +12,9 @@ serve(async (req) => {
             { global: { headers: { Authorization: authHeader } } }
         );
 
-        // Fetch active mailboxes
+        // Fetch active mailboxes with decrypted passwords securely
         const { data: mailboxes, error: mailboxesError } = await supabaseClient
-            .from('mailboxes')
-            .select('*')
-            .eq('is_active', true);
+            .rpc('get_decrypted_mailboxes');
 
         if (mailboxesError) throw mailboxesError;
 

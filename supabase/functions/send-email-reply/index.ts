@@ -25,13 +25,20 @@ serve(async (req) => {
         // Fetch original message
         const { data: message, error: messageError } = await supabaseClient
             .from('messages')
-            .select('*, mailboxes(*)')
+            .select('*')
             .eq('id', messageId)
             .single();
 
         if (messageError || !message) throw new Error('Message not found');
 
-        const mailbox = message.mailboxes;
+        // Fetch decrypted mailbox
+        const { data: mailboxes, error: mailboxError } = await supabaseClient
+            .rpc('get_decrypted_mailboxes');
+            
+        if (mailboxError) throw mailboxError;
+        
+        const mailbox = mailboxes.find((m: any) => m.id === message.mailbox_id);
+
         if (!mailbox || !mailbox.smtp_host) {
             throw new Error('Mailbox not found or SMTP not configured');
         }
