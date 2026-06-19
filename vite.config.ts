@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => ({
       org: "zdenek-dias",
       project: "boostup",
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      disable: true, // Dočasně vypnuto kvůli výpadkům Sentry (504)
+      telemetry: false,
       sourcemaps: {
         assets: ["./dist/**"],
         filesToDeleteAfterUpload: ["./dist/**/*.map"],
