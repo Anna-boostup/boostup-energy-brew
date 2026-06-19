@@ -27,7 +27,7 @@ CREATE POLICY "Admini vidí všechny recenze"
     ON public.product_reviews
     FOR ALL
     USING (EXISTS (
-      SELECT 1 FROM profiles WHERE id = auth.uid() AND is_admin = true
+      SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
     ));
 
 
@@ -54,7 +54,7 @@ CREATE POLICY "Admini spravují všechna doporučení"
     ON public.referrals
     FOR ALL
     USING (EXISTS (
-      SELECT 1 FROM profiles WHERE id = auth.uid() AND is_admin = true
+      SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
     ));
 
 -- Výchozí hodnoty pro nová nastavení v app_settings
