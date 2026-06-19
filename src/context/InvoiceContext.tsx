@@ -40,14 +40,22 @@ export interface Invoice {
     processed_at: string | null;
 }
 
+export interface SystemSettings {
+    active_ai_provider: string;
+    openai_key: string | null;
+    gemini_key: string | null;
+    anthropic_key: string | null;
+}
+
 // Context
 interface InvoiceContextType {
     suppliers: Supplier[];
     aliases: MaterialAlias[];
     invoices: Invoice[];
     loading: boolean;
-    openaiKey: string;
-    setOpenaiKey: (key: string) => void;
+    systemSettings: SystemSettings | null;
+    fetchSystemSettings: () => Promise<void>;
+    updateSystemSettings: (updates: Partial<SystemSettings>) => Promise<boolean>;
     
     // Suppliers
     fetchSuppliers: () => Promise<void>;
@@ -76,21 +84,40 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [aliases, setAliases] = useState<MaterialAlias[]>([]);
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(false);
-    const [openaiKey, setOpenaiKeyState] = useState<string>("");
+    const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
 
-    // Load API Key from localStorage
+    // Load Data
     useEffect(() => {
-        const storedKey = localStorage.getItem("boostup_openai_key");
-        if (storedKey) setOpenaiKeyState(storedKey);
-        
+        fetchSystemSettings();
         fetchSuppliers();
         fetchAliases();
         fetchInvoices();
     }, []);
 
-    const setOpenaiKey = (key: string) => {
-        localStorage.setItem("boostup_openai_key", key);
-        setOpenaiKeyState(key);
+    const fetchSystemSettings = async () => {
+        const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).single();
+        if (error) {
+            console.error("Error fetching system settings:", error);
+            // Setup defaults if not found
+            setSystemSettings({
+                active_ai_provider: 'openai',
+                openai_key: null,
+                gemini_key: null,
+                anthropic_key: null,
+            });
+            return;
+        }
+        setSystemSettings(data as SystemSettings);
+    };
+
+    const updateSystemSettings = async (updates: Partial<SystemSettings>) => {
+        const { error } = await supabase.from('system_settings').upsert({ id: 1, ...updates });
+        if (error) {
+            console.error("Error updating system settings:", error);
+            return false;
+        }
+        await fetchSystemSettings();
+        return true;
     };
 
     const fetchSuppliers = async () => {
@@ -209,15 +236,6 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     const uploadAndParseInvoice = async (file: File) => {
-        if (!openaiKey) {
-            toast({
-                title: "Chybí API Klíč",
-                description: "Pro čtení faktur musíte v nastavení vložit OpenAI API klíč.",
-                variant: "destructive"
-            });
-            return false;
-        }
-
         setLoading(true);
         try {
             // 1. Upload to Supabase Storage
@@ -235,76 +253,36 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             const isPdf = file.type === 'application/pdf';
             const mimeType = file.type;
 
-            const messages: any[] = [
-                {
-                    "role": "system",
-                    "content": "Jsi asistent pro vytěžování dat z faktur. Tvým úkolem je najít na faktuře seznam položek (surovin, materiálů), jejich množství a měrné jednotky. Vrať čistě JSON pole s objekty typu: { \"name\": \"název suroviny\", \"quantity\": číslo, \"unit\": \"kg/ks/l...\" }. Nepiš žádný text kolem, pouze platný JSON. Objekt může mít obalovou vlastnost 'items', ve které bude to pole."
-                }
-            ];
-
+            const payload: any = {};
             if (isPdf) {
-                const text = await extractTextFromPdf(file);
-                messages.push({
-                    "role": "user",
-                    "content": `Extrahuj položky z následujícího textu faktury:\n\n${text}`
-                });
+                payload.text = await extractTextFromPdf(file);
             } else {
                 const base64File = await fileToBase64(file);
-                messages.push({
-                    "role": "user",
-                    "content": [
-                        { "type": "text", "text": "Extrahuj položky z této faktury:" },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": `data:${mimeType};base64,${base64File}`
-                            }
-                        }
-                    ]
-                });
+                // remove data:image/png;base64, prefix if fileToBase64 returns it
+                const base64Content = base64File.includes('base64,') ? base64File.split('base64,')[1] : base64File;
+                payload.image_base64 = base64Content;
+                payload.mime_type = mimeType;
             }
 
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${openaiKey}`
-                },
-                body: JSON.stringify({
-                    model: isPdf ? "gpt-4o-mini" : "gpt-4o",
-                    messages: messages,
-                    temperature: 0.1,
-                    response_format: { type: "json_object" }
-                })
+            const { data, error } = await supabase.functions.invoke('parse-invoice', {
+                body: payload
             });
 
-            if (!response.ok) {
-                throw new Error("Chyba při komunikaci s OpenAI API. Zkontrolujte API klíč.");
+            if (error) {
+                console.error("Parse invoice error:", error);
+                throw new Error("Chyba při komunikaci s parse-invoice edge function.");
             }
 
-            const result = await response.json();
-            const content = result.choices[0].message.content;
+            if (data.error) {
+                console.error("Parse invoice error data:", data.error);
+                throw new Error("Chyba zpracování faktury na serveru.");
+            }
             
-            // Parse JSON
-            let parsedItems = [];
-            try {
-                const parsed = JSON.parse(content);
-                // Handle different structures
-                if (Array.isArray(parsed)) {
-                    parsedItems = parsed;
-                } else if (parsed.items && Array.isArray(parsed.items)) {
-                    parsedItems = parsed.items;
-                } else {
-                    // Try to find any array inside the object
-                    const possibleArray = Object.values(parsed).find(Array.isArray);
-                    if (possibleArray) {
-                        parsedItems = possibleArray;
-                    } else {
-                        parsedItems = [parsed];
-                    }
-                }
-            } catch (e) {
-                throw new Error("AI nevrátila validní data.");
+            // Parse JSON (edge function already returns parsed items array or handles the parse)
+            let parsedItems = data.items || [];
+            
+            if (parsedItems.length === 0 && Array.isArray(data)) {
+                parsedItems = data;
             }
 
             // 4. Map items based on material_aliases
@@ -379,7 +357,8 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     return (
         <InvoiceContext.Provider value={{
-            suppliers, aliases, invoices, loading, openaiKey, setOpenaiKey,
+            suppliers, aliases, invoices, loading, systemSettings,
+            fetchSystemSettings, updateSystemSettings,
             fetchSuppliers, addSupplier, updateSupplier, deleteSupplier,
             fetchAliases, addAlias, deleteAlias,
             fetchInvoices, uploadAndParseInvoice, updateInvoiceStatus

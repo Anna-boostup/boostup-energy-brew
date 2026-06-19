@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useInvoice, ParsedItem } from "@/context/InvoiceContext";
 import { useManufacture } from "@/context/ManufactureContext";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function Invoices() {
     const { 
-        invoices, suppliers, aliases, openaiKey, setOpenaiKey, loading,
+        invoices, suppliers, aliases, loading, systemSettings, updateSystemSettings,
         uploadAndParseInvoice, updateInvoiceStatus, addSupplier, deleteSupplier,
         addAlias, deleteAlias
     } = useInvoice();
@@ -19,8 +19,36 @@ export default function Invoices() {
     const { toast } = useToast();
 
     const [activeTab, setActiveTab] = useState("upload");
-    const [apiKeyInput, setApiKeyInput] = useState(openaiKey);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+    // AI Settings State
+    const [selectedProvider, setSelectedProvider] = useState<string>("openai");
+    const [openaiKeyInput, setOpenaiKeyInput] = useState("");
+    const [geminiKeyInput, setGeminiKeyInput] = useState("");
+    const [anthropicKeyInput, setAnthropicKeyInput] = useState("");
+
+    useEffect(() => {
+        if (systemSettings) {
+            setSelectedProvider(systemSettings.active_ai_provider);
+            setOpenaiKeyInput(systemSettings.openai_key || "");
+            setGeminiKeyInput(systemSettings.gemini_key || "");
+            setAnthropicKeyInput(systemSettings.anthropic_key || "");
+        }
+    }, [systemSettings]);
+
+    const handleSaveAiSettings = async () => {
+        const success = await updateSystemSettings({
+            active_ai_provider: selectedProvider,
+            openai_key: openaiKeyInput,
+            gemini_key: geminiKeyInput,
+            anthropic_key: anthropicKeyInput,
+        });
+        if (success) {
+            toast({ title: "Uloženo", description: "Nastavení AI bylo úspěšně uloženo pro všechny administrátory." });
+        } else {
+            toast({ title: "Chyba", description: "Nepodařilo se uložit nastavení AI.", variant: "destructive" });
+        }
+    };
 
     // New Supplier State
     const [newSupplierName, setNewSupplierName] = useState("");
@@ -42,11 +70,6 @@ export default function Invoices() {
             setSelectedFile(null);
             setActiveTab("list");
         }
-    };
-
-    const handleSaveKey = () => {
-        setOpenaiKey(apiKeyInput);
-        toast({ title: "API Klíč uložen" });
     };
 
     const handleAddSupplier = async () => {
@@ -201,14 +224,11 @@ export default function Invoices() {
                             />
                             <Button 
                                 onClick={handleUpload}
-                                disabled={!selectedFile || loading || !openaiKey}
+                                disabled={!selectedFile || loading}
                                 className="h-14 px-10 bg-lime text-olive-dark hover:bg-lime/80 font-black uppercase tracking-widest rounded-2xl w-full max-w-xs"
                             >
                                 {loading ? "Zpracovávám (10-30s)..." : "Zpracovat přes AI"}
                             </Button>
-                            {!openaiKey && (
-                                <p className="text-red-500 text-xs font-bold mt-2">Před nahráním nastavte OpenAI API klíč v Nastavení AI.</p>
-                            )}
                         </div>
                     </div>
                 </TabsContent>
@@ -401,29 +421,75 @@ export default function Invoices() {
                         <div className="space-y-4">
                             <h2 className="text-2xl font-black font-display uppercase italic text-olive-dark flex items-center gap-3">
                                 <Settings className="w-6 h-6 text-lime" />
-                                Nastavení AI Integrace
+                                Globální Nastavení AI Integrace
                             </h2>
                             <p className="text-sm text-olive-dark/60 font-bold">
-                                Pro čtení faktur využíváme modely OpenAI (GPT-4o). Vložte prosím svůj API klíč. Z bezpečnostních důvodů je uložen pouze ve vašem lokálním prohlížeči a nikam jinam se neposílá (ani do databáze).
+                                Zvolte si model umělé inteligence pro vytěžování faktur. Vložené klíče jsou bezpečně zašifrovány přímo v databázi a platí pro všechny administrátory.
                             </p>
                         </div>
                         
-                        <div className="space-y-4">
-                            <Label htmlFor="api_key">OpenAI API Klíč (sk-proj-...)</Label>
-                            <Input 
-                                id="api_key"
-                                type="password" 
-                                value={apiKeyInput}
-                                onChange={e => setApiKeyInput(e.target.value)}
-                                placeholder="sk-..."
-                                className="font-mono bg-white"
-                            />
-                            <Button onClick={handleSaveKey} className="w-full bg-olive-dark text-white hover:bg-black font-black uppercase tracking-widest rounded-xl">
-                                Uložit API klíč do prohlížeče
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <Label>Preferovaný Poskytovatel</Label>
+                                <Select value={selectedProvider} onValueChange={setSelectedProvider}>
+                                    <SelectTrigger className="bg-white"><SelectValue placeholder="Vyberte poskytovatele" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="openai">OpenAI (GPT-4o)</SelectItem>
+                                        <SelectItem value="gemini">Google Gemini (1.5 Pro)</SelectItem>
+                                        <SelectItem value="anthropic">Anthropic (Claude 3.5 Sonnet)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-4 p-6 bg-white/50 rounded-2xl">
+                                {selectedProvider === 'openai' && (
+                                    <div className="space-y-2">
+                                        <Label>OpenAI API Klíč</Label>
+                                        <Input 
+                                            type="password" 
+                                            value={openaiKeyInput}
+                                            onChange={e => setOpenaiKeyInput(e.target.value)}
+                                            placeholder="sk-proj-..."
+                                            className="font-mono bg-white"
+                                        />
+                                        <p className="text-xs text-olive-dark/50">Model: GPT-4o a GPT-4o-mini</p>
+                                    </div>
+                                )}
+                                {selectedProvider === 'gemini' && (
+                                    <div className="space-y-2">
+                                        <Label>Google Gemini API Klíč</Label>
+                                        <Input 
+                                            type="password" 
+                                            value={geminiKeyInput}
+                                            onChange={e => setGeminiKeyInput(e.target.value)}
+                                            placeholder="AIzaSy..."
+                                            className="font-mono bg-white"
+                                        />
+                                        <p className="text-xs text-olive-dark/50">Model: gemini-1.5-pro</p>
+                                    </div>
+                                )}
+                                {selectedProvider === 'anthropic' && (
+                                    <div className="space-y-2">
+                                        <Label>Anthropic API Klíč</Label>
+                                        <Input 
+                                            type="password" 
+                                            value={anthropicKeyInput}
+                                            onChange={e => setAnthropicKeyInput(e.target.value)}
+                                            placeholder="sk-ant-..."
+                                            className="font-mono bg-white"
+                                        />
+                                        <p className="text-xs text-olive-dark/50">Model: claude-3-5-sonnet-20240620</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Button onClick={handleSaveAiSettings} className="w-full bg-olive-dark text-white hover:bg-black font-black uppercase tracking-widest rounded-xl">
+                                Uložit Globální Nastavení
                             </Button>
                         </div>
                     </div>
                 </TabsContent>
+
             </Tabs>
         </div>
     );
