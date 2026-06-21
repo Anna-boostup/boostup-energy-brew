@@ -60,7 +60,10 @@ export const EMAIL_DEFAULTS: Record<string, EmailTemplateDefault> = {
         <td style="padding:20px 0 0 0;text-align:right;font-size:22px;font-weight:bold;color:#3a572c">{{total}} Kč</td>
     </tr>
 </table>
-<p style="margin:0;font-size:14px;color:#4b5563">Hned jak zásilku předáme dopravci, pošleme ti e-mail se sledovacím číslem.</p>
+<p style="margin:0 0 24px 0;font-size:14px;color:#4b5563">Hned jak zásilku předáme dopravci, pošleme ti e-mail se sledovacím číslem.</p>
+<div style="margin:32px 0 0 0;padding-top:24px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;line-height:1.5">
+    Součástí tohoto potvrzení jsou i naše <a href="https://www.drinkboostup.cz/obchodni-podminky" style="color:#3a572c;text-decoration:underline">Obchodní podmínky</a> a <a href="https://www.drinkboostup.cz/odstoupeni-od-smlouvy.pdf" style="color:#3a572c;text-decoration:underline">Formulář pro odstoupení od smlouvy</a> (PDF).
+</div>
         `
     },
     shipping: {
