@@ -1,5 +1,6 @@
 import { Stripe } from 'stripe';
 import { calculateSecureOrderTotal } from './secure-calculator.js';
+import { checkRateLimit } from './_rate-limit.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16', // Add a default API version to avoid warnings
@@ -30,6 +31,15 @@ export default async function handler(req: Request) {
 
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+    }
+
+    // --- RATE LIMITING ---
+    const { success: rateLimitSuccess } = await checkRateLimit(req, 'stripe-create');
+    if (!rateLimitSuccess) {
+        return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), { 
+            status: 429, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' } 
+        });
     }
 
     try {
