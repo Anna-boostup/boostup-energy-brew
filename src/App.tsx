@@ -55,6 +55,7 @@ const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const CookiesPolicy = lazy(() => import("./pages/legal/CookiesPolicy"));
 const Returns = lazy(() => import("./pages/legal/Returns"));
+const WithdrawalForm = lazy(() => import("./pages/legal/WithdrawalForm"));
 const RecurringPaymentTerms = lazy(() => import("./pages/legal/RecurringPaymentTerms"));
 const ShippingAndPayment = lazy(() => import("./pages/legal/ShippingAndPayment"));
 
@@ -227,6 +228,7 @@ const App = () => (
                             <Route path="/cookies" element={<CookiesPolicy />} />
                             <Route path="/doprava-a-platba" element={<ShippingAndPayment />} />
                             <Route path="/reklamace" element={<Returns />} />
+                            <Route path="/odstoupeni-od-smlouvy" element={<WithdrawalForm />} />
                             <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
                             <Route path="/unsubscribe" element={<Unsubscribe />} />
 
