@@ -3,7 +3,7 @@ import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
 import { useContent } from "@/context/ContentContext";
 import { lazy, Suspense } from "react";
-import bottleSilkyHero from "@/assets/bottle-silky-hero.png";
+
 const IngredientDialog = lazy(() => import("./IngredientDialog"));
 
 const HeroSection = () => {
@@ -105,7 +105,9 @@ const HeroSection = () => {
               to ensure the bottle remains prominent/enlarged as requested.
             */}
             <img
-              src={bottleSilkyHero}
+              src="/bottle-silky.webp"
+              srcSet="/bottle-silky-mobile.webp 600w, /bottle-silky.webp 1200w"
+              sizes="(max-width: 600px) 100vw, 800px"
               alt="BoostUp Pure Shot - prémiový energetický shot"
               className="w-[360px] sm:w-[480px] md:w-[580px] lg:max-h-[85vh] lg:w-auto lg:max-w-none object-contain relative z-10"
               style={{ transform: 'rotate(15deg)' }}
