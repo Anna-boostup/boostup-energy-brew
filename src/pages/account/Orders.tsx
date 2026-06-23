@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Truck, Clock, Eye } from "lucide-react";
+import { CheckCircle, Truck, Clock, Eye, Undo2 } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { OrderDetailDialog, OrderType } from "@/components/orders/OrderDetailDialog";
 import { formatPrice } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const AccountOrders = () => {
     const { user } = useAuth();
@@ -97,15 +98,23 @@ const AccountOrders = () => {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button size="sm" variant="outline">
-                                                        <Eye className="w-4 h-4 mr-2" />
-                                                        Zobrazit
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <OrderDetailDialog order={order} />
-                                            </Dialog>
+                                            <div className="flex justify-end gap-2">
+                                                <Button size="sm" variant="outline" asChild>
+                                                    <Link to={`/odstoupeni-od-smlouvy?orderId=${order.id}&email=${encodeURIComponent(order.customer.email || '')}&name=${encodeURIComponent(order.customer.name || '')}&date=${encodeURIComponent(new Date(order.date).toLocaleDateString())}`}>
+                                                        <Undo2 className="w-4 h-4 mr-2" />
+                                                        Vrátit
+                                                    </Link>
+                                                </Button>
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button size="sm" variant="outline">
+                                                            <Eye className="w-4 h-4 mr-2" />
+                                                            Zobrazit
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <OrderDetailDialog order={order} />
+                                                </Dialog>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -140,14 +149,21 @@ const AccountOrders = () => {
 
                                 <div className="flex justify-between items-center pt-2 border-t">
                                     <span className="font-bold text-lg">{formatPrice(order.total)}</span>
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button size="sm" variant="outline">
-                                                Detail
-                                            </Button>
-                                        </DialogTrigger>
-                                        <OrderDetailDialog order={order} />
-                                    </Dialog>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" variant="outline" asChild>
+                                            <Link to={`/odstoupeni-od-smlouvy?orderId=${order.id}&email=${encodeURIComponent(order.customer.email || '')}&name=${encodeURIComponent(order.customer.name || '')}&date=${encodeURIComponent(new Date(order.date).toLocaleDateString())}`}>
+                                                <Undo2 className="w-4 h-4" />
+                                            </Link>
+                                        </Button>
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button size="sm" variant="outline">
+                                                    Detail
+                                                </Button>
+                                            </DialogTrigger>
+                                            <OrderDetailDialog order={order} />
+                                        </Dialog>
+                                    </div>
                                 </div>
                             </div>
                         ))

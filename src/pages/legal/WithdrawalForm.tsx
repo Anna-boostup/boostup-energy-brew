@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 const WithdrawalForm = () => {
+    const [searchParams] = useSearchParams();
+    const orderId = searchParams.get('orderId') || '';
+    const email = searchParams.get('email') || '';
+    const name = searchParams.get('name') || '';
+    const date = searchParams.get('date') || '';
     
     // Pro lepší SEO a zobrazení tabu
     useEffect(() => {
@@ -49,11 +55,11 @@ const WithdrawalForm = () => {
                     <div className="space-y-4">
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Datum objednání:</strong></span>
-                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
+                            <input type="text" defaultValue={date} className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Číslo objednávky:</strong></span>
-                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
+                            <input type="text" defaultValue={orderId} className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Datum obdržení zboží:</strong></span>
@@ -70,7 +76,7 @@ const WithdrawalForm = () => {
                     <div className="space-y-4">
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Jméno a příjmení:</strong></span>
-                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
+                            <input type="text" defaultValue={name} className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Adresa:</strong></span>
@@ -78,7 +84,7 @@ const WithdrawalForm = () => {
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>E-mail / Telefon:</strong></span>
-                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
+                            <input type="text" defaultValue={email} className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                     </div>
                 </div>
