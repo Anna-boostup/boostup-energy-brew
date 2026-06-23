@@ -67,7 +67,7 @@ const HeroSection = () => {
             </div>
 
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 variant="outline"
                 size="xl"
