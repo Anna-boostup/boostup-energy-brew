@@ -183,7 +183,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             'newsletter_signup', 
             'order_confirmation',
             'registration',
-            'shipping'
+            'shipping',
+            'withdrawal_request'
         ];
         
         if (!allowedTypes.includes(type)) {
@@ -191,7 +192,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // 3. For internal notifications, ignore user-provided 'to' address and force internal address
-        if (type === 'contact_inquiry' || type === 'newsletter_signup') {
+        if (type === 'contact_inquiry' || type === 'newsletter_signup' || type === 'withdrawal_request') {
             to = 'info@drinkboostup.cz';
         }
     }
@@ -475,6 +476,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 });
             } catch (err) {
                 console.error('Failed to store message inquiry:', err);
+            }
+            break;
+
+        case 'withdrawal_request':
+            subject = 'Nové odstoupení od kupní smlouvy 📄';
+            contentHtml = `
+                <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Oznámení o odstoupení od kupní smlouvy</h2>
+                <div style="background:#f9fafb;padding:24px;border-radius:16px;margin:24px 0;border:1px solid #f3f4f6;text-align:left">
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Zákazník:</strong> ${customerName} (${req.body.customerEmail})
+                    </p>
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Adresa:</strong> ${req.body.address}
+                    </p>
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Číslo objednávky:</strong> ${req.body.orderId}
+                    </p>
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Datum objednání:</strong> ${req.body.orderDate}
+                    </p>
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Datum obdržení:</strong> ${req.body.receiveDate}
+                    </p>
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Vracené zboží:</strong><br/>
+                        ${req.body.itemsDescription}
+                    </p>
+                    <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
+                        <strong>Číslo účtu pro vrácení peněz:</strong> ${req.body.bankAccount}
+                    </p>
+                </div>
+            `;
+            
+            try {
+                await supabaseAdmin.from('messages').insert({
+                    from_email: req.body.customerEmail,
+                    from_name: customerName,
+                    subject: subject,
+                    body_text: "Odstoupení od smlouvy",
+                    body_html: contentHtml,
+                    is_read: false
+                });
+            } catch (err) {
+                console.error('Failed to store withdrawal request:', err);
             }
             break;
     }
