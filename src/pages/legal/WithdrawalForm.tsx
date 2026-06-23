@@ -27,9 +27,9 @@ const WithdrawalForm = () => {
                 
                 <div className="mb-8">
                     <h2 className="font-bold mb-2">Adresát (Prodávající):</h2>
-                    <p><strong>Zdeněk Dias</strong></p>
-                    <p>Minská 260/28, Brno 616 00</p>
-                    <p>IČO: 19139803</p>
+                    <p><strong>BOOSTUP SUPPLEMENTS S.R.O.</strong></p>
+                    <p>Chaloupkova 3002/1a, Královo Pole, 612 00 Brno</p>
+                    <p>IČO: 24045560</p>
                     <p>E-mail: info@drinkboostup.cz</p>
                 </div>
 
