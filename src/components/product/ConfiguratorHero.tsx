@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import fallingBottles from "@/assets/falling-bottles-column.png";
+import fallingBottles from "@/assets/falling-bottles-column.webp";
 
 interface ConfiguratorHeroProps {
   className?: string;
