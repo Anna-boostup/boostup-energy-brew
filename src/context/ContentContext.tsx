@@ -37,11 +37,28 @@ const mergeContent = (base: SiteContent, dbContent: Partial<SiteContent> | null)
     const footer = { ...base.footer, ...(dbContent.footer || {}) };
     if (footer.links) {
         footer.links = footer.links.map(group => {
-            if (group.title === "NAVIGACE") {
+            if (group.title === "NAVIGACE" || group.title === "NAVIGATION") {
                 return {
                     ...group,
-                    items: ensureBlogInNav(group.items, "Kontakt")
+                    items: ensureBlogInNav(group.items, group.title === "NAVIGACE" ? "Kontakt" : "Contact")
                 };
+            }
+            if (group.title === "PODPORA" || group.title === "SUPPORT") {
+                const targetLabel = group.title === "PODPORA" ? "Odstoupení od smlouvy" : "Withdrawal Form";
+                const hasItem = group.items.some(item => item.label === targetLabel);
+                
+                if (!hasItem) {
+                    const newItems = [...group.items];
+                    // Insert before Cookies or at the end
+                    const insertIdx = newItems.findIndex(item => item.label === "Cookies" || item.href === "/cookies");
+                    const newItem = { label: targetLabel, href: "/odstoupeni-od-smlouvy" };
+                    if (insertIdx !== -1) {
+                        newItems.splice(insertIdx, 0, newItem);
+                    } else {
+                        newItems.push(newItem);
+                    }
+                    return { ...group, items: newItems };
+                }
             }
             return group;
         });
