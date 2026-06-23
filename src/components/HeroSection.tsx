@@ -67,11 +67,11 @@ const HeroSection = () => {
             </div>
 
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 variant="outline"
                 size="xl"
-                className="rounded-full font-black text-base px-10 hover:scale-110 transition-all duration-500 cursor-pointer shadow-sm hover:shadow-xl hover:-rotate-1 active:scale-95"
+                className="rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
                 style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent' }}
                 onClick={() => scrollTo('mise')}
               >
@@ -80,7 +80,7 @@ const HeroSection = () => {
 
               <Button
                 size="xl"
-                className="group rounded-full font-black text-base px-10 hover:scale-110 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:rotate-1 active:scale-95"
+                className="group rounded-full font-semibold text-base px-8 hover:scale-105 transition-all duration-300 cursor-pointer"
                 style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
                 onClick={() => scrollTo('produkty')}
               >
@@ -118,23 +118,19 @@ const HeroSection = () => {
         </div>
 
         {/* Tags row - full width below both columns */}
-        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 mt-8 justify-center">
+        <div className="flex flex-wrap gap-4 mt-2 justify-center">
           {SITE_CONTENT.hero.tags.map((item) => (
             <button
               key={item.ingredientId}
               onClick={() => setActiveIngredient(item.ingredientId)}
-              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-black tracking-widest transition-all border-0 hover:scale-110 active:scale-95 shadow-lg hover:shadow-2xl cursor-pointer group hover:rotate-1"
+              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-semibold tracking-wide transition-all border-0 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #fffcf0, #f4f1e6)',
+                background: 'linear-gradient(135deg, #f1e8c3, #f4f1e6)',
                 color: '#3d5a2f',
                 fontFamily: 'Poppins, sans-serif',
-                WebkitBackfaceVisibility: 'hidden',
               }}
             >
-              <span 
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0 transition-transform duration-300 group-hover:scale-150 group-hover:animate-pulse" 
-                style={{ backgroundColor: item.dotColor }} 
-              />
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.dotColor }} />
               <span className="uppercase">{item.label}</span>
             </button>
           ))}
