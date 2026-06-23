@@ -127,7 +127,7 @@ export default defineConfig({
     // Guest / General Smoke Tests
     {
       name: 'smoke-desktop',
-      testMatch: 'tests/smoke.spec.ts',
+      testMatch: ['tests/smoke.spec.ts', 'tests/withdrawal_form.spec.ts'],
       use: { 
         ...devices['Desktop Chrome'],
       },
