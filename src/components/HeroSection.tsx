@@ -118,7 +118,7 @@ const HeroSection = () => {
         </div>
 
         {/* Tags row - full width below both columns */}
-        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 mt-8 justify-center">
+        <div className="flex flex-wrap gap-4 mt-2 justify-center">
           {SITE_CONTENT.hero.tags.map((item) => (
             <button
               key={item.ingredientId}
