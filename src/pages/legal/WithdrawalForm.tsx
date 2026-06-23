@@ -23,7 +23,10 @@ const WithdrawalForm = () => {
             </div>
 
             <div className="max-w-3xl mx-auto p-8 print:p-0 print:max-w-none bg-white text-black font-serif">
-                <h1 className="text-2xl font-bold mb-8 text-center uppercase tracking-wider">Oznámení o odstoupení od kupní smlouvy</h1>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
+                    <h1 className="text-2xl font-bold uppercase tracking-wider">Oznámení o odstoupení<br/>od kupní smlouvy</h1>
+                    <img src="/logo-green.png" alt="BoostUp" className="h-10 object-contain print:h-8" />
+                </div>
                 
                 <div className="mb-8">
                     <h2 className="font-bold mb-2">Adresát (Prodávající):</h2>
@@ -38,22 +41,23 @@ const WithdrawalForm = () => {
                         <strong>Oznamuji, že tímto odstupuji od smlouvy o nákupu tohoto zboží:</strong>
                     </p>
                     
-                    <div className="border border-black p-4 mb-6 min-h-[100px]">
-                        <span className="text-slate-400 italic">Doplňte název zboží, případně množství...</span>
-                    </div>
+                    <textarea 
+                        className="w-full border border-black p-4 mb-6 min-h-[100px] resize-y bg-transparent outline-none placeholder:italic placeholder:text-slate-400 font-sans"
+                        placeholder="Doplňte název zboží, případně množství..."
+                    ></textarea>
 
                     <div className="space-y-4">
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Datum objednání:</strong></span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Číslo objednávky:</strong></span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Datum obdržení zboží:</strong></span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                     </div>
                 </div>
@@ -66,15 +70,15 @@ const WithdrawalForm = () => {
                     <div className="space-y-4">
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Jméno a příjmení:</strong></span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>Adresa:</strong></span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
                             <span className="w-48"><strong>E-mail / Telefon:</strong></span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                     </div>
                 </div>
@@ -85,7 +89,7 @@ const WithdrawalForm = () => {
                     </p>
                     <div className="flex gap-4 items-center">
                         <span className="w-48"><strong>Číslo účtu / kód banky:</strong></span>
-                        <div className="flex-1 border-b border-black border-dotted"></div>
+                        <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                     </div>
                 </div>
 
@@ -93,9 +97,9 @@ const WithdrawalForm = () => {
                     <div className="w-64">
                         <div className="flex gap-2 items-center mb-2">
                             <span>V</span>
-                            <div className="flex-1 border-b border-black border-dotted"></div>
+                            <input type="text" className="flex-1 border-b border-black border-dotted bg-transparent outline-none text-center font-sans px-2" />
                             <span>dne</span>
-                            <div className="w-20 border-b border-black border-dotted"></div>
+                            <input type="text" className="w-24 border-b border-black border-dotted bg-transparent outline-none text-center font-sans px-2" />
                         </div>
                     </div>
 
