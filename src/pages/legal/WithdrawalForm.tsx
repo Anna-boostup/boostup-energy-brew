@@ -85,7 +85,7 @@ const WithdrawalForm = () => {
             <div className="print:hidden bg-slate-100 p-4 flex flex-col sm:flex-row justify-between items-center border-b gap-4">
                 <p className="text-sm text-slate-600">Formulář můžete vyplnit a odeslat rovnou elektronicky, nebo jej vytisknout a přiložit k vrácenému zboží.</p>
                 <div className="flex gap-2 w-full sm:w-auto">
-                    <Button onClick={handleSubmit} disabled={isSubmitting} className="gap-2 flex-1 sm:flex-none">
+                    <Button type="submit" form="withdrawal-form" disabled={isSubmitting} className="gap-2 flex-1 sm:flex-none">
                         {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                         {isSubmitting ? "Odesílám..." : "Odeslat elektronicky"}
                     </Button>
@@ -95,7 +95,7 @@ const WithdrawalForm = () => {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-8 print:p-0 print:max-w-none bg-white text-black font-serif">
+            <form id="withdrawal-form" onSubmit={handleSubmit} className="max-w-3xl mx-auto p-8 print:p-0 print:max-w-none bg-white text-black font-serif">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
                     <h1 className="text-2xl font-bold uppercase tracking-wider">Oznámení o odstoupení<br/>od kupní smlouvy</h1>
                     <img src="/logo-green.png" alt="BoostUp" className="h-10 object-contain print:h-8" />
