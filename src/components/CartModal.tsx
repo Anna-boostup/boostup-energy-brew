@@ -60,15 +60,24 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                             {cart.length === 0 ? (
                                 <EmptyCart onClose={onClose} />
                             ) : (
-                                <div className="space-y-4">
-                                    {cart.map((item) => (
-                                        <CartItemRow
-                                            key={item.cartItemId || item.id}
-                                            item={item}
-                                            updateQuantity={updateQuantity}
-                                            removeFromCart={removeFromCart}
-                                        />
-                                    ))}
+                                <div className="flex flex-col">
+                                    <AnimatePresence initial={false}>
+                                        {cart.map((item) => (
+                                            <motion.div
+                                                key={item.cartItemId || item.id}
+                                                initial={{ opacity: 0, height: 0, scale: 0.95, marginBottom: 0 }}
+                                                animate={{ opacity: 1, height: 'auto', scale: 1, marginBottom: 16 }}
+                                                exit={{ opacity: 0, height: 0, scale: 0.9, marginBottom: 0, overflow: 'hidden' }}
+                                                transition={{ duration: 0.25, ease: "easeOut" }}
+                                            >
+                                                <CartItemRow
+                                                    item={item}
+                                                    updateQuantity={updateQuantity}
+                                                    removeFromCart={removeFromCart}
+                                                />
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
                                     <UpsellWidget />
                                 </div>
                             )}

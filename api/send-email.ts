@@ -192,7 +192,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // 3. For internal notifications, ignore user-provided 'to' address and force internal address
-        if (type === 'contact_inquiry' || type === 'newsletter_signup' || type === 'withdrawal_request') {
+        if (type === 'contact_inquiry' || type === 'newsletter_signup') {
             to = 'info@drinkboostup.cz';
         }
     }
@@ -480,8 +480,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             break;
 
         case 'withdrawal_request':
-            subject = 'Nové odstoupení od kupní smlouvy 📄';
-            contentHtml = `
+            const adminSubject = 'Nové odstoupení od kupní smlouvy 📄';
+            const adminHtml = `
                 <h2 style="color:${COLORS.primary};margin:0 0 16px 0;font-size:24px;font-weight:bold">Oznámení o odstoupení od kupní smlouvy</h2>
                 <div style="background:#f9fafb;padding:24px;border-radius:16px;margin:24px 0;border:1px solid #f3f4f6;text-align:left">
                     <p style="margin:0 0 8px 0;font-size:14px;color:${COLORS.secondary}">
@@ -510,17 +510,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             `;
             
             try {
+                // 1. Uložit do DB zpráv
                 await supabaseAdmin.from('messages').insert({
                     from_email: req.body.customerEmail,
                     from_name: customerName,
-                    subject: subject,
+                    subject: adminSubject,
                     body_text: "Odstoupení od smlouvy",
-                    body_html: contentHtml,
+                    body_html: adminHtml,
                     is_read: false
                 });
+
+                // 2. Odeslat notifikaci adminovi
+                await resend.emails.send({
+                    from: 'BoostUp <objednavky@drinkboostup.cz>',
+                    to: ['info@drinkboostup.cz'],
+                    subject: adminSubject,
+                    html: adminHtml
+                });
             } catch (err) {
-                console.error('Failed to store withdrawal request:', err);
+                console.error('Failed to process admin notification for withdrawal request:', err);
             }
+
+            // 3. Změnit typ pro hlavní flow, aby se zákazníkovi poslala potvrzovací šablona
+            type = 'withdrawal_confirmation_customer';
+            
+            try {
+                const { data: custTpl } = await supabaseAdmin.from('email_templates').select('*').eq('id', type).single();
+                if (custTpl) dbTemplate = custTpl;
+                else dbTemplate = null;
+            } catch (e) {
+                dbTemplate = null;
+            }
+            
+            // Fallback content in case EMAIL_DEFAULTS fails (handled gracefully by the rest of the script)
+            subject = 'Přijali jsme Vaše odstoupení od smlouvy 📄';
             break;
     }
 
