@@ -14,7 +14,7 @@ import { useInventory } from "@/context/InventoryContext";
 import { format, subDays } from "date-fns";
 
 
-const AdminLayout = () => {
+const AdminLayoutInner = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -493,5 +493,5 @@ const AdminLayout = () => {
     );
 };
 
-export default AdminLayout;
+export default AdminLayoutInner;
 

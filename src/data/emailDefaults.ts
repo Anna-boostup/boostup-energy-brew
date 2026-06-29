@@ -15,6 +15,20 @@ export const EMAIL_DEFAULTS: Record<string, EmailTemplateDefault> = {
 <p style="margin:32px 0 0 0;font-size:13px;color:#4b5563">Pokud jsi se neregistroval, můžeš tento e-mail bezpečně ignorovat.</p>
         `
     },
+    withdrawal_confirmation_customer: {
+        subject: 'Přijali jsme Vaše odstoupení od smlouvy 📄',
+        content_html: `
+<h2 style="color:#3a572c;margin:0 0 16px 0;font-size:24px;font-weight:bold">Odstoupení od smlouvy přijato</h2>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">Dobrý den,</p>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">potvrzujeme, že jsme v pořádku přijali Vaše oznámení o odstoupení od kupní smlouvy pro objednávku č. <strong>{{orderId}}</strong>.</p>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">Zboží prosím pečlivě zabalte a odešlete na naši adresu:</p>
+<div style="background:#f9fafb;padding:16px;border-radius:12px;margin:24px 0;border:1px solid #f3f4f6;">
+    <p style="margin:0;font-size:16px;color:#4b5563"><strong>BOOSTUP SUPPLEMENTS S.R.O.</strong><br/>Chaloupkova 3002/1a<br/>Královo Pole, 612 00 Brno</p>
+</div>
+<p style="margin:0 0 24px 0;font-size:16px;color:#4b5563">Jakmile zásilku převezmeme a zkontrolujeme, budeme Vás informovat a peníze Vám zašleme zpět na uvedený účet.</p>
+<p style="margin:0 0 0 0;font-size:16px;color:#4b5563">Děkujeme za spolupráci,<br/>Tým BoostUp ⚡</p>
+        `
+    },
     reset_password: {
         subject: 'Obnova hesla | BoostUp ⚡',
         content_html: `

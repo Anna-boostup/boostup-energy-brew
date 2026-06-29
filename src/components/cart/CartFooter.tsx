@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { CartItem } from '@/context/CartContext';
+import { Loader2 } from 'lucide-react';
+
+const CartStripeWrapper = lazy(() => import('./CartStripeWrapper'));
 
 interface CartFooterProps {
     cartTotal: number;
@@ -40,6 +43,17 @@ export const CartFooter: React.FC<CartFooterProps> = ({
                     </div>
                 )}
             </div>
+            
+            <Suspense fallback={
+                <div className="flex justify-center items-center h-10 w-full mb-3 rounded-md bg-secondary/50">
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                </div>
+            }>
+                <div className="w-full mb-3 min-h-[40px]">
+                    <CartStripeWrapper />
+                </div>
+            </Suspense>
+
             <div className="grid grid-cols-2 gap-3 pt-2">
                 <Button
                     onClick={clearCart}

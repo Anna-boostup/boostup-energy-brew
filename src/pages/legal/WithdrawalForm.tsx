@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Printer, Send, Loader2 } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { Printer, Send, Loader2, X, Download } from "lucide-react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
 const WithdrawalForm = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const orderId = searchParams.get('orderId') || '';
     const email = searchParams.get('email') || '';
     const name = searchParams.get('name') || '';
@@ -28,6 +29,17 @@ const WithdrawalForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Striktní JavaScriptová validace (fallback pro starší mobilní prohlížeče nebo in-app prohlížeče FB/IG)
+        if (!formData.itemsDescription.trim() || !formData.orderId.trim() || !formData.customerName.trim() || !formData.customerEmail.trim() || !formData.bankAccount.trim()) {
+            toast({
+                title: "Chybějící údaje",
+                description: "Pro úspěšné odeslání prosím vyplňte všechna povinná pole (Zboží, Číslo objednávky, Jméno, E-mail a Číslo účtu).",
+                variant: "destructive"
+            });
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -82,15 +94,23 @@ const WithdrawalForm = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="print:hidden bg-slate-100 p-4 flex flex-col sm:flex-row justify-between items-center border-b gap-4">
-                <p className="text-sm text-slate-600">Formulář můžete vyplnit a odeslat rovnou elektronicky, nebo jej vytisknout a přiložit k vrácenému zboží.</p>
-                <div className="flex gap-2 w-full sm:w-auto">
-                    <Button type="submit" form="withdrawal-form" disabled={isSubmitting} className="gap-2 flex-1 sm:flex-none">
+            <div className="print:hidden bg-slate-100 p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center border-b gap-4">
+                <div className="flex items-center gap-4 w-full lg:w-auto">
+                    <Button onClick={() => navigate(-1)} variant="ghost" size="icon" className="shrink-0 hover:bg-slate-200">
+                        <X className="w-5 h-5" />
+                    </Button>
+                    <p className="text-sm text-slate-600">Formulář můžete vyplnit a odeslat rovnou elektronicky, nebo jej vytisknout a přiložit k vrácenému zboží.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 w-full lg:w-auto justify-end">
+                    <Button onClick={handlePrint} variant="outline" className="gap-2 flex-1 sm:flex-none bg-white">
+                        <Download className="w-4 h-4" /> <span className="hidden sm:inline">Stáhnout PDF</span><span className="sm:hidden">PDF</span>
+                    </Button>
+                    <Button onClick={handlePrint} variant="outline" className="gap-2 flex-1 sm:flex-none bg-white">
+                        <Printer className="w-4 h-4" /> Vytisknout
+                    </Button>
+                    <Button type="submit" form="withdrawal-form" disabled={isSubmitting} className="gap-2 flex-1 sm:flex-none min-w-[140px]">
                         {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                         {isSubmitting ? "Odesílám..." : "Odeslat elektronicky"}
-                    </Button>
-                    <Button onClick={handlePrint} variant="outline" className="gap-2 flex-1 sm:flex-none">
-                        <Printer className="w-4 h-4" /> Vytisknout
                     </Button>
                 </div>
             </div>

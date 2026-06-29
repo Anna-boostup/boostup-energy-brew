@@ -240,8 +240,8 @@ const App = () => (
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Suspense>
-                        </BrowserRouter>
-                      </CartProvider>
+                      </BrowserRouter>
+                    </CartProvider>
                   </InvoiceProvider>
                 </ManufactureProvider>
               </InventoryProvider>
