@@ -17,7 +17,7 @@ const FlavorModeSelector = ({ flavorMode, onSelectFlavorMode }: FlavorModeSelect
           onClick={() => onSelectFlavorMode("single")}
           className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all duration-300 ${flavorMode === "single"
             ? "bg-primary border-primary text-primary-foreground shadow-button scale-[1.02]"
-            : "border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-primary/60 hover:text-foreground"
+            : "border-primary/40 bg-transparent text-muted-foreground hover:bg-transparent hover:border-primary hover:text-foreground hover:shadow-md"
             }`}
         >
           <Droplet className="w-5 h-5" />
@@ -31,7 +31,7 @@ const FlavorModeSelector = ({ flavorMode, onSelectFlavorMode }: FlavorModeSelect
           onClick={() => onSelectFlavorMode("mix")}
           className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all duration-300 ${flavorMode === "mix"
             ? "bg-gradient-to-r from-lime via-terracotta to-olive border-transparent text-cream shadow-button scale-[1.02]"
-            : "border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-primary/60 hover:text-foreground"
+            : "border-primary/40 bg-transparent text-muted-foreground hover:bg-transparent hover:border-primary hover:text-foreground hover:shadow-md"
             }`}
         >
           <Blend className="w-5 h-5" />
