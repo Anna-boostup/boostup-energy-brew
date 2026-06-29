@@ -10,11 +10,13 @@ import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
 import { supabase } from "@/lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import { useContent } from "@/context/ContentContext";
-import { useInventory } from "@/context/InventoryContext";
+import { useInventory, InventoryProvider } from "@/context/InventoryContext";
+import { useManufacture, ManufactureProvider } from "@/context/ManufactureContext";
+import { InvoiceProvider } from "@/context/InvoiceContext";
 import { format, subDays } from "date-fns";
 
 
-const AdminLayout = () => {
+const AdminLayoutInner = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -490,6 +492,18 @@ const AdminLayout = () => {
                 </div>
             </main>
         </div>
+    );
+};
+
+const AdminLayout = () => {
+    return (
+        <InventoryProvider>
+            <ManufactureProvider>
+                <InvoiceProvider>
+                    <AdminLayoutInner />
+                </InvoiceProvider>
+            </ManufactureProvider>
+        </InventoryProvider>
     );
 };
 

@@ -93,9 +93,10 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('lucide-react')) return 'vendor-lucide';
             if (id.includes('framer-motion')) return 'vendor-framer';
             if (id.includes('@radix-ui') || id.includes('cmdk') || id.includes('embla-carousel')) return 'vendor-ui';
+            if (id.includes('@stripe')) return 'vendor-stripe';
             return 'vendor-core';
           }
-          if (id.includes('src/pages/admin/')) return 'admin-suite';
+          if (id.includes('src/pages/admin/') || id.includes('src/components/admin/')) return 'admin-suite';
           if (id.includes('src/pages/legal/')) return 'legal-suite';
         },
       },
