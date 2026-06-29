@@ -26,7 +26,7 @@ const StripeExpressButtons = () => {
 
   // Logic: Free shipping if total >= 1500 or contains 21-pack
   const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-  const shippingCost = isFreeShipping ? 0 : 79;
+  const shippingCost = isFreeShipping ? 0 : 99;
   const finalTotalAmount = cartTotal + shippingCost;
 
   useEffect(() => {

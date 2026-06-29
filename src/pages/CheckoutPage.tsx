@@ -386,7 +386,7 @@ const CheckoutPage = () => {
       }
 
       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-      const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+      const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
 
       // 3. Create Order Record
       const newOrder: Order = {
@@ -901,10 +901,11 @@ const CheckoutPage = () => {
                   {content.checkout.delivery.title}
                 </h2>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-3 gap-4">
                   {[
-                    { id: 'personal', name: 'Osobní vyzvednutí (Brno)', desc: 'Mendelova univerzita (po předchozí domluvě na e-mailu objednavky@drinkboostup.cz)', icon: <MapPin className="w-5 h-5" /> },
-                    { id: 'zasilkovna', name: 'Zásilkovna', desc: 'Přes 5000 výdejních míst', icon: <Box className="w-5 h-5" /> }
+                    { id: 'personal', name: 'Osobní vyzvednutí', desc: 'Brno (Mendelu)', icon: <MapPin className="w-5 h-5" /> },
+                    { id: 'zasilkovna', name: 'Zásilkovna', desc: 'Výdejní místo', icon: <Box className="w-5 h-5" /> },
+                    { id: 'courier', name: 'Kurýr', desc: 'Doručení na adresu', icon: <Truck className="w-5 h-5" /> }
                   ].map((method) => (
                     <button
                       key={method.id}
@@ -1078,7 +1079,7 @@ const CheckoutPage = () => {
                     <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.shipping}</span>
                     {(() => {
                       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                      const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+                      const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
                       return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? content.checkout.delivery.free : `${shippingCost} Kč`}</span>;
                     })()}
                   </div>
@@ -1092,7 +1093,7 @@ const CheckoutPage = () => {
                       <span className="text-4xl font-display font-black leading-none">
                         {(() => {
                           const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                          const shippingCost = (formData.deliveryMethod === 'zasilkovna' && !isFreeShipping) ? 79 : 0;
+                          const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
                           return cartTotal + shippingCost;
                         })()}
                       </span>
