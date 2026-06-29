@@ -4,6 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { visualizer } from "rollup-plugin-visualizer";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
+import Sitemap from "vite-plugin-sitemap";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -22,6 +23,23 @@ export default defineConfig(({ mode }) => ({
       filename: "dist/stats.html",
       gzipSize: true,
       brotliSize: true,
+    }),
+    Sitemap({ 
+      hostname: 'https://www.drinkboostup.cz',
+      exclude: ['/admin', '/admin/*', '/checkout', '/profile', '/payment/*', '/stats'],
+      dynamicRoutes: [
+        '/',
+        '/login',
+        '/register',
+        '/obchodni-podminky',
+        '/ochrana-osobnich-udaju',
+        '/cookies',
+        '/doprava-a-platba',
+        '/reklamace',
+        '/odstoupeni-od-smlouvy',
+        '/podminky-opakovane-platby',
+        '/blog'
+      ]
     }),
     // Sentry plugin must be after other plugins
     process.env.SENTRY_AUTH_TOKEN ? sentryVitePlugin({
