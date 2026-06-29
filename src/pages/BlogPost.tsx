@@ -258,7 +258,7 @@ const BlogPost = () => {
       <SEO 
         title={`${post.title}`} 
         description={post.excerpt}
-        ogImage={post.featured_image_url}
+        image={post.featured_image_url}
         url={`https://www.drinkboostup.cz/blog/${post.slug}`}
         type="article"
         article={{
