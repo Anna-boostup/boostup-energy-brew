@@ -126,9 +126,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
               >
                 <Mail className="w-5 h-5 text-olive-dark" />
                 {unreadCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-terracotta text-white font-black border-2 border-background animate-in zoom-in duration-300">
-                    {unreadCount}
-                  </Badge>
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 flex items-center justify-center text-[10px] bg-terracotta text-white font-black rounded-full border-2 border-background animate-in zoom-in duration-300 shadow-sm leading-none">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
                 )}
               </Link>
             )}
