@@ -21,9 +21,9 @@ const PackSelector = ({ selectedPack, onSelectPack }: PackSelectorProps) => {
           <button
             key={pack}
             onClick={() => onSelectPack(pack)}
-            className={`relative py-4 sm:py-5 px-4 rounded-2xl border-2 font-bold text-base sm:text-lg transition-all duration-300 hover-lift ${selectedPack === pack
-              ? "bg-primary border-primary text-primary-foreground shadow-button"
-              : "border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60"
+            className={`relative py-4 sm:py-5 px-4 rounded-2xl border-2 font-bold text-base sm:text-lg transition-all duration-300 ${selectedPack === pack
+              ? "bg-primary border-primary text-primary-foreground shadow-button scale-[1.02]"
+              : "border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-primary/60 hover:text-foreground"
               }`}
             style={{ animationDelay: `${index * 100}ms` }}
           >

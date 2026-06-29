@@ -16,7 +16,7 @@ const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTy
           onClick={() => onSelectPurchaseType('onetime')}
           className={`p-4 rounded-2xl border-2 transition-all duration-300 relative ${purchaseType === 'onetime'
             ? "bg-primary border-primary text-primary-foreground shadow-button scale-[1.02]"
-            : "border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60"
+            : "border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-primary/60 hover:text-foreground"
             }`}
         >
           <div className="flex items-center gap-3">
@@ -35,7 +35,7 @@ const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTy
           onClick={() => onSelectPurchaseType('subscription')}
           className={`p-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${purchaseType === 'subscription'
             ? "bg-amber-500 border-amber-500 text-white shadow-button scale-[1.02]"
-            : "border-primary/40 bg-transparent hover:border-amber-500/60"
+            : "border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-amber-500/60 hover:text-foreground"
             }`}
         >
           <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
