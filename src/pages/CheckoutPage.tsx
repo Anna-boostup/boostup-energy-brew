@@ -386,7 +386,7 @@ const CheckoutPage = () => {
       }
 
       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-      const shippingCost = (formData.deliveryMethod !== 'personal' && !isFreeShipping) ? 79 : 0;
+      const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
 
       // 3. Create Order Record
       const newOrder: Order = {
@@ -1079,7 +1079,7 @@ const CheckoutPage = () => {
                     <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.shipping}</span>
                     {(() => {
                       const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                      const shippingCost = (formData.deliveryMethod !== 'personal' && !isFreeShipping) ? 79 : 0;
+                      const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
                       return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? content.checkout.delivery.free : `${shippingCost} Kč`}</span>;
                     })()}
                   </div>
@@ -1093,7 +1093,7 @@ const CheckoutPage = () => {
                       <span className="text-4xl font-display font-black leading-none">
                         {(() => {
                           const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                          const shippingCost = (formData.deliveryMethod !== 'personal' && !isFreeShipping) ? 79 : 0;
+                          const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
                           return cartTotal + shippingCost;
                         })()}
                       </span>
