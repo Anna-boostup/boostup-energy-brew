@@ -38,7 +38,7 @@ const FlavorSelector = ({
                 onClick={() => onSelectFlavor(flavor.id)}
                 className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between gap-4 transition-all duration-300 hover-lift ${isSelected
                   ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} border-transparent shadow-lg scale-[1.02]`
-                  : `border-primary/40 bg-transparent text-muted-foreground hover:border-primary/60 hover:scale-[1.01]`
+                  : `border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-primary/60 hover:text-foreground hover:shadow-sm hover:scale-[1.01]`
                   }`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
@@ -69,7 +69,7 @@ const FlavorSelector = ({
                   </div>
                   <div className={`text-xs leading-snug mt-1 text-balance min-h-[2.5em] flex items-center transition-colors ${isSelected 
                     ? (flavor.id === 'lemon' ? 'text-primary font-medium' : 'text-white/90 font-medium') 
-                    : 'text-foreground/70 font-medium'
+                    : 'text-foreground/70 font-medium group-hover/flavor:text-foreground/90'
                   }`}>
                     {eff?.description || content.flavors[flavor.id]?.description || flavor.description}
                   </div>
