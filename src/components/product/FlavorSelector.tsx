@@ -38,7 +38,7 @@ const FlavorSelector = ({
                 onClick={() => onSelectFlavor(flavor.id)}
                 className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between gap-4 transition-all duration-300 ${isSelected
                   ? `bg-gradient-to-r ${flavor.color} ${flavor.textColor} border-transparent shadow-lg scale-[1.02]`
-                  : `border-primary/40 bg-transparent text-muted-foreground hover:bg-white/40 hover:border-primary/60 hover:text-foreground hover:shadow-sm`
+                  : `border-primary/40 bg-transparent text-muted-foreground hover:bg-transparent hover:border-primary hover:text-foreground hover:shadow-md`
                   }`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
