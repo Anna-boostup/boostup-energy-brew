@@ -10,9 +10,7 @@ import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
 import { supabase } from "@/lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import { useContent } from "@/context/ContentContext";
-import { useInventory, InventoryProvider } from "@/context/InventoryContext";
-import { useManufacture, ManufactureProvider } from "@/context/ManufactureContext";
-import { InvoiceProvider } from "@/context/InvoiceContext";
+import { useInventory } from "@/context/InventoryContext";
 import { format, subDays } from "date-fns";
 
 
@@ -495,17 +493,5 @@ const AdminLayoutInner = () => {
     );
 };
 
-const AdminLayout = () => {
-    return (
-        <InventoryProvider>
-            <ManufactureProvider>
-                <InvoiceProvider>
-                    <AdminLayoutInner />
-                </InvoiceProvider>
-            </ManufactureProvider>
-        </InventoryProvider>
-    );
-};
-
-export default AdminLayout;
+export default AdminLayoutInner;
 

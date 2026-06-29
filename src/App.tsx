@@ -95,6 +95,9 @@ const RoleGuard = ({ children, allowedType }: { children: React.ReactNode, allow
 };
 
 import { CartProvider } from "./context/CartContext";
+import { InventoryProvider } from "./context/InventoryContext";
+import { ManufactureProvider } from "./context/ManufactureContext";
+import { InvoiceProvider } from "./context/InvoiceContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ContentProvider } from "./context/ContentContext";
 import { CookieProvider } from "./context/CookieContext";
@@ -137,8 +140,11 @@ const App = () => (
             <ContentProvider>
             <FontLoader />
             <CookieProvider>
-              <CartProvider>
-                <Toaster />
+              <InventoryProvider>
+                <ManufactureProvider>
+                  <InvoiceProvider>
+                    <CartProvider>
+                      <Toaster />
                       <Sonner />
                       <Analytics />
                       <BrowserRouter>
@@ -234,8 +240,11 @@ const App = () => (
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </Suspense>
-                        </BrowserRouter>
-                </CartProvider>
+                      </BrowserRouter>
+                    </CartProvider>
+                  </InvoiceProvider>
+                </ManufactureProvider>
+              </InventoryProvider>
             </CookieProvider>
           </ContentProvider>
           </LanguageProvider>
