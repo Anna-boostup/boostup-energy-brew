@@ -5,6 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import { visualizer } from "rollup-plugin-visualizer";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import Sitemap from "vite-plugin-sitemap";
+import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -13,7 +14,8 @@ export default defineConfig(({ mode }) => ({
     port: 5174,
   },
   define: {
-    '__APP_VERSION__': JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev-' + new Date().getTime().toString().slice(-6)),
+    '__APP_VERSION__': JSON.stringify(pkg.version),
+    '__COMMIT_SHA__': JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev-' + new Date().getTime().toString().slice(-6)),
   },
   plugins: [
     react(), 
