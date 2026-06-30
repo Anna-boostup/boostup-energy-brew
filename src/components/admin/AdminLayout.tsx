@@ -463,6 +463,14 @@ const AdminLayoutInner = () => {
                         <LogOut className="w-4 h-4 shrink-0" />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 animate-in slide-in-from-left-2 duration-300">{content?.admin?.auth?.logout || "Logout"}</span>}
                     </Button>
+                    
+                    {isExpanded && (
+                        <div className="pt-4 pb-2 w-full text-center border-t border-white/5 mt-4">
+                            <span className="text-white/20 text-[9px] font-mono tracking-[0.2em] uppercase">
+                                BoostUp v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'}
+                            </span>
+                        </div>
+                    )}
                 </div>
             </aside>
 
