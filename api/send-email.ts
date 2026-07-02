@@ -531,11 +531,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 console.error('Failed to process admin notification for withdrawal request:', err);
             }
 
-            // 3. Změnit typ pro hlavní flow, aby se zákazníkovi poslala potvrzovací šablona
-            type = 'withdrawal_confirmation_customer';
+            // 3. Načíst šablonu pro zákazníka (potvrzení odstoupení)
+            const customerType = 'withdrawal_confirmation_customer';
             
             try {
-                const { data: custTpl } = await supabaseAdmin.from('email_templates').select('*').eq('id', type).single();
+                const { data: custTpl } = await supabaseAdmin.from('email_templates').select('*').eq('id', customerType).single();
                 if (custTpl) dbTemplate = custTpl;
                 else dbTemplate = null;
             } catch (e) {
