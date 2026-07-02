@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import DOMPurify from 'dompurify';
 import { useNavigate, useParams } from "react-router-dom";
 import { 
-  ArrowLeft, Save, Globe, Eye, Image as ImageIcon, 
-  Plus, Upload, Loader2, Layout, X, Calendar, Clock 
+  ArrowLeft, Save, Eye, Image as ImageIcon, 
+  Plus, Upload, Loader2, Layout, X, Calendar
 } from "lucide-react";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale";
