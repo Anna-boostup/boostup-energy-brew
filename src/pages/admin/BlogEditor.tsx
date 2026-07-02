@@ -61,6 +61,19 @@ export default function BlogEditor() {
     author_role: "Kvalita & Energie"
   });
 
+  const [socialMedia, setSocialMedia] = useState({
+    share_to_facebook: false,
+    share_to_instagram: false,
+    share_to_youtube: false,
+    social_text: "",
+    social_media_url: "",
+    social_media_type: "image" as "image" | "video",
+    schedule: "now" as "now" | "later",
+    scheduled_time: ""
+  });
+  const [socialUploading, setSocialUploading] = useState(false);
+  const socialFileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     fetchCategories();
     if (isEditing) {
@@ -165,6 +178,44 @@ export default function BlogEditor() {
     if (file) handleImageUpload(file);
   };
 
+  const handleSocialMediaUpload = async (file: File) => {
+    if (!file) return;
+    
+    try {
+      setSocialUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `social-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('blog-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(filePath);
+
+      setSocialMedia(prev => ({ 
+        ...prev, 
+        social_media_url: publicUrl,
+        social_media_type: file.type.includes('video') ? 'video' : 'image'
+      }));
+      toast.success("Soubor pro sítě byl úspěšně nahrán.");
+    } catch (error: any) {
+      console.error('Social upload error:', error);
+      toast.error(`Chyba při nahrávání na sítě: ${error.message}`);
+    } finally {
+      setSocialUploading(false);
+    }
+  };
+
+  const handleSocialFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleSocialMediaUpload(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.content) {
@@ -207,6 +258,47 @@ export default function BlogEditor() {
           navigate(`/admin/blog/edit/${data.id}`, { replace: true });
         }
       }
+
+      // SOCIAL MEDIA WEBHOOK
+      if (socialMedia.share_to_facebook || socialMedia.share_to_instagram || socialMedia.share_to_youtube) {
+        if (formData.status === 'published' || socialMedia.schedule === 'later') {
+          toast.info("Odesílám data na sociální sítě...");
+          try {
+            await fetch(import.meta.env.VITE_MAKE_WEBHOOK_URL || 'https://hook.eu2.make.com/placeholder', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                article_title: formData.title,
+                article_url: `https://www.drinkboostup.cz/blog/${formData.slug || generateSlug(formData.title)}`,
+                article_image: formData.featured_image_url,
+                social_media_url: socialMedia.social_media_url || formData.featured_image_url,
+                social_media_type: socialMedia.social_media_type,
+                social_text: socialMedia.social_text,
+                platforms: {
+                  facebook: socialMedia.share_to_facebook,
+                  instagram: socialMedia.share_to_instagram,
+                  youtube: socialMedia.share_to_youtube,
+                },
+                scheduled_time: socialMedia.schedule === 'later' ? socialMedia.scheduled_time : null
+              })
+            });
+            toast.success("Úspěšně předáno do Make.com ke zveřejnění na sítích.");
+            // Reset social state so it doesn't fire again on next save
+            setSocialMedia(prev => ({
+              ...prev,
+              share_to_facebook: false,
+              share_to_instagram: false,
+              share_to_youtube: false,
+            }));
+          } catch (e) {
+            console.error("Webhook error", e);
+            toast.error("Chyba připojení na Make.com webhook.");
+          }
+        } else {
+            toast.warning("Příspěvek na sítě nebyl odeslán, protože článek je uložen jako Koncept a není naplánován.");
+        }
+      }
+
     } catch (error: any) {
       console.error('Save error:', error);
       toast.error(`Chyba při ukládání článku: ${error.message || "Neznámá chyba"}`);
@@ -486,6 +578,127 @@ export default function BlogEditor() {
               )}
             </div>
           </div>
+
+          {/* SOCIÁLNÍ SÍTĚ SECTION */}
+          <div className="bg-admin-canvas border border-olive-dark/10 rounded-[2rem] shadow-sm p-8 space-y-6">
+            <h3 className="text-olive-dark font-black uppercase tracking-widest text-[10px]">Sociální sítě & Video</h3>
+            <p className="text-[10px] text-olive-dark/60">Při uložení se pošle signál do Make.com pro automatické zveřejnění.</p>
+            
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Label className="text-[10px] text-olive-dark font-black uppercase ml-1">Kam publikovat?</Label>
+                <div className="flex flex-col gap-2">
+                  <label className="flex items-center gap-2 text-sm text-olive-dark cursor-pointer hover:text-lime-dark transition-colors">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-olive-dark/20 text-lime focus:ring-lime"
+                      checked={socialMedia.share_to_facebook}
+                      onChange={(e) => setSocialMedia(prev => ({ ...prev, share_to_facebook: e.target.checked }))}
+                    />
+                    <span className="font-bold">Facebook (Příspěvek / Video)</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-olive-dark cursor-pointer hover:text-lime-dark transition-colors">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-olive-dark/20 text-lime focus:ring-lime"
+                      checked={socialMedia.share_to_instagram}
+                      onChange={(e) => setSocialMedia(prev => ({ ...prev, share_to_instagram: e.target.checked }))}
+                    />
+                    <span className="font-bold">Instagram (Post / Reel)</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-olive-dark cursor-pointer hover:text-lime-dark transition-colors">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-olive-dark/20 text-lime focus:ring-lime"
+                      checked={socialMedia.share_to_youtube}
+                      onChange={(e) => setSocialMedia(prev => ({ ...prev, share_to_youtube: e.target.checked }))}
+                    />
+                    <span className="font-bold">YouTube (Video / Shorts)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Kdy publikovat?</Label>
+                <div className="flex bg-olive-dark/5 p-1 rounded-xl border border-olive-dark/10">
+                  <button
+                    type="button"
+                    onClick={() => setSocialMedia(prev => ({ ...prev, schedule: 'now' }))}
+                    className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                      socialMedia.schedule === 'now' 
+                        ? 'bg-lime text-olive-dark shadow-sm' 
+                        : 'text-olive-dark/40 hover:text-olive-dark/60'
+                    }`}
+                  >
+                    Ihned (při uložení)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSocialMedia(prev => ({ ...prev, schedule: 'later' }))}
+                    className={`flex-1 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                      socialMedia.schedule === 'later' 
+                        ? 'bg-lime text-olive-dark shadow-sm' 
+                        : 'text-olive-dark/40 hover:text-olive-dark/60'
+                    }`}
+                  >
+                    Naplánovat
+                  </button>
+                </div>
+              </div>
+
+              {socialMedia.schedule === 'later' && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                  <Label className="text-[10px] text-olive-dark/40 font-black uppercase ml-1">Datum a čas (Např. 2026-07-15T18:00)</Label>
+                  <Input
+                    type="datetime-local"
+                    value={socialMedia.scheduled_time}
+                    onChange={(e) => setSocialMedia(prev => ({ ...prev, scheduled_time: e.target.value }))}
+                    className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl h-11 focus:border-lime-dark/50 transition-all text-sm font-bold"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2 pt-4 border-t border-olive-dark/10">
+                <Label className="text-olive-dark font-black uppercase tracking-widest text-[10px] ml-1">Doprovodný Text (Social Text)</Label>
+                <textarea
+                  value={socialMedia.social_text}
+                  onChange={(e) => setSocialMedia(prev => ({ ...prev, social_text: e.target.value }))}
+                  placeholder="Skvělý popis pro IG a FB včetně #hashtagů... 🚀"
+                  className="w-full bg-olive-dark/5 border border-olive-dark/10 text-olive-dark rounded-xl p-4 focus:border-lime-dark/50 focus:outline-none transition-all min-h-[100px] resize-none text-sm"
+                />
+              </div>
+
+              <div className="space-y-2 pt-4 border-t border-olive-dark/10">
+                <Label className="text-[10px] text-olive-dark font-black uppercase ml-1">Speciální Fotka / Video (Volitelné)</Label>
+                <p className="text-[9px] text-olive-dark/40 ml-1 mb-2 leading-tight">Pokud nevyplníte, na sítě se pošle hlavní fotka článku nahoře.</p>
+                <div className="flex gap-2 items-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => socialFileInputRef.current?.click()}
+                    disabled={socialUploading}
+                    className="bg-olive-dark/5 border-olive-dark/10 text-olive-dark rounded-xl hover:bg-olive-dark/10 gap-2 font-bold"
+                  >
+                    {socialUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    Nahrát Fotku / Video
+                  </Button>
+                  <input 
+                    type="file"
+                    ref={socialFileInputRef}
+                    className="hidden"
+                    accept="image/*,video/mp4,video/quicktime"
+                    onChange={handleSocialFileChange}
+                  />
+                </div>
+                {socialMedia.social_media_url && (
+                   <div className="mt-2 p-2 bg-olive-dark/5 rounded-xl border border-olive-dark/10 text-xs text-olive-dark truncate">
+                     {socialMedia.social_media_url}
+                     <Badge variant="secondary" className="ml-2 bg-lime text-olive-dark uppercase text-[8px] font-black">{socialMedia.social_media_type}</Badge>
+                   </div>
+                )}
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
