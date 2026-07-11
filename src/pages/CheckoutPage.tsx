@@ -82,6 +82,7 @@ const CheckoutPage = () => {
 
   // Billing Address State
   const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -1101,20 +1102,33 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                 </div>
+                <div className="pt-6 border-t border-white/10 mt-6 mb-6">
+                  <div className="flex items-start space-x-3 bg-secondary/10 p-4 rounded-2xl border border-border/50">
+                    <Checkbox
+                      id="termsAccepted"
+                      checked={termsAccepted}
+                      onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                      className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"
+                    />
+                    <Label htmlFor="termsAccepted" className="text-xs text-muted-foreground leading-snug cursor-pointer">
+                      Souhlasím s <a href="/obchodni-podminky" className="text-foreground underline font-bold hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Obchodními podmínkami</a> a beru na vědomí zpracování mých osobních údajů podle <a href="/ochrana-osobnich-udaju" className="text-foreground underline font-bold hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Zásad ochrany osobních údajů</a>. <span className="text-destructive font-bold">*</span>
+                    </Label>
+                  </div>
+                </div>
 
                 <Button
                   data-testid="checkout-submit-btn"
                   onClick={handleSubmit}
-                  disabled={isProcessing || cart.length === 0 || !isSalesEnabled}
-                  className={`w-full h-20 rounded-[1.5rem] mt-10 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
-                    !isSalesEnabled ? 'bg-slate-200 text-slate-500 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
+                  disabled={isProcessing || cart.length === 0 || !isSalesEnabled || !termsAccepted}
+                  className={`w-full h-20 rounded-[1.5rem] mt-6 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
+                    !isSalesEnabled || !termsAccepted ? 'bg-slate-200 text-slate-500 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
                   }`}
                 >
                   {isProcessing ? (
                     <Loader2 className="animate-spin w-8 h-8" />
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="leading-none">{!isSalesEnabled ? content.checkout.summary.salesDisabled : content.checkout.summary.submitButton}</span>
+                      <span className="leading-none">{!isSalesEnabled ? content.checkout.summary.salesDisabled : (!termsAccepted ? "Souhlaste s VOP pro odeslání" : content.checkout.summary.submitButton)}</span>
                       <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">
                         {!isSalesEnabled ? content.checkout.summary.salesDisabledSub : content.checkout.summary.submitButtonSub}
                       </span>
@@ -1141,10 +1155,8 @@ const CheckoutPage = () => {
               </div>
             </div>
             
-            <div className="lg:col-span-12">
-              <p className="mt-12 text-[10px] text-center text-muted-foreground leading-relaxed px-4 max-w-2xl mx-auto">
-                {content.checkout.summary.legalConsent} <a href="/obchodni-podminky" className="underline font-bold">{content.checkout.summary.terms}</a> a <a href="/ochrana-osobnich-udaju" className="underline font-bold">{content.checkout.summary.privacy}</a>.
-              </p>
+            <div className="lg:col-span-12 hidden">
+              {/* Starý implicitní souhlas přesunut do checkboxu */}
             </div>
           </div>
 
