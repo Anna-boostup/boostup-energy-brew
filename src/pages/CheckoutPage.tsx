@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useCart } from '@/context/CartContext';
+import { useShippingCountries } from '@/hooks/useShippingCountries';
+import { convertPrice, formatMoney, getShippingCost, findCountry, bottlesInCart, DEFAULT_SHIPPING_COUNTRIES, type DeliveryMethodId } from '@/config/shipping';
 import { useInventory, Order } from '@/context/InventoryContext';
 import {
   ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
@@ -112,6 +114,25 @@ const CheckoutPage = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // --- Doručovací země a měna ---
+  const { enabledCountries } = useShippingCountries();
+  const [deliveryCountry, setDeliveryCountry] = useState<string>('CZ');
+  const activeCountries = enabledCountries.length > 0 ? enabledCountries : DEFAULT_SHIPPING_COUNTRIES.filter(c => c.enabled);
+  const selectedCountry = findCountry(activeCountries, deliveryCountry) || activeCountries[0] || DEFAULT_SHIPPING_COUNTRIES[0];
+  const convertedSubtotal = convertPrice(cartTotal, selectedCountry);
+  const totalBottles = bottlesInCart(cart);
+  const freeByRule = cart.some(item => item.pack === 21);
+  const shippingCostCurrency = getShippingCost(selectedCountry, formData.deliveryMethod as DeliveryMethodId, totalBottles, convertedSubtotal, freeByRule);
+  const orderTotalCurrency = convertedSubtotal + shippingCostCurrency;
+  const shippingCostCzk = selectedCountry.rate > 0 ? Math.round(shippingCostCurrency / selectedCountry.rate) : shippingCostCurrency;
+  useEffect(() => {
+    const avail = (['personal', 'zasilkovna', 'courier'] as DeliveryMethodId[]).filter(m => selectedCountry.methods[m] !== undefined && selectedCountry.methods[m] !== null);
+    if (avail.length > 0 && !avail.includes(formData.deliveryMethod as DeliveryMethodId)) {
+      setFormData(prev => ({ ...prev, deliveryMethod: avail[0], packetaPointId: '' }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deliveryCountry]);
 
   // Dynamically set checkout page title to look cleaner in Google Pay/Apple Pay sheet
   useEffect(() => {
@@ -386,8 +407,7 @@ const CheckoutPage = () => {
         }
       }
 
-      const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-      const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
+      const shippingCost = shippingCostCzk;
 
       // 3. Create Order Record
       const newOrder: Order = {
@@ -418,6 +438,9 @@ const CheckoutPage = () => {
           paymentMethod: formData.paymentMethod,
           packetaPointId: formData.packetaPointId,
           promoCode: appliedPromoCode?.code || null,
+          country: selectedCountry.code,
+          currency: selectedCountry.currency,
+          chargedTotal: orderTotalCurrency,
         },
         items: cart.map(item => {
           const finalPrice = item.subscriptionInterval ? item.price * 0.85 : item.price;
@@ -902,12 +925,26 @@ const CheckoutPage = () => {
                   {content.checkout.delivery.title}
                 </h2>
 
+                {activeCountries.length > 1 && (
+                  <div className="mb-6">
+                    <label className="block text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Země doručení</label>
+                    <div className="flex flex-wrap gap-2">
+                      {activeCountries.map((ac) => (
+                        <button key={ac.code} type="button" onClick={() => setDeliveryCountry(ac.code)}
+                          className={`px-4 py-2 rounded-2xl border-2 text-sm font-bold transition-all ${selectedCountry.code === ac.code ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-background/50 hover:border-primary/30'}`}>
+                          {ac.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid md:grid-cols-3 gap-4">
                   {[
                     { id: 'personal', name: 'Osobní vyzvednutí', desc: 'Brno (Mendelu)', icon: <MapPin className="w-5 h-5" /> },
                     { id: 'zasilkovna', name: 'Zásilkovna', desc: 'Výdejní místo', icon: <Box className="w-5 h-5" /> },
                     { id: 'courier', name: 'Kurýr', desc: 'Doručení na adresu', icon: <Truck className="w-5 h-5" /> }
-                  ].map((method) => (
+                  ].filter((method) => selectedCountry.methods[method.id as DeliveryMethodId] !== undefined && selectedCountry.methods[method.id as DeliveryMethodId] !== null).map((method) => (
                     <button
                       key={method.id}
                       data-testid={`checkout-shipping-${method.id}`}
@@ -933,6 +970,7 @@ const CheckoutPage = () => {
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
                     {!selectedPoint ? (
                       <PacketaWidget 
+                        country={selectedCountry.packetaCode}
                         onPointSelected={(point: any) => { 
                           setSelectedPoint(point); 
                           setFormData(prev => ({ ...prev, packetaPointId: point.id })); 
@@ -1066,23 +1104,19 @@ const CheckoutPage = () => {
                 <div className="pt-8 space-y-4 border-t border-white/10 mt-8">
                   <div className="flex justify-between items-center opacity-70">
                     <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.subtotal}</span>
-                    <span className="font-bold">{(cartTotal + discountAmount).toFixed(2)} Kč</span>
+                    <span className="font-bold">{formatMoney(convertPrice(cartTotal + discountAmount, selectedCountry), selectedCountry)}</span>
                   </div>
                   
                   {discountAmount > 0 && (
                     <div className="flex justify-between items-center text-primary">
                       <span className="uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.discount}</span>
-                      <span className="font-bold italic">-{discountAmount.toFixed(2)} Kč</span>
+                      <span className="font-bold italic">-{formatMoney(convertPrice(discountAmount, selectedCountry), selectedCountry)}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between items-center">
                     <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.shipping}</span>
-                    {(() => {
-                      const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                      const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
-                      return <span className={`font-bold ${shippingCost === 0 ? 'text-primary' : ''}`}>{shippingCost === 0 ? content.checkout.delivery.free : `${shippingCost} Kč`}</span>;
-                    })()}
+                    <span className={`font-bold ${shippingCostCurrency === 0 ? 'text-primary' : ''}`}>{shippingCostCurrency === 0 ? content.checkout.delivery.free : formatMoney(shippingCostCurrency, selectedCountry)}</span>
                   </div>
                   
                   <div className="pt-6 border-t-2 border-primary-foreground/20 flex justify-between items-end">
@@ -1092,13 +1126,8 @@ const CheckoutPage = () => {
                     </div>
                     <div className="text-right flex items-baseline">
                       <span className="text-4xl font-display font-black leading-none">
-                        {(() => {
-                          const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-                          const shippingCost = formData.deliveryMethod === 'personal' || isFreeShipping ? 0 : formData.deliveryMethod === 'courier' ? 99 : 79;
-                          return cartTotal + shippingCost;
-                        })()}
+                        {formatMoney(orderTotalCurrency, selectedCountry)}
                       </span>
-                      <span className="text-xl font-black ml-2">Kč</span>
                     </div>
                   </div>
                 </div>
@@ -1106,6 +1135,7 @@ const CheckoutPage = () => {
                   <div className="flex items-start space-x-3 bg-secondary/10 p-4 rounded-2xl border border-border/50">
                     <Checkbox
                       id="termsAccepted"
+                      data-testid="checkout-terms"
                       checked={termsAccepted}
                       onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
                       className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"

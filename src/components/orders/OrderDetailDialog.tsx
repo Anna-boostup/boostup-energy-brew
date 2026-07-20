@@ -13,6 +13,8 @@ import { useContent } from "@/context/ContentContext";
 import { downloadPacketaLabel } from "@/lib/packeta";
 import { supabase } from "@/lib/supabase";
 
+export type OrderType = any;
+
 export const OrderDetailDialog = ({ order }: { order: any }) => {
     const { content } = useContent();
     const { toast } = useToast();

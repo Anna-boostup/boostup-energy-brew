@@ -16,7 +16,7 @@ interface Review {
 }
 
 export const ProductReviews = () => {
-    const { user, userProfile } = useAuth();
+    const { user, profile } = useAuth();
     const { toast } = useToast();
     const [enabled, setEnabled] = useState(false);
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -66,7 +66,7 @@ export const ProductReviews = () => {
 
         const { error } = await supabase.from('product_reviews').insert({
             user_id: user.id,
-            author_name: userProfile?.full_name || user.email?.split('@')[0] || 'Zákazník',
+            author_name: profile?.full_name || user.email?.split('@')[0] || 'Zákazník',
             rating,
             content,
             status: 'pending'

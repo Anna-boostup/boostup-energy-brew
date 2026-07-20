@@ -51,7 +51,7 @@ export const ManufactureRestockDialog = ({ isOpen, onClose, material }: Props) =
     };
 
     if (!content) return null;
-    const t = content?.admin?.inventory?.manufacture?.dialogs?.restock || {};
+    const t = content.admin.inventory.manufacture.dialogs.restock;
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

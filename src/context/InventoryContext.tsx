@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 export type SKU = string;
 
@@ -45,6 +46,10 @@ export interface Order {
         billingHouseNumber?: string;
         billingCity?: string;
         billingZip?: string;
+        promoCode?: string | null;
+        country?: string;
+        currency?: string;
+        chargedTotal?: number;
     };
     items: {
         sku: string;
@@ -115,6 +120,7 @@ interface InventoryContextType {
     products: Product[];
     orders: Order[];
     movements: StockMovement[];
+    loading: boolean;
     addMovement: (sku: SKU, amount: number, type: StockMovement['type'], note?: string) => Promise<void>;
     updateStock: (sku: SKU, quantity: number) => void;
     decrementStock: (sku: SKU, amount: number) => Promise<boolean>;
@@ -143,10 +149,12 @@ interface InventoryContextType {
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { toast } = useToast();
     const [stock, setStock] = useState<Record<SKU, number>>({});
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [movements, setMovements] = useState<StockMovement[]>([]);
+    const [loading, setLoading] = useState(true);
     const [processingOrders, setProcessingOrders] = useState<Set<string>>(new Set());
     const [packagingRules, setPackagingRules] = useState<PackagingRule[]>([]);
     const [recipeRules, setRecipeRules] = useState<RecipeRule[]>([]);
@@ -154,9 +162,14 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // 1. Initial Fetch
     useEffect(() => {
-        fetchInventory();
-        fetchMovements();
-        fetchOrders(); // We can migrate orders later, but let's keep it here
+        const init = async () => {
+            try {
+                await Promise.all([fetchInventory(), fetchMovements(), fetchOrders()]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        init();
         fetchPackagingRules();
         fetchRecipeRules();
         fetchB2BCustomers();
@@ -349,7 +362,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (updateError) {
             console.error("[Inventory] Direct update failed:", updateError);
-            alert(`Sklad nelze aktualizovat. Chyba: ${updateError.message} (${updateError.code})`);
+            toast({ title: "Chyba skladu", description: `Sklad nelze aktualizovat: ${updateError.message} (${updateError.code})`, variant: "destructive" });
             return;
         }
 
@@ -562,6 +575,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
             if (rpcError) {
                 console.error(`[Recipes] RPC error for material ${rule.material_id}:`, rpcError);
+                toast({ title: "Upozornění: odpis surovin", description: `Nepodařilo se automaticky odečíst surovinu pro výrobu ${sku}. Zkontrolujte sklad výroby.`, variant: "destructive" });
             }
         }
     };
@@ -716,7 +730,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
             if (error) {
                 console.error('Error updating order status:', error);
-                alert("Chyba při aktualizaci stavu: " + error.message);
+                toast({ title: "Chyba", description: "Chyba při aktualizaci stavu: " + error.message, variant: "destructive" });
             } else {
                 setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
             }
@@ -732,7 +746,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
             if (error) {
                 console.error('Error updating order status:', error);
-                alert("Chyba při aktualizaci stavu: " + error.message);
+                toast({ title: "Chyba", description: "Chyba při aktualizaci stavu: " + error.message, variant: "destructive" });
                 return;
             }
 
@@ -925,6 +939,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             products,
             orders,
             movements,
+            loading,
             addMovement,
             updateStock,
             decrementStock,

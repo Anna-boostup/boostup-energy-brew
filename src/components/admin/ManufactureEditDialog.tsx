@@ -77,7 +77,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
     };
 
     if (!content) return null;
-    const t = content?.admin?.inventory?.manufacture?.dialogs?.edit || {};
+    const t = content.admin.inventory.manufacture.dialogs.edit;
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

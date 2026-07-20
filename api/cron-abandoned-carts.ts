@@ -11,6 +11,13 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseKey, {
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // Ochrana proti nechtěnému spouštění (stejně jako ostatní crony).
+    const authHeader = req.headers.authorization;
+    const cronSecret = process.env.CRON_SECRET;
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
         // 1. Check if the feature is enabled in app_settings
         const { data: settingsData, error: settingsError } = await supabaseAdmin

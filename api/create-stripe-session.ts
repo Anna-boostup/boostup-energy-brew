@@ -58,10 +58,14 @@ export default async function handler(req: Request) {
         // --- BEZPEČNÝ PŘEPOČET CENY ---
         let finalTotal = total || 0;
         let secureItems = items;
+        let sessionCurrency = 'czk';
+        let allowedCountry = 'CZ';
         try {
             const secureData = await calculateSecureOrderTotal(orderNumber, items);
             finalTotal = secureData.finalTotal;
             secureItems = secureData.secureItems;
+            sessionCurrency = secureData.currency;
+            allowedCountry = secureData.country;
         } catch (err: any) {
              console.error('[Stripe Secure Calc Error]', err);
              return new Response(JSON.stringify({ error: 'Failed to validate order pricing' }), {
@@ -96,7 +100,7 @@ export default async function handler(req: Request) {
             
             return {
                 price_data: {
-                    currency: 'czk',
+                    currency: sessionCurrency,
                     product_data: {
                         name: item.name + (isRecurring ? ` (Předplatné ${item.subscriptionInterval === 'monthly' ? 'měsíční' : 'dvouměsíční'})` : ''),
                         description: item.mixConfiguration ? 'Vlastní mix příchutí' : undefined,
@@ -118,7 +122,7 @@ export default async function handler(req: Request) {
         if (finalTotal > itemsTotal) {
             lineItems.push({
                 price_data: {
-                    currency: 'czk',
+                    currency: sessionCurrency,
                     product_data: {
                         name: 'Doprava',
                     },
@@ -132,7 +136,7 @@ export default async function handler(req: Request) {
             // Removed hardcoded card restriction to allow Apple/Google Pay via Dashboard settings
             billing_address_collection: 'required',
             shipping_address_collection: {
-                allowed_countries: ['CZ', 'SK'],
+                allowed_countries: [allowedCountry] as any,
             },
             customer_email: customerEmail,
             line_items: lineItems,

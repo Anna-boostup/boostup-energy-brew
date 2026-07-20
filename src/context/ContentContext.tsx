@@ -5,9 +5,10 @@ import { SITE_CONTENT_EN } from '@/config/site-content-en';
 import { useLanguage } from '@/context/LanguageContext';
 
 type SiteContent = typeof SITE_CONTENT;
+type LocalizedContent = SiteContent & { lang: string };
 
 interface ContentContextType {
-    content: SiteContent;
+    content: LocalizedContent;
     loading: boolean;
     refreshContent: () => Promise<void>;
     // Raw language versions for CMS editing
@@ -147,7 +148,10 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const contentEN = React.useMemo(() => mergeContent(baseEN, dbContentEN), [baseEN, dbContentEN]);
 
     const activeContentBase = language === 'en' ? contentEN : contentCZ;
-    const content = previewContent ? (previewContent as SiteContent) : activeContentBase;
+    const content = React.useMemo<LocalizedContent>(() => ({
+        ...(previewContent ? (previewContent as SiteContent) : activeContentBase),
+        lang: language,
+    }), [previewContent, activeContentBase, language]);
 
     const fetchContent = async () => {
         try {

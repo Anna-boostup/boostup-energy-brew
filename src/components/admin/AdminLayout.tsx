@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote, Inbox } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote, Inbox, Truck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -200,6 +200,8 @@ const AdminLayoutInner = () => {
             items: [
                 { icon: Inbox, label: "Schránky", path: "/admin/mailboxes" },
                 { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
+                { icon: Truck, label: "Doručení", path: "/admin/shipping" },
+                { icon: Megaphone, label: "Banner", path: "/admin/banner" },
                 { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
                 { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },
                 { icon: HelpCircle, label: content?.admin?.navigation?.help, path: "/admin/help" },
