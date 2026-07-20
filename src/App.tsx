@@ -49,6 +49,8 @@ const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
+const ShippingSettings = lazy(() => import("./pages/admin/ShippingSettings"));
+const BannerSettings = lazy(() => import("./pages/admin/BannerSettings"));
 
 // Legal pages
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -103,6 +105,7 @@ import { ContentProvider } from "./context/ContentContext";
 import { CookieProvider } from "./context/CookieContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import { CookieBanner } from "./components/CookieBanner";
+import { AnnouncementBanner } from "./components/AnnouncementBanner";
 
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
@@ -151,6 +154,7 @@ const App = () => (
                         <AnalyticsTracker />
                         <MetaPixelTracker />
                         <ScrollToTop />
+                        <AnnouncementBanner />
                         <CookieBanner />
                         <Suspense fallback={
                           <div className="h-screen w-full flex items-center justify-center bg-background">
@@ -214,6 +218,8 @@ const App = () => (
                               <Route path="messages" element={<Messages />} />
                               <Route path="users" element={<AdminUsers />} />
                               <Route path="reviews" element={<AdminReviews />} />
+                              <Route path="shipping" element={<ShippingSettings />} />
+                              <Route path="banner" element={<BannerSettings />} />
                               <Route path="emails" element={<EmailManagement />} />
                               <Route path="blog" element={<BlogManagement />} />
                               <Route path="blog/new" element={<BlogEditor />} />

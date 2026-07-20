@@ -11,7 +11,7 @@ import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
     AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette,
-    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download
+    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download, Bell
 } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 

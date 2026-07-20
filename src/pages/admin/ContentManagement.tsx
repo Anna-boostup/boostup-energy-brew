@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker, BarChart, Mail, MapPin, Layout, Settings2, Zap, Plus, Target, Megaphone, Sparkles } from 'lucide-react';
+import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker, BarChart, Mail, MapPin, Layout, Settings2, Zap, Plus, Target, Megaphone, Sparkles, CreditCard } from 'lucide-react';
 import { AVAILABLE_FONTS, FONT_WEIGHTS } from '@/hooks/useDynamicFonts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -226,10 +226,12 @@ const ContentManagement = () => {
                             { id: 'ingredients', icon: Beaker },
                             { id: 'concept', icon: BarChart },
                             { id: 'cta', icon: Megaphone },
+                            { id: 'configurator', icon: Sparkles },
                             { id: 'contact', icon: MapPin },
                             { id: 'flavors', icon: Sparkles },
                             { id: 'footer', icon: Layout },
-                            { id: 'settings', icon: Settings2 }
+                            { id: 'settings', icon: Settings2 },
+                            { id: 'payment', icon: CreditCard }
                         ].map((tab) => (
                             <TabsTrigger 
                                 key={tab.id}
@@ -647,7 +649,6 @@ const ContentManagement = () => {
                                                 onStyleChange={(s) => updateStyle(`concept3b.${concept.id}.fullDescription`, s)}
                                                 multiline
                                                 rows={10}
-                                                className="bg-white border-olive/10"
                                             />
                                         </div>
                                     </div>
@@ -734,15 +735,15 @@ const ContentManagement = () => {
                                     </div>
                                     <StyledTextField
                                         label={content?.admin?.contentManager?.sections?.contact?.email || "Email"}
-                                        value={localContent.contact.info.email}
-                                        onChange={(v) => updateField(['contact', 'info', 'email'], v)}
+                                        value={localContent.contact.info.email.value}
+                                        onChange={(v) => updateField(['contact', 'info', 'email', 'value'], v)}
                                         style={ts('contact.info.email')}
                                         onStyleChange={(s) => updateStyle('contact.info.email', s)}
                                     />
                                     <StyledTextField
                                         label={content?.admin?.contentManager?.sections?.contact?.phone || "Phone"}
-                                        value={localContent.contact.info.phone}
-                                        onChange={(v) => updateField(['contact', 'info', 'phone'], v)}
+                                        value={localContent.contact.info.phone.value}
+                                        onChange={(v) => updateField(['contact', 'info', 'phone', 'value'], v)}
                                         style={ts('contact.info.phone')}
                                         onStyleChange={(s) => updateStyle('contact.info.phone', s)}
                                     />
@@ -753,18 +754,18 @@ const ContentManagement = () => {
                                         <h3 className="text-lg font-black font-display uppercase italic tracking-tight text-olive-dark">{content?.admin?.contentManager?.sections?.contact?.address || "Address"}</h3>
                                     </div>
                                     <StyledTextField
-                                        label={content?.admin?.contentManager?.sections?.contact?.street || "Street"}
-                                        value={localContent.contact.info.address.street}
-                                        onChange={(v) => updateField(['contact', 'info', 'address', 'street'], v)}
-                                        style={ts('contact.info.address.street')}
-                                        onStyleChange={(s) => updateStyle('contact.info.address.street', s)}
+                                        label="Adresa – řádek 1"
+                                        value={localContent.contact.info.address.value.line1}
+                                        onChange={(v) => updateField(['contact', 'info', 'address', 'value', 'line1'], v)}
+                                        style={ts('contact.info.address.line1')}
+                                        onStyleChange={(s) => updateStyle('contact.info.address.line1', s)}
                                     />
                                     <StyledTextField
-                                        label={content?.admin?.contentManager?.sections?.contact?.city || "City"}
-                                        value={localContent.contact.info.address.city}
-                                        onChange={(v) => updateField(['contact', 'info', 'address', 'city'], v)}
-                                        style={ts('contact.info.address.city')}
-                                        onStyleChange={(s) => updateStyle('contact.info.address.city', s)}
+                                        label="Adresa – řádek 2"
+                                        value={localContent.contact.info.address.value.line2}
+                                        onChange={(v) => updateField(['contact', 'info', 'address', 'value', 'line2'], v)}
+                                        style={ts('contact.info.address.line2')}
+                                        onStyleChange={(s) => updateStyle('contact.info.address.line2', s)}
                                     />
                                 </div>
                             </div>
@@ -1064,6 +1065,84 @@ const ContentManagement = () => {
                                             placeholder="např. admin@drinkboostup.cz, info@drinkboostup.cz"
                                         />
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </TabsContent>
+                <TabsContent value="configurator" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <Sparkles className="w-8 h-8 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Konfigurátor</h3>
+                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Texty sekce s výběrem balení na produktové stránce</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-8 sm:p-12 space-y-6">
+                            <StyledTextField label="Badge (štítek)" value={localContent.configurator?.badge || ''} onChange={(v) => updateField(['configurator', 'badge'], v)} style={ts('configurator.badge')} onStyleChange={(s) => updateStyle('configurator.badge', s)} />
+                            <StyledTextField label="Nadpis" value={localContent.configurator?.headline || ''} onChange={(v) => updateField(['configurator', 'headline'], v)} style={ts('configurator.headline')} onStyleChange={(s) => updateStyle('configurator.headline', s)} />
+                            <StyledTextField label="Popis" value={localContent.configurator?.description || ''} onChange={(v) => updateField(['configurator', 'description'], v)} style={ts('configurator.description')} onStyleChange={(s) => updateStyle('configurator.description', s)} multiline rows={3} />
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <StyledTextField label="Tlačítko koupit" value={localContent.configurator?.cta || ''} onChange={(v) => updateField(['configurator', 'cta'], v)} style={ts('configurator.cta')} onStyleChange={(s) => updateStyle('configurator.cta', s)} />
+                                <StyledTextField label="Vyprodáno" value={localContent.configurator?.outOfStock || ''} onChange={(v) => updateField(['configurator', 'outOfStock'], v)} style={ts('configurator.outOfStock')} onStyleChange={(s) => updateStyle('configurator.outOfStock', s)} />
+                                <StyledTextField label="Popisek Celkem" value={localContent.configurator?.total || ''} onChange={(v) => updateField(['configurator', 'total'], v)} style={ts('configurator.total')} onStyleChange={(s) => updateStyle('configurator.total', s)} />
+                            </div>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="payment" className="mt-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                    <div className="glass-card rounded-[3rem] overflow-hidden border-none shadow-2xl">
+                        <div className="bg-olive-dark py-12 px-12 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime/10 blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                            <div className="flex items-center gap-6 relative z-10">
+                                <div className="p-4 bg-lime/10 rounded-2xl border border-lime/20">
+                                    <CreditCard className="w-8 h-8 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-4xl font-black text-white font-display uppercase tracking-tight italic">Platební údaje</h3>
+                                    <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2">Bankovní účet pro platbu převodem a QR platbu</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-8 sm:p-12 space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {([
+                                    { path: ['bankInfo', 'accountName'], label: 'Název účtu (majitel)', value: localContent.bankInfo?.accountName },
+                                    { path: ['bankInfo', 'accountNumber'], label: 'Číslo účtu (bez kódu banky)', value: localContent.bankInfo?.accountNumber },
+                                    { path: ['bankInfo', 'bankCode'], label: 'Kód banky', value: localContent.bankInfo?.bankCode },
+                                    { path: ['bankInfo', 'bankName'], label: 'Název banky', value: localContent.bankInfo?.bankName },
+                                    { path: ['bankInfo', 'iban'], label: 'IBAN', value: localContent.bankInfo?.iban },
+                                    { path: ['bankInfo', 'bic'], label: 'BIC / SWIFT', value: localContent.bankInfo?.bic },
+                                    { path: ['bankInfo', 'currency'], label: 'Měna účtu', value: localContent.bankInfo?.currency },
+                                    { path: ['bankInfo', 'qrMessage'], label: 'Zpráva pro příjemce (QR)', value: localContent.bankInfo?.qrMessage },
+                                ] as { path: string[]; label: string; value: string }[]).map((f) => (
+                                    <div key={f.path.join('.')}>
+                                        <Label className="text-[11px] font-black uppercase tracking-widest text-olive/50 mb-2 block">{f.label}</Label>
+                                        <Input value={f.value || ''} onChange={(e) => updateField(f.path, e.target.value)} className="h-12 bg-white border-olive/15 rounded-2xl font-bold" />
+                                    </div>
+                                ))}
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-black uppercase tracking-tight text-olive-dark mb-4">Sídlo (pro fakturu)</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {([
+                                        { path: ['bankInfo', 'address', 'street'], label: 'Ulice', value: localContent.bankInfo?.address?.street },
+                                        { path: ['bankInfo', 'address', 'city'], label: 'Město / PSČ', value: localContent.bankInfo?.address?.city },
+                                        { path: ['bankInfo', 'address', 'country'], label: 'Země', value: localContent.bankInfo?.address?.country },
+                                        { path: ['bankInfo', 'address', 'ic'], label: 'IČO', value: localContent.bankInfo?.address?.ic },
+                                    ] as { path: string[]; label: string; value: string }[]).map((f) => (
+                                        <div key={f.path.join('.')}>
+                                            <Label className="text-[11px] font-black uppercase tracking-widest text-olive/50 mb-2 block">{f.label}</Label>
+                                            <Input value={f.value || ''} onChange={(e) => updateField(f.path, e.target.value)} className="h-12 bg-white border-olive/15 rounded-2xl font-bold" />
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>

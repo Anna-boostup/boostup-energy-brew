@@ -190,7 +190,7 @@ export const SITE_CONTENT_EN = {
         headline: "HAVE A QUESTION?",
         description: "Curious about our products, partnership or just want to say hello? Write to us or call – we'd love to connect.",
         info: {
-            phone: { label: "Phone", value: "775 222 037" },
+            phone: { label: "Phone", value: "+420 775 222 037" },
             email: { label: "Email", value: "info@drinkboostup.cz" },
             address: { label: "Address", value: { line1: "Technologická 123", line2: "616 00 Brno, Czech Republic" } }
         },

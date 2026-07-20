@@ -36,7 +36,7 @@ export const RestockDialog = ({ isOpen, onClose, sku, currentStock, initialMode 
     }, [isOpen, initialMode]);
 
     if (!content) return null;
-    const t = content?.admin?.inventory?.stock?.restock || {};
+    const t = content.admin.inventory.stock.restock;
 
     // Derive the base flavor SKU (e.g. "lemon-3" → "lemon")
     const baseFlavor = sku ? sku.split('-')[0] : null;

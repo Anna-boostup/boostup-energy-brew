@@ -15,10 +15,10 @@ interface StockHistoryDialogProps {
 
 export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogProps) => {
     const { content } = useContent();
-    const { history } = useInventory();
+    const { movements: history } = useInventory();
 
     if (!content) return null;
-    const t = content?.admin?.inventory?.stock?.history || {};
+    const t = content.admin.inventory.stock.history;
     const dateLocale = content?.lang === 'en' ? enGB : cs;
 
     const stockHistory = sku ? history.filter(h => h.sku === sku).sort((a, b) => 
@@ -75,7 +75,7 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
                                             {format(new Date(h.date), "d. MMMM yyyy HH:mm", { locale: dateLocale })}
                                         </TableCell>
                                         <TableCell className="text-xs">
-                                            {h.user_email || t.systemUser}
+                                            {h.user?.email || t.systemUser}
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2 text-xs font-medium">
@@ -83,8 +83,8 @@ export const StockHistoryDialog = ({ isOpen, onClose, sku }: StockHistoryDialogP
                                                 {getTypeName(h.type)}
                                             </div>
                                         </TableCell>
-                                        <TableCell className={`text-right font-bold ${h.quantity > 0 ? "text-green-600" : "text-red-600"}`}>
-                                            {h.quantity > 0 ? "+" : ""}{h.quantity}
+                                        <TableCell className={`text-right font-bold ${h.amount > 0 ? "text-green-600" : "text-red-600"}`}>
+                                            {h.amount > 0 ? "+" : ""}{h.amount}
                                         </TableCell>
                                         <TableCell className="text-xs text-muted-foreground truncate" title={h.note}>
                                             {h.note || "-"}

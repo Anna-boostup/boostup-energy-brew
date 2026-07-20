@@ -16,7 +16,7 @@ interface Review {
 }
 
 export const ProductReviews = () => {
-    const { user, userProfile } = useAuth();
+    const { user, profile } = useAuth();
     const { toast } = useToast();
     const [enabled, setEnabled] = useState(false);
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -66,7 +66,7 @@ export const ProductReviews = () => {
 
         const { error } = await supabase.from('product_reviews').insert({
             user_id: user.id,
-            author_name: userProfile?.full_name || user.email?.split('@')[0] || 'Zákazník',
+            author_name: profile?.full_name || user.email?.split('@')[0] || 'Zákazník',
             rating,
             content,
             status: 'pending'
@@ -96,11 +96,16 @@ export const ProductReviews = () => {
     return (
         <section className="py-16 md:py-24 bg-background border-t border-border/10">
             <div className="container mx-auto px-4 max-w-4xl">
-                <div className="flex items-center gap-3 mb-10">
-                    <MessageSquareQuote className="w-8 h-8 text-lime" />
-                    <h2 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tighter text-foreground">
-                        Hodnocení zákazníků
-                    </h2>
+                <div className="mb-10">
+                    <div className="flex items-center gap-3 mb-3">
+                        <MessageSquareQuote className="w-8 h-8 text-lime" />
+                        <h2 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tighter text-foreground">
+                            Hodnocení zákazníků
+                        </h2>
+                    </div>
+                    <p className="text-sm text-muted-foreground/80 italic max-w-2xl">
+                        * Recenze mohou vkládat pouze registrovaní uživatelé. Neověřujeme však, zda uživatel hodnocený produkt skutečně zakoupil.
+                    </p>
                 </div>
 
                 {/* Form */}

@@ -9,7 +9,7 @@ const ShippingAndPayment = () => {
                 </p>
 
                 <h2>1. Možnosti dopravy</h2>
-                <p>Spolupracujeme s prověřenými dopravci, abychom zajistili spolehlivé doručení vašeho balíku v rámci celé České republiky.</p>
+                <p>Spolupracujeme s prověřenými dopravci, abychom zajistili spolehlivé doručení vašeho balíku v rámci České republiky i do vybraných zahraničních zemí (aktuálně Slovensko; dostupné země a ceny se zobrazí při výběru v pokladně). Ceny pro zahraničí jsou účtovány v místní měně dané země.</p>
 
                 <h3>Zásilkovna (Packeta) - Doručení na výdejní místo / Z-BOX</h3>
                 <ul>

@@ -186,11 +186,12 @@ const AdminInsights = () => {
             if (o.status === 'cancelled' || o.status === 'pending') return;
 
             // Customer Stats
-            if (o.customerEmail) {
-                const existing = customerMap.get(o.customerEmail) || { email: o.customerEmail, name: o.customerName || 'Neznámý', totalSpent: 0, orderCount: 0 };
+            const customerEmail = o.customer?.email;
+            if (customerEmail) {
+                const existing = customerMap.get(customerEmail) || { email: customerEmail, name: o.customer?.name || 'Neznámý', totalSpent: 0, orderCount: 0 };
                 existing.totalSpent += o.total || 0;
                 existing.orderCount += 1;
-                customerMap.set(o.customerEmail, existing);
+                customerMap.set(customerEmail, existing);
             }
 
             // Product Stats

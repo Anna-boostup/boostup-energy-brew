@@ -11,6 +11,7 @@ declare global {
 
 interface PacketaWidgetProps {
     onPointSelected: (point: any) => void;
+    country?: string;
     apiKey?: string;
 }
 
@@ -37,7 +38,7 @@ function loadPacketaScript(): Promise<void> {
     });
 }
 
-const PacketaWidget = ({ onPointSelected, apiKey }: PacketaWidgetProps) => {
+const PacketaWidget = ({ onPointSelected, apiKey, country }: PacketaWidgetProps) => {
     const packetaApiKey = apiKey || import.meta.env.VITE_PACKETA_API_KEY;
     const [loading, setLoading] = useState(false);
     const [scriptReady, setScriptReady] = useState(!!window.Packeta);
@@ -80,7 +81,7 @@ const PacketaWidget = ({ onPointSelected, apiKey }: PacketaWidgetProps) => {
                 }
             },
             {
-                country: "cz,sk",
+                country: country || "cz",
                 language: "cs",
                 appIdentity: "BoostUp-v1",
             }

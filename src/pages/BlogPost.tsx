@@ -18,6 +18,7 @@ interface Post {
   excerpt: string;
   slug: string;
   featured_image_url: string;
+  featured_image_position?: string;
   category_id: string;
   blog_categories: { name: string } | null;
   published_at: string;

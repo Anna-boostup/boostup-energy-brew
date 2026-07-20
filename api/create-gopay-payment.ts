@@ -63,10 +63,12 @@ export default async function handler(req: Request) {
         // --- BEZPEČNÝ PŘEPOČET CENY ---
         let finalTotal = total || 0;
         let secureItems = items;
+        let currencyCode = 'CZK';
         try {
             const secureData = await calculateSecureOrderTotal(orderNumber, items);
             finalTotal = secureData.finalTotal;
             secureItems = secureData.secureItems;
+            currencyCode = secureData.currencyCode;
         } catch (err: any) {
              console.error('[GoPay Secure Calc Error]', err);
              return new Response(JSON.stringify({ error: 'Failed to validate order pricing' }), {
@@ -116,7 +118,7 @@ export default async function handler(req: Request) {
                 allowed_payment_instruments: ['PAYMENT_CARD', 'BANK_ACCOUNT', 'APPLE_PAY', 'GPAY']
             },
             amount: Math.round(finalTotal * 100),
-            currency: 'CZK',
+            currency: currencyCode,
             order_number: orderNumber,
             order_description: `Objednavka ${orderNumber}`,
             items: [

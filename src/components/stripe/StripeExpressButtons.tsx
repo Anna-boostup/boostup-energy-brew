@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, Zap } from 'lucide-react';
 import { useContent } from '@/context/ContentContext';
+import { useShippingCountries } from '@/hooks/useShippingCountries';
+import { findCountry, getShippingCost, bottlesInCart, DEFAULT_SHIPPING_COUNTRIES } from '@/config/shipping';
 
 const StripeExpressButtons = () => {
   const stripe = useStripe();
@@ -24,9 +26,12 @@ const StripeExpressButtons = () => {
   const [canMakePayment, setCanMakePayment] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Logic: Free shipping if total >= 1500 or contains 21-pack
-  const isFreeShipping = cartTotal >= 1500 || cart.some(item => item.pack === 21);
-  const shippingCost = isFreeShipping ? 0 : 99;
+  // Sazba kurýra + práh dopravy zdarma se berou z admin konfigurace (země CZ; express je CZK-only)
+  const { countries } = useShippingCountries();
+  const czCountry = findCountry(countries, 'CZ') || findCountry(DEFAULT_SHIPPING_COUNTRIES, 'CZ')!;
+  const freeByRule = cart.some(item => item.pack === 21);
+  const totalBottles = bottlesInCart(cart);
+  const shippingCost = getShippingCost(czCountry, 'courier', totalBottles, cartTotal, freeByRule);
   const finalTotalAmount = cartTotal + shippingCost;
 
   useEffect(() => {
@@ -104,6 +109,8 @@ const StripeExpressButtons = () => {
             deliveryMethod: 'courier',
             paymentMethod: 'stripe_express',
             billingSameAsDelivery: true,
+            country: 'CZ',
+            currency: 'CZK',
           },
           items: cart.map(item => ({
             sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,

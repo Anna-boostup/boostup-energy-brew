@@ -1,0 +1,17 @@
+-- Doručovací země, měny a PÁSMOVÁ doprava (dle počtu lahví). JSON v app_settings, klíč shipping_countries.
+-- CZ + SK zapnuté, ostatní připravené a vypnuté. Editovatelné v adminu (/admin/shipping).
+
+INSERT INTO public.app_settings (key, value)
+VALUES (
+  'shipping_countries',
+  '[
+    {"code":"CZ","packetaCode":"cz","stripeCountry":"CZ","name":"Česká republika","nameEn":"Czech Republic","enabled":true,"currency":"CZK","currencySymbol":"Kč","stripeCurrency":"czk","rate":1,"rounding":1,"freeShippingThreshold":1500,"methods":{"personal":[{"maxBottles":null,"price":0}],"zasilkovna":[{"maxBottles":12,"price":79},{"maxBottles":36,"price":109},{"maxBottles":null,"price":139}],"courier":[{"maxBottles":6,"price":99},{"maxBottles":24,"price":139},{"maxBottles":null,"price":189}]}},
+    {"code":"SK","packetaCode":"sk","stripeCountry":"SK","name":"Slovensko","nameEn":"Slovakia","enabled":true,"currency":"EUR","currencySymbol":"€","stripeCurrency":"eur","rate":0.040,"rounding":0.10,"freeShippingThreshold":60,"methods":{"zasilkovna":[{"maxBottles":12,"price":3.90},{"maxBottles":36,"price":5.90},{"maxBottles":null,"price":7.90}],"courier":[{"maxBottles":6,"price":4.90},{"maxBottles":24,"price":6.90},{"maxBottles":null,"price":8.90}]}},
+    {"code":"PL","packetaCode":"pl","stripeCountry":"PL","name":"Polsko","nameEn":"Poland","enabled":false,"currency":"PLN","currencySymbol":"zł","stripeCurrency":"pln","rate":0.17,"rounding":1,"freeShippingThreshold":250,"methods":{"zasilkovna":[{"maxBottles":12,"price":19},{"maxBottles":36,"price":25},{"maxBottles":null,"price":32}],"courier":[{"maxBottles":6,"price":25},{"maxBottles":24,"price":32},{"maxBottles":null,"price":42}]}},
+    {"code":"HU","packetaCode":"hu","stripeCountry":"HU","name":"Maďarsko","nameEn":"Hungary","enabled":false,"currency":"HUF","currencySymbol":"Ft","stripeCurrency":"huf","rate":16,"rounding":10,"freeShippingThreshold":24000,"methods":{"zasilkovna":[{"maxBottles":12,"price":1500},{"maxBottles":36,"price":2200},{"maxBottles":null,"price":2900}],"courier":[{"maxBottles":6,"price":1900},{"maxBottles":24,"price":2600},{"maxBottles":null,"price":3500}]}},
+    {"code":"RO","packetaCode":"ro","stripeCountry":"RO","name":"Rumunsko","nameEn":"Romania","enabled":false,"currency":"RON","currencySymbol":"lei","stripeCurrency":"ron","rate":0.20,"rounding":1,"freeShippingThreshold":300,"methods":{"zasilkovna":[{"maxBottles":12,"price":22},{"maxBottles":36,"price":30},{"maxBottles":null,"price":40}],"courier":[{"maxBottles":6,"price":28},{"maxBottles":24,"price":38},{"maxBottles":null,"price":50}]}},
+    {"code":"AT","packetaCode":"at","stripeCountry":"AT","name":"Rakousko","nameEn":"Austria","enabled":false,"currency":"EUR","currencySymbol":"€","stripeCurrency":"eur","rate":0.040,"rounding":0.10,"freeShippingThreshold":60,"methods":{"zasilkovna":[{"maxBottles":12,"price":4.90},{"maxBottles":36,"price":6.90},{"maxBottles":null,"price":8.90}],"courier":[{"maxBottles":6,"price":6.90},{"maxBottles":24,"price":8.90},{"maxBottles":null,"price":11.90}]}},
+    {"code":"DE","packetaCode":"de","stripeCountry":"DE","name":"Německo","nameEn":"Germany","enabled":false,"currency":"EUR","currencySymbol":"€","stripeCurrency":"eur","rate":0.040,"rounding":0.10,"freeShippingThreshold":60,"methods":{"zasilkovna":[{"maxBottles":12,"price":4.90},{"maxBottles":36,"price":6.90},{"maxBottles":null,"price":8.90}],"courier":[{"maxBottles":6,"price":6.90},{"maxBottles":24,"price":8.90},{"maxBottles":null,"price":11.90}]}}
+  ]'
+)
+ON CONFLICT (key) DO NOTHING;

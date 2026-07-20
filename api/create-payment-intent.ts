@@ -45,9 +45,11 @@ export default async function handler(req: Request) {
 
         // --- BEZPEČNÝ PŘEPOČET CENY ---
         let finalTotal = total || 0;
+        let currency = 'czk';
         try {
             const secureData = await calculateSecureOrderTotal(orderNumber);
             finalTotal = secureData.finalTotal;
+            currency = secureData.currency;
         } catch (err: any) {
              console.error('[Stripe Secure Calc Error]', err);
              return new Response(JSON.stringify({ error: 'Failed to validate order pricing' }), {
@@ -62,7 +64,7 @@ export default async function handler(req: Request) {
         // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amount,
-            currency: 'czk',
+            currency: currency,
             receipt_email: customerEmail,
             metadata: {
                 orderId: orderNumber,

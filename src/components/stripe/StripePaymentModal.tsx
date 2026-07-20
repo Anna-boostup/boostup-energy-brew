@@ -98,10 +98,6 @@ const CheckoutForm = ({ amount, orderNumber, clientSecret }: { amount: number, o
           onReady={() => setIsStripeReady(true)}
           onChange={(event) => {
              console.log('[Stripe PaymentElement Change]', event);
-             if (event.error) {
-               console.error('[Stripe PaymentElement Error]', event.error);
-               setErrorMessage(`Chyba platebního modulu: ${event.error.message}`);
-             }
           }}
         />
         {!isStripeReady && !errorMessage && (

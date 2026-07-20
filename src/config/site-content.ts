@@ -200,7 +200,7 @@ export const SITE_CONTENT = {
         headline: "MÁTE DOTAZ?",
         description: "Zajímá vás něco ohledně našich produktů, partnerství nebo jen chcete pozdravit? Napište nám nebo zavolejte, rádi se s vámi spojíme.",
         info: {
-            phone: { label: "Telefon", value: "775 222 037" },
+            phone: { label: "Telefon", value: "+420 775 222 037" },
             email: { label: "Email", value: "info@drinkboostup.cz" },
             address: { label: "Adresa", value: { line1: "Chaloupkova 3002/1a, Královo Pole", line2: "612 00 Brno, Czech Republic" } }
         },
@@ -262,9 +262,20 @@ export const SITE_CONTENT = {
         }
     },
 
+    configurator: {
+        badge: "Konfigurátor balení",
+        headline: "VYTVOŘTE SI SVOU ENERGII",
+        description: "Vyberte si velikost balení, příchuť a způsob doručení. Vše čerstvě připravené pro špičkový výkon.",
+        outOfStock: "VYPRODÁNO",
+        cta: "PŘIDAT DO KOŠÍKU",
+        total: "Celkem"
+    },
     bankInfo: {
         accountName: "BoostUp Energy s.r.o.",
-        accountNumber: "123456789/0100",
+        accountNumber: "123456789",
+        bankCode: "0100",
+        bankName: "Komerční banka",
+        qrMessage: "BoostUp Energy",
         iban: "CZ12345678901234567890",
         bic: "KOMB CZ PP",
         currency: "Kč",
@@ -856,7 +867,9 @@ export const SITE_CONTENT = {
                 contact: "Kontakt",
                 flavors: "Příchutě",
                 footer: "Patička",
-                settings: "Nastavení"
+                settings: "Nastavení",
+                payment: "Platba",
+                configurator: "Konfigurátor"
             },
             sections: {
                 hero: {

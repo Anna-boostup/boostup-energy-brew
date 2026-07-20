@@ -1,3 +1,6 @@
+import React from "react";
+import { ShoppingBag, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useContent } from "@/context/ContentContext";
 
 interface AddToCartButtonProps {
