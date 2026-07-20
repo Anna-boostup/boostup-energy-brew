@@ -117,6 +117,7 @@ test.describe('Multi-Identity Checkout Scenarios', () => {
       await gopayButton.click();
 
       // 6. Submit
+      await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
       const submitButton = page.getByTestId('checkout-submit-btn');
       await expect(submitButton).toBeEnabled();
       

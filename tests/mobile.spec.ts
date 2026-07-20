@@ -89,6 +89,7 @@ test.describe('Mobile UI & Checkout Audit', () => {
         }
 
         // 6. Scroll check: Ensure the submit button is reachable and not clipped
+        await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
         const submitBtn = page.getByTestId('checkout-submit-btn');
         await submitBtn.scrollIntoViewIfNeeded();
         await expect(submitBtn).toBeVisible();

@@ -68,6 +68,7 @@ test.describe('Payment Gateway — End-to-End Flow', () => {
     await cardPayment.click();
 
     // 8. Submit the order
+    await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
     const submitBtn = page.getByTestId('checkout-submit-btn');
     await expect(submitBtn).toBeEnabled({ timeout: 10000 });
     await submitBtn.click();
@@ -127,6 +128,7 @@ test.describe('Payment Gateway — End-to-End Flow', () => {
     await bankPayment.click();
 
     // 7. Submit
+    await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
     const submitBtn = page.getByTestId('checkout-submit-btn');
     await expect(submitBtn).toBeEnabled({ timeout: 10000 });
     await submitBtn.click();
@@ -205,6 +207,7 @@ test.describe('Payment Gateway — Logged-in User', () => {
     await cardPayment.waitFor({ state: 'visible', timeout: 10000 });
     await cardPayment.click();
 
+    await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
     const submitBtn = page.getByTestId('checkout-submit-btn');
     await expect(submitBtn).toBeEnabled({ timeout: 10000 });
     await submitBtn.click();
