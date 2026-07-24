@@ -95,10 +95,10 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }, []);
 
     const fetchSystemSettings = async () => {
-        const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).single();
-        if (error) {
-            console.error("Error fetching system settings:", error);
-            // Setup defaults if not found
+        const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).maybeSingle();
+        if (error || !data) {
+            if (error) console.error("Error fetching system settings:", error);
+            // Setup defaults if not found / no row / RLS-filtered
             setSystemSettings({
                 active_ai_provider: 'openai',
                 openai_key: null,
