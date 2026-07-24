@@ -535,6 +535,7 @@ export const SITE_CONTENT = {
             content: "Obsah webu",
             pricing: "Ceny a Statistiky",
             promoCodes: "Slevové kódy",
+            insights: "Insights",
             profile: "Můj účet",
             help: "Nápověda"
         },

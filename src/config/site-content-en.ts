@@ -345,6 +345,7 @@ export const SITE_CONTENT_EN = {
             content: "Site Content",
             pricing: "Pricing & Stats",
             promoCodes: "Promo Codes",
+            insights: "Insights",
             profile: "My Account",
             help: "Help",
             quickTips: "Quick Tips",

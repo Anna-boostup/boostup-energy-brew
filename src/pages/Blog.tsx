@@ -65,7 +65,7 @@ const Blog = () => {
               <div className="bg-lime text-olive-dark px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase inline-block mb-6 shadow-lg shadow-lime/20">
                 MAGAZÍN
               </div>
-              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter text-olive-dark mb-6 leading-none">
+              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter text-olive-dark mb-6 leading-tight">
                 BOOSTUP <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-olive-dark/80 to-olive-dark/40">DIGEST</span>
               </h1>
               <p className="text-xl text-olive-dark/60 leading-relaxed font-medium">
