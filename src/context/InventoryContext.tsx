@@ -96,7 +96,12 @@ export interface RecipeRule {
     id: string;
     product_sku: string;
     material_id: string;
+    /** Zadané množství suroviny. Význam určuje input_basis: na 1 lahvičku, nebo na celou várku. */
     quantity_required: number;
+    /** 'unit' = quantity_required je na 1 lahvičku; 'batch' = na várku o batch_bottles lahvičkách. */
+    input_basis?: 'unit' | 'batch';
+    /** Počet lahviček ve várce (jen když input_basis = 'batch'). */
+    batch_bottles?: number | null;
     created_at?: string;
     material_name?: string;
     material_unit?: string;
@@ -561,7 +566,11 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         console.log(`[Recipes] Deducting materials for production of ${amount}x ${sku}`);
 
         for (const rule of matchingRules) {
-            const movementAmount = -(amount * Number(rule.quantity_required));
+            // Přepočet na spotřebu na 1 lahvičku (u receptury zadané "na várku" vydělíme počtem lahviček ve várce).
+            const perBottle = rule.input_basis === 'batch' && rule.batch_bottles && rule.batch_bottles > 0
+                ? Number(rule.quantity_required) / rule.batch_bottles
+                : Number(rule.quantity_required);
+            const movementAmount = -(amount * perBottle);
             const note = `Odpis surovin pro výrobu ${amount}x ${sku}`;
 
             console.log(`[Recipes] Updating manufacture inventory: material_id=${rule.material_id}, amount=${movementAmount}, type=use, note="${note}"`);
