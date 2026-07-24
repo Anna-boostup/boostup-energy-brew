@@ -51,6 +51,14 @@ const AdminLayoutInner = () => {
     const [isHovered, setIsHovered] = useState(false);
     const isExpanded = isPinned || isHovered;
 
+    // Přepnutí připnutí; při přepnutí na auto-hide sbalit menu OKAMŽITĚ
+    // (jinak kurzor visící nad menu drží isHovered=true a menu se nesbalí).
+    const togglePinned = () => {
+        const next = !isPinned;
+        setIsPinned(next);
+        if (!next) setIsHovered(false);
+    };
+
     const [unreadCount, setUnreadCount] = useState(0);
     const [stats, setStats] = useState({ visits: 0, orders: 0, conversion: 0 });
 
@@ -344,7 +352,7 @@ const AdminLayoutInner = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setIsPinned(!isPinned)}
+                            onClick={togglePinned}
                             className="absolute top-6 right-4 text-white/20 hover:text-lime hover:bg-white/5 rounded-full h-8 w-8 transition-all duration-500"
                         >
                             {isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
@@ -427,7 +435,7 @@ const AdminLayoutInner = () => {
                         <div className="flex items-center justify-between px-4">
                             <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20">{content?.admin?.auth?.autoHideSidebar || "Auto-hide Sidebar"}</span>
                             <div 
-                                onClick={() => setIsPinned(!isPinned)}
+                                onClick={togglePinned}
                                 className={`w-8 h-4 rounded-full relative cursor-pointer transition-colors duration-300 ${!isPinned ? 'bg-lime/20' : 'bg-white/5'}`}
                             >
                                 <div className={`absolute top-0.5 h-3 w-3 rounded-full transition-all duration-300 ${!isPinned ? 'right-0.5 bg-lime' : 'left-0.5 bg-white/20'}`} />
