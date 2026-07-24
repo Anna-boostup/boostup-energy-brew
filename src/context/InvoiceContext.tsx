@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useManufacture } from "@/context/ManufactureContext";
+import { useAuth } from "@/context/AuthContext";
 
 // Types
 export interface Supplier {
@@ -78,6 +79,7 @@ const InvoiceContext = createContext<InvoiceContextType | undefined>(undefined);
 
 export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { toast } = useToast();
+    const { user, profile } = useAuth();
     const { fetchMaterials } = useManufacture();
     
     const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -88,11 +90,13 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     // Load Data
     useEffect(() => {
+        // Načítat jen pro adminy – na veřejném webu nemá smysl (RLS to stejně odfiltruje).
+        if (!user || profile?.role !== 'admin') return;
         fetchSystemSettings();
         fetchSuppliers();
         fetchAliases();
         fetchInvoices();
-    }, []);
+    }, [user?.id, profile?.role]);
 
     const fetchSystemSettings = async () => {
         const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).maybeSingle();
