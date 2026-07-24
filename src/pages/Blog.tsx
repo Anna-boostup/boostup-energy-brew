@@ -80,7 +80,11 @@ const Blog = () => {
               <p className="text-xs font-black uppercase tracking-[0.3em] text-olive-dark/30">Načítám články...</p>
             </div>
           ) : posts.length > 0 ? (
-            <div className="relative z-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className={`relative z-0 grid gap-10 ${
+                posts.length === 1 ? 'grid-cols-1 max-w-md' :
+                posts.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl' :
+                'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}>
               {posts.map((post, index) => (
                 <motion.article 
                   key={post.id}
