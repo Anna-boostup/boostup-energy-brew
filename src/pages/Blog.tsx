@@ -56,7 +56,7 @@ const Blog = () => {
       
       <main className="flex-1 pt-32 pb-20">
         <div className="container mx-auto px-4">
-          <header className="relative z-10 max-w-3xl mb-20">
+          <div className="max-w-3xl mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -65,14 +65,14 @@ const Blog = () => {
               <div className="bg-lime text-olive-dark px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase inline-block mb-6 shadow-lg shadow-lime/20">
                 MAGAZÍN
               </div>
-              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter text-olive-dark mb-6 leading-tight pb-2">
+              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter text-olive-dark mb-6 leading-tight">
                 BOOSTUP <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-olive-dark/80 to-olive-dark/40">DIGEST</span>
               </h1>
               <p className="text-xl text-olive-dark/60 leading-relaxed font-medium">
                 Vše o energii, soustředění a o tom, jak z každého dne vytěžit maximum.
               </p>
             </motion.div>
-          </header>
+          </div>
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -80,7 +80,7 @@ const Blog = () => {
               <p className="text-xs font-black uppercase tracking-[0.3em] text-olive-dark/30">Načítám články...</p>
             </div>
           ) : posts.length > 0 ? (
-            <div className={`relative z-0 grid gap-10 ${
+            <div className={`grid gap-10 ${
                 posts.length === 1 ? 'grid-cols-1 max-w-md' :
                 posts.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl' :
                 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
