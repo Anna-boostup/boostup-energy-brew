@@ -23,6 +23,8 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
     const [productSku, setProductSku] = useState<string>("");
     const [materialId, setMaterialId] = useState<string>("");
     const [quantityRequired, setQuantityRequired] = useState<string>("0.1");
+    const [basis, setBasis] = useState<'unit' | 'batch'>('unit');
+    const [batchBottles, setBatchBottles] = useState<string>("1000");
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -30,6 +32,8 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
             setProductSku(rule.product_sku);
             setMaterialId(rule.material_id);
             setQuantityRequired(rule.quantity_required.toString());
+            setBasis(rule.input_basis === 'batch' ? 'batch' : 'unit');
+            setBatchBottles(rule.batch_bottles ? rule.batch_bottles.toString() : "1000");
         } else {
             setProductSku(FLAVORS[0]?.id || "lemon");
             if (materials.length > 0) {
@@ -38,6 +42,8 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
                 setMaterialId("");
             }
             setQuantityRequired("0.1");
+            setBasis('unit');
+            setBatchBottles("1000");
         }
     }, [rule, isOpen, materials]);
 
@@ -70,12 +76,27 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
             return;
         }
 
+        let batchVal: number | null = null;
+        if (basis === 'batch') {
+            batchVal = parseInt(batchBottles);
+            if (isNaN(batchVal) || batchVal <= 0) {
+                toast({
+                    title: "Chyba",
+                    description: "Zadejte počet lahviček ve várce (větší než 0).",
+                    variant: "destructive",
+                });
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             const data = {
                 product_sku: productSku,
                 material_id: materialId,
-                quantity_required: qty
+                quantity_required: qty,
+                input_basis: basis,
+                batch_bottles: batchVal,
             };
 
             let success = false;
@@ -148,7 +169,38 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="quantity">Množství potřebné na 1 lahvičku</Label>
+                        <Label htmlFor="basis">Zadat množství</Label>
+                        <Select value={basis} onValueChange={(v) => setBasis(v as 'unit' | 'batch')}>
+                            <SelectTrigger id="basis">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border shadow-md rounded-md">
+                                <SelectItem value="unit">Na 1 lahvičku</SelectItem>
+                                <SelectItem value="batch">Na várku (více lahviček)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {basis === 'batch' && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="batch-bottles">Počet lahviček ve várce</Label>
+                            <Input
+                                id="batch-bottles"
+                                type="number"
+                                min="1"
+                                step="1"
+                                value={batchBottles}
+                                onChange={(e) => setBatchBottles(e.target.value)}
+                                className="font-mono text-lg"
+                                placeholder="např. 1000"
+                            />
+                        </div>
+                    )}
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="quantity">
+                            {basis === 'batch' ? 'Množství na celou várku' : 'Množství na 1 lahvičku'}
+                        </Label>
                         <div className="flex items-center gap-2">
                             <Input
                                 id="quantity"
@@ -163,9 +215,23 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
                                 {materials.find(m => m.id === materialId)?.unit || "?"}
                             </span>
                         </div>
-                        <p className="text-xs text-olive-dark/60 mt-1">
-                            Zadejte přesné množství potřebné k výrobě 1 ks hotového produktu.
-                        </p>
+                        {basis === 'batch' ? (
+                            <p className="text-xs text-olive-dark/60 mt-1">
+                                Systém automaticky přepočítá spotřebu na 1 lahvičku
+                                {(() => {
+                                    const q = parseFloat(quantityRequired);
+                                    const b = parseInt(batchBottles);
+                                    const unit = materials.find(m => m.id === materialId)?.unit || "";
+                                    return (!isNaN(q) && !isNaN(b) && b > 0)
+                                        ? ` (= ${(q / b).toLocaleString('cs-CZ', { maximumFractionDigits: 6 })} ${unit}/ks).`
+                                        : '.';
+                                })()}
+                            </p>
+                        ) : (
+                            <p className="text-xs text-olive-dark/60 mt-1">
+                                Zadejte přesné množství potřebné k výrobě 1 ks hotového produktu.
+                            </p>
+                        )}
                     </div>
                 </div>
                 <DialogFooter>

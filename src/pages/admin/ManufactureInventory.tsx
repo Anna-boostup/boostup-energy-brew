@@ -13,6 +13,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useContent } from "@/context/ContentContext";
 import { FLAVORS } from "@/config/product-data";
 
+// Zobrazení základu receptury (na lahvičku / na várku) + přepočet na 1 ks
+const recipeBasisLabel = (rule: any) =>
+    rule?.input_basis === 'batch' && rule?.batch_bottles
+        ? `na várku (${rule.batch_bottles} ks)`
+        : 'na 1 lahvičku';
+const recipePerBottle = (rule: any) =>
+    rule?.input_basis === 'batch' && rule?.batch_bottles > 0
+        ? Number(rule.quantity_required) / rule.batch_bottles
+        : Number(rule.quantity_required);
+
 const ManufactureInventory = () => {
     const { content } = useContent();
     const { materials, loading } = useManufacture();
@@ -522,8 +532,13 @@ const ManufactureInventory = () => {
                                                                 {rule.quantity_required} <span className="text-sm font-black uppercase text-olive-dark/50">{rule.material_unit}</span>
                                                             </div>
                                                             <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-0.5 block">
-                                                                Na jednu lahvičku
+                                                                {recipeBasisLabel(rule)}
                                                             </span>
+                                                            {rule.input_basis === 'batch' && (
+                                                                <span className="text-[8px] font-bold text-olive-dark/40 tracking-widest block">
+                                                                    = {recipePerBottle(rule).toLocaleString('cs-CZ', { maximumFractionDigits: 6 })} {rule.material_unit}/ks
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </td>
                                                     <td className="px-10 py-8 text-right">
@@ -581,8 +596,13 @@ const ManufactureInventory = () => {
                                                         {rule.quantity_required} <span className="text-[11px] uppercase opacity-40">{rule.material_unit}</span>
                                                     </p>
                                                     <span className="text-[8px] font-black text-olive-dark/50 uppercase tracking-widest mt-1.5 block">
-                                                        Na 1 ks
+                                                        {recipeBasisLabel(rule)}
                                                     </span>
+                                                    {rule.input_basis === 'batch' && (
+                                                        <span className="text-[8px] font-bold text-olive-dark/40 tracking-widest block">
+                                                            = {recipePerBottle(rule).toLocaleString('cs-CZ', { maximumFractionDigits: 6 })} {rule.material_unit}/ks
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
 
