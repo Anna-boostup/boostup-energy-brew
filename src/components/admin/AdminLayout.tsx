@@ -59,6 +59,24 @@ const AdminLayoutInner = () => {
         if (!next) setIsHovered(false);
     };
 
+    // Sbalování jednotlivých sekcí v bočním menu (stav se pamatuje v prohlížeči)
+    const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(() => {
+        try {
+            const saved = localStorage.getItem("admin_sidebar_collapsed_groups");
+            return saved ? new Set<string>(JSON.parse(saved)) : new Set<string>();
+        } catch { return new Set<string>(); }
+    });
+    useEffect(() => {
+        try { localStorage.setItem("admin_sidebar_collapsed_groups", JSON.stringify([...collapsedGroups])); } catch { /* ignore */ }
+    }, [collapsedGroups]);
+    const toggleGroup = (title: string) => {
+        setCollapsedGroups(prev => {
+            const next = new Set(prev);
+            if (next.has(title)) next.delete(title); else next.add(title);
+            return next;
+        });
+    };
+
     const [unreadCount, setUnreadCount] = useState(0);
     const [stats, setStats] = useState({ visits: 0, orders: 0, conversion: 0 });
 
@@ -369,17 +387,22 @@ const AdminLayoutInner = () => {
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
                     {navGroups.map((group, gIdx) => (
-                        <div key={group.title} className={`${gIdx > 0 ? "pt-8" : "pt-4"} pb-2 relative`}>
+                        <div key={group.title} className={`${gIdx > 0 ? "pt-5" : "pt-3"} pb-2 relative`}>
                             {isExpanded ? (
-                                <div className="flex items-center gap-2 px-10 mb-4">
-                                    <group.icon className="w-3.5 h-3.5 text-olive-light" />
-                                    <p className="text-[9px] font-black tracking-[0.4em] uppercase text-olive-light/60">{group.title}</p>
-                                </div>
+                                <button type="button" onClick={() => toggleGroup(group.title)}
+                                    className="flex items-center justify-between gap-2 px-10 mb-3 w-full hover:opacity-80 transition-opacity">
+                                    <span className="flex items-center gap-2">
+                                        <group.icon className="w-3.5 h-3.5 text-olive-light" />
+                                        <span className="text-[9px] font-black tracking-[0.4em] uppercase text-olive-light/60">{group.title}</span>
+                                    </span>
+                                    <ChevronRight className={`w-3.5 h-3.5 text-olive-light/50 transition-transform duration-300 ${collapsedGroups.has(group.title) ? '' : 'rotate-90'}`} />
+                                </button>
                             ) : (
                                 <div className="flex justify-center mb-4" title={group.title}>
                                     <group.icon className="w-4 h-4 text-olive-light" />
                                 </div>
                             )}
+                            {(!isExpanded || !collapsedGroups.has(group.title)) && (
                             <ul className="space-y-1 w-full" role="list">
                                 {group.items.map((item) => {
                                     const Icon = item.icon;
@@ -425,6 +448,7 @@ const AdminLayoutInner = () => {
                                     );
                                 })}
                             </ul>
+                            )}
                         </div>
                     ))}
                 </div>
