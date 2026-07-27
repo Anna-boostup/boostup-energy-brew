@@ -197,6 +197,7 @@ const AdminLayout = () => {
             title: "SYSTÉM",
             icon: Settings,
             items: [
+                { icon: Megaphone, label: "Banner", path: "/admin/banner" },
                 { icon: TrendingUp, label: content?.admin?.navigation?.pricing, path: "/admin/pricing" },
                 { icon: Activity, label: content?.admin?.navigation?.insights || "Insights", path: "/admin/insights" },
                 { icon: User, label: content?.admin?.navigation?.profile, path: "/admin/profile" },

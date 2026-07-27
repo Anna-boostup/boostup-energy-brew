@@ -47,6 +47,7 @@ const AdminHelp = lazy(() => import("./pages/admin/AdminHelp"));
 const AdminInsights = lazy(() => import("./pages/admin/AdminInsights"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
+const BannerSettings = lazy(() => import("./pages/admin/BannerSettings"));
 
 // Legal pages
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -99,6 +100,7 @@ import { ContentProvider } from "./context/ContentContext";
 import { CookieProvider } from "./context/CookieContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import { CookieBanner } from "./components/CookieBanner";
+import { AnnouncementBanner } from "./components/AnnouncementBanner";
 
 import { HelmetProvider } from 'react-helmet-async';
 import ScrollToTop from './components/ScrollToTop';
@@ -146,6 +148,7 @@ const App = () => (
                       <AnalyticsTracker />
                       <MetaPixelTracker />
                       <ScrollToTop />
+                      <AnnouncementBanner />
                       <CookieBanner />
                       <Suspense fallback={
                         <div className="h-screen w-full flex items-center justify-center bg-background">
@@ -201,6 +204,7 @@ const App = () => (
                             <Route path="inventory" element={<Inventory />} />
                             <Route path="manufacture" element={<ManufactureInventory />} />
                             <Route path="content" element={<ContentManagement />} />
+                            <Route path="banner" element={<BannerSettings />} />
                             <Route path="pricing" element={<PricingStatistics />} />
                             <Route path="promo-codes" element={<PromoCodes />} />
                             <Route path="insights" element={<AdminInsights />} />
