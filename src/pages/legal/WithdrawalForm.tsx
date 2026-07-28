@@ -54,6 +54,15 @@ const WithdrawalForm = () => {
 
             if (!response.ok) throw new Error('Failed to send request');
 
+            // Pokud je objednávka předplatné, zastavíme i opakované platby ve Stripe.
+            try {
+                await fetch('/api/subscription-cancel-public', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: formData.orderId, email: formData.customerEmail, action: 'cancel', immediate: true }),
+                });
+            } catch { /* předplatné nemusí existovat — ignorujeme */ }
+
             toast({
                 title: "Formulář odeslán",
                 description: "Vaše žádost o odstoupení od smlouvy byla úspěšně odeslána. Brzy se vám ozveme s dalším postupem.",
