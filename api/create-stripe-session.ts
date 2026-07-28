@@ -115,11 +115,12 @@ export default async function handler(req: Request) {
             };
         });
 
-        // Add shipping for one-time payments if needed
-        // Note: For pure subscriptions, Stripe handles shipping differently if it's recurring.
-        // For simplicity, we add it as a one-time line item in the first invoice.
+        // Doprava. U předplatného ji účtujeme OPAKOVANĚ (stejný interval jako
+        // předplatné), aby se počítala ke každé platbě — ne jen k první.
         const itemsTotal = secureItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
         if (finalTotal > itemsTotal) {
+            const subItem = secureItems.find((i: any) => i.subscriptionInterval);
+            const subIntervalCount = subItem?.subscriptionInterval === 'monthly' ? 1 : 2;
             lineItems.push({
                 price_data: {
                     currency: sessionCurrency,
@@ -127,6 +128,10 @@ export default async function handler(req: Request) {
                         name: 'Doprava',
                     },
                     unit_amount: Math.round((finalTotal - itemsTotal) * 100),
+                    recurring: isSubscription ? {
+                        interval: 'month',
+                        interval_count: subIntervalCount,
+                    } : undefined,
                 },
                 quantity: 1,
             });
