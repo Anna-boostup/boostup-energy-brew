@@ -38,6 +38,7 @@ const Invoices = lazy(() => import("./pages/admin/Invoices"));
 const Mailboxes = lazy(() => import("./pages/admin/Mailboxes"));
 const AdminProfile = lazy(() => import("./pages/admin/AdminProfile"));
 const Orders = lazy(() => import("./pages/admin/Orders"));
+const AdminSubscriptions = lazy(() => import("./pages/admin/AdminSubscriptions"));
 const ContentManagement = lazy(() => import("./pages/admin/ContentManagement"));
 const PricingStatistics = lazy(() => import("./pages/admin/PricingStatistics"));
 const PromoCodes = lazy(() => import("./pages/admin/PromoCodes"));
@@ -208,6 +209,7 @@ const App = () => (
                             <Route path="/admin" element={<RoleGuard allowedType="admin"><AdminLayout /></RoleGuard>}>
                               <Route index element={<AdminDashboard />} />
                               <Route path="orders" element={<Orders />} />
+                              <Route path="subscriptions" element={<AdminSubscriptions />} />
                               <Route path="inventory" element={<Inventory />} />
                               <Route path="manufacture" element={<ManufactureInventory />} />
                               <Route path="invoices" element={<Invoices />} />

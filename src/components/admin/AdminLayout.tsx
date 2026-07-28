@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { Outlet, Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote, Inbox, Truck } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote, Inbox, Truck, RefreshCw } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useManufacture } from "@/context/ManufactureContext";
@@ -191,6 +191,7 @@ const AdminLayoutInner = () => {
             items: [
                 { icon: LayoutDashboard, label: content?.admin?.navigation?.dashboard, path: "/admin" },
                 { icon: ShoppingCart, label: content?.admin?.navigation?.orders, path: "/admin/orders" },
+                { icon: RefreshCw, label: "Předplatné", path: "/admin/subscriptions" },
                 { icon: Mail, label: content?.admin?.navigation?.messages, path: "/admin/messages" },
             ]
         },
