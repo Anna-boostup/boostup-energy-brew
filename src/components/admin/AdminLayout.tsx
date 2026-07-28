@@ -348,7 +348,7 @@ const AdminLayoutInner = () => {
                         : 'w-20 left-4 translate-x-0'
                 }`}
             >
-                <div className={`pt-10 pb-6 shrink-0 relative flex flex-col items-center justify-center`}>
+                <div className={`pt-6 pb-4 shrink-0 relative flex flex-col items-center justify-center`}>
                     <Link to="/" className="flex items-center group">
                         <span className={`font-display font-black tracking-tighter group-hover:scale-105 transition-all duration-500 ${isExpanded ? 'text-3xl' : 'text-4xl text-white text-center'}`}>
                             {isExpanded ? (
@@ -378,7 +378,7 @@ const AdminLayoutInner = () => {
                     )}
                 </div>
 
-                <div className={`pt-4 pb-4 flex justify-center w-full px-4`}>
+                <div className={`pt-2 pb-3 shrink-0 flex justify-center w-full px-4`}>
                     <Link to="/" className={`flex items-center gap-4 rounded-2xl transition-all duration-300 bg-white/5 hover:bg-lime hover:text-olive-dark group ${!isExpanded ? 'justify-center w-12 h-12 p-0' : 'w-full px-6 py-4'}`}>
                         <Home className="w-5 h-5 shrink-0" />
                         {isExpanded && <span className="text-[10px] font-black uppercase tracking-[0.2em]">{content?.admin?.auth?.backToHome || "Vstoupit na web"}</span>}
@@ -453,7 +453,7 @@ const AdminLayoutInner = () => {
                     ))}
                 </div>
 
-                <div className={`border-t border-white/5 space-y-4 ${isExpanded ? 'p-8' : 'p-4 flex flex-col items-center'}`}>
+                <div className={`border-t border-white/5 shrink-0 space-y-3 ${isExpanded ? 'p-6' : 'p-4 flex flex-col items-center'}`}>
                     {/* Pin Logic in text for better UX */}
                     {isExpanded && (
                         <div className="flex items-center justify-between px-4">
@@ -469,7 +469,7 @@ const AdminLayoutInner = () => {
 
                     <Link 
                         to="/admin/profile" 
-                        className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-5 py-5 gap-4 rounded-[2.5rem] bg-olive-dark/10 border-white/5 w-full' : 'p-0 w-12 h-12 justify-center rounded-2xl'}`}
+                        className={`flex items-center transition-all duration-300 border border-transparent hover:bg-olive-dark/20 ${location.pathname === '/admin/profile' ? 'bg-olive-dark/20 border-white/10 ring-1 ring-lime/20' : ''} ${isExpanded ? 'px-4 py-3.5 gap-4 rounded-3xl bg-olive-dark/10 border-white/5 w-full' : 'p-0 w-12 h-12 justify-center rounded-2xl'}`}
                     >
                         <div className={`rounded-2xl bg-lime overflow-hidden flex items-center justify-center text-olive-dark font-black shadow-xl shadow-lime/20 shrink-0 w-12 h-12 ${isExpanded ? 'min-w-[3rem] text-sm' : 'text-xl'}`}>
                             {profile?.address?.avatar_url ? (
@@ -499,9 +499,12 @@ const AdminLayoutInner = () => {
                     </Button>
                     
                     {isExpanded && (
-                        <div className="pt-4 pb-2 w-full text-center border-t border-white/5 mt-4">
-                            <span className="text-white/20 text-[9px] font-mono tracking-[0.2em] uppercase">
-                                BoostUp v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'}
+                        <div className="pt-3 mt-3 w-full text-center border-t border-white/5 leading-tight">
+                            <span className="block text-white/55 text-[10px] font-mono tracking-[0.15em] uppercase">
+                                BoostUp v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'} · {typeof __COMMIT_SHA__ !== 'undefined' ? __COMMIT_SHA__ : 'local'}
+                            </span>
+                            <span className="block text-white/30 text-[9px] font-mono tracking-wide mt-1">
+                                build {typeof __BUILD_TIME__ !== 'undefined' ? __BUILD_TIME__.slice(0, 16).replace('T', ' ') : '—'}
                             </span>
                         </div>
                     )}
