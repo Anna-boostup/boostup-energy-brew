@@ -385,7 +385,7 @@ const AdminLayoutInner = () => {
                     </Link>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
+                <div className="flex-1 min-h-[220px] overflow-y-auto custom-scrollbar p-0">
                     {navGroups.map((group, gIdx) => (
                         <div key={group.title} className={`${gIdx > 0 ? "pt-5" : "pt-3"} pb-2 relative`}>
                             {isExpanded ? (
