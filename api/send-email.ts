@@ -390,6 +390,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 <p style="margin:0;font-size:14px;color:${COLORS.secondary}">Hned jak zásilku předáme dopravci, pošleme ti e-mail se sledovacím číslem.</p>
             `;
 
+            try {
+                const { data: ordSub } = await supabaseAdmin.from('orders').select('is_subscription_order').eq('id', orderNumber).maybeSingle();
+                const isSubOrder = !!(ordSub as any)?.is_subscription_order;
+                contentHtml += `<div style="margin-top:28px;padding-top:16px;border-top:1px solid #f3f4f6;font-size:12px;color:${COLORS.secondary};line-height:1.6"><p style="margin:0 0 6px 0">Do 14 dnů máš právo <a href="${BASE_URL}/odstoupeni-od-smlouvy?orderId=${encodeURIComponent(orderNumber)}&email=${encodeURIComponent(to)}" style="color:${COLORS.primary};font-weight:600">odstoupit od smlouvy</a>.</p>${isSubOrder ? `<p style="margin:0">Předplatné můžeš kdykoli <a href="${BASE_URL}/zruseni-predplatneho" style="color:${COLORS.primary};font-weight:600">zrušit zde</a>.</p>` : ''}</div>`;
+            } catch (e) { /* odkazy jsou best-effort */ }
+
             // Store order confirmation in the messages table
             try {
                 const messageBody = `Nová objednávka ${orderNumber}.\nZákazník: ${customerName} (${to})\nCelkem: ${total} Kč\nPoložky:\n${items.map((i: any) => `- ${i.name} x${i.quantity}`).join('\n')}`;
@@ -423,6 +429,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     <a href="${trackingUrl}" style="background:${COLORS.primary};color:white;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;display:inline-block;font-size:16px">Sledovat zásilku</a>
                 </div>
             `;
+
+            try {
+                const { data: ordSubShip } = await supabaseAdmin.from('orders').select('is_subscription_order').eq('id', orderNumber).maybeSingle();
+                const isSubShip = !!(ordSubShip as any)?.is_subscription_order;
+                contentHtml += `<div style="margin-top:28px;padding-top:16px;border-top:1px solid #f3f4f6;font-size:12px;color:${COLORS.secondary};line-height:1.6"><p style="margin:0 0 6px 0">Do 14 dnů od převzetí máš právo <a href="${BASE_URL}/odstoupeni-od-smlouvy?orderId=${encodeURIComponent(orderNumber)}&email=${encodeURIComponent(to)}" style="color:${COLORS.primary};font-weight:600">odstoupit od smlouvy</a>.</p>${isSubShip ? `<p style="margin:0">Předplatné můžeš kdykoli <a href="${BASE_URL}/zruseni-predplatneho" style="color:${COLORS.primary};font-weight:600">zrušit zde</a>.</p>` : ''}</div>`;
+            } catch (e) { /* odkazy jsou best-effort */ }
             break;
         }
 
