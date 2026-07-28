@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
   },
   define: {
     '__APP_VERSION__': JSON.stringify(pkg.version),
-    '__COMMIT_SHA__': JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev-' + new Date().getTime().toString().slice(-6)),
+    '__COMMIT_SHA__': JSON.stringify((process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || '').slice(0, 7) || 'local'),
     '__BUILD_TIME__': JSON.stringify(new Date().toISOString()),
   },
   plugins: [
