@@ -8,6 +8,7 @@ import {
     bannerText,
     bannerLinkLabel,
     bannerDismissKey,
+    isBannerActive,
 } from "@/config/banner";
 
 const TYPE_ICON: Record<BannerType, React.ComponentType<{ className?: string }>> = {
@@ -23,12 +24,20 @@ export function AnnouncementBanner() {
     const { language } = useLanguage();
     const { banner, loading } = useAnnouncementBanner();
     const [dismissed, setDismissed] = useState(false);
+    const [now, setNow] = useState(() => new Date());
 
     const dismissKey = bannerDismissKey(banner);
 
+    // Při zapnutém plánu tikáme čas, ať se banner sám objeví/zmizí bez reloadu.
+    useEffect(() => {
+        if (!banner.scheduleEnabled) return;
+        const id = setInterval(() => setNow(new Date()), 30000);
+        return () => clearInterval(id);
+    }, [banner.scheduleEnabled]);
+
     // Zjisti, zda uživatel tenhle (konkrétní) banner už zavřel.
     useEffect(() => {
-        if (!banner.enabled || !banner.dismissible) {
+        if (!banner.dismissible) {
             setDismissed(false);
             return;
         }
@@ -37,12 +46,12 @@ export function AnnouncementBanner() {
         } catch {
             setDismissed(false);
         }
-    }, [dismissKey, banner.enabled, banner.dismissible]);
-
-    if (loading || !banner.enabled || dismissed) return null;
+    }, [dismissKey, banner.dismissible]);
 
     const text = bannerText(banner, language);
-    if (!text) return null;
+    const show = !loading && !dismissed && isBannerActive(banner, now) && !!text;
+
+    if (!show) return null;
 
     const style = BANNER_STYLES[banner.type] || BANNER_STYLES.info;
     const Icon = TYPE_ICON[banner.type] || Info;
@@ -62,7 +71,7 @@ export function AnnouncementBanner() {
     return (
         <div
             role="status"
-            className={`w-full border-b ${style.container}`}
+            className={`fixed top-[72px] left-0 right-0 z-[90] border-b shadow-md ${style.container}`}
         >
             <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3 text-sm">
                 <Icon className="w-4 h-4 shrink-0" />
