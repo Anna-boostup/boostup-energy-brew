@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { X, Info, Wrench, AlertTriangle, Tag } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAnnouncementBanner } from "@/hooks/useAnnouncementBanner";
+import { useLocation } from "react-router-dom";
 import {
     BANNER_STYLES,
     BannerType,
@@ -22,6 +23,7 @@ const isExternal = (url: string) => /^https?:\/\//i.test(url);
 export function AnnouncementBanner() {
     const { language } = useLanguage();
     const { banner, loading } = useAnnouncementBanner();
+    const location = useLocation();
     const [dismissed, setDismissed] = useState(false);
 
     const dismissKey = bannerDismissKey(banner);
@@ -39,7 +41,8 @@ export function AnnouncementBanner() {
         }
     }, [dismissKey, banner.enabled, banner.dismissible]);
 
-    if (loading || !banner.enabled || dismissed) return null;
+    // Jen na úvodní (hero) stránce – ne v adminu ani na dalších stránkách.
+    if (loading || !banner.enabled || dismissed || location.pathname !== '/') return null;
 
     const text = bannerText(banner, language);
     if (!text) return null;
@@ -60,34 +63,37 @@ export function AnnouncementBanner() {
     };
 
     return (
-        <div
-            role="status"
-            className={`fixed top-[72px] left-0 right-0 z-[90] border-b shadow-md ${style.container}`}
-        >
-            <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3 text-sm">
-                <Icon className="w-4 h-4 shrink-0" />
-                <div className="flex-1 min-w-0 text-center sm:text-left">
-                    <span>{text}</span>
-                    {hasLink && (
-                        <a
-                            href={banner.linkUrl}
-                            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                            className={`ml-2 font-semibold ${style.link}`}
+        // Plovoucí (nemodální) dialogová karta nad hero sekcí – web zůstává ovladatelný.
+        <div className="fixed top-[88px] left-1/2 -translate-x-1/2 z-[90] w-[calc(100%-2rem)] max-w-md animate-in fade-in slide-in-from-top-2 duration-300">
+            <div
+                role="status"
+                className={`rounded-2xl border shadow-2xl ${style.container}`}
+            >
+                <div className="px-5 py-4 flex items-start gap-3 text-sm leading-relaxed">
+                    <Icon className="w-5 h-5 shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                        <span>{text}</span>
+                        {hasLink && (
+                            <a
+                                href={banner.linkUrl}
+                                {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                                className={`ml-1 font-semibold ${style.link}`}
+                            >
+                                {linkLabel}
+                            </a>
+                        )}
+                    </div>
+                    {banner.dismissible && (
+                        <button
+                            type="button"
+                            onClick={handleDismiss}
+                            aria-label={language === 'en' ? 'Dismiss' : 'Zavřít'}
+                            className="shrink-0 -mr-1.5 -mt-1.5 p-1.5 rounded-lg hover:bg-black/10 transition-colors"
                         >
-                            {linkLabel}
-                        </a>
+                            <X className="w-4 h-4" />
+                        </button>
                     )}
                 </div>
-                {banner.dismissible && (
-                    <button
-                        type="button"
-                        onClick={handleDismiss}
-                        aria-label={language === 'en' ? 'Dismiss' : 'Zavřít'}
-                        className="shrink-0 p-1 rounded hover:bg-black/10 transition-colors"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
-                )}
             </div>
         </div>
     );
