@@ -11,7 +11,7 @@ const DEFAULT_COUNTRIES: any[] = [
 ];
 const defaultCountry = (code: string) => DEFAULT_COUNTRIES.find(x => x.code === code) || DEFAULT_COUNTRIES[0];
 
-function convertToCurrency(czk: number, cfg: any): number {
+export function convertToCurrency(czk: number, cfg: any): number {
     const step = cfg.rounding > 0 ? cfg.rounding : 1;
     const rounded = Math.round((czk * cfg.rate) / step) * step;
     return Math.round(rounded * 100) / 100;
@@ -26,7 +26,7 @@ function tierPrice(tiers: any[], bottles: number): number {
     return sorted[sorted.length - 1].price;
 }
 
-function shippingForMethod(cfg: any, method: string, totalBottles: number, subtotalInCurrency: number, freeByRule: boolean): number {
+export function shippingForMethod(cfg: any, method: string, totalBottles: number, subtotalInCurrency: number, freeByRule: boolean): number {
     const tiers = cfg.methods ? cfg.methods[method] : undefined;
     if (!Array.isArray(tiers) || tiers.length === 0) return 0;
     const base = tierPrice(tiers, totalBottles);
@@ -36,7 +36,7 @@ function shippingForMethod(cfg: any, method: string, totalBottles: number, subto
     return base;
 }
 
-async function resolveShippingCountry(order: any) {
+export async function resolveShippingCountry(order: any) {
     const code = String(order?.delivery_info?.country || 'CZ').toUpperCase();
     try {
         const { data } = await supabaseAdmin

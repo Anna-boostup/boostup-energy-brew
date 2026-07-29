@@ -54,6 +54,7 @@ async function upsertSubscriptionRecord(stripeSubId: string, orderId?: string | 
             shipping_price: shippingPrice,
             shipping_currency: 'CZK',
             delivery_info: order?.delivery_info || null,
+            items: Array.isArray(order?.items) ? order.items : null,
             current_period_end: periodEnd ? periodEnd.toISOString() : null,
             next_delivery_date: periodEnd ? periodEnd.toISOString().slice(0, 10) : null,
             cancel_at_period_end: !!sub.cancel_at_period_end,
@@ -65,6 +66,97 @@ async function upsertSubscriptionRecord(stripeSubId: string, orderId?: string | 
         else console.log(`[Stripe Webhook] subscription ${sub.id} recorded (${interval}).`);
     } catch (e: any) {
         console.error('[Stripe Webhook] recordSubscription failed:', e?.message || e);
+    }
+}
+
+/** Přepočet potřebných lahviček podle příchutí z položek objednávky (mix / flavor-pack). */
+function computeRequiredStock(items: any[]): Record<string, number> {
+    const req: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
+    for (const item of (items || [])) {
+        const qty = Number(item?.quantity) || 0;
+        if (item?.mixConfiguration) {
+            req.lemon += (Number(item.mixConfiguration.lemon) || 0) * qty;
+            req.red += (Number(item.mixConfiguration.red) || 0) * qty;
+            req.silky += (Number(item.mixConfiguration.silky) || 0) * qty;
+        } else if (item?.sku) {
+            const skuStr = String(item.sku);
+            const parts = skuStr.split('-');
+            const pack = parseInt(parts[parts.length - 1]) || 1;
+            const low = skuStr.toLowerCase();
+            const flavor = low.includes('lemon') ? 'lemon' : low.includes('red') ? 'red' : low.includes('silky') ? 'silky' : null;
+            if (flavor) req[flavor] += qty * pack;
+        }
+    }
+    return req;
+}
+
+/** Zpracuje obnovu předplatného: odpis skladu + objednávka + štítek. Idempotentní dle invoice.id. */
+async function processSubscriptionRenewal(subId: string, invoice: Stripe.Invoice) {
+    try {
+        const { data: sub } = await supabase.from('subscriptions').select('*').eq('stripe_subscription_id', subId).maybeSingle();
+        if (!sub) { console.warn(`[Stripe Webhook] renewal: subscription ${subId} not found`); return; }
+        if (sub.last_invoice_id && sub.last_invoice_id === invoice.id) {
+            console.log(`[Stripe Webhook] renewal invoice ${invoice.id} already processed — skipping.`);
+            return;
+        }
+
+        let periodEndIso: string | null = null;
+        try {
+            const s = await stripe.subscriptions.retrieve(subId);
+            periodEndIso = s.current_period_end ? new Date(s.current_period_end * 1000).toISOString() : null;
+        } catch (e: any) { console.error('[Stripe Webhook] renewal period refresh failed:', e?.message || e); }
+
+        const items: any[] = Array.isArray(sub.items) ? sub.items : [];
+
+        // 1) odpis hotového skladu po příchutích (stejně jako u běžného prodeje)
+        const required = computeRequiredStock(items);
+        for (const flavor of Object.keys(required)) {
+            const amount = required[flavor];
+            if (amount > 0) {
+                const { error } = await supabase.rpc('handle_stock_movement', {
+                    p_sku: flavor, p_type: 'sale', p_amount: -amount, p_note: `Předplatné – obnova ${invoice.id}`,
+                });
+                if (error) console.error(`[Stripe Webhook] renewal stock movement failed for ${flavor}:`, error.message);
+            }
+        }
+
+        // 2) objednávka obnovy
+        const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+        const total = typeof invoice.amount_paid === 'number' ? invoice.amount_paid / 100 : Number(sub.shipping_price || 0);
+        const di: any = sub.delivery_info || {};
+        const orderRow: any = {
+            id: orderNumber,
+            date: new Date().toISOString(),
+            customer: { name: `${di.firstName || ''} ${di.lastName || ''}`.trim() || sub.email, email: sub.email },
+            delivery_info: di,
+            items,
+            total,
+            status: 'paid',
+            is_subscription_order: true,
+        };
+        const { error: orderErr } = await supabase.from('orders').insert(orderRow);
+        if (orderErr) console.error('[Stripe Webhook] renewal order insert failed:', orderErr.message);
+        else console.log(`[Stripe Webhook] renewal order ${orderNumber} created for subscription ${subId}.`);
+
+        // 3) označit fakturu jako zpracovanou + osvěžit období
+        await supabase.from('subscriptions').update({
+            last_invoice_id: invoice.id,
+            current_period_end: periodEndIso,
+            updated_at: new Date().toISOString(),
+        }).eq('stripe_subscription_id', subId);
+
+        // 4) Zásilkovna – štítek
+        if (!orderErr && di.deliveryMethod === 'zasilkovna' && di.packetaPointId) {
+            try {
+                const packet = await createPacketaPacket({
+                    orderNumber, firstName: di.firstName, lastName: di.lastName,
+                    email: sub.email, phone: di.phone, packetaPointId: di.packetaPointId, total,
+                });
+                await supabase.from('orders').update({ packeta_barcode: packet.barcode, packeta_packet_id: packet.packetId }).eq('id', orderNumber);
+            } catch (err) { console.error('[Stripe Webhook] renewal Packeta failed:', err); }
+        }
+    } catch (e: any) {
+        console.error('[Stripe Webhook] processSubscriptionRenewal failed:', e?.message || e);
     }
 }
 
@@ -250,15 +342,7 @@ export default async function handler(req: Request) {
                 const invoice = event.data.object as Stripe.Invoice;
                 const subId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription as any)?.id;
                 if (invoice.billing_reason === 'subscription_cycle' && subId) {
-                    try {
-                        const sub = await stripe.subscriptions.retrieve(subId);
-                        await supabase.from('subscriptions').update({
-                            current_period_end: sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
-                            updated_at: new Date().toISOString(),
-                        }).eq('stripe_subscription_id', subId);
-                    } catch (e: any) { console.error('[Stripe Webhook] invoice.paid refresh failed:', e?.message || e); }
-                    // TODO(fáze 1b): vytvořit objednávku obnovy + odpis zásob.
-                    console.log(`[Stripe Webhook] renewal for ${subId} — order+stock creation is a follow-up step.`);
+                    await processSubscriptionRenewal(subId, invoice);
                 }
                 break;
             }

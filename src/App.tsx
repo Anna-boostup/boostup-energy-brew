@@ -38,6 +38,7 @@ const Invoices = lazy(() => import("./pages/admin/Invoices"));
 const Mailboxes = lazy(() => import("./pages/admin/Mailboxes"));
 const AdminProfile = lazy(() => import("./pages/admin/AdminProfile"));
 const Orders = lazy(() => import("./pages/admin/Orders"));
+const AdminSubscriptions = lazy(() => import("./pages/admin/AdminSubscriptions"));
 const ContentManagement = lazy(() => import("./pages/admin/ContentManagement"));
 const PricingStatistics = lazy(() => import("./pages/admin/PricingStatistics"));
 const PromoCodes = lazy(() => import("./pages/admin/PromoCodes"));
@@ -58,6 +59,7 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const CookiesPolicy = lazy(() => import("./pages/legal/CookiesPolicy"));
 const Returns = lazy(() => import("./pages/legal/Returns"));
 const WithdrawalForm = lazy(() => import("./pages/legal/WithdrawalForm"));
+const SubscriptionCancel = lazy(() => import("./pages/legal/SubscriptionCancel"));
 const RecurringPaymentTerms = lazy(() => import("./pages/legal/RecurringPaymentTerms"));
 const ShippingAndPayment = lazy(() => import("./pages/legal/ShippingAndPayment"));
 
@@ -207,6 +209,7 @@ const App = () => (
                             <Route path="/admin" element={<RoleGuard allowedType="admin"><AdminLayout /></RoleGuard>}>
                               <Route index element={<AdminDashboard />} />
                               <Route path="orders" element={<Orders />} />
+                              <Route path="subscriptions" element={<AdminSubscriptions />} />
                               <Route path="inventory" element={<Inventory />} />
                               <Route path="manufacture" element={<ManufactureInventory />} />
                               <Route path="invoices" element={<Invoices />} />
@@ -235,6 +238,7 @@ const App = () => (
                             <Route path="/doprava-a-platba" element={<ShippingAndPayment />} />
                             <Route path="/reklamace" element={<Returns />} />
                             <Route path="/odstoupeni-od-smlouvy" element={<WithdrawalForm />} />
+                            <Route path="/zruseni-predplatneho" element={<SubscriptionCancel />} />
                             <Route path="/podminky-opakovane-platby" element={<RecurringPaymentTerms />} />
                             <Route path="/unsubscribe" element={<Unsubscribe />} />
 

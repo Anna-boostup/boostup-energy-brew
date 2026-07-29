@@ -10,7 +10,7 @@ import { useInventory, Order } from '@/context/InventoryContext';
 import {
   ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
   Loader2, Package, FileText, ChevronLeft, MapPin,
-  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle, X
+  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle, X, UserPlus
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -789,6 +789,38 @@ const CheckoutPage = () => {
                       className={`w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold ${errors.email ? 'border-destructive/50' : 'border-border focus:border-primary shadow-sm hover:border-border/80'}`}
                     />
                   </div>
+
+                  {hasSubscription && !user && (
+                    <div className="md:col-span-2 rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 space-y-4">
+                      <div className="flex items-start gap-3">
+                        <UserPlus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <div className="text-sm">
+                          <div className="font-black text-foreground uppercase tracking-tight">Doporučujeme založit účet</div>
+                          <p className="text-foreground/60 mt-1 leading-relaxed">
+                            U předplatného jen s účtem půjde měnit dopravu, termín odeslání a předplatné spravovat či zrušit. Bez účtu to nepůjde.
+                          </p>
+                        </div>
+                      </div>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <Checkbox checked={formData.createAccount} onCheckedChange={(v) => setFormData(prev => ({ ...prev, createAccount: !!v }))} />
+                        <span className="text-sm font-bold text-foreground">Vytvořit účet k tomuto e-mailu</span>
+                      </label>
+                      {formData.createAccount && (
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Heslo pro účet *</label>
+                          <input
+                            type="password"
+                            name="password"
+                            autoComplete="new-password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="min. 8 znaků"
+                            className="w-full bg-background/50 border-2 rounded-2xl px-5 py-4 outline-none transition-all font-bold border-border focus:border-primary shadow-sm hover:border-border/80"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.phone} *</label>
                     <input
