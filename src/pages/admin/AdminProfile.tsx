@@ -112,6 +112,7 @@ const AdminProfile = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [isSendingReset, setIsSendingReset] = useState(false);
 
 
     useEffect(() => {
@@ -206,6 +207,22 @@ const AdminProfile = () => {
         );
     };
 
+    const handlePasswordReset = async () => {
+        if (!user?.email) return;
+        setIsSendingReset(true);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (error) throw error;
+            toast({ title: "Odkaz odeslán", description: `E-mail pro obnovení hesla jsme poslali na ${user.email}.` });
+        } catch (error: any) {
+            toast({ title: content?.admin?.profile?.security?.errorTitle || "Chyba", description: error.message, variant: "destructive" });
+        } finally {
+            setIsSendingReset(false);
+        }
+    };
+
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -277,15 +294,15 @@ const AdminProfile = () => {
                     <TabsList className="bg-transparent h-auto p-0.5 sm:p-1 gap-1 sm:gap-2 flex sm:flex-nowrap overflow-x-auto no-scrollbar">
                         <TabsTrigger value="profile" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span>{content?.admin?.profile?.tabs?.info || "Info"}</span>
+                            <span>{content?.admin?.profile?.tabs?.info || "Osobní údaje"}</span>
                         </TabsTrigger>
                         <TabsTrigger value="orders" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span>{content?.admin?.profile?.tabs?.orders || "Orders"}</span>
+                            <span>{content?.admin?.profile?.tabs?.orders || "Objednávky"}</span>
                         </TabsTrigger>
                         <TabsTrigger value="subscriptions" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span>{content?.admin?.profile?.tabs?.subscriptions || "Subscriptions"}</span>
+                            <span>{content?.admin?.profile?.tabs?.subscriptions || "Předplatné"}</span>
                         </TabsTrigger>
                     </TabsList>
                 </div>
@@ -337,7 +354,7 @@ const AdminProfile = () => {
                                     <div className="md:col-span-2 space-y-3">
                                         <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Profilová fotka</Label>
                                         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white shadow-xl shadow-background/50 border border-transparent">
-                                            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-olive-dark/10 bg-olive-dark flex items-center justify-center shrink-0 relative">
+                                            <div className={`w-16 h-16 rounded-full overflow-hidden border-2 border-olive-dark/10 flex items-center justify-center shrink-0 relative ${avatarUrl ? 'bg-white' : 'bg-olive-dark'}`}>
                                                 {avatarUrl ? (
                                                     <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
                                                 ) : avatarText ? (
@@ -590,6 +607,14 @@ const AdminProfile = () => {
                                     {isChangingPassword ? <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Lock className="w-4 h-4 sm:w-5 sm:h-5" />}
                                     {content?.admin?.profile?.security?.update || "Update Password"}
                                 </Button>
+                                <button
+                                    type="button"
+                                    onClick={handlePasswordReset}
+                                    disabled={isSendingReset}
+                                    className="w-full text-center text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50 hover:text-olive-dark transition-colors disabled:opacity-50"
+                                >
+                                    {isSendingReset ? "Odesílám…" : "Neznáte současné heslo? Poslat odkaz e-mailem"}
+                                </button>
                             </form>
                         </div>
                     </div>

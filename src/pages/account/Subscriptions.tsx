@@ -62,8 +62,13 @@ const Subscriptions = () => {
 
     const fetchSubscriptions = async () => {
         try {
-            const { data, error } = await supabase
-                .from('subscriptions').select('*').eq('user_id', user?.id).order('created_at', { ascending: false });
+            // Napáruj případná hostovská předplatná (shoda e-mailu) na tento účet
+            await supabase.rpc('link_my_subscriptions');
+            let query = supabase.from('subscriptions').select('*');
+            query = user?.email
+                ? query.or(`user_id.eq.${user.id},email.eq.${user.email}`)
+                : query.eq('user_id', user?.id);
+            const { data, error } = await query.order('created_at', { ascending: false });
             if (error) throw error;
             setSubscriptions(data || []);
         } catch (e) {
