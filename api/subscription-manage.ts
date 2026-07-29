@@ -1,6 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { resolveShippingCountry, shippingForMethod, convertToCurrency } from './secure-calculator.js';
+import { totalBottles, checkModifiable, checkDateChange, checkShippingChange } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' });
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
@@ -16,41 +17,10 @@ const corsHeaders = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const MIN_DAYS_BEFORE = 5;
 
 function json(body: any, status = 200) {
     return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 }
-function daysUntil(dateStr: string | null | undefined): number | null {
-    if (!dateStr) return null;
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return null;
-    return Math.floor((d.getTime() - Date.now()) / 86400000);
-}
-function totalBottles(items: any[]): number {
-    let n = 0;
-    for (const it of (items || [])) {
-        const qty = Number(it?.quantity) || 0;
-        if (it?.mixConfiguration) {
-            n += ((Number(it.mixConfiguration.lemon) || 0) + (Number(it.mixConfiguration.red) || 0) + (Number(it.mixConfiguration.silky) || 0)) * qty;
-        } else if (it?.sku) {
-            const parts = String(it.sku).split('-');
-            const pack = parseInt(parts[parts.length - 1]) || 1;
-            n += qty * pack;
-        } else {
-            n += qty;
-        }
-    }
-    return n;
-}
-function changedThisMonth(iso: string | null | undefined): boolean {
-    if (!iso) return false;
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) return false;
-    const n = new Date();
-    return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth();
-}
-
 export default async function handler(req: Request) {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
     if (req.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
@@ -71,14 +41,9 @@ export default async function handler(req: Request) {
         const { data: sub } = await admin.from('subscriptions').select('*').eq('id', subscriptionId).maybeSingle();
         if (!sub) return json({ error: 'Subscription not found' }, 404);
         if (sub.user_id !== user.id) return json({ error: 'Forbidden' }, 403);
-        if (sub.status === 'cancelled') return json({ error: 'Předplatné je již zrušené.' }, 400);
-        if (!sub.stripe_subscription_id) return json({ error: 'Předplatné nemá napojení na platby.' }, 400);
-
-        // Pravidlo společné pro všechny změny: nejpozději 5 dní před odesláním.
-        const dleft = daysUntil(sub.next_delivery_date);
-        if (dleft !== null && dleft < MIN_DAYS_BEFORE) {
-            return json({ error: `Změny lze provést nejpozději ${MIN_DAYS_BEFORE} dní před odesláním.` }, 400);
-        }
+        // Společná pravidla: nezrušené, napojené na platby, min. 5 dní před odesláním.
+        const modGuard = checkModifiable(sub);
+        if (!modGuard.ok) return json({ error: modGuard.error }, modGuard.status);
 
         const nowIso = new Date().toISOString();
 
@@ -89,14 +54,9 @@ export default async function handler(req: Request) {
         }
 
         if (action === 'change_date') {
-            if (changedThisMonth(sub.last_date_change_at)) {
-                return json({ error: 'Datum odeslání lze změnit jen jednou za kalendářní měsíc.' }, 400);
-            }
             const newDate: string = payload?.date;
-            const nd = daysUntil(newDate);
-            if (nd === null || nd < MIN_DAYS_BEFORE) {
-                return json({ error: `Nové datum musí být alespoň ${MIN_DAYS_BEFORE} dní od dneška.` }, 400);
-            }
+            const dateGuard = checkDateChange(sub, newDate);
+            if (!dateGuard.ok) return json({ error: dateGuard.error }, dateGuard.status);
             const anchor = Math.floor(new Date(newDate + 'T00:00:00').getTime() / 1000);
             // Posun dalšího stržení na nové datum (svázané) — trial_end přeplánuje fakturaci.
             await stripe.subscriptions.update(sub.stripe_subscription_id, { trial_end: anchor, proration_behavior: 'none' });
@@ -110,13 +70,9 @@ export default async function handler(req: Request) {
         }
 
         if (action === 'change_shipping') {
-            if (changedThisMonth(sub.last_shipping_change_at)) {
-                return json({ error: 'Způsob dopravy lze změnit jen jednou za kalendářní měsíc.' }, 400);
-            }
             const method = payload?.method;
-            if (!method || !['personal', 'zasilkovna', 'courier'].includes(method)) {
-                return json({ error: 'Neplatný způsob dopravy.' }, 400);
-            }
+            const shipGuard = checkShippingChange(sub, method);
+            if (!shipGuard.ok) return json({ error: shipGuard.error }, shipGuard.status);
             const cfg: any = await resolveShippingCountry({ delivery_info: sub.delivery_info });
             const items: any[] = Array.isArray(sub.items) ? sub.items : [];
             const bottles = totalBottles(items);
