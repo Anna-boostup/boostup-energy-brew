@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { Loader2, Save, RotateCcw, AlertTriangle, Info, Type, Eye, EyeOff, FileText, Beaker, BarChart, Mail, MapPin, Layout, Settings2, Zap, Plus, Target, Megaphone, Sparkles, CreditCard } from 'lucide-react';
@@ -232,16 +233,23 @@ const ContentManagement = () => {
                             { id: 'footer', icon: Layout },
                             { id: 'settings', icon: Settings2 },
                             { id: 'payment', icon: CreditCard }
-                        ].map((tab) => (
-                            <TabsTrigger 
-                                key={tab.id}
-                                value={tab.id} 
-                                className="px-4 sm:px-8 py-3 sm:py-5 rounded-xl sm:rounded-[2rem] font-black uppercase text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-olive-dark/60 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none shrink-0 flex items-center gap-2"
-                            >
-                                <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                <span className="hidden xs:inline">{content?.admin?.contentManager?.tabs?.[tab.id as keyof typeof content.admin.contentManager.tabs] || tab.id.toUpperCase()}</span>
-                            </TabsTrigger>
-                        ))}
+                        ].map((tab) => {
+                            const tabLabel = content?.admin?.contentManager?.tabs?.[tab.id as keyof typeof content.admin.contentManager.tabs] || tab.id.toUpperCase();
+                            return (
+                            <Tooltip key={tab.id}>
+                                <TooltipTrigger asChild>
+                                    <TabsTrigger 
+                                        value={tab.id} 
+                                        className="px-4 sm:px-8 py-3 sm:py-5 rounded-xl sm:rounded-[2rem] font-black uppercase text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-olive-dark/60 data-[state=active]:bg-olive-dark data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-olive-dark/20 transition-all duration-500 border-none shrink-0 flex items-center gap-2"
+                                    >
+                                        <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                        <span className="hidden xs:inline">{tabLabel}</span>
+                                    </TabsTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom" className="font-black uppercase text-[10px] tracking-widest">{tabLabel}</TooltipContent>
+                            </Tooltip>
+                            );
+                        })}
                     </TabsList>
                 </div>
 
