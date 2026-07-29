@@ -27,6 +27,7 @@ const AccountProfile = lazy(() => import("./pages/account/Profile"));
 const ReferralProgram = lazy(() => import("./pages/account/ReferralProgram"));
 const CompanyProfile = lazy(() => import("./pages/account/CompanyProfile"));
 const Subscriptions = lazy(() => import("./pages/account/Subscriptions"));
+const AccountHelp = lazy(() => import("./pages/account/AccountHelp"));
 const CompanyAccountLayout = lazy(() => import("./pages/account/CompanyAccountLayout"));
 
 // Admin pages
@@ -184,6 +185,7 @@ const App = () => (
                               <Route path="orders" element={<AccountOrders />} />
                               <Route path="subscriptions" element={<Subscriptions />} />
                               <Route path="referrals" element={<ReferralProgram />} />
+                              <Route path="help" element={<AccountHelp />} />
                             </Route>
 
                             {/* Company Account Routes */}
