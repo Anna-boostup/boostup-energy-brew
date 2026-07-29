@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, FileText, Factory, Bell, User, HelpCircle, TrendingUp, Mail, ExternalLink, Sparkles, ChevronRight, Activity, Pin, PinOff, PenTool, Users, Loader2, Home, Store, Boxes, Megaphone, Settings, MessageSquareQuote, Inbox, Truck, RefreshCw } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useManufacture } from "@/context/ManufactureContext";
 import logoGreen from "@/assets/logo-green.png";
 import { AdminErrorBoundary } from "@/components/AdminErrorBoundary";
@@ -399,9 +400,14 @@ const AdminLayoutInner = () => {
                                     <ChevronRight className={`w-3.5 h-3.5 text-olive-light/50 transition-transform duration-300 ${collapsedGroups.has(group.title) ? '' : 'rotate-90'}`} />
                                 </button>
                             ) : (
-                                <div className="flex justify-center mb-4" title={group.title}>
-                                    <group.icon className="w-4 h-4 text-olive-light" />
-                                </div>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="flex justify-center mb-4 cursor-default">
+                                            <group.icon className="w-4 h-4 text-olive-light" />
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right" className="font-black uppercase text-[10px] tracking-widest">{group.title}</TooltipContent>
+                                </Tooltip>
                             )}
                             {(!isExpanded || !collapsedGroups.has(group.title)) && (
                             <ul className="space-y-1 w-full" role="list">
@@ -415,13 +421,14 @@ const AdminLayoutInner = () => {
                                                 <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-lime rounded-r-full shadow-[0_0_15px_rgba(163,230,53,0.8)] z-20" />
                                             )}
                                             
+                                            <Tooltip>
+                                            <TooltipTrigger asChild>
                                             <button
                                                 onClick={() => navigate(item.path)}
                                                 className={`flex items-center justify-between transition-all duration-500 rounded-2xl relative overflow-hidden ${isActive
                                                     ? "bg-white/5 text-white active-glow"
                                                     : "text-white/40 hover:bg-white/5 hover:text-white"
                                                     } ${!isExpanded ? 'h-12 w-12 justify-center' : 'w-full px-6 py-4'}`}
-                                                title={!isExpanded ? item.label : undefined}
                                                 aria-current={isActive ? "page" : undefined}
                                             >
                                                 <div className={`flex items-center ${isExpanded ? 'gap-4' : 'justify-center'} relative z-10 w-full`}>
@@ -445,6 +452,9 @@ const AdminLayoutInner = () => {
                                                     <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-lg border border-black/50" />
                                                 )}
                                             </button>
+                                            </TooltipTrigger>
+                                            {!isExpanded && <TooltipContent side="right" className="font-black uppercase text-[10px] tracking-widest">{item.label}</TooltipContent>}
+                                            </Tooltip>
                                         </li>
                                     );
                                 })}

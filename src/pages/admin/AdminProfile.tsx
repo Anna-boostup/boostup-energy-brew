@@ -112,6 +112,7 @@ const AdminProfile = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [isSendingReset, setIsSendingReset] = useState(false);
 
 
     useEffect(() => {
@@ -204,6 +205,22 @@ const AdminProfile = () => {
                 </div>
             </div>
         );
+    };
+
+    const handlePasswordReset = async () => {
+        if (!user?.email) return;
+        setIsSendingReset(true);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (error) throw error;
+            toast({ title: "Odkaz odeslán", description: `E-mail pro obnovení hesla jsme poslali na ${user.email}.` });
+        } catch (error: any) {
+            toast({ title: content?.admin?.profile?.security?.errorTitle || "Chyba", description: error.message, variant: "destructive" });
+        } finally {
+            setIsSendingReset(false);
+        }
     };
 
     const handleChangePassword = async (e: React.FormEvent) => {
@@ -337,7 +354,7 @@ const AdminProfile = () => {
                                     <div className="md:col-span-2 space-y-3">
                                         <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-olive-dark pl-1">Profilová fotka</Label>
                                         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white shadow-xl shadow-background/50 border border-transparent">
-                                            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-olive-dark/10 bg-olive-dark flex items-center justify-center shrink-0 relative">
+                                            <div className={`w-16 h-16 rounded-full overflow-hidden border-2 border-olive-dark/10 flex items-center justify-center shrink-0 relative ${avatarUrl ? 'bg-white' : 'bg-olive-dark'}`}>
                                                 {avatarUrl ? (
                                                     <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
                                                 ) : avatarText ? (
@@ -590,6 +607,14 @@ const AdminProfile = () => {
                                     {isChangingPassword ? <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Lock className="w-4 h-4 sm:w-5 sm:h-5" />}
                                     {content?.admin?.profile?.security?.update || "Update Password"}
                                 </Button>
+                                <button
+                                    type="button"
+                                    onClick={handlePasswordReset}
+                                    disabled={isSendingReset}
+                                    className="w-full text-center text-[10px] font-black uppercase tracking-[0.2em] text-olive-dark/50 hover:text-olive-dark transition-colors disabled:opacity-50"
+                                >
+                                    {isSendingReset ? "Odesílám…" : "Neznáte současné heslo? Poslat odkaz e-mailem"}
+                                </button>
                             </form>
                         </div>
                     </div>
