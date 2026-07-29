@@ -11,7 +11,7 @@ import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
     AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette,
-    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download, Bell, Megaphone, RefreshCw
+    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download, Bell, Megaphone, RefreshCw, CreditCard
 } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 
@@ -897,6 +897,22 @@ const AdminMockup = ({ id, activeItemId }: { id: string, activeItemId?: string }
                 { id: 'create_manual_order', label: "Vytvoření ruční (manuální) objednávky", description: "Postup:\n1. Klikněte na '+ Nová objednávka'.\n2. Vyplňte dodací a fakturační údaje zákazníka.\n3. V tabulce položek přidejte požadované produkty a jejich množství.\n4. Zvolte stav platby a objednávku uložte.\n\nVyužití:\nTelefonické objednávky nebo B2B prodeje." },
                 { id: 'bulk_processing', label: "Hromadné zpracování objednávek", description: "Postup:\nZaškrtnutím políček u více objednávek v levém sloupci aktivujete hromadné menu. Můžete najednou stornovat více objednávek, změnit jim stav nebo vygenerovat hromadný tisk štítků (tiskne více štítků na jeden arch A4 pro úsporu papíru)." },
                 { id: 'packeta_shipping', label: "Generování štítků Zásilkovny (Packeta API)", description: "Postup:\nU objednávek se zvoleným doručením na výdejní místo Zásilkovny se v detailu zobrazí tlačítko 'Odeslat do Zásilkovny'. Kliknutím odešlete data balíku na servery Zásilkovny, která vám vrátí trasovací číslo. Následně kliknutím na 'Vytisknout štítek' stáhnete PDF k tisku." }
+            ]
+        },
+        {
+            id: 'refunds',
+            icon: CreditCard,
+            title: "Refundace a vrácení peněz",
+            description: "Jak vrátit peníze u Stripe, GoPay a bankovního převodu",
+            path: "/admin/orders",
+            items: [
+                { id: 'refund_where', label: "Kde se refundace řeší (důležité)", description: "Jak to funguje:\nVrácení peněz se NEDĚLÁ přímo v e-shopu – tlačítko na refundaci tady není. Peníze vracíte v systému platební brány (Stripe / GoPay), u bankovního převodu ručně.\n\nPo vrácení peněz:\nV sekci Objednávky změňte stav objednávky na 'Stornováno' a připište poznámku (důvod a datum vrácení). Tím se to propíše do evidence." },
+                { id: 'refund_find', label: "Jak najít platbu k objednávce", description: "Postup:\nPlatbu spárujete přes ČÍSLO OBJEDNÁVKY (např. BUP1721...), e-mail zákazníka nebo částku a datum.\n- Stripe: číslo objednávky je u platby uložené jako 'orderId' (metadata) – lze podle něj hledat.\n- GoPay: číslo objednávky = 'order_number' platby." },
+                { id: 'refund_stripe', label: "Refundace přes Stripe (karta, Apple/Google Pay)", description: "Postup:\n1. Přihlaste se do Stripe Dashboard (dashboard.stripe.com) – pozor na správný režim (Test vs Live).\n2. Payments → najděte platbu (podle e-mailu, částky nebo čísla objednávky).\n3. Otevřete platbu → tlačítko 'Refund'.\n4. Zvolte plnou nebo částečnou částku a potvrďte.\n\nPozn.:\nPeníze se vrací na původní kartu, obvykle do 5–10 pracovních dnů." },
+                { id: 'refund_gopay', label: "Refundace přes GoPay", description: "Postup:\n1. Přihlaste se do obchodního portálu GoPay (account.gopay.com).\n2. Přehled plateb → najděte platbu podle čísla objednávky (order_number) nebo částky.\n3. U platby zvolte 'Vrátit platbu' (refundace) – plnou nebo částečnou – a potvrďte.\n\nPozn.:\nGoPay vrací na původní platební prostředek zákazníka; refunduje se vždy na straně GoPay, ne ve Stripe." },
+                { id: 'refund_transfer', label: "Bankovní převod (ruční vrácení)", description: "Postup:\nU objednávek placených převodem vracíte peníze RUČNĚ na účet zákazníka. Číslo účtu zákazník uvede (např. ve formuláři odstoupení od smlouvy). Po odeslání převodu označte objednávku jako 'Stornováno' a doplňte poznámku." },
+                { id: 'refund_subscription', label: "Refundace u předplatného", description: "Jak to funguje:\nPředplatné běží jen přes Stripe. Zrušení (v /admin/subscriptions nebo v účtu zákazníka) zastaví BUDOUCÍ platby, ale samo NEVRACÍ už zaplacené peníze.\n\nVrácení poslední platby:\nMá-li zákazník nárok (např. 14denní odstoupení), zrušte předplatné a poslední fakturu/platbu refundujte ve Stripe (viz výše). Lze i částečně." },
+                { id: 'refund_legal', label: "Zákonné lhůty (14denní odstoupení)", description: "Důležité:\nPři odstoupení od smlouvy do 14 dnů máte povinnost vrátit peníze do 14 dnů a STEJNOU metodou, jakou zákazník platil (pokud se nedohodnete jinak). Žádosti chodí z formuláře 'Odstoupit od smlouvy' na váš e-mail. Vrácení proveďte ve Stripe/GoPay/převodem podle původní platby a objednávku stornujte." }
             ]
         },
         {
