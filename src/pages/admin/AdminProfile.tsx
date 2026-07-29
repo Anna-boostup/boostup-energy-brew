@@ -294,15 +294,15 @@ const AdminProfile = () => {
                     <TabsList className="bg-transparent h-auto p-0.5 sm:p-1 gap-1 sm:gap-2 flex sm:flex-nowrap overflow-x-auto no-scrollbar">
                         <TabsTrigger value="profile" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span>{content?.admin?.profile?.tabs?.info || "Info"}</span>
+                            <span>{content?.admin?.profile?.tabs?.info || "Osobní údaje"}</span>
                         </TabsTrigger>
                         <TabsTrigger value="orders" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span>{content?.admin?.profile?.tabs?.orders || "Orders"}</span>
+                            <span>{content?.admin?.profile?.tabs?.orders || "Objednávky"}</span>
                         </TabsTrigger>
                         <TabsTrigger value="subscriptions" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
                             <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span>{content?.admin?.profile?.tabs?.subscriptions || "Subscriptions"}</span>
+                            <span>{content?.admin?.profile?.tabs?.subscriptions || "Předplatné"}</span>
                         </TabsTrigger>
                     </TabsList>
                 </div>
