@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CalendarClock, Loader2, RefreshCw, XCircle, Check, ExternalLink } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/use-toast';
 
 const SETTINGS_KEY = 'subscription_dispatch';
@@ -134,7 +135,14 @@ const AdminSubscriptions = () => {
                                     </td>
                                     <td className="px-4 py-3">{s.product_handle} ×{s.quantity}</td>
                                     <td className="px-4 py-3">{s.interval === 'monthly' ? 'Měsíčně' : '2 měsíce'}</td>
-                                    <td className="px-4 py-3">{fmt(s.next_delivery_date)}{!s.uses_global_date && <span className="ml-1 text-[10px] text-amber-600">(vlastní)</span>}</td>
+                                    <td className="px-4 py-3">{fmt(s.next_delivery_date)}{!s.uses_global_date && (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <span className="ml-1 text-[10px] text-amber-600 cursor-help underline decoration-dotted">(vlastní)</span>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="max-w-[240px] text-xs leading-relaxed">Zákazník má vlastní datum odeslání – globální datum ho nepřepíše.</TooltipContent>
+                                        </Tooltip>
+                                    )}</td>
                                     <td className="px-4 py-3">{SHIPPING_LABELS[s.shipping_method || ''] || s.shipping_method || '—'}</td>
                                     <td className="px-4 py-3">
                                         <Badge variant={s.status === 'active' ? 'default' : s.status === 'paused' ? 'secondary' : 'destructive'} className="uppercase text-[10px]">
