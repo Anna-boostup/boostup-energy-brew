@@ -8,12 +8,25 @@ import { useInventory, RecipeRule } from "@/context/InventoryContext";
 import { useManufacture } from "@/context/ManufactureContext";
 import { useToast } from "@/hooks/use-toast";
 import { FLAVORS } from "@/config/product-data";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
     rule: RecipeRule | null;
 }
+
+const InfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="text-muted-foreground/60 hover:text-primary transition-colors align-middle">
+                <Info className="w-3.5 h-3.5" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[260px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
 
 export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
     const { addRecipeRule, updateRecipeRule } = useInventory();
@@ -169,7 +182,7 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="basis">Zadat množství</Label>
+                        <Label htmlFor="basis" className="inline-flex items-center gap-1">Zadat množství <InfoTip text="Zvol, zda je množství na 1 lahvičku, nebo na celou várku. U várky doplň počet lahviček – spotřeba se přepočítá na 1 kus (např. 5000 g na várku 1000 ks = 5 g/ks)." /></Label>
                         <Select value={basis} onValueChange={(v) => setBasis(v as 'unit' | 'batch')}>
                             <SelectTrigger id="basis">
                                 <SelectValue />
@@ -183,7 +196,7 @@ export const RecipeRuleDialog = ({ isOpen, onClose, rule }: Props) => {
 
                     {basis === 'batch' && (
                         <div className="grid gap-2">
-                            <Label htmlFor="batch-bottles">Počet lahviček ve várce</Label>
+                            <Label htmlFor="batch-bottles" className="inline-flex items-center gap-1">Počet lahviček ve várce <InfoTip text="Kolik hotových lahviček vznikne z jedné várky. Slouží k přepočtu spotřeby suroviny na 1 kus." /></Label>
                             <Input
                                 id="batch-bottles"
                                 type="number"

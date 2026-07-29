@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { Megaphone, Save, Loader2, Check, Info, Wrench, AlertTriangle, Tag, X, CalendarClock } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useAnnouncementBanner } from '@/hooks/useAnnouncementBanner';
 import {
     BannerConfig,
@@ -32,6 +33,17 @@ const SCHEDULE_STATUS: Record<BannerLiveStatus, { label: string; cls: string; do
     'scheduled-before': { label: 'Naplánováno – čeká na začátek období', cls: 'bg-amber-50 text-amber-700', dot: 'bg-amber-500' },
     'scheduled-after': { label: 'Ukončeno – naplánované období už proběhlo', cls: 'bg-olive/5 text-olive/60', dot: 'bg-olive/40' },
 };
+
+const InfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="text-olive/40 hover:text-primary transition-colors align-middle">
+                <Info className="w-3.5 h-3.5" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[280px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
 
 const BannerSettings = () => {
     const { banner, loading, saving, saveBanner } = useAnnouncementBanner();
@@ -151,7 +163,7 @@ const BannerSettings = () => {
 
             {/* Typ baneru */}
             <div className="rounded-3xl border-2 border-olive/10 bg-white p-5 sm:p-6 mb-5">
-                <div className="font-black text-olive-dark uppercase tracking-tight mb-3 text-sm">Typ (barva)</div>
+                <div className="font-black text-olive-dark uppercase tracking-tight mb-3 text-sm inline-flex items-center gap-1">Typ (barva) <InfoTip text="Určuje barvu a ikonu banneru: Informace = modrá, Údržba = tmavá, Upozornění = oranžová, Akce = zelená." /></div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {TYPES.map((tp) => {
                         const st = BANNER_STYLES[tp];

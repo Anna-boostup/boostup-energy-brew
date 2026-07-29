@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { Calendar, RefreshCw, Loader2, AlertCircle, XCircle, Truck, Save } from "lucide-react";
+import { Calendar, RefreshCw, Loader2, AlertCircle, XCircle, Truck, Save, Info } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +38,17 @@ const changedThisMonth = (iso?: string | null): boolean => {
     const n = new Date();
     return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth();
 };
+
+const InfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="text-muted-foreground/60 hover:text-primary transition-colors align-middle">
+                <Info className="w-3.5 h-3.5" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[240px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
 
 const Subscriptions = () => {
     const { user } = useAuth();
@@ -144,7 +156,7 @@ const Subscriptions = () => {
                                             )}
                                             <div className="flex flex-col sm:flex-row sm:items-end gap-2">
                                                 <div className="flex-1">
-                                                    <label className="text-[10px] font-bold uppercase text-muted-foreground">Změnit datum odeslání</label>
+                                                    <label className="text-[10px] font-bold uppercase text-muted-foreground inline-flex items-center gap-1">Změnit datum odeslání <InfoTip text="Změnit lze 1× za kalendářní měsíc a nejpozději 5 dní před odesláním. Nové datum posune i datum platby." /></label>
                                                     <input type="date" value={dateDraft[sub.id] || ''} onChange={(e) => setDateDraft(p => ({ ...p, [sub.id]: e.target.value }))}
                                                         disabled={!canEdit || dateLockedMonth}
                                                         className="mt-1 w-full bg-background border-2 border-border rounded-xl px-3 py-2 text-sm disabled:opacity-50" />
@@ -158,7 +170,7 @@ const Subscriptions = () => {
 
                                             <div className="flex flex-col sm:flex-row sm:items-end gap-2">
                                                 <div className="flex-1">
-                                                    <label className="text-[10px] font-bold uppercase text-muted-foreground">Změnit dopravu</label>
+                                                    <label className="text-[10px] font-bold uppercase text-muted-foreground inline-flex items-center gap-1">Změnit dopravu <InfoTip text="Změnit lze 1× za kalendářní měsíc a nejpozději 5 dní před odesláním. Cena dopravy se přepočítá podle nového způsobu." /></label>
                                                     <select value={shipDraft[sub.id] ?? (sub.shipping_method || '')} onChange={(e) => setShipDraft(p => ({ ...p, [sub.id]: e.target.value }))}
                                                         disabled={!canEdit || shipLockedMonth}
                                                         className="mt-1 w-full bg-background border-2 border-border rounded-xl px-3 py-2 text-sm disabled:opacity-50">
