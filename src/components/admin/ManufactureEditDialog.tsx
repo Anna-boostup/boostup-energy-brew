@@ -7,6 +7,19 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useManufacture, ManufactureMaterial } from "@/context/ManufactureContext";
 import { useToast } from "@/hooks/use-toast";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+
+const InfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="text-muted-foreground/60 hover:text-primary transition-colors align-middle">
+                <Info className="w-3.5 h-3.5" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[260px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
 
 interface Props {
     isOpen: boolean;
@@ -111,6 +124,7 @@ export const ManufactureEditDialog = ({ isOpen, onClose, material }: Props) => {
                             <Label htmlFor="warning" className="flex items-center gap-1.5 text-amber-600">
                                 <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
                                 {t.warningLabel}
+                                <InfoTip text="Když zásoba klesne pod tuto hodnotu, materiál se v administraci označí varovně (upozornění na nutnou výrobu/nákup)." />
                             </Label>
                             <Input
                                 id="warning"

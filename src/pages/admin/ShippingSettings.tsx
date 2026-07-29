@@ -2,7 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Truck, Save, Loader2, Check, Globe, Plus, X } from 'lucide-react';
+import { Truck, Save, Loader2, Check, Globe, Plus, X, Info } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+
+const InfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="text-olive/40 hover:text-primary transition-colors align-middle">
+                <Info className="w-3 h-3" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[280px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
 import { useShippingCountries } from '@/hooks/useShippingCountries';
 import { ShippingCountry, ShippingTier, DeliveryMethodId } from '@/config/shipping';
 
@@ -129,15 +141,15 @@ const ShippingSettings = () => {
                                 <Input value={c.currencySymbol} onChange={(e) => updateCountry(c.code, { currencySymbol: e.target.value })} className="h-9 bg-white border-olive/15 text-sm" />
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold uppercase tracking-widest text-olive/50 mb-1">Kurz CZK→měna</label>
+                                <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-olive/50 mb-1">Kurz CZK→měna <InfoTip text="Přepočet cen z CZK do měny této země. Pro CZK je kurz 1." /></label>
                                 {numField(c.code, 'rate', c.rate)}
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold uppercase tracking-widest text-olive/50 mb-1">Zaokrouhlení</label>
+                                <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-olive/50 mb-1">Zaokrouhlení <InfoTip text="Na jakou hodnotu se zaokrouhlují přepočtené ceny (např. 0,10 € nebo 1 Kč)." /></label>
                                 {numField(c.code, 'rounding', c.rounding)}
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold uppercase tracking-widest text-olive/50 mb-1">Doprava zdarma od ({c.currencySymbol})</label>
+                                <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-olive/50 mb-1">Doprava zdarma od ({c.currencySymbol}) <InfoTip text="Objednávky nad tuto částku (v měně země) mají dopravu zdarma. Prázdné = bez hranice." /></label>
                                 {numField(c.code, 'freeShippingThreshold', c.freeShippingThreshold)}
                             </div>
                         </div>

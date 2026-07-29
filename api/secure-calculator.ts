@@ -98,6 +98,17 @@ export async function calculateSecureOrderTotal(orderId: string, itemsFromFronte
     const secureItems = [];
     const itemsToProcess = itemsFromFrontend && itemsFromFrontend.length > 0 ? itemsFromFrontend : order.items;
 
+    // Konfigurovatelná sleva předplatného (app_settings; fallback 15 %).
+    let subDiscountPct = 15;
+    try {
+        const { data: discRow } = await supabaseAdmin.from('app_settings').select('value').eq('key', 'subscription_discount_pct').maybeSingle();
+        if (discRow?.value !== undefined && discRow?.value !== null) {
+            let dv = NaN;
+            try { dv = Number(JSON.parse(discRow.value)); } catch { dv = Number(discRow.value); }
+            if (!isNaN(dv) && dv >= 0 && dv <= 90) subDiscountPct = dv;
+        }
+    } catch (e) { /* fallback 15 */ }
+
     for (const item of itemsToProcess) {
         let basePrice = 0;
         
@@ -121,7 +132,7 @@ export async function calculateSecureOrderTotal(orderId: string, itemsFromFronte
         let finalItemPrice = basePrice;
         
         if (isSubscriptionItem) {
-            finalItemPrice = basePrice * 0.85; // Sleva 15% pro předplatné
+            finalItemPrice = basePrice * ((100 - subDiscountPct) / 100); // Sleva předplatného (konfigurovatelná v adminu)
         } else if (discountPercent > 0) {
             finalItemPrice = basePrice * ((100 - discountPercent) / 100);
         }

@@ -11,7 +11,7 @@ import {
     HelpCircle, Globe, ShoppingCart, Package, Factory,
     Type, Save, ToggleLeft, ChevronRight,
     AlertTriangle, Mail, MousePointer2, BarChart, Gift, Settings2, Zap, Layout, ShieldCheck, Palette,
-    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download, Bell
+    Database, Send, Info, Key, Newspaper, Loader2, Users, FileText, Download, Bell, Megaphone, RefreshCw, CreditCard
 } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 
@@ -900,6 +900,46 @@ const AdminMockup = ({ id, activeItemId }: { id: string, activeItemId?: string }
             ]
         },
         {
+            id: 'refunds',
+            icon: CreditCard,
+            title: "Refundace a vrácení peněz",
+            description: "Jak vrátit peníze u Stripe, GoPay a bankovního převodu",
+            path: "/admin/orders",
+            items: [
+                { id: 'refund_where', label: "Kde se refundace řeší (důležité)", description: "Jak to funguje:\nVrácení peněz se NEDĚLÁ přímo v e-shopu – tlačítko na refundaci tady není. Peníze vracíte v systému platební brány (Stripe / GoPay), u bankovního převodu ručně.\n\nPo vrácení peněz:\nV sekci Objednávky změňte stav objednávky na 'Stornováno' a připište poznámku (důvod a datum vrácení). Tím se to propíše do evidence." },
+                { id: 'refund_find', label: "Jak najít platbu k objednávce", description: "Postup:\nPlatbu spárujete přes ČÍSLO OBJEDNÁVKY (např. BUP1721...), e-mail zákazníka nebo částku a datum.\n- Stripe: číslo objednávky je u platby uložené jako 'orderId' (metadata) – lze podle něj hledat.\n- GoPay: číslo objednávky = 'order_number' platby." },
+                { id: 'refund_stripe', label: "Refundace přes Stripe (karta, Apple/Google Pay)", description: "Postup:\n1. Přihlaste se do Stripe Dashboard (dashboard.stripe.com) – pozor na správný režim (Test vs Live).\n2. Payments → najděte platbu (podle e-mailu, částky nebo čísla objednávky).\n3. Otevřete platbu → tlačítko 'Refund'.\n4. Zvolte plnou nebo částečnou částku a potvrďte.\n\nPozn.:\nPeníze se vrací na původní kartu, obvykle do 5–10 pracovních dnů." },
+                { id: 'refund_gopay', label: "Refundace přes GoPay", description: "Postup:\n1. Přihlaste se do obchodního portálu GoPay (account.gopay.com).\n2. Přehled plateb → najděte platbu podle čísla objednávky (order_number) nebo částky.\n3. U platby zvolte 'Vrátit platbu' (refundace) – plnou nebo částečnou – a potvrďte.\n\nPozn.:\nGoPay vrací na původní platební prostředek zákazníka; refunduje se vždy na straně GoPay, ne ve Stripe." },
+                { id: 'refund_transfer', label: "Bankovní převod (ruční vrácení)", description: "Postup:\nU objednávek placených převodem vracíte peníze RUČNĚ na účet zákazníka. Číslo účtu zákazník uvede (např. ve formuláři odstoupení od smlouvy). Po odeslání převodu označte objednávku jako 'Stornováno' a doplňte poznámku." },
+                { id: 'refund_subscription', label: "Refundace u předplatného", description: "Jak to funguje:\nPředplatné běží jen přes Stripe. Zrušení (v /admin/subscriptions nebo v účtu zákazníka) zastaví BUDOUCÍ platby, ale samo NEVRACÍ už zaplacené peníze.\n\nVrácení poslední platby:\nMá-li zákazník nárok (např. 14denní odstoupení), zrušte předplatné a poslední fakturu/platbu refundujte ve Stripe (viz výše). Lze i částečně." },
+                { id: 'refund_legal', label: "Zákonné lhůty (14denní odstoupení)", description: "Důležité:\nPři odstoupení od smlouvy do 14 dnů máte povinnost vrátit peníze do 14 dnů a STEJNOU metodou, jakou zákazník platil (pokud se nedohodnete jinak). Žádosti chodí z formuláře 'Odstoupit od smlouvy' na váš e-mail. Vrácení proveďte ve Stripe/GoPay/převodem podle původní platby a objednávku stornujte." }
+            ]
+        },
+        {
+            id: 'banner',
+            icon: Megaphone,
+            title: "Oznamovací banner",
+            description: "Plovoucí upozornění na úvodní stránce (údržba, akce)",
+            path: "/admin/banner",
+            items: [
+                { id: 'banner_basics', label: "Zapnutí a obsah banneru", description: "Postup:\nV sekci Banner zapnete přepínač 'Zobrazit banner na webu', zvolíte typ (barvu) – Informace, Údržba, Upozornění nebo Akce – a vyplníte text česky i anglicky. Volitelně přidáte odkaz s popiskem a uložíte tlačítkem dole.\n\nZobrazení:\nBanner se ukáže jako plovoucí okno (karta) pod hlavičkou POUZE na úvodní stránce a návštěvník ho může zavřít křížkem." },
+                { id: 'banner_schedule', label: "Automatické plánování (datum a čas)", description: "Postup:\nV kartě banneru zapnete 'Automatické plánování' a nastavíte 'Zobrazit od' a 'Zobrazit do'. Banner se pak sám zapne a vypne podle období – ruční přepínač se v tomto režimu ignoruje.\n\nPoznámka:\nPrázdná hranice znamená bez omezení (např. jen 'od')." }
+            ]
+        },
+        {
+            id: 'subscriptions',
+            icon: RefreshCw,
+            title: "Předplatné",
+            description: "Přehled předplatných, expediční datum a zrušení",
+            path: "/admin/subscriptions",
+            items: [
+                { id: 'subs_overview', label: "Přehled předplatných", description: "Postup:\nV sekci Předplatné vidíte všechna aktivní i zrušená předplatná: zákazníka, produkt, interval (měsíčně / 2 měsíce), datum odeslání, dopravu a stav. U každého je odkaz do Stripe.\n\nPoznámka:\nDoprava se u předplatného účtuje ke KAŽDÉ platbě, ne jen k první." },
+                { id: 'subs_global_date', label: "Globální datum odeslání (zapnout/vypnout)", description: "Jak to funguje:\nNahoře je přepínač 'Globální datum odeslání'. Když ho zapnete a uložíte datum, propíše se jako datum odeslání všem předplatným, která nemají vlastní datum. Je to POUZE expediční den – NEmění datum stržení platby.\n\nPoznámka:\nPokud si zákazník nastaví vlastní datum, globální ho nepřepíše (v přehledu má štítek '(vlastní)')." },
+                { id: 'subs_cancel', label: "Zrušení a obnovení předplatného", description: "Postup:\nU každého předplatného můžete kliknout na 'Zrušit' – zruší se ke konci aktuálního období (stav 'Zruší se'). Dokud období neskončí, jde zrušení vrátit tlačítkem 'Obnovit'." },
+                { id: 'subs_customer', label: "Co zvládne zákazník sám", description: "Jak to funguje:\nPřihlášený zákazník si ve svém účtu může 1× za kalendářní měsíc a nejpozději 5 dní před odesláním změnit datum odeslání (posune i platbu), změnit dopravu a předplatné zrušit.\n\nHost bez účtu:\nZruší předplatné na veřejné stránce /zruseni-predplatneho (číslo objednávky + e-mail), nebo do 14 dnů využije formulář odstoupení od smlouvy." }
+            ]
+        },
+        {
             id: 'inventory',
             icon: Package,
             title: "Skladové zásoby",
@@ -920,7 +960,8 @@ const AdminMockup = ({ id, activeItemId }: { id: string, activeItemId?: string }
             path: "/admin/manufacture",
             items: [
                 { id: 'materials_management', label: "Správa a naskladnění výrobních surovin", description: "Postup:\nV sekci Výroba spravujete stav základních materiálů: prázdné plechovky, hliníková víčka, etikety příchutí, papírové krabice a namíchaný nápoj (v litrech). Naskladnění a odpisy surovin probíhají stejně jako u produktů zadáním množství a poznámky." },
-                { id: 'materials_history', label: "Historie a audit spotřeby surovin", description: "Postup:\nKaždé doskladnění surovin nebo jejich odpis (např. spotřeba při plnění plechovek) je detailně logováno s datem, množstvím, poznámkou a autorem záznamu pro stoprocentní přehled o výrobních nákladech." }
+                { id: 'materials_history', label: "Historie a audit spotřeby surovin", description: "Postup:\nKaždé doskladnění surovin nebo jejich odpis (např. spotřeba při plnění plechovek) je detailně logováno s datem, množstvím, poznámkou a autorem záznamu pro stoprocentní přehled o výrobních nákladech." },
+                { id: 'recipe_consumption', label: "Receptura – spotřeba surovin (na lahvičku / na várku)", description: "Postup:\nU produktu zadáte recepturu – kolik které suroviny se spotřebuje. U každé položky zvolíte základ: buď 'na 1 lahvičku', nebo 'na várku' a k tomu počet lahviček ve várce. Systém přepočítá spotřebu na 1 kus.\n\nJak to funguje:\nPři zaznamenání výroby (naskladnění hotových kusů) se odpovídající množství surovin automaticky odečte ze skladu výroby." }
             ]
         },
         {

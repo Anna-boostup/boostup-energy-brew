@@ -10,10 +10,12 @@ import { useInventory, Order } from '@/context/InventoryContext';
 import {
   ArrowLeft, ShoppingBag, CreditCard, Truck, CheckCircle,
   Loader2, Package, FileText, ChevronLeft, MapPin,
-  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle, X, UserPlus
+  Minus, Plus, Trash2, Lock, Sparkles, AlertCircle, X, UserPlus, Info
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useSubscriptionDiscount } from "@/hooks/useSubscriptionDiscount";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import PacketaWidget from '@/components/PacketaWidget';
@@ -61,6 +63,17 @@ const sendOrderConfirmationEmail = async (
 import { useContent } from '@/context/ContentContext';
 import { trackBeginCheckout } from '@/lib/analytics';
 
+const CheckoutInfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="opacity-60 hover:opacity-100 transition-opacity align-middle">
+                <Info className="w-3 h-3 inline" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[260px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
+
 const CheckoutPage = () => {
   const { content } = useContent();
   const isSalesEnabled = content.isSalesEnabled !== false;
@@ -68,6 +81,7 @@ const CheckoutPage = () => {
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
   const { user } = useAuth();
+  const { pct: subDiscountPct } = useSubscriptionDiscount();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [promoInput, setPromoInput] = useState("");
@@ -443,7 +457,7 @@ const CheckoutPage = () => {
           chargedTotal: orderTotalCurrency,
         },
         items: cart.map(item => {
-          const finalPrice = item.subscriptionInterval ? item.price * 0.85 : item.price;
+          const finalPrice = item.subscriptionInterval ? item.price * (1 - subDiscountPct / 100) : item.price;
           return {
             sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
             name: item.name,
@@ -1147,7 +1161,7 @@ const CheckoutPage = () => {
                   )}
 
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em]">{content.checkout.summary.shipping}</span>
+                    <span className="text-white/40 uppercase font-bold text-[10px] tracking-[0.2em] inline-flex items-center gap-1">{content.checkout.summary.shipping} <CheckoutInfoTip text={selectedCountry?.freeShippingThreshold ? `Doprava zdarma při objednávce nad ${selectedCountry.freeShippingThreshold} ${selectedCountry.currency}. Jinak závisí na počtu lahví a zemi.` : "Cena dopravy závisí na počtu lahví a zemi."} /></span>
                     <span className={`font-bold ${shippingCostCurrency === 0 ? 'text-primary' : ''}`}>{shippingCostCurrency === 0 ? content.checkout.delivery.free : formatMoney(shippingCostCurrency, selectedCountry)}</span>
                   </div>
                   

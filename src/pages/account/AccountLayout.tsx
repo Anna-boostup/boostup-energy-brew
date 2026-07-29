@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { User, Package, LogOut, RefreshCw, Gift } from "lucide-react";
+import { User, Package, LogOut, RefreshCw, Gift, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,8 @@ const AccountLayout = () => {
         { name: "Můj profil", href: "/account/profile", icon: User },
         { name: "Moje objednávky", href: "/account/orders", icon: Package },
         { name: "Moje předplatné", href: "/account/subscriptions", icon: RefreshCw },
-        ...(referralsEnabled ? [{ name: "Získej odměnu", href: "/account/referrals", icon: Gift }] : [])
+        ...(referralsEnabled ? [{ name: "Získej odměnu", href: "/account/referrals", icon: Gift }] : []),
+        { name: "Nápověda", href: "/account/help", icon: HelpCircle }
     ];
 
     return (

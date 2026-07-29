@@ -11,9 +11,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
-import { AlertCircle, CheckCircle2, Loader2, Power } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Power, Info } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
 import { downloadPacketaLabel } from "@/lib/packeta";
+
+const InfoTip = ({ text }: { text: string }) => (
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="opacity-60 hover:opacity-100 transition-opacity align-middle">
+                <Info className="w-3 h-3 inline" />
+            </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[280px] text-xs leading-relaxed">{text}</TooltipContent>
+    </Tooltip>
+);
 
 const AdminDashboard = () => {
     const { orders = [], stock = {}, loading: inventoryLoading } = useInventory() || { orders: [], stock: {}, loading: true };
@@ -179,7 +191,7 @@ const AdminDashboard = () => {
                         <div className="flex flex-col flex-1">
                             <span className={`text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-1.5 ${
                                 isSalesEnabled ? 'text-olive-dark/50' : 'text-cream/60'
-                            }`}>{content?.admin?.dashboard?.salesStatus}</span>
+                            }`}>{content?.admin?.dashboard?.salesStatus} <InfoTip text="Hlavní vypínač e-shopu. Když vypnete, web okamžitě přestane přijímat objednávky – v košíku a na pokladně se ukáže upozornění a dokončení platby je zablokované." /></span>
                             <span className={`text-xl font-black uppercase tracking-tighter leading-none ${
                                 isSalesEnabled ? 'text-olive-dark' : 'text-cream'
                             }`}>

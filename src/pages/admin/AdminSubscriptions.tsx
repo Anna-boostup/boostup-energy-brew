@@ -3,7 +3,9 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CalendarClock, Loader2, RefreshCw, XCircle, Check, ExternalLink } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/use-toast';
+import { SUBSCRIPTION_DISCOUNT_KEY } from '@/hooks/useSubscriptionDiscount';
 
 const SETTINGS_KEY = 'subscription_dispatch';
 const SHIPPING_LABELS: Record<string, string> = { personal: 'Osobní', zasilkovna: 'Zásilkovna', courier: 'Kurýr' };
@@ -16,13 +18,16 @@ const AdminSubscriptions = () => {
     const [globalDate, setGlobalDate] = useState('');
     const [savingGlobal, setSavingGlobal] = useState(false);
     const [busy, setBusy] = useState<string | null>(null);
+    const [discountPct, setDiscountPct] = useState('15');
+    const [savingDiscount, setSavingDiscount] = useState(false);
 
     const load = async () => {
         setLoading(true);
         try {
-            const [{ data: subData }, { data: setting }] = await Promise.all([
+            const [{ data: subData }, { data: setting }, { data: disc }] = await Promise.all([
                 supabase.from('subscriptions').select('*').order('created_at', { ascending: false }),
                 supabase.from('app_settings').select('value').eq('key', SETTINGS_KEY).maybeSingle(),
+                supabase.from('app_settings').select('value').eq('key', SUBSCRIPTION_DISCOUNT_KEY).maybeSingle(),
             ]);
             setSubs(subData || []);
             if (setting?.value) {
@@ -30,6 +35,12 @@ const AdminSubscriptions = () => {
                     const v = typeof setting.value === 'string' ? JSON.parse(setting.value) : setting.value;
                     setGlobalEnabled(!!v.enabled);
                     setGlobalDate(v.date || '');
+                } catch { /* ignore */ }
+            }
+            if (disc?.value !== undefined && disc?.value !== null) {
+                try {
+                    const dv = typeof disc.value === 'string' ? JSON.parse(disc.value) : disc.value;
+                    if (!isNaN(Number(dv))) setDiscountPct(String(Number(dv)));
                 } catch { /* ignore */ }
             }
         } catch (e) { console.error(e); }
@@ -52,6 +63,18 @@ const AdminSubscriptions = () => {
             await load();
         } catch (e: any) { toast({ title: 'Chyba', description: e?.message, variant: 'destructive' }); }
         finally { setSavingGlobal(false); }
+    };
+
+    const saveDiscount = async () => {
+        setSavingDiscount(true);
+        try {
+            const n = Number(discountPct);
+            if (isNaN(n) || n < 0 || n > 90) { toast({ title: 'Neplatná sleva', description: 'Zadej hodnotu 0–90 %.', variant: 'destructive' }); return; }
+            const { error } = await supabase.from('app_settings').upsert({ key: SUBSCRIPTION_DISCOUNT_KEY, value: JSON.stringify(n) }, { onConflict: 'key' });
+            if (error) throw error;
+            toast({ title: 'Uloženo', description: `Sleva předplatného nastavena na ${n} %.` });
+        } catch (e: any) { toast({ title: 'Chyba', description: e?.message, variant: 'destructive' }); }
+        finally { setSavingDiscount(false); }
     };
 
     const adminAction = async (sub: any, action: string) => {
@@ -107,6 +130,18 @@ const AdminSubscriptions = () => {
                 </div>
             </div>
 
+            <div className="rounded-3xl border-2 border-olive/10 bg-white p-5 sm:p-6 mb-6">
+                <div className="font-black text-olive-dark uppercase tracking-tight text-sm mb-3">Sleva předplatného</div>
+                <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+                    <div>
+                        <label className="text-[10px] font-bold uppercase text-olive/60">Sleva (%)</label>
+                        <input type="number" min="0" max="90" value={discountPct} onChange={e => setDiscountPct(e.target.value)} className="mt-1 block w-28 bg-white border-2 border-olive/15 rounded-xl px-3 py-2 text-sm" />
+                    </div>
+                    <p className="text-xs text-olive/50 flex-1">Procentuální sleva pro předplatné. Projeví se u produktu (štítek) i v ceně u pokladny.</p>
+                    <Button size="sm" onClick={saveDiscount} disabled={savingDiscount} className="gap-2">{savingDiscount ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} Uložit</Button>
+                </div>
+            </div>
+
             {loading ? (
                 <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
             ) : subs.length === 0 ? (
@@ -134,7 +169,14 @@ const AdminSubscriptions = () => {
                                     </td>
                                     <td className="px-4 py-3">{s.product_handle} ×{s.quantity}</td>
                                     <td className="px-4 py-3">{s.interval === 'monthly' ? 'Měsíčně' : '2 měsíce'}</td>
-                                    <td className="px-4 py-3">{fmt(s.next_delivery_date)}{!s.uses_global_date && <span className="ml-1 text-[10px] text-amber-600">(vlastní)</span>}</td>
+                                    <td className="px-4 py-3">{fmt(s.next_delivery_date)}{!s.uses_global_date && (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <span className="ml-1 text-[10px] text-amber-600 cursor-help underline decoration-dotted">(vlastní)</span>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="max-w-[240px] text-xs leading-relaxed">Zákazník má vlastní datum odeslání – globální datum ho nepřepíše.</TooltipContent>
+                                        </Tooltip>
+                                    )}</td>
                                     <td className="px-4 py-3">{SHIPPING_LABELS[s.shipping_method || ''] || s.shipping_method || '—'}</td>
                                     <td className="px-4 py-3">
                                         <Badge variant={s.status === 'active' ? 'default' : s.status === 'paused' ? 'secondary' : 'destructive'} className="uppercase text-[10px]">
