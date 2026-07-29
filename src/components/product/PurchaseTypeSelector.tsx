@@ -1,6 +1,7 @@
 
 import { Info } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useSubscriptionDiscount } from "@/hooks/useSubscriptionDiscount";
 
 const InfoTip = ({ text }: { text: string }) => (
     <Tooltip>
@@ -21,6 +22,7 @@ interface PurchaseTypeSelectorProps {
 }
 
 const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTypeSelectorProps) => {
+  const { pct } = useSubscriptionDiscount();
   return (
     <div>
       <h3 className="font-display text-sm font-bold text-foreground mb-4 tracking-widest">MOŽNOSTI NÁKUPU</h3>
@@ -53,7 +55,7 @@ const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTy
             }`}
         >
           <div className="absolute top-0 right-0 bg-amber-600/20 text-white text-[10px] font-bold px-2 py-1 rounded-bl-xl backdrop-blur-sm">
-            -10% SLEVA
+            -{pct}% SLEVA
           </div>
           <div className="flex items-center gap-3">
             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${purchaseType === 'subscription' ? "border-white" : "border-muted-foreground"}`}>
@@ -61,7 +63,7 @@ const PurchaseTypeSelector = ({ purchaseType, onSelectPurchaseType }: PurchaseTy
             </div>
             <div className="text-left">
               <div className="font-bold text-sm sm:text-base inline-flex items-center gap-1">Předplatné <InfoTip text="Pravidelné dodávky se slevou. Termín odeslání, dopravu i zrušení spravuješ ve svém účtu; doprava se účtuje u každé zásilky." /></div>
-              <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-10%</span></div>
+              <div className={`text-[10px] sm:text-xs ${purchaseType === 'subscription' ? "text-white" : "text-foreground/70"}`}>Každý měsíc <span className={`font-bold ${purchaseType === 'subscription' ? "text-white" : "text-amber-600"}`}>-{pct}%</span></div>
             </div>
           </div>
         </button>

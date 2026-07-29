@@ -15,6 +15,7 @@ import {
 import { motion } from 'framer-motion';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { useSubscriptionDiscount } from "@/hooks/useSubscriptionDiscount";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
 import PacketaWidget from '@/components/PacketaWidget';
@@ -80,6 +81,7 @@ const CheckoutPage = () => {
   const hasSubscription = cart.some(item => item.subscriptionInterval);
   const { addOrder, decrementStock, getStock } = useInventory();
   const { user } = useAuth();
+  const { pct: subDiscountPct } = useSubscriptionDiscount();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [promoInput, setPromoInput] = useState("");
@@ -455,7 +457,7 @@ const CheckoutPage = () => {
           chargedTotal: orderTotalCurrency,
         },
         items: cart.map(item => {
-          const finalPrice = item.subscriptionInterval ? item.price * 0.85 : item.price;
+          const finalPrice = item.subscriptionInterval ? item.price * (1 - subDiscountPct / 100) : item.price;
           return {
             sku: item.flavorMode === 'mix' ? `mix-${item.pack}` : `${item.flavor}-${item.pack}`,
             name: item.name,
