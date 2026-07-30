@@ -28,16 +28,32 @@ const ShippingSettings = () => {
     const { countries, loading, saving, saveCountries } = useShippingCountries();
     const { toast } = useToast();
     const [draft, setDraft] = useState<ShippingCountry[]>([]);
-    const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+    const COLLAPSED_KEY = 'boostup_shipping_collapsed';
+    const readCollapsed = (): string[] | null => {
+        try { const raw = localStorage.getItem(COLLAPSED_KEY); return raw ? JSON.parse(raw) : null; } catch { return null; }
+    };
+    const persistCollapsed = (set: Set<string>) => {
+        try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify([...set])); } catch { /* ignore */ }
+    };
+    const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(readCollapsed() || []));
+    const [collapsedInit, setCollapsedInit] = useState(false);
     const toggleCollapsed = (code: string) => setCollapsed(prev => {
         const n = new Set(prev);
         if (n.has(code)) n.delete(code); else n.add(code);
+        persistCollapsed(n);
         return n;
     });
 
     useEffect(() => {
         if (!loading) setDraft(countries.map(c => ({ ...c, methods: JSON.parse(JSON.stringify(c.methods)) })));
     }, [loading, countries]);
+
+    // Defaultně jsou všechny země sbalené (dokud si uživatel neuloží vlastní stav)
+    useEffect(() => {
+        if (collapsedInit || draft.length === 0) return;
+        if (readCollapsed() === null) setCollapsed(new Set(draft.map(c => c.code)));
+        setCollapsedInit(true);
+    }, [draft, collapsedInit]);
 
     const updateCountry = (code: string, patch: Partial<ShippingCountry>) => {
         setDraft(prev => prev.map(c => c.code === code ? { ...c, ...patch } : c));
