@@ -242,3 +242,54 @@ export async function performPauseResume(stripe: any, admin: any, sub: any, acti
     await admin.from('subscriptions').update({ status: 'active', updated_at: nowIso }).eq('id', sub.id);
     return { status: 200, body: { ok: true, message: 'Předplatné bylo obnoveno.' } };
 }
+
+
+export interface RenewalDeps { supabase: any; stripe: any; }
+export interface RenewalResult {
+    outcome: 'processed' | 'not_found' | 'duplicate';
+    order?: RenewalOrder;
+    orderInserted?: boolean;
+    stockMovements?: RenewalStockMovement[];
+    periodEndIso?: string | null;
+}
+
+/**
+ * Exekuce obnovy předplatného s injektovanými klienty: fetch → idempotence →
+ * odečet skladu (rpc) → objednávka → update předplatného. Vrací výsledek.
+ * (Štítek Zásilkovny řeší volající — je to side-effect specifický pro webhook.)
+ */
+export async function executeRenewal(
+    deps: RenewalDeps,
+    subId: string,
+    invoice: { id?: string | null; amount_paid?: number | null },
+    nowIso: string,
+    orderNumber: string,
+): Promise<RenewalResult> {
+    const { supabase, stripe } = deps;
+    const { data: sub } = await supabase.from('subscriptions').select('*').eq('stripe_subscription_id', subId).maybeSingle();
+    if (!sub) return { outcome: 'not_found' };
+    if (isRenewalProcessed(sub.last_invoice_id, invoice.id)) return { outcome: 'duplicate' };
+
+    let periodEndIso: string | null = null;
+    try {
+        const s = await stripe.subscriptions.retrieve(subId);
+        periodEndIso = s?.current_period_end ? new Date(s.current_period_end * 1000).toISOString() : null;
+    } catch { /* osvěžení období best-effort */ }
+
+    const { stockMovements, order } = buildRenewalPlan(sub, invoice, nowIso, orderNumber);
+
+    for (const sm of stockMovements) {
+        const { error } = await supabase.rpc('handle_stock_movement', { p_sku: sm.sku, p_type: 'sale', p_amount: -sm.amount, p_note: sm.note });
+        if (error) console.error(`[renewal] stock movement failed for ${sm.sku}:`, error.message);
+    }
+
+    const { error: orderErr } = await supabase.from('orders').insert(order);
+
+    await supabase.from('subscriptions').update({
+        last_invoice_id: invoice.id,
+        current_period_end: periodEndIso,
+        updated_at: nowIso,
+    }).eq('stripe_subscription_id', subId);
+
+    return { outcome: 'processed', order, orderInserted: !orderErr, stockMovements, periodEndIso };
+}

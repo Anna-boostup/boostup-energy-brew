@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { createPacketaPacket } from './_packeta-helper.js';
-import { computeRequiredStock, mapStripeStatus, mapInterval, isRenewalInvoice, isRenewalProcessed, buildRenewalPlan, applySubscriptionStatusEvent, applySubscriptionPaused, applySubscriptionDeleted } from './_lib/subscriptionRules.js';
+import { mapStripeStatus, mapInterval, isRenewalInvoice, applySubscriptionStatusEvent, applySubscriptionPaused, applySubscriptionDeleted, executeRenewal } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16',
@@ -74,51 +74,22 @@ async function upsertSubscriptionRecord(stripeSubId: string, orderId?: string | 
 /** Zpracuje obnovu předplatného: odpis skladu + objednávka + štítek. Idempotentní dle invoice.id. */
 async function processSubscriptionRenewal(subId: string, invoice: Stripe.Invoice) {
     try {
-        const { data: sub } = await supabase.from('subscriptions').select('*').eq('stripe_subscription_id', subId).maybeSingle();
-        if (!sub) { console.warn(`[Stripe Webhook] renewal: subscription ${subId} not found`); return; }
-        if (isRenewalProcessed(sub.last_invoice_id, invoice.id)) {
-            console.log(`[Stripe Webhook] renewal invoice ${invoice.id} already processed — skipping.`);
-            return;
-        }
-
-        let periodEndIso: string | null = null;
-        try {
-            const s = await stripe.subscriptions.retrieve(subId);
-            periodEndIso = s.current_period_end ? new Date(s.current_period_end * 1000).toISOString() : null;
-        } catch (e: any) { console.error('[Stripe Webhook] renewal period refresh failed:', e?.message || e); }
-
-        // Plán obnovy (čistá logika — skladové pohyby + objednávka)
+        const nowIso = new Date().toISOString();
         const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-        const { stockMovements, order: orderRow } = buildRenewalPlan(sub, invoice, new Date().toISOString(), orderNumber);
-        const di: any = sub.delivery_info || {};
-        const total = orderRow.total;
+        const res = await executeRenewal({ supabase, stripe }, subId, invoice, nowIso, orderNumber);
 
-        // 1) odpis hotového skladu po příchutích (stejně jako u běžného prodeje)
-        for (const sm of stockMovements) {
-            const { error } = await supabase.rpc('handle_stock_movement', {
-                p_sku: sm.sku, p_type: 'sale', p_amount: -sm.amount, p_note: sm.note,
-            });
-            if (error) console.error(`[Stripe Webhook] renewal stock movement failed for ${sm.sku}:`, error.message);
-        }
+        if (res.outcome === 'not_found') { console.warn(`[Stripe Webhook] renewal: subscription ${subId} not found`); return; }
+        if (res.outcome === 'duplicate') { console.log(`[Stripe Webhook] renewal invoice ${invoice.id} already processed — skipping.`); return; }
+        if (res.orderInserted) console.log(`[Stripe Webhook] renewal order ${orderNumber} created for subscription ${subId}.`);
+        else console.error('[Stripe Webhook] renewal order insert failed.');
 
-        // 2) objednávka obnovy
-        const { error: orderErr } = await supabase.from('orders').insert(orderRow);
-        if (orderErr) console.error('[Stripe Webhook] renewal order insert failed:', orderErr.message);
-        else console.log(`[Stripe Webhook] renewal order ${orderNumber} created for subscription ${subId}.`);
-
-        // 3) označit fakturu jako zpracovanou + osvěžit období
-        await supabase.from('subscriptions').update({
-            last_invoice_id: invoice.id,
-            current_period_end: periodEndIso,
-            updated_at: new Date().toISOString(),
-        }).eq('stripe_subscription_id', subId);
-
-        // 4) Zásilkovna – štítek
-        if (!orderErr && di.deliveryMethod === 'zasilkovna' && di.packetaPointId) {
+        // Zásilkovna – štítek (side-effect specifický pro webhook)
+        const di: any = res.order?.delivery_info || {};
+        if (res.orderInserted && di.deliveryMethod === 'zasilkovna' && di.packetaPointId) {
             try {
                 const packet = await createPacketaPacket({
                     orderNumber, firstName: di.firstName, lastName: di.lastName,
-                    email: sub.email, phone: di.phone, packetaPointId: di.packetaPointId, total,
+                    email: (res.order as any)?.customer?.email, phone: di.phone, packetaPointId: di.packetaPointId, total: res.order?.total,
                 });
                 await supabase.from('orders').update({ packeta_barcode: packet.barcode, packeta_packet_id: packet.packetId }).eq('id', orderNumber);
             } catch (err) { console.error('[Stripe Webhook] renewal Packeta failed:', err); }

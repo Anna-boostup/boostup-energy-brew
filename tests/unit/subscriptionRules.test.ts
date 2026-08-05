@@ -18,6 +18,7 @@ import {
     applySubscriptionPaused,
     applySubscriptionDeleted,
     performPauseResume,
+    executeRenewal,
     type SubscriptionLike,
 } from '../../api/_lib/subscriptionRules';
 
@@ -356,6 +357,53 @@ describe('performPauseResume (endpoint pause/resume)', () => {
         const rec: any[] = [];
         const r = await performPauseResume(fakeStripe(rec), fakeDb(rec), sub({ stripe_subscription_id: null }), 'resume', 'NOW');
         expect(r.status).toBe(400);
+        expect(rec).toEqual([]);
+    });
+});
+
+
+describe('executeRenewal (webhook invoice.paid → sklad + objednávka + idempotence)', () => {
+    function fakeRenewalDb(rec: any[], subRow: any) {
+        return {
+            from(table: string) {
+                return {
+                    select() { return { eq() { return { maybeSingle() { return Promise.resolve({ data: subRow }); } }; } }; },
+                    insert(row: any) { rec.push({ op: 'insert', table, row }); return Promise.resolve({ error: null }); },
+                    update(row: any) { return { eq(col: string, val: any) { rec.push({ op: 'update', table, row, col, val }); return Promise.resolve({ error: null }); } }; },
+                };
+            },
+            rpc(fn: string, args: any) { rec.push({ op: 'rpc', fn, args }); return Promise.resolve({ error: null }); },
+        };
+    }
+    const fakeRenewalStripe = (periodEnd: number | null) => ({ subscriptions: { retrieve: () => Promise.resolve({ current_period_end: periodEnd }) } });
+
+    it('zpracuje obnovu: odečte sklad, založí objednávku, označí fakturu', async () => {
+        const rec: any[] = [];
+        const subRow = { stripe_subscription_id: 'sub_1', last_invoice_id: null, items: [{ sku: 'A-LEMON-2', quantity: 3 }], delivery_info: { firstName: 'Jan', lastName: 'Novák', deliveryMethod: 'courier' }, email: 'jan@x.cz', shipping_price: 120 };
+        const res = await executeRenewal({ supabase: fakeRenewalDb(rec, subRow), stripe: fakeRenewalStripe(1893456000) }, 'sub_1', { id: 'in_1', amount_paid: 74900 }, 'NOW', 'BUP1');
+        expect(res.outcome).toBe('processed');
+        expect(res.orderInserted).toBe(true);
+        expect(rec).toEqual([
+            { op: 'rpc', fn: 'handle_stock_movement', args: { p_sku: 'lemon', p_type: 'sale', p_amount: -6, p_note: 'Předplatné – obnova in_1' } },
+            { op: 'insert', table: 'orders', row: res.order },
+            { op: 'update', table: 'subscriptions', row: { last_invoice_id: 'in_1', current_period_end: new Date(1893456000 * 1000).toISOString(), updated_at: 'NOW' }, col: 'stripe_subscription_id', val: 'sub_1' },
+        ]);
+        expect(res.order!.total).toBe(749);
+        expect(res.order!.is_subscription_order).toBe(true);
+    });
+
+    it('idempotence: stejná faktura → přeskočí, žádný sklad/objednávka', async () => {
+        const rec: any[] = [];
+        const subRow = { stripe_subscription_id: 'sub_1', last_invoice_id: 'in_1', items: [{ sku: 'A-LEMON-2', quantity: 3 }] };
+        const res = await executeRenewal({ supabase: fakeRenewalDb(rec, subRow), stripe: fakeRenewalStripe(1) }, 'sub_1', { id: 'in_1', amount_paid: 74900 }, 'NOW', 'BUP1');
+        expect(res.outcome).toBe('duplicate');
+        expect(rec).toEqual([]);
+    });
+
+    it('neznámé předplatné → not_found, žádné zápisy', async () => {
+        const rec: any[] = [];
+        const res = await executeRenewal({ supabase: fakeRenewalDb(rec, null), stripe: fakeRenewalStripe(1) }, 'sub_x', { id: 'in_9', amount_paid: 1000 }, 'NOW', 'BUP9');
+        expect(res.outcome).toBe('not_found');
         expect(rec).toEqual([]);
     });
 });
