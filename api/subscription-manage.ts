@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { resolveShippingCountry, shippingForMethod, convertToCurrency } from './secure-calculator.js';
-import { totalBottles, checkModifiable, checkDateChange, checkShippingChange } from './_lib/subscriptionRules.js';
+import { totalBottles, checkModifiable, checkDateChange, checkShippingChange, checkPauseResume } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' });
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
@@ -44,8 +44,8 @@ export default async function handler(req: Request) {
 
         // Přerušení / obnovení předplatného — vratné akce, bez pravidla „5 dní předem".
         if (action === 'pause' || action === 'resume') {
-            if (sub.status === 'cancelled') return json({ error: 'Předplatné je již zrušené.' }, 400);
-            if (!sub.stripe_subscription_id) return json({ error: 'Předplatné nemá napojení na platby.' }, 400);
+            const prGuard = checkPauseResume(sub);
+            if (!prGuard.ok) return json({ error: prGuard.error }, prGuard.status);
             const ts = new Date().toISOString();
             if (action === 'pause') {
                 await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: { behavior: 'void' } });

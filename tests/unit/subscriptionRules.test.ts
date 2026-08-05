@@ -7,6 +7,12 @@ import {
     checkModifiable,
     checkDateChange,
     checkShippingChange,
+    mapStripeStatus,
+    mapInterval,
+    isRenewalInvoice,
+    isRenewalProcessed,
+    computeRequiredStock,
+    checkPauseResume,
     type SubscriptionLike,
 } from '../../api/_lib/subscriptionRules';
 
@@ -142,5 +148,90 @@ describe('checkShippingChange (změna dopravy)', () => {
     it('zamítne prázdnou metodu', () => {
         expect(checkShippingChange(baseSub(), null, NOW).ok).toBe(false);
         expect(checkShippingChange(baseSub(), '', NOW).ok).toBe(false);
+    });
+});
+
+
+describe('mapStripeStatus', () => {
+    it('active bez pauzy → active', () => {
+        expect(mapStripeStatus('active', false)).toBe('active');
+        expect(mapStripeStatus('trialing', false)).toBe('active');
+    });
+    it('pause_collection → paused (i u active)', () => {
+        expect(mapStripeStatus('active', true)).toBe('paused');
+        expect(mapStripeStatus(undefined, true)).toBe('paused');
+    });
+    it('canceled/cancelled → cancelled (má přednost)', () => {
+        expect(mapStripeStatus('canceled', false)).toBe('cancelled');
+        expect(mapStripeStatus('cancelled', true)).toBe('cancelled');
+    });
+});
+
+describe('mapInterval', () => {
+    it('>= 2 měsíce → bimonthly, jinak monthly', () => {
+        expect(mapInterval(1)).toBe('monthly');
+        expect(mapInterval(2)).toBe('bimonthly');
+        expect(mapInterval(3)).toBe('bimonthly');
+        expect(mapInterval(undefined)).toBe('monthly');
+        expect(mapInterval(null)).toBe('monthly');
+    });
+});
+
+describe('isRenewalInvoice', () => {
+    it('jen subscription_cycle je obnova', () => {
+        expect(isRenewalInvoice('subscription_cycle')).toBe(true);
+        expect(isRenewalInvoice('subscription_create')).toBe(false);
+        expect(isRenewalInvoice('manual')).toBe(false);
+        expect(isRenewalInvoice(undefined)).toBe(false);
+    });
+});
+
+describe('isRenewalProcessed (idempotence obnovy)', () => {
+    it('stejné invoice id → už zpracováno', () => {
+        expect(isRenewalProcessed('in_1', 'in_1')).toBe(true);
+    });
+    it('různé / prázdné → nezpracováno', () => {
+        expect(isRenewalProcessed('in_1', 'in_2')).toBe(false);
+        expect(isRenewalProcessed(null, 'in_1')).toBe(false);
+        expect(isRenewalProcessed('in_1', null)).toBe(false);
+        expect(isRenewalProcessed(undefined, undefined)).toBe(false);
+    });
+});
+
+describe('computeRequiredStock', () => {
+    it('SKU s příchutí a balením (× množství)', () => {
+        expect(computeRequiredStock([{ sku: 'BUP-LEMON-12', quantity: 2 }])).toEqual({ lemon: 24, red: 0, silky: 0 });
+        expect(computeRequiredStock([{ sku: 'X-RED-6', quantity: 1 }])).toEqual({ lemon: 0, red: 6, silky: 0 });
+    });
+    it('SKU bez čísla balení → pack = 1', () => {
+        expect(computeRequiredStock([{ sku: 'boost-silky', quantity: 2 }])).toEqual({ lemon: 0, red: 0, silky: 2 });
+    });
+    it('mix konfigurace (součet příchutí × množství)', () => {
+        expect(computeRequiredStock([{ mixConfiguration: { lemon: 1, red: 2, silky: 0 }, quantity: 3 }])).toEqual({ lemon: 3, red: 6, silky: 0 });
+    });
+    it('SKU bez rozpoznané příchuti se ignoruje', () => {
+        expect(computeRequiredStock([{ sku: 'MERCH-TSHIRT-1', quantity: 5 }])).toEqual({ lemon: 0, red: 0, silky: 0 });
+    });
+    it('sčítá více položek a zvládá prázdné vstupy', () => {
+        expect(computeRequiredStock([{ sku: 'A-LEMON-2', quantity: 1 }, { mixConfiguration: { lemon: 0, red: 1, silky: 1 }, quantity: 2 }]))
+            .toEqual({ lemon: 2, red: 2, silky: 2 });
+        expect(computeRequiredStock([])).toEqual({ lemon: 0, red: 0, silky: 0 });
+        expect(computeRequiredStock(null)).toEqual({ lemon: 0, red: 0, silky: 0 });
+    });
+});
+
+describe('checkPauseResume (přerušit / obnovit)', () => {
+    const sub = (o: Partial<SubscriptionLike> = {}): SubscriptionLike => ({ status: 'active', stripe_subscription_id: 'sub_1', ...o });
+    it('projde u aktivního napojeného předplatného', () => {
+        expect(checkPauseResume(sub())).toEqual({ ok: true });
+        expect(checkPauseResume(sub({ status: 'paused' })).ok).toBe(true);
+    });
+    it('zamítne zrušené', () => {
+        const r = checkPauseResume(sub({ status: 'cancelled' }));
+        expect(r.ok).toBe(false); expect(r.error).toMatch(/zrušené/);
+    });
+    it('zamítne bez napojení na platby', () => {
+        const r = checkPauseResume(sub({ stripe_subscription_id: null }));
+        expect(r.ok).toBe(false); expect(r.error).toMatch(/napojení na platby/);
     });
 });

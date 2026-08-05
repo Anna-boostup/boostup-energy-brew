@@ -94,3 +94,60 @@ export function checkShippingChange(sub: SubscriptionLike, method: string | null
     }
     return OK;
 }
+
+
+// ---------------------------------------------------------------------------
+// Webhook / stav — čisté pomocné funkce (sdílené s api/stripe-webhook.ts)
+// ---------------------------------------------------------------------------
+
+export type SubStatus = 'active' | 'paused' | 'cancelled';
+
+/** Mapuje Stripe stav + pause_collection na náš stav předplatného. */
+export function mapStripeStatus(stripeStatus?: string | null, hasPauseCollection?: boolean): SubStatus {
+    if (stripeStatus === 'canceled' || stripeStatus === 'cancelled') return 'cancelled';
+    if (hasPauseCollection) return 'paused';
+    return 'active';
+}
+
+/** Interval podle počtu měsíců (>= 2 → dvouměsíční). */
+export function mapInterval(intervalCount?: number | null): 'monthly' | 'bimonthly' {
+    return (Number(intervalCount) || 1) >= 2 ? 'bimonthly' : 'monthly';
+}
+
+/** True pro fakturu opakované platby předplatného. */
+export function isRenewalInvoice(billingReason?: string | null): boolean {
+    return billingReason === 'subscription_cycle';
+}
+
+/** True, pokud už byla tato faktura zpracována (idempotence obnovy). */
+export function isRenewalProcessed(lastInvoiceId?: string | null, invoiceId?: string | null): boolean {
+    return !!lastInvoiceId && !!invoiceId && lastInvoiceId === invoiceId;
+}
+
+/** Potřebný sklad (lahvičky po příchutích) z položek objednávky/předplatného. */
+export function computeRequiredStock(items: any[] | null | undefined): Record<string, number> {
+    const req: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
+    for (const item of (items || [])) {
+        const qty = Number(item?.quantity) || 0;
+        if (item?.mixConfiguration) {
+            req.lemon += (Number(item.mixConfiguration.lemon) || 0) * qty;
+            req.red += (Number(item.mixConfiguration.red) || 0) * qty;
+            req.silky += (Number(item.mixConfiguration.silky) || 0) * qty;
+        } else if (item?.sku) {
+            const skuStr = String(item.sku);
+            const parts = skuStr.split('-');
+            const pack = parseInt(parts[parts.length - 1]) || 1;
+            const low = skuStr.toLowerCase();
+            const flavor = low.includes('lemon') ? 'lemon' : low.includes('red') ? 'red' : low.includes('silky') ? 'silky' : null;
+            if (flavor) req[flavor] += qty * pack;
+        }
+    }
+    return req;
+}
+
+/** Guard pro přerušení/obnovení — vratné akce (jen nezrušené + napojené na platby). */
+export function checkPauseResume(sub: SubscriptionLike): GuardResult {
+    if (sub.status === 'cancelled') return { ok: false, error: 'Předplatné je již zrušené.', status: 400 };
+    if (!sub.stripe_subscription_id) return { ok: false, error: 'Předplatné nemá napojení na platby.', status: 400 };
+    return { ok: true };
+}
