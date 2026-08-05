@@ -41,6 +41,22 @@ export default async function handler(req: Request) {
         const { data: sub } = await admin.from('subscriptions').select('*').eq('id', subscriptionId).maybeSingle();
         if (!sub) return json({ error: 'Subscription not found' }, 404);
         if (sub.user_id !== user.id) return json({ error: 'Forbidden' }, 403);
+
+        // Přerušení / obnovení předplatného — vratné akce, bez pravidla „5 dní předem".
+        if (action === 'pause' || action === 'resume') {
+            if (sub.status === 'cancelled') return json({ error: 'Předplatné je již zrušené.' }, 400);
+            if (!sub.stripe_subscription_id) return json({ error: 'Předplatné nemá napojení na platby.' }, 400);
+            const ts = new Date().toISOString();
+            if (action === 'pause') {
+                await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: { behavior: 'void' } });
+                await admin.from('subscriptions').update({ status: 'paused', updated_at: ts }).eq('id', sub.id);
+                return json({ ok: true, message: 'Předplatné bylo přerušeno — opakované platby jsou pozastaveny.' });
+            }
+            await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: '' as any });
+            await admin.from('subscriptions').update({ status: 'active', updated_at: ts }).eq('id', sub.id);
+            return json({ ok: true, message: 'Předplatné bylo obnoveno.' });
+        }
+
         // Společná pravidla: nezrušené, napojené na platby, min. 5 dní před odesláním.
         const modGuard = checkModifiable(sub);
         if (!modGuard.ok) return json({ error: modGuard.error }, modGuard.status);
