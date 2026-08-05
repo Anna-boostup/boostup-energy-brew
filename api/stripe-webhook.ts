@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { createPacketaPacket } from './_packeta-helper.js';
-import { mapStripeStatus, mapInterval, isRenewalInvoice, applySubscriptionStatusEvent, applySubscriptionPaused, applySubscriptionDeleted, executeRenewal } from './_lib/subscriptionRules.js';
+import { isRenewalInvoice, applySubscriptionStatusEvent, applySubscriptionPaused, applySubscriptionDeleted, executeRenewal, buildSubscriptionRecord } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16',
@@ -28,43 +28,15 @@ const corsHeaders = {
 async function upsertSubscriptionRecord(stripeSubId: string, orderId?: string | null) {
     try {
         const sub = await stripe.subscriptions.retrieve(stripeSubId);
-        const firstItem = sub.items?.data?.[0];
-        const intervalCount = firstItem?.price?.recurring?.interval_count || 1;
-        const interval = mapInterval(intervalCount);
-        const periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000) : null;
-
         let order: any = null;
         if (orderId) {
             const { data } = await supabase.from('orders').select('*').eq('id', orderId).single();
             order = data;
         }
-        const items: any[] = Array.isArray(order?.items) ? order.items : [];
-        const itemsTotal = items.reduce((a, it) => a + (Number(it.price) * Number(it.quantity)), 0);
-        const shippingPrice = order ? Math.max(0, Number(order.total) - itemsTotal) : null;
-
-        const row: any = {
-            stripe_subscription_id: sub.id,
-            stripe_customer_id: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
-            email: order?.customer?.email || null,
-            user_id: order?.user_id ?? null,
-            status: mapStripeStatus(sub.status, !!sub.pause_collection),
-            interval,
-            product_handle: items[0]?.sku || items[0]?.name || 'subscription',
-            quantity: items[0]?.quantity || 1,
-            shipping_method: order?.delivery_info?.deliveryMethod || null,
-            shipping_price: shippingPrice,
-            shipping_currency: 'CZK',
-            delivery_info: order?.delivery_info || null,
-            items: Array.isArray(order?.items) ? order.items : null,
-            current_period_end: periodEnd ? periodEnd.toISOString() : null,
-            next_delivery_date: periodEnd ? periodEnd.toISOString().slice(0, 10) : null,
-            cancel_at_period_end: !!sub.cancel_at_period_end,
-            updated_at: new Date().toISOString(),
-        };
-
+        const row = buildSubscriptionRecord(sub, order, new Date().toISOString());
         const { error } = await supabase.from('subscriptions').upsert(row, { onConflict: 'stripe_subscription_id' });
         if (error) console.error('[Stripe Webhook] subscription upsert error:', error.message);
-        else console.log(`[Stripe Webhook] subscription ${sub.id} recorded (${interval}).`);
+        else console.log(`[Stripe Webhook] subscription ${sub.id} recorded (${row.interval}).`);
     } catch (e: any) {
         console.error('[Stripe Webhook] recordSubscription failed:', e?.message || e);
     }

@@ -19,6 +19,10 @@ import {
     applySubscriptionDeleted,
     performPauseResume,
     executeRenewal,
+    buildSubscriptionRecord,
+    performCancel,
+    performChangeDate,
+    performChangeShipping,
     type SubscriptionLike,
 } from '../../api/_lib/subscriptionRules';
 
@@ -404,6 +408,123 @@ describe('executeRenewal (webhook invoice.paid → sklad + objednávka + idempot
         const rec: any[] = [];
         const res = await executeRenewal({ supabase: fakeRenewalDb(rec, null), stripe: fakeRenewalStripe(1) }, 'sub_x', { id: 'in_9', amount_paid: 1000 }, 'NOW', 'BUP9');
         expect(res.outcome).toBe('not_found');
+        expect(rec).toEqual([]);
+    });
+});
+
+
+describe('buildSubscriptionRecord (vytvoření záznamu předplatného)', () => {
+    it('sestaví řádek z Stripe subscription + objednávky', () => {
+        const stripeSub = { id: 'sub_1', customer: 'cus_1', status: 'active', pause_collection: null, cancel_at_period_end: false, current_period_end: 1893456000, items: { data: [{ price: { recurring: { interval_count: 2 } } }] } };
+        const order = { customer: { email: 'a@b.cz' }, user_id: 'u1', total: 1618, items: [{ sku: 'BUP-LEMON-12', price: 749, quantity: 2 }], delivery_info: { deliveryMethod: 'courier' } };
+        const row = buildSubscriptionRecord(stripeSub, order, 'NOW');
+        expect(row.stripe_subscription_id).toBe('sub_1');
+        expect(row.stripe_customer_id).toBe('cus_1');
+        expect(row.email).toBe('a@b.cz');
+        expect(row.user_id).toBe('u1');
+        expect(row.status).toBe('active');
+        expect(row.interval).toBe('bimonthly');
+        expect(row.product_handle).toBe('BUP-LEMON-12');
+        expect(row.quantity).toBe(2);
+        expect(row.shipping_method).toBe('courier');
+        expect(row.shipping_price).toBe(120); // total 1618 - itemsTotal 1498
+        expect(row.current_period_end).toBe(new Date(1893456000 * 1000).toISOString());
+        expect(row.next_delivery_date).toBe(new Date(1893456000 * 1000).toISOString().slice(0, 10));
+        expect(row.cancel_at_period_end).toBe(false);
+        expect(row.updated_at).toBe('NOW');
+    });
+    it('bez objednávky → rozumné defaulty', () => {
+        const row = buildSubscriptionRecord({ id: 'sub_2', status: 'active', current_period_end: null, items: { data: [] } }, null, 'NOW');
+        expect(row.email).toBeNull();
+        expect(row.shipping_price).toBeNull();
+        expect(row.product_handle).toBe('subscription');
+        expect(row.quantity).toBe(1);
+        expect(row.interval).toBe('monthly');
+        expect(row.items).toBeNull();
+    });
+});
+
+function fakeDb2(rec: any[]) {
+    return { from(t: string) { return { update(row: any) { return { eq(col: string, val: any) { rec.push({ op: 'update', table: t, row, col, val }); return Promise.resolve({ error: null }); } }; } }; } };
+}
+
+describe('performCancel (owner zrušení ke konci období)', () => {
+    it('nastaví cancel_at_period_end ve Stripu i v DB', async () => {
+        const rec: any[] = [];
+        const stripe = { subscriptions: { update: (id: string, payload: any) => { rec.push({ op: 'stripe.update', id, payload }); return Promise.resolve({}); } } };
+        const r = await performCancel(stripe, fakeDb2(rec), { id: 'row1', stripe_subscription_id: 'sub_1' }, 'NOW');
+        expect(r.status).toBe(200);
+        expect(rec).toEqual([
+            { op: 'stripe.update', id: 'sub_1', payload: { cancel_at_period_end: true } },
+            { op: 'update', table: 'subscriptions', row: { cancel_at_period_end: true, updated_at: 'NOW' }, col: 'id', val: 'row1' },
+        ]);
+    });
+});
+
+describe('performChangeDate (změna data odeslání)', () => {
+    const NOW = new Date('2026-07-15T12:00:00.000Z').getTime();
+    const inDays = (n: number) => new Date(NOW + n * 86400000).toISOString().slice(0, 10);
+    it('posune trial_end a zapíše nové datum', async () => {
+        const rec: any[] = [];
+        const stripe = { subscriptions: { update: (id: string, payload: any) => { rec.push({ op: 'stripe.update', id, payload }); return Promise.resolve({}); } } };
+        const newDate = inDays(10);
+        const anchor = Math.floor(new Date(newDate + 'T00:00:00').getTime() / 1000);
+        const r = await performChangeDate(stripe, fakeDb2(rec), { id: 'row1', stripe_subscription_id: 'sub_1', last_date_change_at: null, next_delivery_date: inDays(20) }, newDate, 'NOW', NOW);
+        expect(r.status).toBe(200);
+        expect(rec).toEqual([
+            { op: 'stripe.update', id: 'sub_1', payload: { trial_end: anchor, proration_behavior: 'none' } },
+            { op: 'update', table: 'subscriptions', row: { next_delivery_date: newDate, uses_global_date: false, last_date_change_at: 'NOW', updated_at: 'NOW' }, col: 'id', val: 'row1' },
+        ]);
+    });
+    it('zamítne druhou změnu v měsíci (400, žádné volání)', async () => {
+        const rec: any[] = [];
+        const stripe = { subscriptions: { update: () => { rec.push({ op: 'stripe.update' }); return Promise.resolve({}); } } };
+        const r = await performChangeDate(stripe, fakeDb2(rec), { id: 'row1', stripe_subscription_id: 'sub_1', last_date_change_at: new Date(NOW - 2 * 86400000).toISOString() }, inDays(10), 'NOW', NOW);
+        expect(r.status).toBe(400);
+        expect(rec).toEqual([]);
+    });
+});
+
+describe('performChangeShipping (změna dopravy)', () => {
+    const cfg = { stripeCurrency: 'czk', methods: { courier: [{ maxBottles: null, price: 99 }], zasilkovna: [{ maxBottles: null, price: 79 }] } };
+    const deps = (rec: any[], itemsData: any[], shipCur = 99) => ({
+        stripe: {
+            subscriptions: {
+                retrieve: () => Promise.resolve({ items: { data: itemsData } }),
+                update: (id: string, payload: any) => { rec.push({ op: 'stripe.update', id, payload }); return Promise.resolve({}); },
+            },
+        },
+        admin: fakeDb2(rec),
+        resolveShippingCountry: () => cfg,
+        shippingForMethod: () => shipCur,
+        convertToCurrency: (x: number) => x,
+    });
+    const sub = { id: 'row1', stripe_subscription_id: 'sub_1', interval: 'monthly', last_shipping_change_at: null, items: [{ sku: 'X-6', price: 100, quantity: 1 }], delivery_info: {} };
+    const dopravaItem = { id: 'si_ship', price: { product: { name: 'Doprava' } } };
+    const prodItem = { id: 'si_prod', price: { product: { name: 'BoostUp' } } };
+
+    it('shipCur>0 + existující položka Doprava → update položky', async () => {
+        const rec: any[] = [];
+        const r = await performChangeShipping(deps(rec, [prodItem, dopravaItem], 99) as any, sub, 'courier', 'NOW');
+        expect(r.status).toBe(200);
+        expect(rec[0]).toEqual({ op: 'stripe.update', id: 'sub_1', payload: { items: [{ id: 'si_ship', price_data: { currency: 'czk', product_data: { name: 'Doprava' }, unit_amount: 9900, recurring: { interval: 'month', interval_count: 1 } } }], proration_behavior: 'none' } });
+        expect(rec[1]).toEqual({ op: 'update', table: 'subscriptions', row: { shipping_method: 'courier', shipping_price: 99, shipping_currency: 'czk', last_shipping_change_at: 'NOW', updated_at: 'NOW' }, col: 'id', val: 'row1' });
+    });
+    it('shipCur>0 bez položky Doprava → přidá novou položku', async () => {
+        const rec: any[] = [];
+        await performChangeShipping(deps(rec, [prodItem], 99) as any, sub, 'courier', 'NOW');
+        expect(rec[0]).toEqual({ op: 'stripe.update', id: 'sub_1', payload: { items: [{ price_data: { currency: 'czk', product_data: { name: 'Doprava' }, unit_amount: 9900, recurring: { interval: 'month', interval_count: 1 } } }], proration_behavior: 'none' } });
+    });
+    it('shipCur=0 + existující položka → odebere ji', async () => {
+        const rec: any[] = [];
+        await performChangeShipping(deps(rec, [prodItem, dopravaItem], 0) as any, sub, 'courier', 'NOW');
+        expect(rec[0]).toEqual({ op: 'stripe.update', id: 'sub_1', payload: { items: [{ id: 'si_ship', deleted: true }], proration_behavior: 'none' } });
+    });
+    it('neplatná metoda / bez pásem → 400', async () => {
+        const rec: any[] = [];
+        const badDeps: any = { ...deps(rec, [prodItem], 99), resolveShippingCountry: () => ({ stripeCurrency: 'czk', methods: {} }) };
+        const r = await performChangeShipping(badDeps, sub, 'courier', 'NOW');
+        expect(r.status).toBe(400);
         expect(rec).toEqual([]);
     });
 });

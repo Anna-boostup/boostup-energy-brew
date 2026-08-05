@@ -293,3 +293,108 @@ export async function executeRenewal(
 
     return { outcome: 'processed', order, orderInserted: !orderErr, stockMovements, periodEndIso };
 }
+
+
+/** Sestaví řádek předplatného pro upsert z Stripe subscription + původní objednávky (čistá funkce). */
+export function buildSubscriptionRecord(stripeSub: any, order: any, nowIso: string): Record<string, any> {
+    const firstItem = stripeSub?.items?.data?.[0];
+    const intervalCount = firstItem?.price?.recurring?.interval_count || 1;
+    const periodEnd = stripeSub?.current_period_end ? new Date(stripeSub.current_period_end * 1000) : null;
+    const items: any[] = Array.isArray(order?.items) ? order.items : [];
+    const itemsTotal = items.reduce((a, it) => a + (Number(it.price) * Number(it.quantity)), 0);
+    const shippingPrice = order ? Math.max(0, Number(order.total) - itemsTotal) : null;
+    return {
+        stripe_subscription_id: stripeSub?.id,
+        stripe_customer_id: typeof stripeSub?.customer === 'string' ? stripeSub.customer : stripeSub?.customer?.id,
+        email: order?.customer?.email || null,
+        user_id: order?.user_id ?? null,
+        status: mapStripeStatus(stripeSub?.status, !!stripeSub?.pause_collection),
+        interval: mapInterval(intervalCount),
+        product_handle: items[0]?.sku || items[0]?.name || 'subscription',
+        quantity: items[0]?.quantity || 1,
+        shipping_method: order?.delivery_info?.deliveryMethod || null,
+        shipping_price: shippingPrice,
+        shipping_currency: 'CZK',
+        delivery_info: order?.delivery_info || null,
+        items: Array.isArray(order?.items) ? order.items : null,
+        current_period_end: periodEnd ? periodEnd.toISOString() : null,
+        next_delivery_date: periodEnd ? periodEnd.toISOString().slice(0, 10) : null,
+        cancel_at_period_end: !!stripeSub?.cancel_at_period_end,
+        updated_at: nowIso,
+    };
+}
+
+/** Zrušení ke konci období (owner endpoint). */
+export async function performCancel(stripe: any, admin: any, sub: any, nowIso: string): Promise<{ status: number; body: any }> {
+    await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
+    await admin.from('subscriptions').update({ cancel_at_period_end: true, updated_at: nowIso }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Předplatné bude zrušeno ke konci aktuálního období.' } };
+}
+
+/** Změna data odeslání: pravidla + posun trial_end ve Stripu + zápis. */
+export async function performChangeDate(stripe: any, admin: any, sub: any, newDate: string, nowIso: string, now: number = Date.now()): Promise<{ status: number; body: any }> {
+    const guard = checkDateChange(sub, newDate, now);
+    if (!guard.ok) return { status: guard.status || 400, body: { error: guard.error } };
+    const anchor = Math.floor(new Date(newDate + 'T00:00:00').getTime() / 1000);
+    await stripe.subscriptions.update(sub.stripe_subscription_id, { trial_end: anchor, proration_behavior: 'none' });
+    await admin.from('subscriptions').update({
+        next_delivery_date: newDate,
+        uses_global_date: false,
+        last_date_change_at: nowIso,
+        updated_at: nowIso,
+    }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Datum odeslání i platby bylo přesunuto.' } };
+}
+
+export interface ShippingChangeDeps {
+    stripe: any;
+    admin: any;
+    resolveShippingCountry: (arg: any) => any;
+    shippingForMethod: (cfg: any, method: string, bottles: number, subtotalCur: number, free: boolean) => number;
+    convertToCurrency: (amount: number, cfg: any) => number;
+}
+
+/** Změna dopravy: pravidla + přepočet ceny + úprava/přidání/odebrání položky „Doprava" ve Stripu + zápis. */
+export async function performChangeShipping(deps: ShippingChangeDeps, sub: any, method: string, nowIso: string, now: number = Date.now()): Promise<{ status: number; body: any }> {
+    const { stripe, admin, resolveShippingCountry, shippingForMethod, convertToCurrency } = deps;
+    const guard = checkShippingChange(sub, method, now);
+    if (!guard.ok) return { status: guard.status || 400, body: { error: guard.error } };
+    const cfg: any = await resolveShippingCountry({ delivery_info: sub.delivery_info });
+    const items: any[] = Array.isArray(sub.items) ? sub.items : [];
+    const bottles = totalBottles(items);
+    const subtotalCzk = items.reduce((a: number, it: any) => a + Number(it.price) * Number(it.quantity), 0);
+    const subtotalCur = convertToCurrency(subtotalCzk, cfg);
+    const tiers = cfg?.methods ? cfg.methods[method] : undefined;
+    if (!Array.isArray(tiers) || tiers.length === 0) {
+        return { status: 400, body: { error: 'Tento způsob dopravy není pro danou zemi dostupný.' } };
+    }
+    const shipCur = shippingForMethod(cfg, method, bottles, subtotalCur, false);
+    const currency = cfg?.stripeCurrency || 'czk';
+    const intervalCount = sub.interval === 'bimonthly' ? 2 : 1;
+
+    const full = await stripe.subscriptions.retrieve(sub.stripe_subscription_id, { expand: ['items.data.price.product'] });
+    const shipItem = full.items.data.find((it: any) => {
+        const prod: any = it?.price?.product;
+        return prod && typeof prod === 'object' && prod.name === 'Doprava';
+    });
+
+    if (shipCur > 0) {
+        const priceData: any = { currency, product_data: { name: 'Doprava' }, unit_amount: Math.round(shipCur * 100), recurring: { interval: 'month', interval_count: intervalCount } };
+        if (shipItem) {
+            await stripe.subscriptions.update(sub.stripe_subscription_id, { items: [{ id: shipItem.id, price_data: priceData }], proration_behavior: 'none' });
+        } else {
+            await stripe.subscriptions.update(sub.stripe_subscription_id, { items: [{ price_data: priceData }], proration_behavior: 'none' });
+        }
+    } else if (shipItem) {
+        await stripe.subscriptions.update(sub.stripe_subscription_id, { items: [{ id: shipItem.id, deleted: true }], proration_behavior: 'none' });
+    }
+
+    await admin.from('subscriptions').update({
+        shipping_method: method,
+        shipping_price: shipCur,
+        shipping_currency: currency,
+        last_shipping_change_at: nowIso,
+        updated_at: nowIso,
+    }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Způsob dopravy byl změněn.' } };
+}
