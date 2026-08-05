@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { createPacketaPacket } from './_packeta-helper.js';
-import { computeRequiredStock, mapStripeStatus, mapInterval, isRenewalInvoice, isRenewalProcessed, buildRenewalPlan } from './_lib/subscriptionRules.js';
+import { computeRequiredStock, mapStripeStatus, mapInterval, isRenewalInvoice, isRenewalProcessed, buildRenewalPlan, applySubscriptionStatusEvent, applySubscriptionPaused, applySubscriptionDeleted } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16',
@@ -299,32 +299,19 @@ export default async function handler(req: Request) {
             }
             case 'customer.subscription.paused': {
                 const sub = event.data.object as Stripe.Subscription;
-                await supabase.from('subscriptions').update({
-                    status: 'paused',
-                    updated_at: new Date().toISOString(),
-                }).eq('stripe_subscription_id', sub.id);
+                await applySubscriptionPaused(supabase, sub.id, new Date().toISOString());
                 console.log(`[Stripe Webhook] subscription ${sub.id} paused`);
                 break;
             }
             case 'customer.subscription.updated': {
                 const sub = event.data.object as Stripe.Subscription;
-                const status = mapStripeStatus(sub.status, !!sub.pause_collection);
-                await supabase.from('subscriptions').update({
-                    status,
-                    cancel_at_period_end: !!sub.cancel_at_period_end,
-                    current_period_end: sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
-                    updated_at: new Date().toISOString(),
-                }).eq('stripe_subscription_id', sub.id);
-                console.log(`[Stripe Webhook] subscription ${sub.id} updated -> ${status}`);
+                const upd = await applySubscriptionStatusEvent(supabase, sub, new Date().toISOString());
+                console.log(`[Stripe Webhook] subscription ${sub.id} updated -> ${upd.status}`);
                 break;
             }
             case 'customer.subscription.deleted': {
                 const sub = event.data.object as Stripe.Subscription;
-                await supabase.from('subscriptions').update({
-                    status: 'cancelled',
-                    cancelled_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                }).eq('stripe_subscription_id', sub.id);
+                await applySubscriptionDeleted(supabase, sub.id, new Date().toISOString());
                 console.log(`[Stripe Webhook] subscription ${sub.id} cancelled`);
                 break;
             }

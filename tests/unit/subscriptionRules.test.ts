@@ -14,6 +14,10 @@ import {
     computeRequiredStock,
     checkPauseResume,
     buildRenewalPlan,
+    applySubscriptionStatusEvent,
+    applySubscriptionPaused,
+    applySubscriptionDeleted,
+    performPauseResume,
     type SubscriptionLike,
 } from '../../api/_lib/subscriptionRules';
 
@@ -268,5 +272,90 @@ describe('buildRenewalPlan (obnova → sklad + objednávka)', () => {
             { sku: 'lemon', amount: 2, note: 'Předplatné – obnova in_3' },
             { sku: 'red', amount: 2, note: 'Předplatné – obnova in_3' },
         ]);
+    });
+});
+
+
+// --- Integrační testy s falešnými klienty (ověřují skutečná volání Stripe/DB) ---
+function fakeDb(rec: any[]) {
+    return {
+        from(table: string) {
+            return {
+                update(row: any) {
+                    return { eq(col: string, val: any) { rec.push({ op: 'update', table, row, col, val }); return Promise.resolve({ error: null }); } };
+                },
+            };
+        },
+    };
+}
+function fakeStripe(rec: any[]) {
+    return { subscriptions: { update: (id: string, payload: any) => { rec.push({ op: 'stripe.update', id, payload }); return Promise.resolve({}); } } };
+}
+
+describe('applySubscriptionStatusEvent (webhook customer.subscription.updated)', () => {
+    it('pause_collection → paused a zapíše správný update do DB', async () => {
+        const rec: any[] = [];
+        const upd = await applySubscriptionStatusEvent(fakeDb(rec), { id: 'sub_1', status: 'active', pause_collection: { behavior: 'void' }, cancel_at_period_end: false, current_period_end: 1893456000 }, 'NOW');
+        expect(upd.status).toBe('paused');
+        expect(upd.cancel_at_period_end).toBe(false);
+        expect(upd.current_period_end).toBe(new Date(1893456000 * 1000).toISOString());
+        expect(rec).toEqual([{ op: 'update', table: 'subscriptions', row: upd, col: 'stripe_subscription_id', val: 'sub_1' }]);
+    });
+    it('canceled → cancelled, cancel_at_period_end se přenese', async () => {
+        const rec: any[] = [];
+        const upd = await applySubscriptionStatusEvent(fakeDb(rec), { id: 'sub_2', status: 'canceled', cancel_at_period_end: true, current_period_end: null }, 'NOW');
+        expect(upd.status).toBe('cancelled');
+        expect(upd.cancel_at_period_end).toBe(true);
+        expect(upd.current_period_end).toBeNull();
+    });
+});
+
+describe('applySubscriptionPaused / applySubscriptionDeleted (webhook)', () => {
+    it('paused → status paused + zápis dle stripe_subscription_id', async () => {
+        const rec: any[] = [];
+        const upd = await applySubscriptionPaused(fakeDb(rec), 'sub_1', 'NOW');
+        expect(upd).toEqual({ status: 'paused', updated_at: 'NOW' });
+        expect(rec[0]).toEqual({ op: 'update', table: 'subscriptions', row: upd, col: 'stripe_subscription_id', val: 'sub_1' });
+    });
+    it('deleted → cancelled + cancelled_at', async () => {
+        const rec: any[] = [];
+        const upd = await applySubscriptionDeleted(fakeDb(rec), 'sub_9', 'NOW');
+        expect(upd).toEqual({ status: 'cancelled', cancelled_at: 'NOW', updated_at: 'NOW' });
+        expect(rec[0].val).toBe('sub_9');
+    });
+});
+
+describe('performPauseResume (endpoint pause/resume)', () => {
+    const sub = (o: any = {}) => ({ id: 'row1', status: 'active', stripe_subscription_id: 'sub_1', ...o });
+    it('pause → Stripe pause_collection void + DB status paused (v pořadí)', async () => {
+        const rec: any[] = [];
+        const r = await performPauseResume(fakeStripe(rec), fakeDb(rec), sub(), 'pause', 'NOW');
+        expect(r.status).toBe(200);
+        expect(r.body.ok).toBe(true);
+        expect(rec).toEqual([
+            { op: 'stripe.update', id: 'sub_1', payload: { pause_collection: { behavior: 'void' } } },
+            { op: 'update', table: 'subscriptions', row: { status: 'paused', updated_at: 'NOW' }, col: 'id', val: 'row1' },
+        ]);
+    });
+    it('resume → Stripe pause_collection "" + DB status active', async () => {
+        const rec: any[] = [];
+        const r = await performPauseResume(fakeStripe(rec), fakeDb(rec), sub({ status: 'paused' }), 'resume', 'NOW');
+        expect(r.status).toBe(200);
+        expect(rec).toEqual([
+            { op: 'stripe.update', id: 'sub_1', payload: { pause_collection: '' } },
+            { op: 'update', table: 'subscriptions', row: { status: 'active', updated_at: 'NOW' }, col: 'id', val: 'row1' },
+        ]);
+    });
+    it('zrušené předplatné → 400 a žádné volání Stripe/DB', async () => {
+        const rec: any[] = [];
+        const r = await performPauseResume(fakeStripe(rec), fakeDb(rec), sub({ status: 'cancelled' }), 'pause', 'NOW');
+        expect(r.status).toBe(400);
+        expect(rec).toEqual([]);
+    });
+    it('bez napojení na platby → 400', async () => {
+        const rec: any[] = [];
+        const r = await performPauseResume(fakeStripe(rec), fakeDb(rec), sub({ stripe_subscription_id: null }), 'resume', 'NOW');
+        expect(r.status).toBe(400);
+        expect(rec).toEqual([]);
     });
 });

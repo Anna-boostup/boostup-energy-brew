@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { resolveShippingCountry, shippingForMethod, convertToCurrency } from './secure-calculator.js';
-import { totalBottles, checkModifiable, checkDateChange, checkShippingChange, checkPauseResume } from './_lib/subscriptionRules.js';
+import { totalBottles, checkModifiable, checkDateChange, checkShippingChange, performPauseResume } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' });
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
@@ -44,17 +44,8 @@ export default async function handler(req: Request) {
 
         // Přerušení / obnovení předplatného — vratné akce, bez pravidla „5 dní předem".
         if (action === 'pause' || action === 'resume') {
-            const prGuard = checkPauseResume(sub);
-            if (!prGuard.ok) return json({ error: prGuard.error }, prGuard.status);
-            const ts = new Date().toISOString();
-            if (action === 'pause') {
-                await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: { behavior: 'void' } });
-                await admin.from('subscriptions').update({ status: 'paused', updated_at: ts }).eq('id', sub.id);
-                return json({ ok: true, message: 'Předplatné bylo přerušeno — opakované platby jsou pozastaveny.' });
-            }
-            await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: '' as any });
-            await admin.from('subscriptions').update({ status: 'active', updated_at: ts }).eq('id', sub.id);
-            return json({ ok: true, message: 'Předplatné bylo obnoveno.' });
+            const r = await performPauseResume(stripe, admin, sub, action, new Date().toISOString());
+            return json(r.body, r.status);
         }
 
         // Společná pravidla: nezrušené, napojené na platby, min. 5 dní před odesláním.

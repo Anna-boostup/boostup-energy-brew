@@ -196,3 +196,49 @@ export function buildRenewalPlan(
     };
     return { stockMovements, order };
 }
+
+
+// ---------------------------------------------------------------------------
+// Akce nad předplatným s INJEKTOVANÝMI klienty (Stripe/Supabase jako parametr)
+// — umožňuje skutečné integrační testy s falešnými klienty.
+// ---------------------------------------------------------------------------
+
+/** customer.subscription.updated → zapíše stav + období do DB. Vrací zapsaný objekt. */
+export async function applySubscriptionStatusEvent(supabase: any, sub: any, nowIso: string): Promise<Record<string, any>> {
+    const update = {
+        status: mapStripeStatus(sub?.status, !!sub?.pause_collection),
+        cancel_at_period_end: !!sub?.cancel_at_period_end,
+        current_period_end: sub?.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
+        updated_at: nowIso,
+    };
+    await supabase.from('subscriptions').update(update).eq('stripe_subscription_id', sub?.id);
+    return update;
+}
+
+/** customer.subscription.paused → status=paused. */
+export async function applySubscriptionPaused(supabase: any, subId: string, nowIso: string): Promise<Record<string, any>> {
+    const update = { status: 'paused', updated_at: nowIso };
+    await supabase.from('subscriptions').update(update).eq('stripe_subscription_id', subId);
+    return update;
+}
+
+/** customer.subscription.deleted → status=cancelled + cancelled_at. */
+export async function applySubscriptionDeleted(supabase: any, subId: string, nowIso: string): Promise<Record<string, any>> {
+    const update = { status: 'cancelled', cancelled_at: nowIso, updated_at: nowIso };
+    await supabase.from('subscriptions').update(update).eq('stripe_subscription_id', subId);
+    return update;
+}
+
+/** Přerušení/obnovení: zavolá Stripe (pause_collection) + zapíše stav do DB. Vrací {status, body}. */
+export async function performPauseResume(stripe: any, admin: any, sub: any, action: 'pause' | 'resume', nowIso: string): Promise<{ status: number; body: any }> {
+    const guard = checkPauseResume(sub);
+    if (!guard.ok) return { status: guard.status || 400, body: { error: guard.error } };
+    if (action === 'pause') {
+        await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: { behavior: 'void' } });
+        await admin.from('subscriptions').update({ status: 'paused', updated_at: nowIso }).eq('id', sub.id);
+        return { status: 200, body: { ok: true, message: 'Předplatné bylo přerušeno — opakované platby jsou pozastaveny.' } };
+    }
+    await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: '' });
+    await admin.from('subscriptions').update({ status: 'active', updated_at: nowIso }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Předplatné bylo obnoveno.' } };
+}
