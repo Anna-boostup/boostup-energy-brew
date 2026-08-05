@@ -1,7 +1,7 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { createPacketaPacket } from './_packeta-helper.js';
-import { computeRequiredStock, mapStripeStatus, mapInterval, isRenewalInvoice, isRenewalProcessed } from './_lib/subscriptionRules.js';
+import { computeRequiredStock, mapStripeStatus, mapInterval, isRenewalInvoice, isRenewalProcessed, buildRenewalPlan } from './_lib/subscriptionRules.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16',
@@ -87,34 +87,21 @@ async function processSubscriptionRenewal(subId: string, invoice: Stripe.Invoice
             periodEndIso = s.current_period_end ? new Date(s.current_period_end * 1000).toISOString() : null;
         } catch (e: any) { console.error('[Stripe Webhook] renewal period refresh failed:', e?.message || e); }
 
-        const items: any[] = Array.isArray(sub.items) ? sub.items : [];
+        // Plán obnovy (čistá logika — skladové pohyby + objednávka)
+        const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+        const { stockMovements, order: orderRow } = buildRenewalPlan(sub, invoice, new Date().toISOString(), orderNumber);
+        const di: any = sub.delivery_info || {};
+        const total = orderRow.total;
 
         // 1) odpis hotového skladu po příchutích (stejně jako u běžného prodeje)
-        const required = computeRequiredStock(items);
-        for (const flavor of Object.keys(required)) {
-            const amount = required[flavor];
-            if (amount > 0) {
-                const { error } = await supabase.rpc('handle_stock_movement', {
-                    p_sku: flavor, p_type: 'sale', p_amount: -amount, p_note: `Předplatné – obnova ${invoice.id}`,
-                });
-                if (error) console.error(`[Stripe Webhook] renewal stock movement failed for ${flavor}:`, error.message);
-            }
+        for (const sm of stockMovements) {
+            const { error } = await supabase.rpc('handle_stock_movement', {
+                p_sku: sm.sku, p_type: 'sale', p_amount: -sm.amount, p_note: sm.note,
+            });
+            if (error) console.error(`[Stripe Webhook] renewal stock movement failed for ${sm.sku}:`, error.message);
         }
 
         // 2) objednávka obnovy
-        const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-        const total = typeof invoice.amount_paid === 'number' ? invoice.amount_paid / 100 : Number(sub.shipping_price || 0);
-        const di: any = sub.delivery_info || {};
-        const orderRow: any = {
-            id: orderNumber,
-            date: new Date().toISOString(),
-            customer: { name: `${di.firstName || ''} ${di.lastName || ''}`.trim() || sub.email, email: sub.email },
-            delivery_info: di,
-            items,
-            total,
-            status: 'paid',
-            is_subscription_order: true,
-        };
         const { error: orderErr } = await supabase.from('orders').insert(orderRow);
         if (orderErr) console.error('[Stripe Webhook] renewal order insert failed:', orderErr.message);
         else console.log(`[Stripe Webhook] renewal order ${orderNumber} created for subscription ${subId}.`);

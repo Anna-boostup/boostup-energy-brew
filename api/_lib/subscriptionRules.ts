@@ -151,3 +151,48 @@ export function checkPauseResume(sub: SubscriptionLike): GuardResult {
     if (!sub.stripe_subscription_id) return { ok: false, error: 'Předplatné nemá napojení na platby.', status: 400 };
     return { ok: true };
 }
+
+
+export interface RenewalStockMovement { sku: string; amount: number; note: string; }
+export interface RenewalOrder {
+    id: string;
+    date: string;
+    customer: { name: string | null; email: string | null };
+    delivery_info: any;
+    items: any[];
+    total: number;
+    status: string;
+    is_subscription_order: boolean;
+}
+export interface RenewalPlan { stockMovements: RenewalStockMovement[]; order: RenewalOrder; }
+
+/**
+ * Sestaví plán obnovy předplatného (skladové pohyby + objednávku) jako čistá data.
+ * Bez side-efektů — volající pak provede rpc/insert. `nowIso` a `orderNumber`
+ * se injektují kvůli testovatelnosti.
+ */
+export function buildRenewalPlan(
+    sub: any,
+    invoice: { id?: string | null; amount_paid?: number | null } | null,
+    nowIso: string,
+    orderNumber: string,
+): RenewalPlan {
+    const items: any[] = Array.isArray(sub?.items) ? sub.items : [];
+    const required = computeRequiredStock(items);
+    const stockMovements: RenewalStockMovement[] = Object.keys(required)
+        .filter((f) => required[f] > 0)
+        .map((f) => ({ sku: f, amount: required[f], note: `Předplatné – obnova ${invoice?.id}` }));
+    const total = typeof invoice?.amount_paid === 'number' ? invoice.amount_paid / 100 : Number(sub?.shipping_price || 0);
+    const di: any = sub?.delivery_info || {};
+    const order: RenewalOrder = {
+        id: orderNumber,
+        date: nowIso,
+        customer: { name: `${di.firstName || ''} ${di.lastName || ''}`.trim() || (sub?.email ?? null), email: sub?.email ?? null },
+        delivery_info: di,
+        items,
+        total,
+        status: 'paid',
+        is_subscription_order: true,
+    };
+    return { stockMovements, order };
+}

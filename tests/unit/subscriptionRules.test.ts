@@ -13,6 +13,7 @@ import {
     isRenewalProcessed,
     computeRequiredStock,
     checkPauseResume,
+    buildRenewalPlan,
     type SubscriptionLike,
 } from '../../api/_lib/subscriptionRules';
 
@@ -233,5 +234,39 @@ describe('checkPauseResume (přerušit / obnovit)', () => {
     it('zamítne bez napojení na platby', () => {
         const r = checkPauseResume(sub({ stripe_subscription_id: null }));
         expect(r.ok).toBe(false); expect(r.error).toMatch(/napojení na platby/);
+    });
+});
+
+
+describe('buildRenewalPlan (obnova → sklad + objednávka)', () => {
+    const NOW = '2026-07-15T00:00:00.000Z';
+    it('sestaví skladové pohyby a objednávku z položek + faktury', () => {
+        const sub = { items: [{ sku: 'A-LEMON-2', quantity: 3 }], delivery_info: { firstName: 'Jan', lastName: 'Novák', deliveryMethod: 'courier' }, email: 'jan@x.cz', shipping_price: 120 };
+        const plan = buildRenewalPlan(sub, { id: 'in_9', amount_paid: 74900 }, NOW, 'BUP123');
+        expect(plan.stockMovements).toEqual([{ sku: 'lemon', amount: 6, note: 'Předplatné – obnova in_9' }]);
+        expect(plan.order).toEqual({
+            id: 'BUP123', date: NOW,
+            customer: { name: 'Jan Novák', email: 'jan@x.cz' },
+            delivery_info: { firstName: 'Jan', lastName: 'Novák', deliveryMethod: 'courier' },
+            items: [{ sku: 'A-LEMON-2', quantity: 3 }],
+            total: 749, status: 'paid', is_subscription_order: true,
+        });
+    });
+    it('total padá na shipping_price, když faktura nemá amount_paid', () => {
+        const plan = buildRenewalPlan({ items: [], delivery_info: {}, email: 'a@b.cz', shipping_price: 99 }, { id: 'in_1' }, NOW, 'BUP1');
+        expect(plan.order.total).toBe(99);
+        expect(plan.stockMovements).toEqual([]);
+    });
+    it('jméno padá na e-mail, když v delivery_info chybí', () => {
+        const plan = buildRenewalPlan({ items: [], delivery_info: {}, email: 'x@y.cz' }, { id: 'in_2', amount_paid: 0 }, NOW, 'BUP2');
+        expect(plan.order.customer.name).toBe('x@y.cz');
+        expect(plan.order.total).toBe(0);
+    });
+    it('mix konfigurace → více skladových pohybů', () => {
+        const plan = buildRenewalPlan({ items: [{ mixConfiguration: { lemon: 1, red: 1, silky: 0 }, quantity: 2 }] }, { id: 'in_3', amount_paid: 1000 }, NOW, 'BUP3');
+        expect(plan.stockMovements).toEqual([
+            { sku: 'lemon', amount: 2, note: 'Předplatné – obnova in_3' },
+            { sku: 'red', amount: 2, note: 'Předplatné – obnova in_3' },
+        ]);
     });
 });
