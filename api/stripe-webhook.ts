@@ -316,6 +316,28 @@ export default async function handler(req: Request) {
                  console.log(`[Stripe Webhook] Payment intent failed: ${intent.id}`);
                  break;
             }
+            case 'customer.subscription.created': {
+                const sub = event.data.object as Stripe.Subscription;
+                // Autoritativní záznam (s objednávkou) vzniká přes checkout.session.completed.
+                // Tady jen pojistka: když řádek ještě neexistuje, doplň ho (nepřepisuj existující položky).
+                const { data: existing } = await supabase.from('subscriptions').select('id').eq('stripe_subscription_id', sub.id).maybeSingle();
+                if (!existing) {
+                    await upsertSubscriptionRecord(sub.id);
+                    console.log(`[Stripe Webhook] subscription ${sub.id} created (fallback record)`);
+                } else {
+                    console.log(`[Stripe Webhook] subscription ${sub.id} created — record already exists, skipping`);
+                }
+                break;
+            }
+            case 'customer.subscription.paused': {
+                const sub = event.data.object as Stripe.Subscription;
+                await supabase.from('subscriptions').update({
+                    status: 'paused',
+                    updated_at: new Date().toISOString(),
+                }).eq('stripe_subscription_id', sub.id);
+                console.log(`[Stripe Webhook] subscription ${sub.id} paused`);
+                break;
+            }
             case 'customer.subscription.updated': {
                 const sub = event.data.object as Stripe.Subscription;
                 const status = sub.status === 'canceled' ? 'cancelled' : (sub.pause_collection ? 'paused' : 'active');
@@ -338,12 +360,20 @@ export default async function handler(req: Request) {
                 console.log(`[Stripe Webhook] subscription ${sub.id} cancelled`);
                 break;
             }
-            case 'invoice.paid': {
+            case 'invoice.paid':
+            case 'invoice.payment_succeeded': {
                 const invoice = event.data.object as Stripe.Invoice;
                 const subId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription as any)?.id;
+                // Idempotentní (processSubscriptionRenewal hlídá last_invoice_id) — bezpečné i když přijdou oba eventy.
                 if (invoice.billing_reason === 'subscription_cycle' && subId) {
                     await processSubscriptionRenewal(subId, invoice);
                 }
+                break;
+            }
+            case 'invoice.payment_failed': {
+                const invoice = event.data.object as Stripe.Invoice;
+                const subId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription as any)?.id;
+                console.warn(`[Stripe Webhook] invoice.payment_failed pro předplatné ${subId || 'n/a'} (faktura ${invoice.id}) — automatický dunning zatím neřešíme.`);
                 break;
             }
             default:
