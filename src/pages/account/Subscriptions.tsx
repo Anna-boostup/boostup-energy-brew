@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { Calendar, RefreshCw, Loader2, AlertCircle, XCircle, Truck, Save, Info } from "lucide-react";
+import { Calendar, RefreshCw, Loader2, AlertCircle, XCircle, Truck, Save, Info, Pause, Play } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -195,16 +195,34 @@ const Subscriptions = () => {
                                 </CardContent>
                                 <CardFooter className="bg-muted/10 border-t pt-4 flex justify-between items-center gap-3">
                                     <p className="text-xs text-muted-foreground">
-                                        {pendingCancel ? 'Zruší se ke konci aktuálního období.' : 'Platba i doprava se účtují u každé zásilky.'}
+                                        {isCancelled ? 'Předplatné je zrušené.' : pendingCancel ? 'Zruší se ke konci aktuálního období.' : sub.status === 'paused' ? 'Přerušeno — opakované platby jsou pozastaveny.' : 'Platba i doprava se účtují u každé zásilky.'}
                                     </p>
-                                    {!isCancelled && !pendingCancel && (
-                                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive gap-2"
-                                            disabled={locked || busy === `${sub.id}:cancel`}
-                                            onClick={() => { if (window.confirm('Opravdu zrušit předplatné ke konci aktuálního období?')) manage(sub, 'cancel'); }}>
-                                            {busy === `${sub.id}:cancel` ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
-                                            Zrušit
-                                        </Button>
-                                    )}
+                                    <div className="flex items-center gap-2">
+                                        {!isCancelled && sub.status === 'active' && (
+                                            <Button variant="outline" size="sm" className="gap-2"
+                                                disabled={busy === `${sub.id}:pause`}
+                                                onClick={() => manage(sub, 'pause')}>
+                                                {busy === `${sub.id}:pause` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />}
+                                                Přerušit
+                                            </Button>
+                                        )}
+                                        {!isCancelled && sub.status === 'paused' && (
+                                            <Button variant="default" size="sm" className="gap-2"
+                                                disabled={busy === `${sub.id}:resume`}
+                                                onClick={() => manage(sub, 'resume')}>
+                                                {busy === `${sub.id}:resume` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                                                Obnovit
+                                            </Button>
+                                        )}
+                                        {!isCancelled && !pendingCancel && (
+                                            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive gap-2"
+                                                disabled={locked || busy === `${sub.id}:cancel`}
+                                                onClick={() => { if (window.confirm('Opravdu zrušit předplatné ke konci aktuálního období?')) manage(sub, 'cancel'); }}>
+                                                {busy === `${sub.id}:cancel` ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
+                                                Zrušit
+                                            </Button>
+                                        )}
+                                    </div>
                                 </CardFooter>
                             </Card>
                         );

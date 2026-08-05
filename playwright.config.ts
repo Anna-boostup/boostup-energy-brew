@@ -124,6 +124,17 @@ export default defineConfig({
       dependencies: ['setup-admin'],
     },
 
+    // Subscription management E2E — mockovaný backend, běží na preview se zákaznickým loginem
+    {
+      name: 'subscription-e2e',
+      testMatch: 'tests/subscription_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/customer.json',
+      },
+      dependencies: ['setup-customer'],
+    },
+
     // Guest / General Smoke Tests
     {
       name: 'smoke-desktop',

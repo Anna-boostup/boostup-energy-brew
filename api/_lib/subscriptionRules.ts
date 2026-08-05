@@ -94,3 +94,307 @@ export function checkShippingChange(sub: SubscriptionLike, method: string | null
     }
     return OK;
 }
+
+
+// ---------------------------------------------------------------------------
+// Webhook / stav — čisté pomocné funkce (sdílené s api/stripe-webhook.ts)
+// ---------------------------------------------------------------------------
+
+export type SubStatus = 'active' | 'paused' | 'cancelled';
+
+/** Mapuje Stripe stav + pause_collection na náš stav předplatného. */
+export function mapStripeStatus(stripeStatus?: string | null, hasPauseCollection?: boolean): SubStatus {
+    if (stripeStatus === 'canceled' || stripeStatus === 'cancelled') return 'cancelled';
+    if (hasPauseCollection) return 'paused';
+    return 'active';
+}
+
+/** Interval podle počtu měsíců (>= 2 → dvouměsíční). */
+export function mapInterval(intervalCount?: number | null): 'monthly' | 'bimonthly' {
+    return (Number(intervalCount) || 1) >= 2 ? 'bimonthly' : 'monthly';
+}
+
+/** True pro fakturu opakované platby předplatného. */
+export function isRenewalInvoice(billingReason?: string | null): boolean {
+    return billingReason === 'subscription_cycle';
+}
+
+/** True, pokud už byla tato faktura zpracována (idempotence obnovy). */
+export function isRenewalProcessed(lastInvoiceId?: string | null, invoiceId?: string | null): boolean {
+    return !!lastInvoiceId && !!invoiceId && lastInvoiceId === invoiceId;
+}
+
+/** Potřebný sklad (lahvičky po příchutích) z položek objednávky/předplatného. */
+export function computeRequiredStock(items: any[] | null | undefined): Record<string, number> {
+    const req: Record<string, number> = { lemon: 0, red: 0, silky: 0 };
+    for (const item of (items || [])) {
+        const qty = Number(item?.quantity) || 0;
+        if (item?.mixConfiguration) {
+            req.lemon += (Number(item.mixConfiguration.lemon) || 0) * qty;
+            req.red += (Number(item.mixConfiguration.red) || 0) * qty;
+            req.silky += (Number(item.mixConfiguration.silky) || 0) * qty;
+        } else if (item?.sku) {
+            const skuStr = String(item.sku);
+            const parts = skuStr.split('-');
+            const pack = parseInt(parts[parts.length - 1]) || 1;
+            const low = skuStr.toLowerCase();
+            const flavor = low.includes('lemon') ? 'lemon' : low.includes('red') ? 'red' : low.includes('silky') ? 'silky' : null;
+            if (flavor) req[flavor] += qty * pack;
+        }
+    }
+    return req;
+}
+
+/** Guard pro přerušení/obnovení — vratné akce (jen nezrušené + napojené na platby). */
+export function checkPauseResume(sub: SubscriptionLike): GuardResult {
+    if (sub.status === 'cancelled') return { ok: false, error: 'Předplatné je již zrušené.', status: 400 };
+    if (!sub.stripe_subscription_id) return { ok: false, error: 'Předplatné nemá napojení na platby.', status: 400 };
+    return { ok: true };
+}
+
+
+export interface RenewalStockMovement { sku: string; amount: number; note: string; }
+export interface RenewalOrder {
+    id: string;
+    date: string;
+    customer: { name: string | null; email: string | null };
+    delivery_info: any;
+    items: any[];
+    total: number;
+    status: string;
+    is_subscription_order: boolean;
+}
+export interface RenewalPlan { stockMovements: RenewalStockMovement[]; order: RenewalOrder; }
+
+/**
+ * Sestaví plán obnovy předplatného (skladové pohyby + objednávku) jako čistá data.
+ * Bez side-efektů — volající pak provede rpc/insert. `nowIso` a `orderNumber`
+ * se injektují kvůli testovatelnosti.
+ */
+export function buildRenewalPlan(
+    sub: any,
+    invoice: { id?: string | null; amount_paid?: number | null } | null,
+    nowIso: string,
+    orderNumber: string,
+): RenewalPlan {
+    const items: any[] = Array.isArray(sub?.items) ? sub.items : [];
+    const required = computeRequiredStock(items);
+    const stockMovements: RenewalStockMovement[] = Object.keys(required)
+        .filter((f) => required[f] > 0)
+        .map((f) => ({ sku: f, amount: required[f], note: `Předplatné – obnova ${invoice?.id}` }));
+    const total = typeof invoice?.amount_paid === 'number' ? invoice.amount_paid / 100 : Number(sub?.shipping_price || 0);
+    const di: any = sub?.delivery_info || {};
+    const order: RenewalOrder = {
+        id: orderNumber,
+        date: nowIso,
+        customer: { name: `${di.firstName || ''} ${di.lastName || ''}`.trim() || (sub?.email ?? null), email: sub?.email ?? null },
+        delivery_info: di,
+        items,
+        total,
+        status: 'paid',
+        is_subscription_order: true,
+    };
+    return { stockMovements, order };
+}
+
+
+// ---------------------------------------------------------------------------
+// Akce nad předplatným s INJEKTOVANÝMI klienty (Stripe/Supabase jako parametr)
+// — umožňuje skutečné integrační testy s falešnými klienty.
+// ---------------------------------------------------------------------------
+
+/** customer.subscription.updated → zapíše stav + období do DB. Vrací zapsaný objekt. */
+export async function applySubscriptionStatusEvent(supabase: any, sub: any, nowIso: string): Promise<Record<string, any>> {
+    const update = {
+        status: mapStripeStatus(sub?.status, !!sub?.pause_collection),
+        cancel_at_period_end: !!sub?.cancel_at_period_end,
+        current_period_end: sub?.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
+        updated_at: nowIso,
+    };
+    await supabase.from('subscriptions').update(update).eq('stripe_subscription_id', sub?.id);
+    return update;
+}
+
+/** customer.subscription.paused → status=paused. */
+export async function applySubscriptionPaused(supabase: any, subId: string, nowIso: string): Promise<Record<string, any>> {
+    const update = { status: 'paused', updated_at: nowIso };
+    await supabase.from('subscriptions').update(update).eq('stripe_subscription_id', subId);
+    return update;
+}
+
+/** customer.subscription.deleted → status=cancelled + cancelled_at. */
+export async function applySubscriptionDeleted(supabase: any, subId: string, nowIso: string): Promise<Record<string, any>> {
+    const update = { status: 'cancelled', cancelled_at: nowIso, updated_at: nowIso };
+    await supabase.from('subscriptions').update(update).eq('stripe_subscription_id', subId);
+    return update;
+}
+
+/** Přerušení/obnovení: zavolá Stripe (pause_collection) + zapíše stav do DB. Vrací {status, body}. */
+export async function performPauseResume(stripe: any, admin: any, sub: any, action: 'pause' | 'resume', nowIso: string): Promise<{ status: number; body: any }> {
+    const guard = checkPauseResume(sub);
+    if (!guard.ok) return { status: guard.status || 400, body: { error: guard.error } };
+    if (action === 'pause') {
+        await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: { behavior: 'void' } });
+        await admin.from('subscriptions').update({ status: 'paused', updated_at: nowIso }).eq('id', sub.id);
+        return { status: 200, body: { ok: true, message: 'Předplatné bylo přerušeno — opakované platby jsou pozastaveny.' } };
+    }
+    await stripe.subscriptions.update(sub.stripe_subscription_id, { pause_collection: '' });
+    await admin.from('subscriptions').update({ status: 'active', updated_at: nowIso }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Předplatné bylo obnoveno.' } };
+}
+
+
+export interface RenewalDeps { supabase: any; stripe: any; }
+export interface RenewalResult {
+    outcome: 'processed' | 'not_found' | 'duplicate';
+    order?: RenewalOrder;
+    orderInserted?: boolean;
+    stockMovements?: RenewalStockMovement[];
+    periodEndIso?: string | null;
+}
+
+/**
+ * Exekuce obnovy předplatného s injektovanými klienty: fetch → idempotence →
+ * odečet skladu (rpc) → objednávka → update předplatného. Vrací výsledek.
+ * (Štítek Zásilkovny řeší volající — je to side-effect specifický pro webhook.)
+ */
+export async function executeRenewal(
+    deps: RenewalDeps,
+    subId: string,
+    invoice: { id?: string | null; amount_paid?: number | null },
+    nowIso: string,
+    orderNumber: string,
+): Promise<RenewalResult> {
+    const { supabase, stripe } = deps;
+    const { data: sub } = await supabase.from('subscriptions').select('*').eq('stripe_subscription_id', subId).maybeSingle();
+    if (!sub) return { outcome: 'not_found' };
+    if (isRenewalProcessed(sub.last_invoice_id, invoice.id)) return { outcome: 'duplicate' };
+
+    let periodEndIso: string | null = null;
+    try {
+        const s = await stripe.subscriptions.retrieve(subId);
+        periodEndIso = s?.current_period_end ? new Date(s.current_period_end * 1000).toISOString() : null;
+    } catch { /* osvěžení období best-effort */ }
+
+    const { stockMovements, order } = buildRenewalPlan(sub, invoice, nowIso, orderNumber);
+
+    for (const sm of stockMovements) {
+        const { error } = await supabase.rpc('handle_stock_movement', { p_sku: sm.sku, p_type: 'sale', p_amount: -sm.amount, p_note: sm.note });
+        if (error) console.error(`[renewal] stock movement failed for ${sm.sku}:`, error.message);
+    }
+
+    const { error: orderErr } = await supabase.from('orders').insert(order);
+
+    await supabase.from('subscriptions').update({
+        last_invoice_id: invoice.id,
+        current_period_end: periodEndIso,
+        updated_at: nowIso,
+    }).eq('stripe_subscription_id', subId);
+
+    return { outcome: 'processed', order, orderInserted: !orderErr, stockMovements, periodEndIso };
+}
+
+
+/** Sestaví řádek předplatného pro upsert z Stripe subscription + původní objednávky (čistá funkce). */
+export function buildSubscriptionRecord(stripeSub: any, order: any, nowIso: string): Record<string, any> {
+    const firstItem = stripeSub?.items?.data?.[0];
+    const intervalCount = firstItem?.price?.recurring?.interval_count || 1;
+    const periodEnd = stripeSub?.current_period_end ? new Date(stripeSub.current_period_end * 1000) : null;
+    const items: any[] = Array.isArray(order?.items) ? order.items : [];
+    const itemsTotal = items.reduce((a, it) => a + (Number(it.price) * Number(it.quantity)), 0);
+    const shippingPrice = order ? Math.max(0, Number(order.total) - itemsTotal) : null;
+    return {
+        stripe_subscription_id: stripeSub?.id,
+        stripe_customer_id: typeof stripeSub?.customer === 'string' ? stripeSub.customer : stripeSub?.customer?.id,
+        email: order?.customer?.email || null,
+        user_id: order?.user_id ?? null,
+        status: mapStripeStatus(stripeSub?.status, !!stripeSub?.pause_collection),
+        interval: mapInterval(intervalCount),
+        product_handle: items[0]?.sku || items[0]?.name || 'subscription',
+        quantity: items[0]?.quantity || 1,
+        shipping_method: order?.delivery_info?.deliveryMethod || null,
+        shipping_price: shippingPrice,
+        shipping_currency: 'CZK',
+        delivery_info: order?.delivery_info || null,
+        items: Array.isArray(order?.items) ? order.items : null,
+        current_period_end: periodEnd ? periodEnd.toISOString() : null,
+        next_delivery_date: periodEnd ? periodEnd.toISOString().slice(0, 10) : null,
+        cancel_at_period_end: !!stripeSub?.cancel_at_period_end,
+        updated_at: nowIso,
+    };
+}
+
+/** Zrušení ke konci období (owner endpoint). */
+export async function performCancel(stripe: any, admin: any, sub: any, nowIso: string): Promise<{ status: number; body: any }> {
+    await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
+    await admin.from('subscriptions').update({ cancel_at_period_end: true, updated_at: nowIso }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Předplatné bude zrušeno ke konci aktuálního období.' } };
+}
+
+/** Změna data odeslání: pravidla + posun trial_end ve Stripu + zápis. */
+export async function performChangeDate(stripe: any, admin: any, sub: any, newDate: string, nowIso: string, now: number = Date.now()): Promise<{ status: number; body: any }> {
+    const guard = checkDateChange(sub, newDate, now);
+    if (!guard.ok) return { status: guard.status || 400, body: { error: guard.error } };
+    const anchor = Math.floor(new Date(newDate + 'T00:00:00').getTime() / 1000);
+    await stripe.subscriptions.update(sub.stripe_subscription_id, { trial_end: anchor, proration_behavior: 'none' });
+    await admin.from('subscriptions').update({
+        next_delivery_date: newDate,
+        uses_global_date: false,
+        last_date_change_at: nowIso,
+        updated_at: nowIso,
+    }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Datum odeslání i platby bylo přesunuto.' } };
+}
+
+export interface ShippingChangeDeps {
+    stripe: any;
+    admin: any;
+    resolveShippingCountry: (arg: any) => any;
+    shippingForMethod: (cfg: any, method: string, bottles: number, subtotalCur: number, free: boolean) => number;
+    convertToCurrency: (amount: number, cfg: any) => number;
+}
+
+/** Změna dopravy: pravidla + přepočet ceny + úprava/přidání/odebrání položky „Doprava" ve Stripu + zápis. */
+export async function performChangeShipping(deps: ShippingChangeDeps, sub: any, method: string, nowIso: string, now: number = Date.now()): Promise<{ status: number; body: any }> {
+    const { stripe, admin, resolveShippingCountry, shippingForMethod, convertToCurrency } = deps;
+    const guard = checkShippingChange(sub, method, now);
+    if (!guard.ok) return { status: guard.status || 400, body: { error: guard.error } };
+    const cfg: any = await resolveShippingCountry({ delivery_info: sub.delivery_info });
+    const items: any[] = Array.isArray(sub.items) ? sub.items : [];
+    const bottles = totalBottles(items);
+    const subtotalCzk = items.reduce((a: number, it: any) => a + Number(it.price) * Number(it.quantity), 0);
+    const subtotalCur = convertToCurrency(subtotalCzk, cfg);
+    const tiers = cfg?.methods ? cfg.methods[method] : undefined;
+    if (!Array.isArray(tiers) || tiers.length === 0) {
+        return { status: 400, body: { error: 'Tento způsob dopravy není pro danou zemi dostupný.' } };
+    }
+    const shipCur = shippingForMethod(cfg, method, bottles, subtotalCur, false);
+    const currency = cfg?.stripeCurrency || 'czk';
+    const intervalCount = sub.interval === 'bimonthly' ? 2 : 1;
+
+    const full = await stripe.subscriptions.retrieve(sub.stripe_subscription_id, { expand: ['items.data.price.product'] });
+    const shipItem = full.items.data.find((it: any) => {
+        const prod: any = it?.price?.product;
+        return prod && typeof prod === 'object' && prod.name === 'Doprava';
+    });
+
+    if (shipCur > 0) {
+        const priceData: any = { currency, product_data: { name: 'Doprava' }, unit_amount: Math.round(shipCur * 100), recurring: { interval: 'month', interval_count: intervalCount } };
+        if (shipItem) {
+            await stripe.subscriptions.update(sub.stripe_subscription_id, { items: [{ id: shipItem.id, price_data: priceData }], proration_behavior: 'none' });
+        } else {
+            await stripe.subscriptions.update(sub.stripe_subscription_id, { items: [{ price_data: priceData }], proration_behavior: 'none' });
+        }
+    } else if (shipItem) {
+        await stripe.subscriptions.update(sub.stripe_subscription_id, { items: [{ id: shipItem.id, deleted: true }], proration_behavior: 'none' });
+    }
+
+    await admin.from('subscriptions').update({
+        shipping_method: method,
+        shipping_price: shipCur,
+        shipping_currency: currency,
+        last_shipping_change_at: nowIso,
+        updated_at: nowIso,
+    }).eq('id', sub.id);
+    return { status: 200, body: { ok: true, message: 'Způsob dopravy byl změněn.' } };
+}
