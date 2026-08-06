@@ -674,7 +674,7 @@ const CheckoutPage = () => {
               </p>
             </div>
             
-            <div className="flex items-center gap-4 bg-card/50 backdrop-blur-sm border border-border p-4 rounded-3xl">
+            <div className="flex items-center justify-center gap-4 bg-card/50 backdrop-blur-sm border border-border p-4 rounded-3xl">
               <div className="flex -space-x-3">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="w-10 h-10 rounded-full border-2 border-card bg-secondary flex items-center justify-center text-[10px] font-bold">
@@ -1178,13 +1178,13 @@ const CheckoutPage = () => {
                   </div>
                 </div>
                 <div className="pt-6 border-t border-white/10 mt-6 mb-6">
-                  <div className="flex items-start space-x-3 bg-secondary/10 p-4 rounded-2xl border border-border/50">
+                  <div className="flex items-start space-x-3 bg-white/5 p-4 rounded-2xl border border-white/20">
                     <Checkbox
                       id="termsAccepted"
                       data-testid="checkout-terms"
                       checked={termsAccepted}
                       onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                      className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"
+                      className="w-5 h-5 border-2 border-white/60 data-[state=checked]:bg-[#bef264] data-[state=checked]:border-[#bef264] data-[state=checked]:text-black mt-1"
                     />
                     <Label htmlFor="termsAccepted" className="text-xs text-white/80 leading-snug cursor-pointer flex-1 min-w-0 break-words">
                       Souhlasím s <a href="/obchodni-podminky" className="text-white underline font-bold hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">Obchodními podmínkami</a> a beru na vědomí zpracování mých osobních údajů podle <a href="/ochrana-osobnich-udaju" className="text-white underline font-bold hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">Zásad ochrany osobních údajů</a>. <span className="text-destructive font-bold">*</span>
@@ -1196,7 +1196,7 @@ const CheckoutPage = () => {
                   data-testid="checkout-submit-btn"
                   onClick={handleSubmit}
                   disabled={isProcessing || cart.length === 0 || !isSalesEnabled || !termsAccepted}
-                  className={`w-full h-20 rounded-[1.5rem] mt-6 font-black text-xl uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
+                  className={`w-full h-20 rounded-[1.5rem] mt-6 font-black text-base sm:text-lg uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
                     !isSalesEnabled || !termsAccepted ? 'bg-slate-200 text-slate-500 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
                   }`}
                 >
@@ -1204,7 +1204,7 @@ const CheckoutPage = () => {
                     <Loader2 className="animate-spin w-8 h-8" />
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="leading-none">{!isSalesEnabled ? content.checkout.summary.salesDisabled : (!termsAccepted ? "Souhlaste s VOP pro odeslání" : content.checkout.summary.submitButton)}</span>
+                      <span className="leading-tight text-center px-2 break-words">{!isSalesEnabled ? content.checkout.summary.salesDisabled : (!termsAccepted ? "Souhlaste s VOP pro odeslání" : content.checkout.summary.submitButton)}</span>
                       <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">
                         {!isSalesEnabled ? content.checkout.summary.salesDisabledSub : content.checkout.summary.submitButtonSub}
                       </span>
