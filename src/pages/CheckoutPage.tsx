@@ -66,7 +66,7 @@ import { trackBeginCheckout } from '@/lib/analytics';
 const CheckoutInfoTip = ({ text }: { text: string }) => (
     <Tooltip>
         <TooltipTrigger asChild>
-            <button type="button" tabIndex={-1} aria-label="Nápověda" className="opacity-60 hover:opacity-100 transition-opacity align-middle">
+            <button type="button" tabIndex={-1} aria-label="Nápověda" className="opacity-60 hover:opacity-100 transition-opacity align-middle inline-flex items-center justify-center min-w-[24px] min-h-[24px]">
                 <Info className="w-3 h-3 inline" />
             </button>
         </TooltipTrigger>
@@ -655,6 +655,7 @@ const CheckoutPage = () => {
                 clearCart();
                 navigate('/', { replace: true });
               }}
+              aria-label="Zrušit objednávku"
               className="flex items-center gap-2 text-destructive hover:scale-105 transition-all font-bold group"
             >
               <X size={14} className="text-destructive" />
@@ -663,8 +664,8 @@ const CheckoutPage = () => {
           </div>
         </div>
           
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end">
+            <div className="lg:col-span-8">
               <h1 className="text-4xl md:text-7xl font-display font-black text-foreground leading-none tracking-tighter uppercase">
                 {content.checkout.titleLine1} <br />
                 <span className="text-gradient-energy italic pr-4 inline-block pb-2">{content.checkout.titleLine2}</span>
@@ -673,21 +674,23 @@ const CheckoutPage = () => {
                 {content.checkout.subTitle}
               </p>
             </div>
-            
-            <div className="flex items-center justify-center gap-4 bg-card/50 backdrop-blur-sm border border-border p-4 rounded-3xl">
-              <div className="flex -space-x-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-card bg-secondary flex items-center justify-center text-[10px] font-bold">
-                    {i === 1 ? <CheckCircle className="w-5 h-5 text-primary" /> : i}
-                  </div>
-                ))}
+
+            <div className="lg:col-span-4 flex justify-center">
+              <div className="flex items-center justify-center gap-4 bg-card/50 backdrop-blur-sm border border-border p-4 rounded-3xl">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-card bg-secondary flex items-center justify-center text-[10px] font-bold">
+                      {i === 1 ? <CheckCircle className="w-5 h-5 text-primary" /> : i}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-left">
+                  <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">{content.checkout.steps.stepCount}</div>
+                  <div className="text-xs font-black uppercase tracking-tight">{content.checkout.steps.confirmation}</div>
+                </div>
               </div>
-              <div className="text-left">
-                <div className="text-[10px] font-bold text-primary uppercase tracking-widest leading-none">{content.checkout.steps.stepCount}</div>
-                <div className="text-xs font-black uppercase tracking-tight">{content.checkout.steps.confirmation}</div>
-              </div>
+            </div>
           </div>
-        </div>
 
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Form Side */}
@@ -737,9 +740,9 @@ const CheckoutPage = () => {
                       className="md:col-span-2 grid md:grid-cols-4 gap-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 mb-2"
                     >
                       <div className="md:col-span-2 space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.companyName} *</label>
+                        <label htmlFor="companyName" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.companyName} *</label>
                         <input
-                          name="companyName"
+                          name="companyName" id="companyName"
                           value={formData.companyName}
                           onChange={handleChange}
                           placeholder="Např. BoostUp Energy s.r.o."
@@ -747,9 +750,9 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.ico} *</label>
+                        <label htmlFor="ico" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.ico} *</label>
                         <input
-                          name="ico"
+                          name="ico" id="ico"
                           value={formData.ico}
                           onChange={handleChange}
                           placeholder="12345678"
@@ -757,9 +760,9 @@ const CheckoutPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.dic}</label>
+                        <label htmlFor="dic" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.dic}</label>
                         <input
-                          name="dic"
+                          name="dic" id="dic"
                           value={formData.dic}
                           onChange={handleChange}
                           placeholder="CZ12345678"
@@ -770,9 +773,9 @@ const CheckoutPage = () => {
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.firstName} *</label>
+                    <label htmlFor="firstName" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.firstName} *</label>
                     <input
-                      name="firstName"
+                      name="firstName" id="firstName"
                       autoComplete="given-name"
                       value={formData.firstName}
                       onChange={handleChange}
@@ -781,9 +784,9 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.lastName} *</label>
+                    <label htmlFor="lastName" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.lastName} *</label>
                     <input
-                      name="lastName"
+                      name="lastName" id="lastName"
                       autoComplete="family-name"
                       value={formData.lastName}
                       onChange={handleChange}
@@ -792,10 +795,10 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.email} *</label>
+                    <label htmlFor="email" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.email} *</label>
                     <input
                       type="email"
-                      name="email"
+                      name="email" id="email"
                       autoComplete="email"
                       value={formData.email}
                       onChange={handleChange}
@@ -816,15 +819,15 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox checked={formData.createAccount} onCheckedChange={(v) => setFormData(prev => ({ ...prev, createAccount: !!v }))} />
+                        <Checkbox aria-label="Vytvořit účet k tomuto e-mailu" className="w-6 h-6" checked={formData.createAccount} onCheckedChange={(v) => setFormData(prev => ({ ...prev, createAccount: !!v }))} />
                         <span className="text-sm font-bold text-foreground">Vytvořit účet k tomuto e-mailu</span>
                       </label>
                       {formData.createAccount && (
                         <div className="space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Heslo pro účet *</label>
+                          <label htmlFor="password" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">Heslo pro účet *</label>
                           <input
                             type="password"
-                            name="password"
+                            name="password" id="password"
                             autoComplete="new-password"
                             value={formData.password}
                             onChange={handleChange}
@@ -836,10 +839,10 @@ const CheckoutPage = () => {
                     </div>
                   )}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.phone} *</label>
+                    <label htmlFor="phone" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.personalInfo.phone} *</label>
                     <input
                       type="tel"
-                      name="phone"
+                      name="phone" id="phone"
                       autoComplete="tel"
                       value={formData.phone}
                       onChange={handleChange}
@@ -849,9 +852,9 @@ const CheckoutPage = () => {
 
                   <div className="md:col-span-2 grid grid-cols-6 gap-6">
                     <div className="col-span-4 space-y-2">
-                      <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">Ulice</label>
+                      <label htmlFor="street" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">Ulice</label>
                       <input
-                        name="street"
+                        name="street" id="street"
                         autoComplete="address-line1"
                         value={formData.street}
                         onChange={handleChange}
@@ -860,9 +863,9 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div className="col-span-2 space-y-2">
-                      <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
+                      <label htmlFor="houseNumber" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
                       <input
-                        name="houseNumber"
+                        name="houseNumber" id="houseNumber"
                         autoComplete="address-line2"
                         value={formData.houseNumber}
                         onChange={handleChange}
@@ -873,9 +876,9 @@ const CheckoutPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
+                    <label htmlFor="city" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
                     <input
-                      name="city"
+                      name="city" id="city"
                       autoComplete="address-level2"
                       value={formData.city}
                       onChange={handleChange}
@@ -884,9 +887,9 @@ const CheckoutPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
+                    <label htmlFor="zip" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
                     <input
-                      name="zip"
+                      name="zip" id="zip"
                       autoComplete="postal-code"
                       value={formData.zip}
                       onChange={handleChange}
@@ -910,9 +913,10 @@ const CheckoutPage = () => {
                   <div className="flex items-center space-x-3 bg-secondary/30 p-3 rounded-2xl border border-border/50">
                     <Checkbox
                       id="billingSame"
+                      aria-label={content.checkout.address.billingSame}
                       checked={billingSameAsDelivery}
                       onCheckedChange={(checked) => setBillingSameAsDelivery(checked as boolean)}
-                      className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      className="w-6 h-6 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                     <Label htmlFor="billingSame" className="font-bold cursor-pointer text-xs uppercase tracking-widest">{content.checkout.address.billingSame}</Label>
                   </div>
@@ -923,18 +927,18 @@ const CheckoutPage = () => {
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="md:col-span-2 grid grid-cols-6 gap-6">
                         <div className="col-span-4 space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.street}</label>
+                          <label htmlFor="billingStreet" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.street}</label>
                           <input
-                            name="billingStreet"
+                            name="billingStreet" id="billingStreet"
                             value={formData.billingStreet}
                             onChange={handleChange}
                             className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold"
                           />
                         </div>
                         <div className="col-span-2 space-y-2">
-                          <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
+                          <label htmlFor="billingHouseNumber" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.houseNumber} *</label>
                           <input
-                            name="billingHouseNumber"
+                            name="billingHouseNumber" id="billingHouseNumber"
                             value={formData.billingHouseNumber}
                             onChange={handleChange}
                             className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold"
@@ -942,18 +946,18 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
+                        <label htmlFor="billingCity" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.city} *</label>
                         <input
-                          name="billingCity"
+                          name="billingCity" id="billingCity"
                           value={formData.billingCity}
                           onChange={handleChange}
                           className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-foreground/50 uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
+                        <label htmlFor="billingZip" className="text-[10px] font-black text-primary uppercase tracking-[0.2em] ml-1">{content.checkout.address.zip} *</label>
                         <input
-                          name="billingZip"
+                          name="billingZip" id="billingZip"
                           value={formData.billingZip}
                           onChange={handleChange}
                           className="w-full bg-background/50 border-2 border-border rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all font-bold"
@@ -1181,10 +1185,11 @@ const CheckoutPage = () => {
                   <div className="flex items-start space-x-3 bg-white/5 p-4 rounded-2xl border border-white/20">
                     <Checkbox
                       id="termsAccepted"
+                      aria-label="Souhlasím s obchodními podmínkami a zásadami ochrany osobních údajů"
                       data-testid="checkout-terms"
                       checked={termsAccepted}
                       onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                      className="w-5 h-5 border-2 border-white/60 data-[state=checked]:bg-[#bef264] data-[state=checked]:border-[#bef264] data-[state=checked]:text-black mt-1"
+                      className="w-6 h-6 border-2 border-white/60 data-[state=checked]:bg-[#bef264] data-[state=checked]:border-[#bef264] data-[state=checked]:text-black mt-1"
                     />
                     <Label htmlFor="termsAccepted" className="text-xs text-white/80 leading-snug cursor-pointer flex-1 min-w-0 break-words">
                       Souhlasím s <a href="/obchodni-podminky" className="text-white underline font-bold hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">Obchodními podmínkami</a> a beru na vědomí zpracování mých osobních údajů podle <a href="/ochrana-osobnich-udaju" className="text-white underline font-bold hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">Zásad ochrany osobních údajů</a>. <span className="text-destructive font-bold">*</span>
