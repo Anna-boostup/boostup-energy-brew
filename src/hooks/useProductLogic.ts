@@ -4,6 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { useInventory } from "@/context/InventoryContext";
 import { useToast } from "@/hooks/use-toast";
 import { FLAVORS, PACK_SIZES, type FlavorType } from "@/config/product-data";
+import { useSubscriptionDiscount } from "@/hooks/useSubscriptionDiscount";
 
 // Assets
 const bottlesHero = "/hero-vse.webp";
@@ -21,6 +22,7 @@ export const useProductLogic = () => {
     const [flavorMode, setFlavorMode] = useState<FlavorMode | null>("single");
     const [selectedFlavor, setSelectedFlavor] = useState<Flavor | null>("lemon");
     const [purchaseType, setPurchaseType] = useState<'onetime' | 'subscription' | null>("onetime");
+    const { pct: subDiscountPct } = useSubscriptionDiscount();
     const [quantity, setQuantity] = useState(1);
     const [mixCounts, setMixCounts] = useState<Record<string, number>>({ lemon: 0, red: 0, silky: 0 });
 
@@ -132,7 +134,7 @@ export const useProductLogic = () => {
     const flavorName = cmsFlavor?.name || currentFlavor.name;
 
     const basePrice = getDynamicPrice();
-    const price = purchaseType === 'subscription' ? Math.round(basePrice * 0.90) : basePrice;
+    const price = purchaseType === 'subscription' ? Math.round(basePrice * (1 - subDiscountPct / 100)) : basePrice;
 
     const currentMixCount = Object.values(mixCounts).reduce((a, b) => a + b, 0);
     const isMixValid = selectedPack ? currentMixCount === selectedPack : false;
@@ -222,6 +224,7 @@ export const useProductLogic = () => {
         currentFlavor,
         flavorName,
         price,
+        subDiscountPct,
         isMixValid,
         isOutOfStock,
         isValid,

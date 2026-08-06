@@ -31,6 +31,7 @@ const ProductSection = () => {
     currentFlavor,
     flavorName,
     price,
+    subDiscountPct,
     isMixValid,
     isOutOfStock,
     isValid,
@@ -76,7 +77,7 @@ const ProductSection = () => {
               <div className="space-y-10 animate-fade-up animation-delay-400">
                 {/* 1. Pack Size */}
                 <div className="space-y-4">
-                  <PackSelector selectedPack={selectedPack} onSelectPack={setSelectedPack} />
+                  <PackSelector selectedPack={selectedPack} onSelectPack={setSelectedPack} purchaseType={purchaseType} discountPct={subDiscountPct} />
                 </div>
 
                 {/* 2. Purchase Type */}
