@@ -482,3 +482,15 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+/* A11y: readable placeholder contrast (Tailwind Preflight defaults to gray-400 ~2.16:1) */
+@layer base {
+  input::placeholder,
+  textarea::placeholder {
+    color: hsl(99 22% 34%);
+    opacity: 1;
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: hsl(47 20% 68%);
+  }
+}
