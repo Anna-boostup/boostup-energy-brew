@@ -138,9 +138,11 @@ const WithdrawalForm = () => {
                     <p>E-mail: info@drinkboostup.cz</p>
                 </div>
 
+                <p className="mb-4 text-sm italic"><span className="text-red-600">*</span> Povinné pole</p>
+
                 <div className="mb-8 leading-relaxed">
                     <p className="mb-4">
-                        <strong>Oznamuji, že tímto odstupuji od smlouvy o nákupu tohoto zboží:</strong>
+                        <strong>Oznamuji, že tímto odstupuji od smlouvy o nákupu tohoto zboží:</strong> <span className="text-red-600" aria-hidden="true">*</span>
                     </p>
                     
                     <textarea 
@@ -153,15 +155,15 @@ const WithdrawalForm = () => {
 
                     <div className="space-y-4">
                         <div className="flex gap-4 items-center">
-                            <span className="w-48"><strong>Datum objednání:</strong></span>
+                            <span className="w-48"><strong>Datum objednání:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                             <input type="text" value={formData.orderDate} onChange={(e) => setFormData({...formData, orderDate: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
-                            <span className="w-48"><strong>Číslo objednávky:</strong></span>
+                            <span className="w-48"><strong>Číslo objednávky:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                             <input type="text" value={formData.orderId} onChange={(e) => setFormData({...formData, orderId: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
-                            <span className="w-48"><strong>Datum obdržení zboží:</strong></span>
+                            <span className="w-48"><strong>Datum obdržení zboží:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                             <input type="text" value={formData.receiveDate} onChange={(e) => setFormData({...formData, receiveDate: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                     </div>
@@ -174,15 +176,15 @@ const WithdrawalForm = () => {
                     
                     <div className="space-y-4">
                         <div className="flex gap-4 items-center">
-                            <span className="w-48"><strong>Jméno a příjmení:</strong></span>
+                            <span className="w-48"><strong>Jméno a příjmení:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                             <input type="text" value={formData.customerName} onChange={(e) => setFormData({...formData, customerName: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
-                            <span className="w-48"><strong>Adresa:</strong></span>
+                            <span className="w-48"><strong>Adresa:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                             <input type="text" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                         <div className="flex gap-4 items-center">
-                            <span className="w-48"><strong>E-mail / Telefon:</strong></span>
+                            <span className="w-48"><strong>E-mail / Telefon:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                             <input type="text" value={formData.customerEmail} onChange={(e) => setFormData({...formData, customerEmail: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                         </div>
                     </div>
@@ -193,7 +195,7 @@ const WithdrawalForm = () => {
                         Kupní cenu za zboží včetně nákladů na dodání prosím vraťte na bankovní účet:
                     </p>
                     <div className="flex gap-4 items-center">
-                        <span className="w-48"><strong>Číslo účtu / kód banky:</strong></span>
+                        <span className="w-48"><strong>Číslo účtu / kód banky:</strong> <span className="text-red-600" aria-hidden="true">*</span></span>
                         <input type="text" value={formData.bankAccount} onChange={(e) => setFormData({...formData, bankAccount: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none font-sans px-2" />
                     </div>
                 </div>
@@ -204,7 +206,7 @@ const WithdrawalForm = () => {
                             <span>V</span>
                             <input type="text" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} required className="flex-1 border-b border-black border-dotted bg-transparent outline-none text-center font-sans px-2" />
                             <span>dne</span>
-                            <input type="text" value={formData.signDate} onChange={(e) => setFormData({...formData, signDate: e.target.value})} required className="w-24 border-b border-black border-dotted bg-transparent outline-none text-center font-sans px-2" />
+                            <input type="text" value={formData.signDate} onChange={(e) => setFormData({...formData, signDate: e.target.value})} required className="w-24 border-b border-black border-dotted bg-transparent outline-none text-center font-sans px-2" /> <span className="text-red-600" aria-hidden="true">*</span>
                         </div>
                     </div>
 
