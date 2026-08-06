@@ -1186,8 +1186,8 @@ const CheckoutPage = () => {
                       onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
                       className="w-5 h-5 border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"
                     />
-                    <Label htmlFor="termsAccepted" className="text-xs text-muted-foreground leading-snug cursor-pointer">
-                      Souhlasím s <a href="/obchodni-podminky" className="text-foreground underline font-bold hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Obchodními podmínkami</a> a beru na vědomí zpracování mých osobních údajů podle <a href="/ochrana-osobnich-udaju" className="text-foreground underline font-bold hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Zásad ochrany osobních údajů</a>. <span className="text-destructive font-bold">*</span>
+                    <Label htmlFor="termsAccepted" className="text-xs text-white/80 leading-snug cursor-pointer flex-1 min-w-0 break-words">
+                      Souhlasím s <a href="/obchodni-podminky" className="text-white underline font-bold hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">Obchodními podmínkami</a> a beru na vědomí zpracování mých osobních údajů podle <a href="/ochrana-osobnich-udaju" className="text-white underline font-bold hover:opacity-80 transition-opacity" target="_blank" rel="noopener noreferrer">Zásad ochrany osobních údajů</a>. <span className="text-destructive font-bold">*</span>
                     </Label>
                   </div>
                 </div>
