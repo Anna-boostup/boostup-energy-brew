@@ -7,11 +7,16 @@ type Pack = typeof PACK_SIZES[number];
 interface PackSelectorProps {
   selectedPack: Pack | null;
   onSelectPack: (pack: Pack) => void;
+  purchaseType?: 'onetime' | 'subscription' | null;
+  discountPct?: number;
 }
 
-const PackSelector = ({ selectedPack, onSelectPack }: PackSelectorProps) => {
+const PackSelector = ({ selectedPack, onSelectPack, purchaseType, discountPct = 0 }: PackSelectorProps) => {
   const { content } = useContent();
   const pricing = content.pricing || { pack3: 0, pack12: 0, pack21: 0 };
+  const isSub = purchaseType === 'subscription';
+  const disc = (p: number) => (isSub ? p * (1 - (discountPct || 0) / 100) : p);
+  const czk = (n: number, frac = 0) => n.toLocaleString('cs-CZ', { maximumFractionDigits: frac });
 
   return (
     <div>
@@ -29,22 +34,27 @@ const PackSelector = ({ selectedPack, onSelectPack }: PackSelectorProps) => {
           >
             {pack === 3 && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-olive text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                {(pricing.pack3 / 3).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} KČ / SHOT
+                {czk(disc(pricing.pack3) / 3, 2)} KČ / SHOT
               </div>
             )}
             {pack === 12 && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                {(pricing.pack12 / 12).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} KČ / SHOT
+                {czk(disc(pricing.pack12) / 12, 2)} KČ / SHOT
               </div>
             )}
             {pack === 21 && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm z-20 whitespace-nowrap">
-                {(pricing.pack21 / 21).toLocaleString('cs-CZ', { maximumFractionDigits: 2 })} KČ / SHOT
+                {czk(disc(pricing.pack21) / 21, 2)} KČ / SHOT
               </div>
             )}
             {pack}x
             <span className="block text-xs sm:text-sm font-semibold">
-              {pricing[`pack${pack}` as keyof typeof pricing]} Kč
+              {isSub && (
+                <span className="line-through opacity-50 mr-1 font-normal">
+                  {pricing[`pack${pack}` as keyof typeof pricing]} Kč
+                </span>
+              )}
+              {czk(disc(Number(pricing[`pack${pack}` as keyof typeof pricing])))} Kč
             </span>
             {pack === 21 && (
               <span className="block text-[9px] font-bold text-green-600 mt-1 uppercase leading-none">
