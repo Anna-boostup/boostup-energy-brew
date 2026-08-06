@@ -1202,7 +1202,7 @@ const CheckoutPage = () => {
                   onClick={handleSubmit}
                   disabled={isProcessing || cart.length === 0 || !isSalesEnabled || !termsAccepted}
                   className={`w-full h-20 rounded-[1.5rem] mt-6 font-black text-base sm:text-lg uppercase italic shadow-[0_10px_40px_-5px_rgba(190,242,100,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] group ${
-                    !isSalesEnabled || !termsAccepted ? 'bg-slate-200 text-slate-500 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
+                    !isSalesEnabled || !termsAccepted ? 'bg-slate-200 text-slate-700 cursor-not-allowed shadow-none' : 'bg-[#bef264] text-black hover:bg-[#a3e635]'
                   }`}
                 >
                   {isProcessing ? (
@@ -1210,7 +1210,7 @@ const CheckoutPage = () => {
                   ) : (
                     <div className="flex flex-col items-center">
                       <span className="leading-tight text-center px-2 break-words">{!isSalesEnabled ? content.checkout.summary.salesDisabled : (!termsAccepted ? "Souhlaste s VOP pro odeslání" : content.checkout.summary.submitButton)}</span>
-                      <span className="text-[10px] tracking-[0.2em] opacity-60 not-italic mt-1">
+                      <span className="text-[10px] tracking-[0.2em] opacity-80 not-italic mt-1">
                         {!isSalesEnabled ? content.checkout.summary.salesDisabledSub : content.checkout.summary.submitButtonSub}
                       </span>
                     </div>
