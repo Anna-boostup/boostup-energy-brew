@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Order } from "@/context/InventoryContext";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Printer, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
@@ -61,7 +61,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
             <DialogContent className="max-w-4xl h-[95vh] md:h-auto md:max-h-[92vh] p-0 gap-0 border-none bg-zinc-100 overflow-hidden flex flex-col rounded-t-[2.5rem] md:rounded-[3rem]">
                 {/* Fixed Toolbar */}
                 <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-zinc-200 p-4 sm:p-6 flex justify-between items-center no-print shadow-sm">
-                    <div className="flex gap-3 w-full sm:w-auto">
+                    <div className="flex gap-3 flex-1 min-w-0 sm:flex-initial">
                         <Button 
                             variant="outline" 
                             size="sm" 
@@ -81,6 +81,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                             </a>
                         </Button>
                     </div>
+                    <DialogClose asChild>
+                        <Button variant="ghost" size="icon" aria-label="Zavřít" className="h-12 w-12 sm:h-10 sm:w-10 rounded-xl shrink-0 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900">
+                            <X className="w-5 h-5" />
+                        </Button>
+                    </DialogClose>
                 </div>
 
                 {/* Invoice Body */}

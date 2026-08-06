@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useContent } from "@/context/ContentContext";
 import { supabase } from "@/lib/supabase";
@@ -19,6 +20,16 @@ const AdminProfile = () => {
     const { user, profile, loading: authLoading, refetchProfile } = useAuth();
     const { content, loading: contentLoading } = useContent();
     const { toast } = useToast();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get('tab');
+    const currentTab = ['profile', 'orders', 'subscriptions'].includes(tabParam || '') ? (tabParam as string) : 'profile';
+    const handleTabChange = (v: string) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set('tab', v);
+            return next;
+        }, { replace: true });
+    };
 
     // Early return pro loading je posunut dolů kvůli pravidlům React hooks
 
@@ -289,7 +300,7 @@ const AdminProfile = () => {
                 </div>
             </div>
 
-            <Tabs defaultValue="profile" className="space-y-12">
+            <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-12">
                 <div className="p-1.5 sm:p-2 bg-olive-dark rounded-[2rem] sm:rounded-[2.5rem] w-full md:w-fit shadow-2xl overflow-hidden">
                     <TabsList className="bg-transparent h-auto p-0.5 sm:p-1 gap-1 sm:gap-2 flex sm:flex-nowrap overflow-x-auto no-scrollbar">
                         <TabsTrigger value="profile" className="flex-1 sm:flex-initial gap-2 sm:gap-3 px-4 sm:px-10 py-4 sm:py-5 rounded-[1.8rem] sm:rounded-[2.2rem] font-black uppercase text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-white/60 data-[state=active]:bg-lime data-[state=active]:text-olive-dark transition-all duration-500 border-none shadow-none data-[state=active]:shadow-xl data-[state=active]:shadow-lime/20 whitespace-nowrap">
