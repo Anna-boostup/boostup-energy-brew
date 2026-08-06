@@ -463,7 +463,8 @@ const CheckoutPage = () => {
             name: item.name,
             quantity: item.quantity,
             price: parseFloat(finalPrice.toFixed(2)),
-            mixConfiguration: item.mixConfiguration
+            mixConfiguration: item.mixConfiguration,
+            subscriptionInterval: item.subscriptionInterval
           };
         }),
         total: cartTotal + shippingCost,

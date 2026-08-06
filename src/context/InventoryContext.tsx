@@ -61,6 +61,7 @@ export interface Order {
             red: number;
             silky: number;
         };
+        subscriptionInterval?: 'monthly' | 'bimonthly';
     }[];
     total: number;
     status: 'pending' | 'paid' | 'processing' | 'shipped' | 'completed' | 'cancelled';
