@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, Home, ShoppingBag, CreditCard, Clock } from 'lucide-react';
+import { CheckCircle, ArrowRight, Home, ShoppingBag, CreditCard, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PaymentInstructions from '@/components/PaymentInstructions';
 import { useCart } from '@/context/CartContext';
 import { track } from '@vercel/analytics';
 import { useCookieConsent } from '@/context/CookieContext';
+import { useSubscriptionDiscount } from '@/hooks/useSubscriptionDiscount';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
@@ -22,6 +23,8 @@ const PaymentSuccess = () => {
 
     const orderNumber = searchParams.get('orderNumber') || 'BUP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     const amount = searchParams.get('amount') || '0';
+    const isSubscription = searchParams.get('sub') === '1';
+    const { pct: subDiscountPct } = useSubscriptionDiscount();
 
     useEffect(() => {
         // Clear cart as a safety measure upon landing on success page
@@ -118,6 +121,8 @@ const PaymentSuccess = () => {
                         <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground leading-tight">
                             {isPending ? (
                                 <>ČEKÁME NA <span className="text-gradient-energy">PLATBU</span></>
+                            ) : isSubscription ? (
+                                <>DĚKUJEME ZA <span className="text-gradient-energy">PŘEDPLATNÉ</span></>
                             ) : (
                                 <>DĚKUJEME ZA <span className="text-gradient-energy">OBJEDNÁVKU</span></>
                             )}
@@ -125,7 +130,9 @@ const PaymentSuccess = () => {
                         <p className="text-lg text-foreground/80 max-w-md mx-auto">
                             {isPending
                                 ? "Vaše objednávka byla přijata. Prosíme o provedení platby podle pokynů níže."
-                                : "Vaše platba byla úspěšně přijata. Potvrzení jsme vám právě odeslali na email."
+                                : isSubscription
+                                    ? `Vaše první zásilka je na cestě. Další pak dostanete automaticky a pravidelně — se slevou ${subDiscountPct} % u každé objednávky.`
+                                    : "Vaše platba byla úspěšně přijata. Potvrzení jsme vám právě odeslali na email."
                             }
                         </p>
                     </div>
@@ -143,10 +150,21 @@ const PaymentSuccess = () => {
                             <p className="text-lg sm:text-xl font-display font-bold break-all">#{orderNumber}</p>
                         </div>
                         <div className="bg-secondary/20 rounded-2xl p-6 border border-border/50 overflow-hidden" data-sentry-mask>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Celková částka</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{isSubscription ? 'Částka za zásilku' : 'Celková částka'}</p>
                             <p className="text-lg sm:text-xl font-display font-bold text-primary break-all">{amount} Kč</p>
                         </div>
                     </div>
+
+                    {isSubscription && !isPending && (
+                        <div className="text-left bg-primary/5 border border-primary/20 rounded-2xl p-5 space-y-2">
+                            <div className="flex items-center gap-2 text-primary font-black uppercase text-xs tracking-widest">
+                                <RefreshCw className="w-4 h-4" /> Pravidelné předplatné
+                            </div>
+                            <p className="text-sm text-foreground/80">
+                                Platbu i dopravu strháváme před každou zásilkou. Termín, dopravu i množství upravíte jednou za kalendářní měsíc (nejpozději 5 dní před odesláním), nebo předplatné kdykoli zrušíte ke konci období.
+                            </p>
+                        </div>
+                    )}
 
                     <div className="space-y-6">
                         <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 flex items-center justify-center gap-3">
@@ -167,13 +185,23 @@ const PaymentSuccess = () => {
                                 <Home className="w-4 h-4 mr-2" />
                                 Domů
                             </Button>
-                            <Button
-                                onClick={() => navigate('/')}
-                                className="flex-1 rounded-2xl h-14 font-bold shadow-button animate-energy-pulse"
-                            >
-                                Další nákup
-                                <ArrowRight className="w-4 h-4 ml-2" />
-                            </Button>
+                            {isSubscription ? (
+                                <Button
+                                    onClick={() => navigate('/account/subscriptions')}
+                                    className="flex-1 rounded-2xl h-14 font-bold shadow-button animate-energy-pulse"
+                                >
+                                    Moje předplatné
+                                    <ArrowRight className="w-4 h-4 ml-2" />
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={() => navigate('/')}
+                                    className="flex-1 rounded-2xl h-14 font-bold shadow-button animate-energy-pulse"
+                                >
+                                    Další nákup
+                                    <ArrowRight className="w-4 h-4 ml-2" />
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>

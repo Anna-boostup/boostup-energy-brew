@@ -80,19 +80,19 @@ export default async function handler(req: Request) {
             || req.headers.get('referer')?.replace(/\/[^/]*$/, '')
             || 'https://drinkboostup.cz';
 
+        // Obsahuje objednávka předplatné? (potřebujeme to už před test-mode bypassem)
+        const isSubscription = secureItems.some((item: any) => item.subscriptionInterval);
+
         // TEST MODE BYPASS
         if (process.env.IS_TEST_MODE === 'true') {
             console.log(`[Stripe] TEST MODE ACTIVE. Bypassing gateway for order ${orderNumber}`);
             return new Response(JSON.stringify({ 
-                url: `${origin}/payment/success?session_id=TEST_SESSION_${orderNumber}&orderNumber=${orderNumber}&amount=${total}&status=paid_test`
+                url: `${origin}/payment/success?session_id=TEST_SESSION_${orderNumber}&orderNumber=${orderNumber}&amount=${total}&status=paid_test${isSubscription ? '&sub=1' : ''}`
             }), {
                 status: 200,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             });
         }
-        
-        // Check if there is a subscription item
-        const isSubscription = secureItems.some((item: any) => item.subscriptionInterval);
         
         // Map items to Stripe line_items
         const lineItems = secureItems.map((item: any) => {
@@ -146,7 +146,7 @@ export default async function handler(req: Request) {
             customer_email: customerEmail,
             line_items: lineItems,
             mode: isSubscription ? 'subscription' : 'payment',
-            success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${finalTotal}`,
+            success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${finalTotal}${isSubscription ? '&sub=1' : ''}`,
             cancel_url: `${origin}/checkout`,
             metadata: {
                 orderId: orderNumber,
