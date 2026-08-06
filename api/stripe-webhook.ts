@@ -61,7 +61,7 @@ async function processSubscriptionRenewal(subId: string, invoice: Stripe.Invoice
             try {
                 const packet = await createPacketaPacket({
                     orderNumber, firstName: di.firstName, lastName: di.lastName,
-                    email: (res.order as any)?.customer?.email, phone: di.phone, packetaPointId: di.packetaPointId, total: res.order?.total,
+                    email: (res.order as any)?.customer?.email, phone: di.phone, packetaPointId: di.packetaPointId, total: res.order?.total ?? 0,
                 });
                 await supabase.from('orders').update({ packeta_barcode: packet.barcode, packeta_packet_id: packet.packetId }).eq('id', orderNumber);
             } catch (err) { console.error('[Stripe Webhook] renewal Packeta failed:', err); }
