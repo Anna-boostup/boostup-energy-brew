@@ -96,6 +96,7 @@ test.describe('Full Subscription E2E — nákup + zrušení', () => {
     await page.getByTestId('checkout-payment-card').click();
 
     // ─── 6. Odeslat → Stripe hosted checkout ─────────────────────────────────
+    await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
     const submitBtn = page.getByTestId('checkout-submit-btn');
     await expect(submitBtn).toBeEnabled({ timeout: 10000 });
     await Promise.all([
