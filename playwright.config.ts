@@ -111,6 +111,19 @@ export default defineConfig({
       dependencies: ['setup-admin'],
     },
 
+    // Full Subscription E2E — reálný Stripe hosted checkout + webhook + zrušení
+    // Requires: SUBSCRIPTION_FULL_E2E=true, IS_TEST_MODE=false
+    {
+      name: 'subscription-full-e2e',
+      testMatch: 'tests/subscription_full_e2e.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow navigation to stripe.com
+        bypassCSP: true,
+      },
+      dependencies: ['setup-admin'],
+    },
+
     // Full GoPay E2E — goes through real GoPay Sandbox hosted checkout page
     // Requires: GOPAY_FULL_E2E=true, IS_TEST_MODE=false
     {
