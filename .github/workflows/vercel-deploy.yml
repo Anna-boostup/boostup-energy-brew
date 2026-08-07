@@ -78,6 +78,8 @@ jobs:
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
           vercel alias set $DEPLOYMENT_URL test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
+          # Keep the www.* alias in sync too (Stripe webhook may target www.test.*); tolerate a missing domain
+          vercel alias set $DEPLOYMENT_URL www.test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} || echo "www.test.drinkboostup.cz alias not configured — skipping"
           echo "DEPLOYMENT_URL=https://test.drinkboostup.cz" >> $GITHUB_ENV
           echo "url=https://test.drinkboostup.cz" >> $GITHUB_OUTPUT
 
