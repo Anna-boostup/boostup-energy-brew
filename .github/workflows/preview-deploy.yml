@@ -50,6 +50,8 @@ jobs:
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
           vercel alias set $DEPLOYMENT_URL preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
+          # Keep the www.* alias in sync too (tolerate a missing domain)
+          vercel alias set $DEPLOYMENT_URL www.preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} || echo "www.preview.drinkboostup.cz alias not configured — skipping"
 
       - name: Wait for 200 OK
         run: |
