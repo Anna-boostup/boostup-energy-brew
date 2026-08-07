@@ -135,16 +135,22 @@ test.describe('Full Subscription E2E — nákup + zrušení', () => {
     // obchází RLS. Předplatné patří zákazníkovi (guest e-mail), ne adminovi, takže
     // tohle je spolehlivější ověření než admin výpis (ten závisí na admin RLS policy).
     await page.goto('/zruseni-predplatneho', { waitUntil: 'load', timeout: 30000 });
-    await page.locator('input[placeholder="BUP..."]').fill(orderNumber as string);
-    await page.locator('input[type="email"]').fill(testEmail);
 
-    // Webhook je asynchronní — lookup opakujeme, dokud se předplatné neobjeví.
+    const orderInput = page.locator('input[placeholder="BUP..."]');
+    const emailInput = page.locator('input[type="email"]');
+    const findBtn = page.getByRole('button', { name: /Najít předplatné/i });
     // Tlačítko "Zrušit ke konci období" se zobrazí jen když aktivní předplatné EXISTUJE = důkaz vzniku.
     const cancelBtn = page.getByRole('button', { name: /Zrušit ke konci období/i });
+
+    // Webhook je asynchronní a stránka se může re-mountnout → vyplnění polí i lookup
+    // opakujeme v jedné smyčce, dokud se nenajde aktivní předplatné.
     await expect(async () => {
-      await page.getByRole('button', { name: /Najít předplatné/i }).click();
-      await expect(cancelBtn).toBeVisible({ timeout: 5000 });
-    }).toPass({ timeout: 45000, intervals: [2000, 3000, 5000] });
+      await orderInput.fill(orderNumber as string);
+      await emailInput.fill(testEmail);
+      await expect(findBtn).toBeEnabled({ timeout: 3000 });
+      await findBtn.click();
+      await expect(cancelBtn).toBeVisible({ timeout: 6000 });
+    }).toPass({ timeout: 60000, intervals: [3000, 5000, 5000] });
     console.log(`✅ Předplatné pro ${testEmail} nalezeno (veřejný lookup, service-role)`);
 
     // ─── 11. Zrušit ke konci období ──────────────────────────────────────────
