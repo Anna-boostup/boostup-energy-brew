@@ -109,6 +109,7 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     await page.getByTestId('checkout-payment-card').click();
 
     // 6. Odeslat objednávku → přesměrování na Stripe
+    await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
     const submitBtn = page.getByTestId('checkout-submit-btn');
     await expect(submitBtn).toBeEnabled({ timeout: 10000 });
 
@@ -230,6 +231,7 @@ test.describe('Full Stripe E2E — Real Gateway + Webhook', () => {
     }
 
     await page.getByTestId('checkout-payment-card').click();
+    await page.getByTestId('checkout-terms').click(); // souhlas s VOP (povinné)
     const submitBtn = page.getByTestId('checkout-submit-btn');
     await expect(submitBtn).toBeEnabled({ timeout: 10000 });
 
