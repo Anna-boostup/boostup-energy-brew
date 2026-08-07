@@ -6,13 +6,15 @@ import { isRenewalInvoice, applySubscriptionStatusEvent, applySubscriptionPaused
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16',
 });
+// Edge runtime → Web Crypto pro ověření podpisu Stripe webhinu
+const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const config = {
-    runtime: 'nodejs', 
+    runtime: 'edge',
 };
 
 const corsHeaders = {
@@ -80,9 +82,8 @@ export default async function handler(req: Request) {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
     }
 
-    // Use ArrayBuffer to prevent UTF-8 string encoding from corrupting the raw payload bytes
-    const arrayBuffer = await req.arrayBuffer();
-    const payload = Buffer.from(arrayBuffer);
+    // Raw tělo requestu pro ověření podpisu (edge runtime → Web Request)
+    const payload = await req.text();
     const signature = req.headers.get('stripe-signature');
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -97,7 +98,9 @@ export default async function handler(req: Request) {
         event = await stripe.webhooks.constructEventAsync(
             payload,
             signature,
-            webhookSecret
+            webhookSecret,
+            undefined,
+            cryptoProvider
         );
     } catch (err: any) {
         console.error(`Webhook signature verification failed. ${err.message}`);
