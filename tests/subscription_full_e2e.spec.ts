@@ -133,8 +133,8 @@ test.describe('Full Subscription E2E — nákup + zrušení', () => {
     // ─── 10. Ověřit vznik záznamu + zrušit přes service-role API (deterministicky) ──
     // Voláme /api/subscription-cancel-public napřímo (běží pod service-role → obchází RLS,
     // předplatné patří zákazníkovi). Žádné UI = žádná flaky pole/tlačítka.
-    // page.request neprochází page.route, takže Vercel bypass hlavičku přidáváme ručně.
-    const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
+    // page.request neprochází page.route, takže Vercel bypass hlavičku přidáváme ručně
+    // (bypassSecret je deklarovaný výše u waitForPaymentSuccess).
     const apiHeaders: Record<string, string> = bypassSecret
       ? { 'x-vercel-protection-bypass': bypassSecret, 'x-vercel-skip-toolbar': '1' }
       : {};
