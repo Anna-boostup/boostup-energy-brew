@@ -130,32 +130,44 @@ test.describe('Full Subscription E2E — nákup + zrušení', () => {
     // ─── 9. Počkat na webhook (checkout.session.completed → vytvoření předplatného) ──
     await page.waitForTimeout(8000);
 
-    // ─── 10. Ověřit vznik + zrušit přes veřejnou stránku (nezávislé na RLS) ───
-    // Lookup jde přes /api/subscription-cancel-public, které běží pod service-role →
-    // obchází RLS. Předplatné patří zákazníkovi (guest e-mail), ne adminovi, takže
-    // tohle je spolehlivější ověření než admin výpis (ten závisí na admin RLS policy).
-    await page.goto('/zruseni-predplatneho', { waitUntil: 'load', timeout: 30000 });
+    // ─── 10. Ověřit vznik záznamu + zrušit přes service-role API (deterministicky) ──
+    // Voláme /api/subscription-cancel-public napřímo (běží pod service-role → obchází RLS,
+    // předplatné patří zákazníkovi). Žádné UI = žádná flaky pole/tlačítka.
+    // page.request neprochází page.route, takže Vercel bypass hlavičku přidáváme ručně.
+    const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '';
+    const apiHeaders: Record<string, string> = bypassSecret
+      ? { 'x-vercel-protection-bypass': bypassSecret, 'x-vercel-skip-toolbar': '1' }
+      : {};
 
-    const orderInput = page.locator('input[placeholder="BUP..."]');
-    const emailInput = page.locator('input[type="email"]');
-    const findBtn = page.getByRole('button', { name: /Najít předplatné/i });
-    // Tlačítko "Zrušit ke konci období" se zobrazí jen když aktivní předplatné EXISTUJE = důkaz vzniku.
-    const cancelBtn = page.getByRole('button', { name: /Zrušit ke konci období/i });
-
-    // Webhook je asynchronní a stránka se může re-mountnout → vyplnění polí i lookup
-    // opakujeme v jedné smyčce, dokud se nenajde aktivní předplatné.
+    // Webhook je asynchronní → lookup opakujeme, dokud předplatné neexistuje.
     await expect(async () => {
-      await orderInput.fill(orderNumber as string);
-      await emailInput.fill(testEmail);
-      await expect(findBtn).toBeEnabled({ timeout: 3000 });
-      await findBtn.click();
-      await expect(cancelBtn).toBeVisible({ timeout: 6000 });
+      const res = await page.request.post('/api/subscription-cancel-public', {
+        data: { orderId: orderNumber, email: testEmail, action: 'lookup' },
+        headers: apiHeaders,
+      });
+      expect(res.ok(), `lookup HTTP ${res.status()}`).toBeTruthy();
+      const body = await res.json();
+      expect(body.hasActiveSubscription, 'webhook musel vytvořit záznam předplatného').toBe(true);
     }).toPass({ timeout: 60000, intervals: [3000, 5000, 5000] });
-    console.log(`✅ Předplatné pro ${testEmail} nalezeno (veřejný lookup, service-role)`);
+    console.log(`✅ Předplatné pro ${testEmail} vytvořeno (ověřeno přes service-role lookup API)`);
 
     // ─── 11. Zrušit ke konci období ──────────────────────────────────────────
-    await cancelBtn.click();
-    await expect(page.locator('body')).toContainText(/Hotovo|zrušen|ke konci období/i, { timeout: 20000 });
-    console.log('✅ Předplatné zrušeno ke konci období');
+    const cancelRes = await page.request.post('/api/subscription-cancel-public', {
+      data: { orderId: orderNumber, email: testEmail, action: 'cancel', immediate: false },
+      headers: apiHeaders,
+    });
+    expect(cancelRes.ok(), `cancel HTTP ${cancelRes.status()}`).toBeTruthy();
+    const cancelBody = await cancelRes.json();
+    expect(cancelBody.ok, 'zrušení musí projít').toBe(true);
+    console.log(`✅ Předplatné zrušeno: ${cancelBody.message}`);
+
+    // ─── 12. Ověřit, že je zrušení naplánované (pendingCancel) ────────────────
+    const verifyRes = await page.request.post('/api/subscription-cancel-public', {
+      data: { orderId: orderNumber, email: testEmail, action: 'lookup' },
+      headers: apiHeaders,
+    });
+    const verifyBody = await verifyRes.json();
+    expect(verifyBody.pendingCancel, 'lookup musí po zrušení hlásit pendingCancel').toBe(true);
+    console.log('✅ Zrušení potvrzeno (pendingCancel=true)');
   });
 });
