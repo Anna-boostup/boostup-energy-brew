@@ -44,7 +44,7 @@ export default async function handler(req: Request) {
 
     try {
         const body = await req.json();
-        const { orderNumber, items, customerEmail, total, origin: bodyOrigin } = body;
+        const { orderNumber, items, customerEmail, total, origin: bodyOrigin, customer: customerDetails } = body;
 
         console.log(`[Stripe Checkout] Creating session for order ${orderNumber}`);
 
@@ -137,13 +137,49 @@ export default async function handler(req: Request) {
             });
         }
 
+        // Předvyplnění Stripe Checkoutu jménem a adresou z našeho formuláře (přes Customer objekt)
+        let stripeCustomerId: string | undefined;
+        if (customerEmail) {
+            try {
+                const addr = customerDetails?.address ? {
+                    line1: customerDetails.address.line1 || undefined,
+                    city: customerDetails.address.city || undefined,
+                    postal_code: customerDetails.address.postal_code || undefined,
+                    country: customerDetails.address.country || allowedCountry,
+                } : undefined;
+                const custPayload: any = {
+                    email: customerEmail,
+                    name: customerDetails?.name || undefined,
+                    phone: customerDetails?.phone || undefined,
+                    address: addr,
+                    shipping: (customerDetails?.name && addr?.line1) ? {
+                        name: customerDetails.name,
+                        phone: customerDetails?.phone || undefined,
+                        address: addr,
+                    } : undefined,
+                };
+                const existing = await stripe.customers.list({ email: customerEmail, limit: 1 });
+                if (existing.data.length > 0) {
+                    stripeCustomerId = existing.data[0].id;
+                    await stripe.customers.update(stripeCustomerId, custPayload);
+                } else {
+                    const created = await stripe.customers.create(custPayload);
+                    stripeCustomerId = created.id;
+                }
+            } catch (e: any) {
+                console.error('[Stripe] customer prefill failed:', e?.message || e);
+            }
+        }
+
         const session = await stripe.checkout.sessions.create({
             // Removed hardcoded card restriction to allow Apple/Google Pay via Dashboard settings
             billing_address_collection: 'required',
             shipping_address_collection: {
                 allowed_countries: [allowedCountry] as any,
             },
-            customer_email: customerEmail,
+            ...(stripeCustomerId
+                ? { customer: stripeCustomerId, customer_update: { name: 'auto', address: 'auto', shipping: 'auto' } }
+                : { customer_email: customerEmail }),
             line_items: lineItems,
             mode: isSubscription ? 'subscription' : 'payment',
             success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${orderNumber}&amount=${finalTotal}${isSubscription ? '&sub=1' : ''}`,

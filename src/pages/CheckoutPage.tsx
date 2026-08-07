@@ -530,6 +530,16 @@ const CheckoutPage = () => {
               total: newOrder.total,
               items: newOrder.items,
               origin: window.location.origin,
+              customer: {
+                name: `${formData.firstName} ${formData.lastName}`.trim(),
+                phone: formData.phone,
+                address: {
+                  line1: `${formData.street} ${formData.houseNumber}`.trim(),
+                  city: formData.city,
+                  postal_code: formData.zip,
+                  country: selectedCountry.code,
+                },
+              },
             }),
           });
 
