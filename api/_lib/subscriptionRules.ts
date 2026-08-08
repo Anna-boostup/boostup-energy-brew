@@ -283,7 +283,20 @@ export async function executeRenewal(
         if (error) console.error(`[renewal] stock movement failed for ${sm.sku}:`, error.message);
     }
 
-    const { error: orderErr } = await supabase.from('orders').insert(order);
+    // DB má ploché sloupce (customer_email/customer_name/created_at) — objekt `order`
+    // (customer{}, date) je jen interní tvar pro webhook (Packeta). Mapuj na sloupce.
+    const orderRow = {
+        id: order.id,
+        customer_email: (order as any).customer?.email ?? null,
+        customer_name: (order as any).customer?.name ?? null,
+        total: order.total,
+        status: order.status,
+        items: order.items,
+        delivery_info: order.delivery_info,
+        is_subscription_order: true,
+    };
+    const { error: orderErr } = await supabase.from('orders').insert(orderRow);
+    if (orderErr) console.error('[renewal] order insert failed:', orderErr.message);
 
     await supabase.from('subscriptions').update({
         last_invoice_id: invoice.id,
@@ -306,7 +319,7 @@ export function buildSubscriptionRecord(stripeSub: any, order: any, nowIso: stri
     return {
         stripe_subscription_id: stripeSub?.id,
         stripe_customer_id: typeof stripeSub?.customer === 'string' ? stripeSub.customer : stripeSub?.customer?.id,
-        email: order?.customer?.email || null,
+        email: order?.customer_email || (typeof stripeSub?.customer === 'object' ? stripeSub?.customer?.email : null) || null,
         user_id: order?.user_id ?? null,
         status: mapStripeStatus(stripeSub?.status, !!stripeSub?.pause_collection),
         interval: mapInterval(intervalCount),

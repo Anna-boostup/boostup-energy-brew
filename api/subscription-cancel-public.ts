@@ -31,9 +31,10 @@ export default async function handler(req: Request) {
         const immediate = !!body?.immediate;
         if (!orderId || !email) return json({ error: 'Zadejte číslo objednávky i e-mail.' }, 400);
 
-        const { data: order } = await admin.from('orders').select('id, customer, is_subscription_order, date').eq('id', orderId).maybeSingle();
+        const { data: order, error: orderErr } = await admin.from('orders').select('id, customer_email, is_subscription_order').eq('id', orderId).maybeSingle();
+        if (orderErr) console.error('[subscription-cancel-public] order read error:', orderErr.message);
         if (!order) return json({ found: false, error: 'Objednávka nenalezena. Zkontrolujte číslo objednávky.' }, 404);
-        const orderEmail = String((order as any)?.customer?.email || '').toLowerCase();
+        const orderEmail = String((order as any)?.customer_email || '').toLowerCase();
         if (!orderEmail || orderEmail !== email) return json({ found: false, error: 'E-mail nesouhlasí s objednávkou.' }, 403);
 
         const { data: subs } = await admin.from('subscriptions').select('*').ilike('email', orderEmail).neq('status', 'cancelled').order('created_at', { ascending: false });
