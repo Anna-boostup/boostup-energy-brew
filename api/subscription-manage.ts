@@ -9,7 +9,7 @@ const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const anonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
 const admin = createClient(supabaseUrl, serviceKey);
 
-export const config = { runtime: 'nodejs' };
+export const config = { runtime: 'edge' };
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
