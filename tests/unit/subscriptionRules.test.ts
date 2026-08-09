@@ -389,7 +389,16 @@ describe('executeRenewal (webhook invoice.paid → sklad + objednávka + idempot
         expect(res.orderInserted).toBe(true);
         expect(rec).toEqual([
             { op: 'rpc', fn: 'handle_stock_movement', args: { p_sku: 'lemon', p_type: 'sale', p_amount: -6, p_note: 'Předplatné – obnova in_1' } },
-            { op: 'insert', table: 'orders', row: res.order },
+            { op: 'insert', table: 'orders', row: {
+                id: res.order!.id,
+                customer_email: (res.order as any).customer.email,
+                customer_name: (res.order as any).customer.name,
+                total: res.order!.total,
+                status: res.order!.status,
+                items: res.order!.items,
+                delivery_info: res.order!.delivery_info,
+                is_subscription_order: true,
+            } },
             { op: 'update', table: 'subscriptions', row: { last_invoice_id: 'in_1', current_period_end: new Date(1893456000 * 1000).toISOString(), updated_at: 'NOW' }, col: 'stripe_subscription_id', val: 'sub_1' },
         ]);
         expect(res.order!.total).toBe(749);
@@ -416,7 +425,7 @@ describe('executeRenewal (webhook invoice.paid → sklad + objednávka + idempot
 describe('buildSubscriptionRecord (vytvoření záznamu předplatného)', () => {
     it('sestaví řádek z Stripe subscription + objednávky', () => {
         const stripeSub = { id: 'sub_1', customer: 'cus_1', status: 'active', pause_collection: null, cancel_at_period_end: false, current_period_end: 1893456000, items: { data: [{ price: { recurring: { interval_count: 2 } } }] } };
-        const order = { customer: { email: 'a@b.cz' }, user_id: 'u1', total: 1618, items: [{ sku: 'BUP-LEMON-12', price: 749, quantity: 2 }], delivery_info: { deliveryMethod: 'courier' } };
+        const order = { customer_email: 'a@b.cz', customer_name: 'A B', user_id: 'u1', total: 1618, items: [{ sku: 'BUP-LEMON-12', price: 749, quantity: 2 }], delivery_info: { deliveryMethod: 'courier' } };
         const row = buildSubscriptionRecord(stripeSub, order, 'NOW');
         expect(row.stripe_subscription_id).toBe('sub_1');
         expect(row.stripe_customer_id).toBe('cus_1');

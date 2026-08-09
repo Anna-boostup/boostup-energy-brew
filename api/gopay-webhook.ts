@@ -137,7 +137,7 @@ export default async function handler(req: Request) {
                             orderNumber: fullOrder.id,
                             firstName: fullOrder.delivery_info.firstName,
                             lastName: fullOrder.delivery_info.lastName,
-                            email: fullOrder.customer.email,
+                            email: fullOrder.customer_email,
                             phone: fullOrder.delivery_info.phone,
                             packetaPointId: fullOrder.delivery_info.packetaPointId,
                             total: fullOrder.total,
