@@ -41,9 +41,18 @@ export default async function handler(req: Request) {
         const nowIso = new Date().toISOString();
 
         if (action === 'cancel') {
-            await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
-            await admin.from('subscriptions').update({ cancel_at_period_end: true, updated_at: nowIso }).eq('id', sub.id);
-            return json({ ok: true, message: 'Zrušení naplánováno ke konci období.' });
+            try {
+                await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
+                await admin.from('subscriptions').update({ cancel_at_period_end: true, updated_at: nowIso }).eq('id', sub.id);
+                return json({ ok: true, message: 'Zrušení naplánováno ke konci období.' });
+            } catch (err: any) {
+                // Předplatné s běžící/nedokončenou checkout session (status incomplete) nejde naplánovat
+                // ke konci období — Stripe to odmítne. V takovém případě ho zrušíme rovnou.
+                if (!/checkout session|incomplete/i.test(String(err?.message || ''))) throw err;
+                await stripe.subscriptions.cancel(sub.stripe_subscription_id);
+                await admin.from('subscriptions').update({ status: 'cancelled', cancelled_at: nowIso, cancel_at_period_end: false, updated_at: nowIso }).eq('id', sub.id);
+                return json({ ok: true, message: 'Předplatné nemělo dokončenou platbu — zrušeno okamžitě.' });
+            }
         }
         if (action === 'cancel_now') {
             await stripe.subscriptions.cancel(sub.stripe_subscription_id);

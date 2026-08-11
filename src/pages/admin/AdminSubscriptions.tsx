@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarClock, Loader2, RefreshCw, XCircle, Check, ExternalLink } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { SUBSCRIPTION_DISCOUNT_KEY } from '@/hooks/useSubscriptionDiscount';
 
 const SETTINGS_KEY = 'subscription_dispatch';
@@ -20,6 +21,7 @@ const AdminSubscriptions = () => {
     const [busy, setBusy] = useState<string | null>(null);
     const [discountPct, setDiscountPct] = useState('15');
     const [savingDiscount, setSavingDiscount] = useState(false);
+    const [cancelTarget, setCancelTarget] = useState<any | null>(null);
 
     const load = async () => {
         setLoading(true);
@@ -187,8 +189,8 @@ const AdminSubscriptions = () => {
                                         {s.status !== 'cancelled' && (s.cancel_at_period_end ? (
                                             <Button size="sm" variant="outline" disabled={busy === `${s.id}:resume`} onClick={() => adminAction(s, 'resume')}>{busy === `${s.id}:resume` ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Obnovit'}</Button>
                                         ) : (
-                                            <Button size="sm" variant="ghost" className="text-destructive gap-1" disabled={busy === `${s.id}:cancel`} onClick={() => adminAction(s, 'cancel')}>
-                                                {busy === `${s.id}:cancel` ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Zrušit
+                                            <Button size="sm" variant="ghost" className="text-destructive gap-1" disabled={busy === `${s.id}:cancel` || busy === `${s.id}:cancel_now`} onClick={() => setCancelTarget(s)}>
+                                                {(busy === `${s.id}:cancel` || busy === `${s.id}:cancel_now`) ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Zrušit
                                             </Button>
                                         ))}
                                     </td>
@@ -198,6 +200,41 @@ const AdminSubscriptions = () => {
                     </table>
                 </div>
             )}
+
+            <Dialog open={!!cancelTarget} onOpenChange={(o) => { if (!o) setCancelTarget(null); }}>
+                <DialogContent className="bg-white border-2 border-olive/10 rounded-3xl text-olive-dark">
+                    <DialogHeader>
+                        <DialogTitle className="font-black uppercase tracking-tight flex items-center gap-2 text-olive-dark">
+                            <XCircle className="w-5 h-5 text-destructive" /> Zrušit předplatné
+                        </DialogTitle>
+                        <DialogDescription className="text-olive/60">
+                            {cancelTarget?.email || 'Zákazník bez e-mailu'} — {cancelTarget?.product_handle} ×{cancelTarget?.quantity}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="text-sm text-olive/70 space-y-2">
+                        <p><b className="text-olive-dark">Ke konci období</b> — předplatné doběhne do {fmt(cancelTarget?.next_delivery_date)} a pak skončí; další platba se nestrhne.</p>
+                        <p><b className="text-olive-dark">Okamžitě</b> — ukončí předplatné hned. Vhodné u předplatných bez dokončené platby.</p>
+                    </div>
+                    <DialogFooter className="gap-2 sm:gap-2">
+                        <Button variant="outline" onClick={() => setCancelTarget(null)}>Zpět</Button>
+                        <Button
+                            variant="outline"
+                            className="text-destructive border-destructive/40 hover:bg-destructive/5"
+                            disabled={!!busy}
+                            onClick={async () => { const t = cancelTarget; await adminAction(t, 'cancel'); setCancelTarget(null); }}
+                        >
+                            {busy === `${cancelTarget?.id}:cancel` ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ke konci období'}
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            disabled={!!busy}
+                            onClick={async () => { const t = cancelTarget; await adminAction(t, 'cancel_now'); setCancelTarget(null); }}
+                        >
+                            {busy === `${cancelTarget?.id}:cancel_now` ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Okamžitě'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
