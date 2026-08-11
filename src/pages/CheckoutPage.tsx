@@ -1,5 +1,5 @@
 // Force redeploy - Final Merged Production Version (Loveble Design + Development Logic)
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useRef, useTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -128,6 +128,16 @@ const CheckoutPage = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // U předplatného předzaškrtneme založení účtu (host to může odškrtnout).
+  // Efekt (ne init) kvůli async hydrataci košíku — nastaví se jednou, až hasSubscription zesílí na true.
+  const accountDefaulted = useRef(false);
+  useEffect(() => {
+    if (hasSubscription && !user && !accountDefaulted.current) {
+      accountDefaulted.current = true;
+      setFormData(prev => (prev.createAccount ? prev : { ...prev, createAccount: true }));
+    }
+  }, [hasSubscription, user]);
 
   // --- Doručovací země a měna ---
   const { enabledCountries } = useShippingCountries();

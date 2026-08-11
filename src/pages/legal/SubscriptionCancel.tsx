@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Loader2, Search, XCircle, CheckCircle } from "lucide-react";
+import { Loader2, Search, XCircle, CheckCircle, UserPlus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
 
@@ -74,6 +74,19 @@ const SubscriptionCancel = () => {
                                         K objednávce jsme našli aktivní předplatné{info.nextDate ? <> — další odeslání <b>{new Date(info.nextDate).toLocaleDateString('cs-CZ')}</b></> : null}.
                                         {info.pendingCancel ? ' Zrušení už je naplánované ke konci období.' : ''}
                                     </p>
+                                    {!info.pendingCancel && (
+                                        <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+                                            <p className="text-sm font-bold text-foreground">Nechcete rušit?</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Se založeným účtem zásilku jen posunete, změníte dopravu nebo předplatné pozastavíte — změnu termínu, dopravy i pauzu lze udělat jen po přihlášení. Rušit tak vůbec nemusíte.
+                                            </p>
+                                            <Link to="/register" className="inline-block">
+                                                <Button variant="outline" size="sm" className="gap-2 mt-1">
+                                                    <UserPlus className="w-4 h-4" /> Založit účet
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    )}
                                     {!info.pendingCancel && (
                                         <Button onClick={cancel} disabled={busy} variant="destructive" className="gap-2">
                                             {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />} Zrušit ke konci období
