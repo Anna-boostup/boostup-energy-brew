@@ -40,23 +40,39 @@ export default async function handler(req: Request) {
         if (!sub.stripe_subscription_id) return json({ error: 'Bez napojení na Stripe.' }, 400);
         const nowIso = new Date().toISOString();
 
+        // Stripe nedovolí zrušit (ani naplánovat zrušení) předplatné, které má ještě OTEVŘENOU
+        // checkout session (stav incomplete — typicky nedokončený/roztestovaný nákup). Správné
+        // řešení dle Stripu je tu session expirovat; tím se incomplete předplatné zruší.
+        const isCheckoutBlock = (m: string) => /checkout session|incomplete/i.test(m || '');
+        const clearIncomplete = async () => {
+            const sessions = await stripe.checkout.sessions.list({ subscription: sub.stripe_subscription_id, status: 'open', limit: 20 });
+            for (const cs of sessions.data) { try { await stripe.checkout.sessions.expire(cs.id); } catch { /* ignore */ } }
+            try { await stripe.subscriptions.cancel(sub.stripe_subscription_id); } catch { /* po expiraci už je fakticky zrušené */ }
+        };
+        const markCancelled = () => admin.from('subscriptions')
+            .update({ status: 'cancelled', cancelled_at: nowIso, cancel_at_period_end: false, updated_at: nowIso })
+            .eq('id', sub.id);
+
         if (action === 'cancel') {
             try {
                 await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
                 await admin.from('subscriptions').update({ cancel_at_period_end: true, updated_at: nowIso }).eq('id', sub.id);
                 return json({ ok: true, message: 'Zrušení naplánováno ke konci období.' });
             } catch (err: any) {
-                // Předplatné s běžící/nedokončenou checkout session (status incomplete) nejde naplánovat
-                // ke konci období — Stripe to odmítne. V takovém případě ho zrušíme rovnou.
-                if (!/checkout session|incomplete/i.test(String(err?.message || ''))) throw err;
-                await stripe.subscriptions.cancel(sub.stripe_subscription_id);
-                await admin.from('subscriptions').update({ status: 'cancelled', cancelled_at: nowIso, cancel_at_period_end: false, updated_at: nowIso }).eq('id', sub.id);
+                if (!isCheckoutBlock(String(err?.message || ''))) throw err;
+                await clearIncomplete();
+                await markCancelled();
                 return json({ ok: true, message: 'Předplatné nemělo dokončenou platbu — zrušeno okamžitě.' });
             }
         }
         if (action === 'cancel_now') {
-            await stripe.subscriptions.cancel(sub.stripe_subscription_id);
-            await admin.from('subscriptions').update({ status: 'cancelled', cancelled_at: nowIso, cancel_at_period_end: false, updated_at: nowIso }).eq('id', sub.id);
+            try {
+                await stripe.subscriptions.cancel(sub.stripe_subscription_id);
+            } catch (err: any) {
+                if (!isCheckoutBlock(String(err?.message || ''))) throw err;
+                await clearIncomplete();
+            }
+            await markCancelled();
             return json({ ok: true, message: 'Předplatné bylo zrušeno.' });
         }
         if (action === 'resume') {
@@ -67,6 +83,6 @@ export default async function handler(req: Request) {
         return json({ error: 'Neznámá akce.' }, 400);
     } catch (e: any) {
         console.error('[subscription-admin] error:', e?.message || e);
-        return json({ error: e?.message || 'Server error' }, 500);
+        return json({ error: 'Akci se nepodařilo dokončit. Zkuste to prosím znovu, nebo ji proveďte přímo ve Stripe.' }, 500);
     }
 }
