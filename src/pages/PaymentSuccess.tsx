@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, Home, ShoppingBag, CreditCard, Clock, RefreshCw } from 'lucide-react';
+import { CheckCircle, ArrowRight, Home, ShoppingBag, CreditCard, Clock, RefreshCw, UserPlus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PaymentInstructions from '@/components/PaymentInstructions';
 import { useCart } from '@/context/CartContext';
@@ -9,6 +9,8 @@ import { track } from '@vercel/analytics';
 import { useCookieConsent } from '@/context/CookieContext';
 import { useSubscriptionDiscount } from '@/hooks/useSubscriptionDiscount';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
@@ -41,6 +43,30 @@ const PaymentSuccess = () => {
     const autoRedirect = !isSubscription;
     const [countdown, setCountdown] = useState(isPending ? 120 : 30);
     const [cancelled, setCancelled] = useState(false);
+    const { toast } = useToast();
+    const [activationEmail, setActivationEmail] = useState('');
+    const [activationBusy, setActivationBusy] = useState(false);
+    const [activationSent, setActivationSent] = useState(false);
+
+    // Host bez účtu: pošleme mu na e-mail aktivační (magic) odkaz -> po kliknutí je přihlášený a účet vznikne.
+    const sendActivation = async () => {
+        const email = activationEmail.trim();
+        if (!email) return;
+        setActivationBusy(true);
+        try {
+            const origin = typeof window !== 'undefined' ? window.location.origin : '';
+            const { error } = await supabase.auth.signInWithOtp({
+                email,
+                options: { emailRedirectTo: `${origin}/account/subscriptions` },
+            });
+            if (error) throw error;
+            setActivationSent(true);
+        } catch (e: any) {
+            toast({ title: 'Nepodařilo se odeslat', description: e?.message || 'Zkuste to prosím znovu.', variant: 'destructive' });
+        } finally {
+            setActivationBusy(false);
+        }
+    };
 
     // Vyčištění košíku + měření konverze (jednorázově po načtení stránky)
     useEffect(() => {
@@ -196,6 +222,35 @@ const PaymentSuccess = () => {
                             <p className="text-sm text-foreground/80">
                                 Platbu i dopravu strháváme před každou zásilkou. Termín, dopravu i množství upravíte jednou za kalendářní měsíc (nejpozději 5 dní před odesláním), nebo předplatné kdykoli zrušíte ke konci období.
                             </p>
+                        </div>
+                    )}
+
+                    {isSubscription && !isPending && !profile && (
+                        <div className="text-left bg-secondary/30 border border-border rounded-2xl p-5 space-y-3">
+                            <div className="flex items-center gap-2 text-foreground font-black uppercase text-xs tracking-widest">
+                                <UserPlus className="w-4 h-4 text-primary" /> Spravujte předplatné online
+                            </div>
+                            <p className="text-sm text-foreground/70">
+                                Se založeným účtem si termín, dopravu i množství upravíte sami a předplatné můžete kdykoli pozastavit. Pošleme vám aktivační odkaz na e-mail.
+                            </p>
+                            {activationSent ? (
+                                <p className="text-sm font-bold text-primary">
+                                    Aktivační odkaz jsme poslali na {activationEmail}. Zkontrolujte e-mail a dokončete založení účtu.
+                                </p>
+                            ) : (
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                        type="email"
+                                        value={activationEmail}
+                                        onChange={(e) => setActivationEmail(e.target.value)}
+                                        placeholder="vas@email.cz"
+                                        className="flex-1 bg-background border-2 border-border rounded-xl px-4 py-3 font-bold outline-none focus:border-primary"
+                                    />
+                                    <Button onClick={sendActivation} disabled={activationBusy || !activationEmail} className="rounded-xl h-auto py-3 px-5 font-bold">
+                                        {activationBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Aktivovat účet'}
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     )}
 
