@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { track } from '@vercel/analytics';
 import { useCookieConsent } from '@/context/CookieContext';
 import { useSubscriptionDiscount } from '@/hooks/useSubscriptionDiscount';
+import { useAuth } from '@/context/AuthContext';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
@@ -19,29 +20,39 @@ const PaymentSuccess = () => {
     // If Stripe explicitly returns 'succeeded', we consider it success, same as manual urlStatus
     const status = stripeStatus === 'succeeded' ? 'success' : stripeStatus || urlStatus || 'success';
     const isPending = status === 'pending' || status === 'requires_action' || status === 'requires_payment_method';
-    const [countdown, setCountdown] = useState(isPending ? 120 : 10);
-
     const orderNumber = searchParams.get('orderNumber') || 'BUP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     const amount = searchParams.get('amount') || '0';
     const isSubscription = searchParams.get('sub') === '1';
     const { pct: subDiscountPct } = useSubscriptionDiscount();
+    const { profile } = useAuth();
 
+    // Cíl tlačítka „Moje předplatné" podle role / typu účtu.
+    // Host bez účtu (null) žádnou správu předplatného nemá → tlačítko skryjeme.
+    const subscriptionsPath = !profile
+        ? null
+        : profile.role === 'admin'
+            ? '/admin/profile?tab=subscriptions'
+            : profile.account_type === 'company'
+                ? '/company-account/subscriptions'
+                : '/account/subscriptions';
+
+    // U dokončeného předplatného NEODPOČÍTÁVÁME ani nepřesměrováváme — uživatel si má
+    // v klidu přečíst další kroky. Odpočet běží jen u běžných objednávek a čekajících plateb.
+    const autoRedirect = !isSubscription;
+    const [countdown, setCountdown] = useState(isPending ? 120 : 30);
+    const [cancelled, setCancelled] = useState(false);
+
+    // Vyčištění košíku + měření konverze (jednorázově po načtení stránky)
     useEffect(() => {
-        // Clear cart as a safety measure upon landing on success page
         clearCart();
 
-        // --- TRACKING START ---
         if (!isPending) {
             const hasBeenTracked = sessionStorage.getItem(`tracked_${orderNumber}`);
             if (!hasBeenTracked) {
                 const numericAmount = parseFloat(amount.replace(/[^0-9.]/g, '')) || 0;
 
                 // Vercel Analytics
-                track('purchase', {
-                    order_id: orderNumber,
-                    value: numericAmount,
-                    currency: 'CZK'
-                });
+                track('purchase', { order_id: orderNumber, value: numericAmount, currency: 'CZK' });
 
                 // Google Analytics 4
                 if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -49,7 +60,7 @@ const PaymentSuccess = () => {
                         transaction_id: orderNumber,
                         value: numericAmount,
                         currency: 'CZK',
-                        items: [] 
+                        items: [],
                     });
                 }
 
@@ -59,27 +70,49 @@ const PaymentSuccess = () => {
                         value: numericAmount,
                         currency: 'CZK',
                         content_type: 'product',
-                        content_ids: [orderNumber]
+                        content_ids: [orderNumber],
                     });
                     console.log('[Meta Pixel] Purchase tracked:', orderNumber, numericAmount);
                 }
                 sessionStorage.setItem(`tracked_${orderNumber}`, 'true');
             }
         }
-        // --- TRACKING END ---
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [orderNumber, amount, isPending]);
 
+    // Jakmile uživatel se stránkou začne pracovat (klik, klávesa, scroll, dotyk),
+    // automatické přesměrování zrušíme, ať ho nevytrhne z rozečtené stránky.
+    useEffect(() => {
+        if (!autoRedirect) return;
+        const cancel = () => setCancelled(true);
+        const opts: AddEventListenerOptions = { passive: true, once: true };
+        window.addEventListener('pointerdown', cancel, opts);
+        window.addEventListener('keydown', cancel, opts);
+        window.addEventListener('wheel', cancel, opts);
+        window.addEventListener('touchstart', cancel, opts);
+        return () => {
+            window.removeEventListener('pointerdown', cancel);
+            window.removeEventListener('keydown', cancel);
+            window.removeEventListener('wheel', cancel);
+            window.removeEventListener('touchstart', cancel);
+        };
+    }, [autoRedirect]);
+
+    // Odpočet — jen u běžných objednávek / čekajících plateb a dokud ho uživatel nezruší.
+    useEffect(() => {
+        if (!autoRedirect || cancelled) return;
         const timer = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    navigate('/');
-                }
-                return prev - 1;
-            });
+            setCountdown((prev) => (prev <= 1 ? 0 : prev - 1));
         }, 1000);
-
         return () => clearInterval(timer);
-    }, [navigate, orderNumber, amount, isPending]);
+    }, [autoRedirect, cancelled]);
+
+    // Přesměrování až po dojetí odpočtu (žádný side-effect uvnitř setState).
+    useEffect(() => {
+        if (autoRedirect && !cancelled && countdown === 0) {
+            navigate('/');
+        }
+    }, [autoRedirect, cancelled, countdown, navigate]);
 
     return (
         <main className="min-h-screen bg-secondary/30 flex items-center justify-center p-4">
@@ -167,14 +200,16 @@ const PaymentSuccess = () => {
                     )}
 
                     <div className="space-y-6">
-                        <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 flex items-center justify-center gap-3">
-                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                            <p className="text-sm font-bold">
-                                {isPending
-                                    ? `Tato stránka se zavře za ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}`
-                                    : `Automatické přesměrování za ${countdown} sekund`}
-                            </p>
-                        </div>
+                        {(isPending || (autoRedirect && !cancelled)) && (
+                            <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 flex items-center justify-center gap-3">
+                                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                                <p className="text-sm font-bold">
+                                    {isPending
+                                        ? `Tato stránka se zavře za ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}`
+                                        : `Automatické přesměrování za ${countdown} sekund`}
+                                </p>
+                            </div>
+                        )}
 
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Button
@@ -186,13 +221,15 @@ const PaymentSuccess = () => {
                                 Domů
                             </Button>
                             {isSubscription ? (
-                                <Button
-                                    onClick={() => navigate('/account/subscriptions')}
-                                    className="flex-1 rounded-2xl h-14 font-bold shadow-button animate-energy-pulse"
-                                >
-                                    Moje předplatné
-                                    <ArrowRight className="w-4 h-4 ml-2" />
-                                </Button>
+                                subscriptionsPath && (
+                                    <Button
+                                        onClick={() => navigate(subscriptionsPath)}
+                                        className="flex-1 rounded-2xl h-14 font-bold shadow-button animate-energy-pulse"
+                                    >
+                                        Moje předplatné
+                                        <ArrowRight className="w-4 h-4 ml-2" />
+                                    </Button>
+                                )
                             ) : (
                                 <Button
                                     onClick={() => navigate('/')}
