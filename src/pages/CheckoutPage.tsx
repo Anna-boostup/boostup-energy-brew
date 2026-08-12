@@ -79,7 +79,7 @@ const CheckoutPage = () => {
   const isSalesEnabled = content.isSalesEnabled !== false;
   const { cart, cartTotal, discountAmount, appliedPromoCode, applyPromoCode, removePromoCode, clearCart } = useCart();
   const hasSubscription = cart.some(item => item.subscriptionInterval);
-  const { addOrder, decrementStock, getStock } = useInventory();
+  const { addOrder, decrementStock, getStock, addMovement } = useInventory();
   const { user } = useAuth();
   const { pct: subDiscountPct } = useSubscriptionDiscount();
   const { toast } = useToast();
@@ -423,11 +423,30 @@ const CheckoutPage = () => {
 
       const orderNumber = `BUP${Math.floor(Date.now() / 1000)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
 
-      // 2. Decrement Stock
+      // 2. Decrement Stock (atomicky; server blokuje preprodej).
+      // Kdyz se nektera prichut mezitim vyprodala, uz odectene kusy vratime
+      // a objednavku nezalozime.
+      const decremented: Array<[string, number]> = [];
+      let stockOk = true;
       for (const [flavor, amount] of Object.entries(requiredStock)) {
         if (amount > 0) {
-          await decrementStock(flavor, amount);
+          const ok = await decrementStock(flavor, amount);
+          if (!ok) { stockOk = false; break; }
+          decremented.push([flavor, amount]);
         }
+      }
+      if (!stockOk) {
+        // kompenzace: vrat uz odectene kusy zpet na sklad
+        for (const [flavor, amount] of decremented) {
+          await addMovement(flavor, amount, 'correction', `Vraceni - objednavka zrusena (nedostatek zasob)`);
+        }
+        toast({
+          title: "Nedostatek zásob",
+          description: "Některé položky se mezitím vyprodaly. Zkontrolujte prosím dostupnost a zkuste to znovu.",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
       }
 
       const shippingCost = shippingCostCzk;

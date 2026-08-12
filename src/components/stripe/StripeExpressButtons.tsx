@@ -17,7 +17,7 @@ const StripeExpressButtons = () => {
   const stripe = useStripe();
   const elements = useElements();
   const { cart, cartTotal, appliedPromoCode, clearCart } = useCart();
-  const { addOrder, decrementStock } = useInventory();
+  const { addOrder, decrementStock, addMovement } = useInventory();
   const { content } = useContent();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -124,22 +124,37 @@ const StripeExpressButtons = () => {
           is_subscription_order: cart.some(item => !!item.subscriptionInterval)
         };
 
-        // 1. Stock update (synchronized with CheckoutPage)
+        // 1. Stock update (synchronized with CheckoutPage) - server atomicky blokuje preprodej
+        const decremented: Array<[string, number]> = [];
+        let stockOk = true;
+        const applyDec = async (base: string, amount: number) => {
+          if (!stockOk || amount <= 0) return;
+          const ok = await decrementStock(base, amount);
+          if (ok) decremented.push([base, amount]);
+          else stockOk = false;
+        };
         for (const item of cart) {
            if (item.flavorMode === 'mix' && item.mixConfiguration) {
               const { lemon, red, silky } = item.mixConfiguration;
-              if (lemon) await decrementStock('lemon', lemon * item.quantity);
-              if (red) await decrementStock('red', red * item.quantity);
-              if (silky) await decrementStock('silky', silky * item.quantity);
+              await applyDec('lemon', (lemon || 0) * item.quantity);
+              await applyDec('red', (red || 0) * item.quantity);
+              await applyDec('silky', (silky || 0) * item.quantity);
            } else if (item.flavor && item.pack) {
               const flavorLower = item.flavor.toLowerCase();
               const flavorBase = flavorLower.includes('lemon') ? 'lemon'
                 : flavorLower.includes('red') ? 'red'
                 : flavorLower.includes('silky') ? 'silky' : null;
               if (flavorBase) {
-                 await decrementStock(flavorBase, item.pack * item.quantity);
+                 await applyDec(flavorBase, item.pack * item.quantity);
               }
            }
+        }
+        if (!stockOk) {
+          // vrat uz odectene kusy; catch nize zavola ev.complete('fail') + toast
+          for (const [base, amount] of decremented) {
+            await addMovement(base, amount, 'correction', 'Vraceni - express platba zrusena (nedostatek zasob)');
+          }
+          throw new Error('Některé položky se mezitím vyprodaly. Zkontrolujte prosím dostupnost.');
         }
 
         // 2. Save to Database
