@@ -268,6 +268,19 @@ export async function executeRenewal(
     const { supabase, stripe } = deps;
     const { data: sub } = await supabase.from('subscriptions').select('*').eq('stripe_subscription_id', subId).maybeSingle();
     if (!sub) return { outcome: 'not_found' };
+
+    // Atomická pojistka proti dvojímu zpracování stejné faktury (Stripe pošle invoice.paid
+    // i invoice.payment_succeeded). Unikátní PK na invoice_id → druhý zápis selže (23505 = duplicita).
+    // Když tabulka ještě není / jiná chyba: nepovažovat za duplicitu, pokračovat best-effort.
+    if (invoice.id) {
+        const { error: lockErr } = await supabase
+            .from('subscription_renewals')
+            .insert({ invoice_id: invoice.id, subscription_id: subId });
+        if (lockErr) {
+            if ((lockErr as any).code === '23505') return { outcome: 'duplicate' };
+            console.error('[renewal] dedup insert failed (pokračuji best-effort):', lockErr.message);
+        }
+    }
     if (isRenewalProcessed(sub.last_invoice_id, invoice.id)) return { outcome: 'duplicate' };
 
     let periodEndIso: string | null = null;

@@ -45,22 +45,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const dueDate = new Date(new Date(order.created_at).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
             xml += `    <FaktVyst>\n`;
-            xml += `      <Doklad>${order.order_number || order.id.slice(0, 8)}</Doklad>\n`;
-            xml += `      <Popis>Objednávka z e-shopu č. ${order.order_number || order.id.slice(0, 8)}</Popis>\n`;
-            xml += `      <VarSymbol>${order.order_number || order.id.replace(/\D/g, '').slice(0, 10)}</VarSymbol>\n`;
+            xml += `      <Doklad>${order.id}</Doklad>\n`;
+            xml += `      <Popis>Objednávka z e-shopu č. ${order.id}</Popis>\n`;
+            xml += `      <VarSymbol>${String(order.id).replace(/\D/g, '').slice(0, 10)}</VarSymbol>\n`;
             xml += `      <DatVyst>${date}</DatVyst>\n`;
             xml += `      <DatUctPrip>${date}</DatUctPrip>\n`;
             xml += `      <DatSpl>${dueDate}</DatSpl>\n`;
             xml += `      <Adresa>\n`;
-            xml += `        <ObchNazev>${order.customer_name || 'Anonymní zákazník'}</ObchNazev>\n`;
+            const di = order.delivery_info || {};
+            const obchNazev = di.isCompany ? (di.companyName || order.customer_name) : order.customer_name;
+            xml += `        <ObchNazev>${obchNazev || 'Anonymní zákazník'}</ObchNazev>\n`;
             xml += `        <Email>${order.customer_email || ''}</Email>\n`;
-            if (order.shipping_address) {
-                const addr = order.shipping_address;
-                xml += `        <Ulice>${addr.street || ''}</Ulice>\n`;
-                xml += `        <Obec>${addr.city || ''}</Obec>\n`;
-                xml += `        <PSC>${addr.zip || ''}</PSC>\n`;
-                xml += `        <Stat>${addr.country || 'Česká republika'}</Stat>\n`;
-            }
+            xml += `        <Ulice>${`${di.street || ''} ${di.houseNumber || ''}`.trim()}</Ulice>\n`;
+            xml += `        <Obec>${di.city || ''}</Obec>\n`;
+            xml += `        <PSC>${di.zip || ''}</PSC>\n`;
+            xml += `        <Stat>${di.country || 'Česká republika'}</Stat>\n`;
             xml += `      </Adresa>\n`;
 
             xml += `      <SeznamPolozek>\n`;
@@ -75,10 +74,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
             xml += `      </SeznamPolozek>\n`;
 
+            // Ceny jsou včetně DPH → základ = total/1.21, daň = total − základ (součet pak sedí na Celkem).
+            const zaklad21 = Number(order.total) / 1.21;
+            const dan21 = Number(order.total) - zaklad21;
             xml += `      <SouhrnDPH>\n`;
             xml += `        <Zaklad0>0</Zaklad0>\n`;
-            xml += `        <Zaklad21>${order.total}</Zaklad21>\n`;
-            xml += `        <Dan21>${(order.total * 0.21).toFixed(2)}</Dan21>\n`;
+            xml += `        <Zaklad21>${zaklad21.toFixed(2)}</Zaklad21>\n`;
+            xml += `        <Dan21>${dan21.toFixed(2)}</Dan21>\n`;
             xml += `      </SouhrnDPH>\n`;
             xml += `      <Celkem>${order.total}</Celkem>\n`;
             xml += `    </FaktVyst>\n`;
