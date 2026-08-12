@@ -401,8 +401,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     // Legacy support
-    const updateStock = (sku: SKU, quantity: number) => {
-        addMovement(sku, quantity, 'correction', 'Manual override');
+    const updateStock = async (sku: SKU, quantity: number) => {
+        await addMovement(sku, quantity, 'correction', 'Manual override');
     };
 
     const decrementStock = async (sku: SKU, amount: number) => {

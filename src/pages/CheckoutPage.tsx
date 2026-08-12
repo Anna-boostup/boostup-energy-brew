@@ -155,7 +155,6 @@ const CheckoutPage = () => {
     if (avail.length > 0 && !avail.includes(formData.deliveryMethod as DeliveryMethodId)) {
       setFormData(prev => ({ ...prev, deliveryMethod: avail[0], packetaPointId: '' }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deliveryCountry]);
 
   // Dynamically set checkout page title to look cleaner in Google Pay/Apple Pay sheet
