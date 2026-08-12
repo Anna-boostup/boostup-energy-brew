@@ -4,11 +4,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Printer, FileText, X, Package, Loader2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
-import InvoiceModal from "@/components/admin/InvoiceModal";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 import { useInventory } from "@/context/InventoryContext";
+
+const InvoiceModal = lazy(() => import("@/components/admin/InvoiceModal"));
 import { useContent } from "@/context/ContentContext";
 import { downloadPacketaLabel } from "@/lib/packeta";
 import { supabase } from "@/lib/supabase";
@@ -97,12 +98,14 @@ export const OrderDetailDialog = ({ order }: { order: any }) => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                    <InvoiceModal order={order}>
-                        <Button variant="outline" size="sm" className="h-9 gap-2 flex-1 sm:flex-initial justify-center">
-                            <FileText className="w-4 h-4 shrink-0" />
-                            <span className="truncate">{content.admin.orders.detail.invoice}</span>
-                        </Button>
-                    </InvoiceModal>
+                    <Suspense fallback={null}>
+                        <InvoiceModal order={order}>
+                            <Button variant="outline" size="sm" className="h-9 gap-2 flex-1 sm:flex-initial justify-center">
+                                <FileText className="w-4 h-4 shrink-0" />
+                                <span className="truncate">{content.admin.orders.detail.invoice}</span>
+                            </Button>
+                        </InvoiceModal>
+                    </Suspense>
 
                     <Button variant="outline" size="sm" className="h-9 gap-2 flex-1 sm:flex-initial justify-center" onClick={() => window.print()}>
                         <Printer className="w-4 h-4 shrink-0" />
