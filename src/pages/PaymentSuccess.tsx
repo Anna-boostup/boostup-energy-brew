@@ -103,6 +103,7 @@ const PaymentSuccess = () => {
                 sessionStorage.setItem(`tracked_${orderNumber}`, 'true');
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orderNumber, amount, isPending]);
 
     // Jakmile uživatel se stránkou začne pracovat (klik, klávesa, scroll, dotyk),

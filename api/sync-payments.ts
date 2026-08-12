@@ -106,17 +106,16 @@ export default async function handler(req: Request) {
             try {
                 // --- STRIPE SYNC ---
                 if (method === 'stripe' || order.is_subscription_order) {
-                    // Nejdřív přímo přes uložené session id; fallback na prohledání metadat (starší objednávky).
-                    let matchingSession: any = null;
-                    if (order.stripe_session_id) {
-                        try { matchingSession = await stripe.checkout.sessions.retrieve(order.stripe_session_id); }
-                        catch (e) { console.error(`[Sync Payments] retrieve session failed for ${order.id}:`, e); }
-                    }
-                    if (!matchingSession) {
-                        const sessions = await stripe.checkout.sessions.list({ limit: 100 });
-                        matchingSession = sessions.data.find(s => s.metadata?.orderId === order.id) || null;
-                    }
-
+                    // Search for successful checkout sessions or payment intents with this orderId
+                    const sessions = await stripe.checkout.sessions.list({
+                        limit: 5,
+                    });
+                    
+                    // Note: We can also search by metadata if we use a more expensive search, 
+                    // but usually direct check is safer if we store the session ID.
+                    // For now, let's search sessions for the orderId in metadata
+                    const matchingSession = sessions.data.find(s => s.metadata?.orderId === order.id);
+                    
                     if (matchingSession && matchingSession.payment_status === 'paid') {
                         isPaid = true;
                         console.log(`[Sync Payments] Order ${order.id} found PAID on Stripe.`);

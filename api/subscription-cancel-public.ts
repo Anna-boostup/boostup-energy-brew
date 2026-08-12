@@ -1,6 +1,5 @@
 import { Stripe } from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { checkRateLimit } from './_rate-limit.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' });
 const admin = createClient(process.env.VITE_SUPABASE_URL || '', process.env.SUPABASE_SERVICE_ROLE_KEY || '');
@@ -25,9 +24,6 @@ export default async function handler(req: Request) {
     if (req.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
     try {
-        const { success: rlOk } = await checkRateLimit(req, 'sub-cancel-public');
-        if (!rlOk) return json({ error: 'Příliš mnoho pokusů. Zkuste to prosím za chvíli.' }, 429);
-
         const body: any = await req.json().catch(() => ({}));
         const orderId = String(body?.orderId || '').trim();
         const email = String(body?.email || '').trim().toLowerCase();
@@ -37,9 +33,9 @@ export default async function handler(req: Request) {
 
         const { data: order, error: orderErr } = await admin.from('orders').select('id, customer_email, is_subscription_order').eq('id', orderId).maybeSingle();
         if (orderErr) console.error('[subscription-cancel-public] order read error:', orderErr.message);
-        if (!order) return json({ found: false, error: 'Objednávku s tímto číslem a e-mailem jsme nenašli.' }, 404);
+        if (!order) return json({ found: false, error: 'Objednávka nenalezena. Zkontrolujte číslo objednávky.' }, 404);
         const orderEmail = String((order as any)?.customer_email || '').toLowerCase();
-        if (!orderEmail || orderEmail !== email) return json({ found: false, error: 'Objednávku s tímto číslem a e-mailem jsme nenašli.' }, 404);
+        if (!orderEmail || orderEmail !== email) return json({ found: false, error: 'E-mail nesouhlasí s objednávkou.' }, 403);
 
         const { data: subs } = await admin.from('subscriptions').select('*').ilike('email', orderEmail).neq('status', 'cancelled').order('created_at', { ascending: false });
         const sub: any = subs && subs[0];

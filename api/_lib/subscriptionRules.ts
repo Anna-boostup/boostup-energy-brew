@@ -327,7 +327,7 @@ export function buildSubscriptionRecord(stripeSub: any, order: any, nowIso: stri
     const intervalCount = firstItem?.price?.recurring?.interval_count || 1;
     const periodEnd = stripeSub?.current_period_end ? new Date(stripeSub.current_period_end * 1000) : null;
     const items: any[] = Array.isArray(order?.items) ? order.items : [];
-    const itemsTotal = items.reduce((a, it) => a + (Number(it.price) || 0) * (Number(it.quantity) || 0), 0);
+    const itemsTotal = items.reduce((a, it) => a + (Number(it.price) * Number(it.quantity)), 0);
     const shippingPrice = order ? Math.max(0, Number(order.total) - itemsTotal) : null;
     return {
         stripe_subscription_id: stripeSub?.id,

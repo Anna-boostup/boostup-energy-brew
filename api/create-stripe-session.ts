@@ -1,12 +1,10 @@
 import { Stripe } from 'stripe';
 import { calculateSecureOrderTotal } from './secure-calculator.js';
 import { checkRateLimit } from './_rate-limit.js';
-import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2023-10-16', // Add a default API version to avoid warnings
 });
-const admin = createClient(process.env.VITE_SUPABASE_URL || '', process.env.SUPABASE_SERVICE_ROLE_KEY || '');
 
 export const config = {
     runtime: 'edge',
@@ -191,13 +189,6 @@ export default async function handler(req: Request) {
                 isSubscription: isSubscription ? 'true' : 'false'
             },
         });
-
-        // Ulož session id na objednávku pro spolehlivé doúčtování (sync-payments). Best-effort.
-        try {
-            await admin.from('orders').update({ stripe_session_id: session.id }).eq('id', orderNumber);
-        } catch (e) {
-            console.error('[Stripe] uložení session id na objednávku selhalo:', e);
-        }
 
         return new Response(JSON.stringify({ url: session.url }), {
             status: 200,

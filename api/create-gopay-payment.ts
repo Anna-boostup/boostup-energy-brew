@@ -103,6 +103,7 @@ export default async function handler(req: Request) {
         console.log(`[GoPay] Creating payment for order ${orderNumber}, baseUrl: ${baseUrl}`);
 
         const tokenData = await getAccessToken(clientId!, clientSecret!, baseUrl);
+        console.log('[GoPay Token Response]', JSON.stringify(tokenData));
         const accessToken = tokenData.access_token;
 
         // NOTE: target omitted — the one payment that reached GoPay (ID 3297672027) had no target.
