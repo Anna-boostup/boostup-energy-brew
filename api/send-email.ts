@@ -195,6 +195,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (type === 'contact_inquiry' || type === 'newsletter_signup') {
             to = 'info@drinkboostup.cz';
         }
+
+        // 3b. U e-mailů vázaných na objednávku bereme příjemce ze záznamu objednávky (ne z requestu) —
+        // brání zneužití endpointu k rozesílání brandovaných e-mailů na libovolné adresy.
+        if (['order_confirmation', 'shipping', 'withdrawal_request'].includes(type)) {
+            if (!orderNumber) return res.status(400).json({ error: 'Missing orderNumber' });
+            const { data: ord } = await supabaseAdmin.from('orders').select('customer_email').eq('id', orderNumber).maybeSingle();
+            if (!ord?.customer_email) return res.status(404).json({ error: 'Order not found' });
+            to = ord.customer_email;
+        }
     }
 
     if (!to) {
