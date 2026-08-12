@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Order } from "@/context/InventoryContext";
 import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { FileText, Download, Printer, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { SITE_CONTENT } from "@/config/site-content";
 import { useContent } from "@/context/ContentContext";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 
 interface InvoiceModalProps {
     order: Order;
@@ -15,6 +17,8 @@ interface InvoiceModalProps {
 const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
     const { content } = useContent();
     const invoiceRef = useRef<HTMLDivElement>(null);
+    const { toast } = useToast();
+    const [downloading, setDownloading] = useState(false);
     const bank = SITE_CONTENT.bankInfo;
 
     if (!content) return null;
@@ -29,6 +33,31 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
 
     const handlePrint = () => {
         window.print();
+    };
+
+    const handleDownload = async () => {
+        setDownloading(true);
+        try {
+            const { data: sess } = await supabase.auth.getSession();
+            const token = sess?.session?.access_token;
+            const res = await fetch(`/api/generate-invoice?orderId=${order.id}`, {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            if (!res.ok) throw new Error(res.status === 403 ? "Nemáte oprávnění k této faktuře." : "Stažení faktury se nezdařilo.");
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `faktura-${order.id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (e: any) {
+            toast({ title: "Chyba", description: e?.message || "Stažení faktury se nezdařilo.", variant: "destructive" });
+        } finally {
+            setDownloading(false);
+        }
     };
 
     const formatDate = (date: string) => {
@@ -73,12 +102,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({ order, children }) => {
                         <Button 
                             variant="outline" 
                             size="sm" 
-                            asChild
+                            onClick={handleDownload}
+                            disabled={downloading}
                             className="flex-1 sm:flex-initial h-12 sm:h-10 rounded-xl sm:rounded-lg gap-2 font-black uppercase text-[10px] tracking-widest border-zinc-200 hover:bg-zinc-50"
                         >
-                            <a href={`/api/generate-invoice?orderId=${order.id}`} target="_blank" rel="noopener noreferrer">
-                                <Download className="w-4 h-4" /> {t.actions.save}
-                            </a>
+                            <Download className="w-4 h-4" /> {t.actions.save}
                         </Button>
                     </div>
                     <DialogClose asChild>
