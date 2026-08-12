@@ -24,6 +24,7 @@ const AdminSubscriptions = () => {
     const [cancelTarget, setCancelTarget] = useState<any | null>(null);
     const [cancelResult, setCancelResult] = useState<{ ok: boolean; message: string } | null>(null);
     const [cancelBusy, setCancelBusy] = useState<string | null>(null);
+    const [cancelReason, setCancelReason] = useState('');
 
     const load = async () => {
         setLoading(true);
@@ -109,7 +110,7 @@ const AdminSubscriptions = () => {
             const res = await fetch('/api/subscription-admin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ subscriptionId: cancelTarget.id, action }),
+                body: JSON.stringify({ subscriptionId: cancelTarget.id, action, reason: cancelReason || undefined }),
             });
             const data = await res.json().catch(() => ({}));
             setCancelResult(res.ok
@@ -123,7 +124,7 @@ const AdminSubscriptions = () => {
         }
     };
 
-    const closeCancelDialog = () => { setCancelTarget(null); setCancelResult(null); setCancelBusy(null); };
+    const closeCancelDialog = () => { setCancelTarget(null); setCancelResult(null); setCancelBusy(null); setCancelReason(''); };
 
     const fmt = (d?: string | null) => d ? new Date(d).toLocaleDateString('cs-CZ') : '—';
 
@@ -260,6 +261,18 @@ const AdminSubscriptions = () => {
                             <div className="text-sm text-olive/70 space-y-2">
                                 <p><b className="text-olive-dark">Ke konci období</b> — předplatné doběhne do {fmt(cancelTarget?.next_delivery_date)} a pak skončí; další platba se nestrhne.</p>
                                 <p><b className="text-olive-dark">Okamžitě</b> — ukončí předplatné hned. Vhodné u předplatných bez dokončené platby.</p>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold uppercase text-olive/60">Důvod (nepovinné)</label>
+                                <input
+                                    type="text"
+                                    value={cancelReason}
+                                    onChange={e => setCancelReason(e.target.value)}
+                                    placeholder="např. na žádost zákazníka, neplatič, test…"
+                                    disabled={!!cancelBusy}
+                                    className="mt-1 block w-full bg-white border-2 border-olive/15 rounded-xl px-3 py-2 text-sm text-olive-dark placeholder:text-olive/40"
+                                />
+                                <p className="mt-1 text-[11px] text-olive/50">Uloží se do historie (kdo, kdy, u koho a proč).</p>
                             </div>
                             <DialogFooter className="gap-2 sm:gap-2">
                                 <Button variant="outline" disabled={!!cancelBusy} onClick={closeCancelDialog}>Zpět</Button>
