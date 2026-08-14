@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export type SKU = string;
 
@@ -166,11 +167,13 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [recipeRules, setRecipeRules] = useState<RecipeRule[]>([]);
     const [b2bCustomers, setB2bCustomers] = useState<B2BCustomer[]>([]);
 
-    // 1. Initial Fetch
+    const { user, profile } = useAuth();
+
+    // 1. Veřejné načtení (potřebuje i shop): sklad + konfigurační pravidla.
     useEffect(() => {
         const init = async () => {
             try {
-                await Promise.all([fetchInventory(), fetchMovements(), fetchOrders()]);
+                await fetchInventory();
             } finally {
                 setLoading(false);
             }
@@ -178,8 +181,16 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         init();
         fetchPackagingRules();
         fetchRecipeRules();
-        fetchB2BCustomers();
     }, []);
+
+    // 1b. Adminní data (objednávky, pohyby, B2B zákazníci) — jen pro přihlášeného admina,
+    // ať se na veřejném webu zbytečně netahají (výkon).
+    useEffect(() => {
+        if (!user || profile?.role !== 'admin') return;
+        fetchOrders();
+        fetchMovements();
+        fetchB2BCustomers();
+    }, [user?.id, profile?.role]);
 
     // 2. Realtime Subscriptions
     useEffect(() => {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export interface ManufactureMaterial {
     id: string;
@@ -44,11 +45,14 @@ export const ManufactureProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
     const alertTriggered = useRef(false);
+    const { user, profile } = useAuth();
 
+    // Výrobní data jsou čistě adminní — na veřejném webu je netáhneme.
     useEffect(() => {
+        if (!user || profile?.role !== 'admin') return;
         fetchMaterials();
         fetchMovements();
-    }, []);
+    }, [user?.id, profile?.role]);
 
     useEffect(() => {
         if (!loading && materials.length > 0 && !alertTriggered.current) {

@@ -73,6 +73,35 @@ async function processSubscriptionRenewal(subId: string, invoice: Stripe.Invoice
     }
 }
 
+// Faktura (daňový doklad) e-mailem po zaplacení. Plně izolované (dynamické importy +
+// try/catch) — jakákoli chyba se jen zaloguje a NIKDY neovlivní zpracování webhooku.
+async function sendInvoiceEmail(order: any) {
+    try {
+        const to = order?.customer_email;
+        if (!to || !process.env.RESEND_API_KEY) return;
+        const { buildInvoicePdf } = await import('./_lib/invoicePdf.js');
+        const pdf = await buildInvoicePdf(order);
+        let binary = '';
+        const chunk = 0x8000;
+        for (let i = 0; i < pdf.length; i += chunk) {
+            binary += String.fromCharCode(...pdf.subarray(i, i + chunk));
+        }
+        const content = btoa(binary);
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+            from: 'BoostUp <fakturace@drinkboostup.cz>',
+            to,
+            subject: `Faktura k objednávce ${order.id}`,
+            html: `<p>Dobrý den,</p><p>děkujeme za Váš nákup. V příloze najdete fakturu (daňový doklad) k objednávce <strong>${order.id}</strong>.</p><p>Tým BoostUp</p>`,
+            attachments: [{ filename: `faktura-${order.id}.pdf`, content }],
+        });
+        console.log(`[Stripe Webhook] Invoice emailed for ${order.id}`);
+    } catch (e: any) {
+        console.error('[Stripe Webhook] invoice email failed:', e?.message || e);
+    }
+}
+
 export default async function handler(req: Request) {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
@@ -139,8 +168,9 @@ export default async function handler(req: Request) {
                             }
                             console.log(`[Stripe Webhook] Order ${orderId} marked as paid (Checkout).`);
 
-                            // Zásilkovna - create packet
                             const { data: fullOrder } = await supabase.from('orders').select('*').eq('id', orderId).single();
+                            if (fullOrder) await sendInvoiceEmail(fullOrder);
+                            // Zásilkovna - create packet
                             if (fullOrder?.delivery_info?.deliveryMethod === 'zasilkovna' && fullOrder?.delivery_info?.packetaPointId && !fullOrder?.packeta_barcode) {
                                 try {
                                     const packet = await createPacketaPacket({
@@ -198,8 +228,9 @@ export default async function handler(req: Request) {
                             }
                             console.log(`[Stripe Webhook] Order ${orderId} marked as paid (Intent).`);
 
-                            // Zásilkovna - create packet
                             const { data: fullOrder } = await supabase.from('orders').select('*').eq('id', orderId).single();
+                            if (fullOrder) await sendInvoiceEmail(fullOrder);
+                            // Zásilkovna - create packet
                             if (fullOrder?.delivery_info?.deliveryMethod === 'zasilkovna' && fullOrder?.delivery_info?.packetaPointId && !fullOrder?.packeta_barcode) {
                                 try {
                                     const packet = await createPacketaPacket({

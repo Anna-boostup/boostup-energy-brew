@@ -2,6 +2,7 @@ import { useContent } from "@/context/ContentContext";
 import { Brain, Heart, Scale, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, lazy, Suspense } from "react";
+import { LazySection } from "./LazySection";
 const EnergyChart = lazy(() => import("./EnergyChart"));
 import { getTextStyle } from "@/lib/textStyles";
 import { ConceptCard } from "./concept/ConceptCard";
@@ -72,9 +73,11 @@ const ConceptSection = () => {
 
         {/* Energy Chart */}
         <div className="mb-20 animate-fade-up animation-delay-400 min-h-[400px]">
-          <Suspense fallback={<div className="h-[400px] w-full flex items-center justify-center bg-secondary/20 rounded-3xl animate-pulse">Načítání grafu...</div>}>
-            <EnergyChart />
-          </Suspense>
+          <LazySection minHeight="400px">
+            <Suspense fallback={<div className="h-[400px] w-full flex items-center justify-center bg-secondary/20 rounded-3xl animate-pulse">Načítání grafu...</div>}>
+              <EnergyChart />
+            </Suspense>
+          </LazySection>
         </div>
 
         {/* CTA Button is back at the bottom where it belongs */}
