@@ -388,6 +388,7 @@ describe('executeRenewal (webhook invoice.paid → sklad + objednávka + idempot
         expect(res.outcome).toBe('processed');
         expect(res.orderInserted).toBe(true);
         expect(rec).toEqual([
+            { op: 'insert', table: 'subscription_renewals', row: { invoice_id: 'in_1', subscription_id: 'sub_1' } },
             { op: 'rpc', fn: 'handle_stock_movement', args: { p_sku: 'lemon', p_type: 'sale', p_amount: -6, p_note: 'Předplatné – obnova in_1' } },
             { op: 'insert', table: 'orders', row: {
                 id: res.order!.id,
