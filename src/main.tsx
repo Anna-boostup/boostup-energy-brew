@@ -29,6 +29,19 @@ if (import.meta.env.VITE_SENTRY_DSN) {
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
         environment: import.meta.env.MODE,
+        // Šum z in-app prohlížečů (Instagram/Facebook webview) — injektnutý kód
+        // 3. strany, ne naše chyby. Např. "Error invoking postMessage: Java object is gone"
+        // ze skriptů iabjs:// při beforeunload. Filtrujeme, ať nešpiní issues.
+        ignoreErrors: [
+            'Java object is gone',
+            'Error invoking postMessage',
+            'ResizeObserver loop limit exceeded',
+            'ResizeObserver loop completed with undelivered notifications',
+        ],
+        denyUrls: [
+            /iabjs:\/\//i,                       // Instagram in-app browser
+            /navigation_performance_logger/i,
+        ],
     });
 }
 
