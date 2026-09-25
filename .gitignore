@@ -35,3 +35,8 @@ playwright/.auth/
 
 # Supabase
 supabase/.temp/
+
+# Environment / tajné údaje – nikdy do gitu (šablona .env.example zůstává)
+.env
+.env.*
+!.env.example

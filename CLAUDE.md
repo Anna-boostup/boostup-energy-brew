@@ -36,7 +36,7 @@ npm run test:e2e         # Playwright (potřebuje .env s testovacími účty)
 ## Známé otevřené body
 - Packeta packet má stále `<currency>CZK</currency>` (řešit u dobírky), GoPay potřebuje povolené EUR, SK checkout + express otestovat end-to-end.
 - Odloženo: podepsaný unsubscribe odkaz, lazy-load jazyků, stránkování `select('*')`.
-- ⚠️ **`.env` je trackovaný v gitu** a obsahuje testovací přihlašovací údaje (TEST_ADMIN_PASSWORD…). Doporučeno: vyřadit z gitu (`git rm --cached .env`), přidat do `.gitignore`, hesla testovacích účtů změnit a pro CI použít GitHub Secrets. Skill `secrets-env-checklist`.
+- Tajné údaje: `.env` a `.env.*` jsou v `.gitignore` (kromě `.env.example`). CI bere hodnoty z GitHub Secrets. Do 9/2026 byl `.env` s testovacími hesly v gitu, takže hesla testovacích účtů musela být změněna. Nikdy ho nevracej do repa. Skill `secrets-env-checklist`.
 
 ## Git
 Commity: konvenční prefixy s českým popisem (`fix(renewal): …`, `test(stock): …`, `chore(sentry): …`). Commit a push dělá Zdeněk na Macu.
