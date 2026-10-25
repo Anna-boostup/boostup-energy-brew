@@ -1,26 +1,24 @@
-import { useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
 import { useContent } from "@/context/ContentContext";
-import { useLanguage } from "@/context/LanguageContext";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/hooks/useMediaQuery";
 import { FLAVOR_THEMES } from "@/config/flavor-themes";
 import type { FlavorType } from "@/config/product-data";
 import FlavorDecor from "./hero/FlavorDecor";
 import FlavorStage from "./hero/FlavorStage";
-import FlavorSwitcher from "./hero/FlavorSwitcher";
+import { FLAVOR_ORDER } from "@/config/flavor-themes";
 
 const IngredientDialog = lazy(() => import("./IngredientDialog"));
 
 const benefitIcons = [Zap, Leaf, Brain, GraduationCap];
 
 /**
- * Hero "Flavor Orbit": jeden aktivní barevný svět (Silky Leaf / Lemon Blast / Red Rush),
- * změna příchutě řízená uživatelem. Texty zůstávají z CMS beze změny.
+ * Hero "Flavor Orbit": barevné světy se střídají samy v klidném rytmu.
+ * Texty zůstávají z CMS beze změny.
  */
 const HeroSection = () => {
   const { content: SITE_CONTENT } = useContent();
-  const { language } = useLanguage();
   const [activeIngredient, setActiveIngredient] = useState<string | null>(null);
   const [flavor, setFlavor] = useState<FlavorType>("silky");
 
@@ -28,6 +26,20 @@ const HeroSection = () => {
   const isWide = useMediaQuery("(min-width: 768px)");
   // Flip + pohyb jen na větší obrazovce a bez prefers-reduced-motion
   const animate = isWide && !reducedMotion;
+
+  // Automatická, nenásilná rotace příchutí. Respektuje systémové nastavení
+  // omezení pohybu a nepokračuje na skryté kartě prohlížeče.
+  useEffect(() => {
+    if (reducedMotion) return;
+
+    const advance = () => {
+      if (document.hidden) return;
+      setFlavor((current) => FLAVOR_ORDER[(FLAVOR_ORDER.indexOf(current) + 1) % FLAVOR_ORDER.length]);
+    };
+
+    const timer = window.setInterval(advance, 4600);
+    return () => window.clearInterval(timer);
+  }, [reducedMotion]);
 
   const theme = FLAVOR_THEMES[flavor];
 
@@ -66,14 +78,9 @@ const HeroSection = () => {
             </h1>
           </div>
 
-          {/* Pravý sloupec: dominantní lahev + přepínač */}
+          {/* Pravý sloupec: dominantní lahev se samovolně střídajícími příchutěmi */}
           <div className="flex flex-col items-center gap-8 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
             <FlavorStage active={flavor} animate={animate} alt={imageAlt} />
-            <FlavorSwitcher
-              active={flavor}
-              onChange={setFlavor}
-              label={language === "en" ? "Choose flavour" : "Vyberte příchuť"}
-            />
           </div>
 
           <div className="text-center lg:col-span-7 lg:row-start-2 lg:self-start lg:pl-6 lg:text-left xl:pl-12">
