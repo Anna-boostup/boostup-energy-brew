@@ -1,128 +1,70 @@
-import { useEffect, useState } from "react";
-import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
+import { ArrowDownRight, ArrowRight, Beaker, Bolt, GraduationCap, Timer } from "lucide-react";
 import { Button } from "./ui/button";
-import { useContent } from "@/context/ContentContext";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/hooks/useMediaQuery";
-import { FLAVOR_THEMES } from "@/config/flavor-themes";
-import type { FlavorType } from "@/config/product-data";
 import FlavorDecor from "./hero/FlavorDecor";
 import FlavorStage from "./hero/FlavorStage";
-import { FLAVOR_ORDER } from "@/config/flavor-themes";
 
-const benefitIcons = [Zap, Leaf, Brain, GraduationCap];
+const proofPoints = [
+  { icon: GraduationCap, label: "VYVINUTO S ODBORNÍKY", detail: "na Mendelově univerzitě", tone: "bg-lime text-olive" },
+  { icon: Bolt, label: "SÍLA 2,5 ESPRESSA", detail: "v jednom 60 ml shotu", tone: "bg-orange text-cream" },
+  { icon: Timer, label: "READY-TO-DRINK", detail: "když není čas nic míchat", tone: "bg-terracotta text-cream" },
+  { icon: Beaker, label: "PROMYŠLENÉ SLOŽENÍ", detail: "extrakty · vitamíny · minerály", tone: "bg-olive text-lime" },
+];
 
-/**
- * Hero "Flavor Orbit": barevné světy se střídají samy v klidném rytmu.
- * Texty zůstávají z CMS beze změny.
- */
 const HeroSection = () => {
-  const { content: SITE_CONTENT } = useContent();
-  const [flavor, setFlavor] = useState<FlavorType>("silky");
-
   const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
-  const isWide = useMediaQuery("(min-width: 768px)");
-  // Flip + pohyb jen na větší obrazovce a bez prefers-reduced-motion
-  const animate = isWide && !reducedMotion;
-
-  // Automatická, nenásilná rotace příchutí. Respektuje systémové nastavení
-  // omezení pohybu a nepokračuje na skryté kartě prohlížeče.
-  useEffect(() => {
-    if (reducedMotion) return;
-
-    const advance = () => {
-      if (document.hidden) return;
-      setFlavor((current) => FLAVOR_ORDER[(FLAVOR_ORDER.indexOf(current) + 1) % FLAVOR_ORDER.length]);
-    };
-
-    const timer = window.setInterval(advance, 4600);
-    return () => window.clearInterval(timer);
-  }, [reducedMotion]);
-
-  const theme = FLAVOR_THEMES[flavor];
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-  };
-
-  const imageAlt = `BoostUp Pure Shot - prémiový energetický shot (${theme.name})`;
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 
   return (
-    <section
-      data-flavor={flavor}
-      className="relative isolate overflow-hidden pt-28 pb-10 transition-colors duration-700 motion-reduce:transition-none lg:flex lg:min-h-[min(820px,100svh)] lg:items-center lg:pb-14 lg:pt-32"
-      style={{ backgroundColor: theme.base, color: theme.text }}
-    >
-      <FlavorDecor active={flavor} />
+    <section className="relative isolate overflow-hidden bg-cream pb-10 pt-28 text-olive lg:min-h-[min(860px,100svh)] lg:pb-14 lg:pt-32">
+      <FlavorDecor active="silky" />
+      <div aria-hidden="true" className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-lime/40 blur-3xl" />
+      <div aria-hidden="true" className="absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-orange/15 blur-3xl" />
 
       <div className="container relative z-10 mx-auto px-5 sm:px-8">
-        <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-0">
-          {/* Nadpis a texty z CMS beze změny; na mobilu je lahev hned pod nadpisem */}
-          <div className="text-center lg:col-span-7 lg:row-start-1 lg:self-end lg:pl-6 lg:text-left xl:pl-12">
-            <h1 className="font-display">
-              <span className="block text-xl font-medium uppercase leading-[1.1] sm:text-2xl md:text-3xl lg:text-4xl">
-                {SITE_CONTENT.hero.headline.part1}
-              </span>
-              <span
-                className="mt-2 block text-3xl font-medium uppercase leading-[1.15] sm:text-4xl md:text-5xl lg:text-6xl"
-              >
-                <span
-                  className="font-bold motion-safe:transition-colors motion-safe:duration-700"
-                  style={{ color: theme.headlineAccent }}
-                >
-                  {SITE_CONTENT.hero.headline.gradient}
-                </span>
-              </span>
+        <div className="grid items-center gap-6 lg:grid-cols-12 lg:gap-x-8">
+          <div className="text-center lg:col-span-7 lg:text-left xl:pl-8">
+            <p className="font-label mb-5 inline-flex items-center gap-2 rounded-full bg-olive px-4 py-2 text-[10px] text-lime sm:text-xs">
+              <span className="h-2 w-2 rounded-full bg-lime" /> BOOSTUP PURE SHOT
+            </p>
+            <h1 className="max-w-4xl font-display text-balance text-[clamp(3.1rem,7.2vw,7.5rem)] font-black uppercase leading-[0.88] tracking-[-0.065em]">
+              JE 14:37.<br />
+              <span className="text-terracotta">A TY UŽ ČTEŠ</span><br />
+              STEJNÝ MAIL<br className="hidden sm:block" /> POTŘETÍ.
             </h1>
           </div>
 
-          {/* Pravý sloupec: dominantní lahev se samovolně střídajícími příchutěmi */}
-          <div className="flex flex-col items-center gap-8 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
-            <FlavorStage active={flavor} animate={animate} alt={imageAlt} />
+          <div className="order-2 flex justify-center lg:order-none lg:col-span-5 lg:row-span-2">
+            <div className="w-full max-w-[410px] lg:max-w-[490px]">
+              <FlavorStage active="silky" animate={false} alt="BoostUp Pure Shot Silky Leaf" />
+            </div>
           </div>
 
-          <div className="text-center lg:col-span-7 lg:row-start-2 lg:self-start lg:pl-6 lg:text-left xl:pl-12">
-            <ul className="mx-auto mb-9 mt-2 flex max-w-xl flex-col gap-4 lg:mx-0 lg:mt-9">
-              {SITE_CONTENT.hero.benefits.map((item, i) => {
-                const Icon = benefitIcons[i] ?? Zap;
-                return (
-                  <li key={i} className="flex items-center gap-4 text-left">
-                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,currentColor_14%,transparent)]">
-                      <Icon className="h-5 w-5" aria-hidden="true" />
-                    </span>
-                    <p className="text-sm md:text-base">
-                      <span className="font-bold">{item.bold}</span>
-                      <span> — {item.text}</span>
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <div className="flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
-              <Button
-                variant="outline"
-                size="xl"
-                className="rounded-full border-2 border-current bg-transparent px-8 text-base font-bold text-inherit hover:bg-[color-mix(in_srgb,currentColor_14%,transparent)] hover:text-inherit focus-visible:ring-current focus-visible:ring-offset-0"
-                onClick={() => scrollTo("mise")}
-              >
-                {SITE_CONTENT.hero.cta.secondary}
+          <div className="order-3 text-center lg:col-span-7 lg:text-left xl:pl-8">
+            <p className="mx-auto max-w-2xl text-lg font-semibold leading-relaxed text-olive/85 sm:text-xl lg:mx-0">
+              Funkční shot pro chvíle, kdy hlava jede naplno a potřebuješ zůstat ve svém tempu.
+            </p>
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+              <Button size="xl" className="group rounded-full bg-olive px-7 text-base font-bold text-lime hover:bg-olive-dark" onClick={() => scrollTo("produkty")}>
+                Vybrat příchuť <ArrowRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
-
-              <Button
-                size="xl"
-                className="group rounded-full px-8 text-base font-bold transition-[background-color,color,box-shadow,transform] duration-500 hover:brightness-95 focus-visible:ring-current focus-visible:ring-offset-0 motion-safe:hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: theme.ctaBg,
-                  color: theme.ctaText,
-                  boxShadow: `0 14px 30px -12px color-mix(in srgb, ${theme.ctaBg} 70%, transparent)`,
-                }}
-                onClick={() => scrollTo("produkty")}
-              >
-                {SITE_CONTENT.hero.cta.primary}
-                <ArrowRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
+              <Button variant="ghost" size="xl" className="rounded-full px-7 text-base font-bold text-olive hover:bg-olive/10 hover:text-olive" onClick={() => scrollTo("jak-funguje")}>
+                Jak BoostUp funguje <ArrowDownRight className="ml-1 h-5 w-5" />
               </Button>
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:mt-7 lg:grid-cols-4">
+          {proofPoints.map(({ icon: Icon, label, detail, tone }) => (
+            <article key={label} className={`flex min-h-28 items-center gap-4 rounded-[1.65rem] px-5 py-4 shadow-card ${tone}`}>
+              <Icon className="h-7 w-7 shrink-0" strokeWidth={2.3} aria-hidden="true" />
+              <div>
+                <p className="font-label text-[10px] leading-tight sm:text-[11px]">{label}</p>
+                <p className="mt-1 text-sm font-semibold leading-tight opacity-85">{detail}</p>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
