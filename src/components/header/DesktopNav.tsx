@@ -4,7 +4,7 @@ interface DesktopNavProps {
 
 const DesktopNav = ({ navigation }: DesktopNavProps) => {
   return (
-    <nav className="hidden md:flex items-center gap-8">
+    <nav aria-label="Hlavní navigace" className="hidden items-center justify-center gap-1 lg:flex">
       {navigation.map((link) => (
         <a
           key={link.href}
@@ -16,7 +16,7 @@ const DesktopNav = ({ navigation }: DesktopNavProps) => {
               document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
             }
           }}
-          className="text-foreground/70 hover:text-foreground transition-colors"
+          className="rounded-full px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-lime focus-visible:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           {link.label}
         </a>

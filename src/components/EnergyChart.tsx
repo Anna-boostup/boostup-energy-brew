@@ -77,16 +77,16 @@ const EnergyChart = () => {
             <AreaChart data={individualData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="kofeinGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#aa263e" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#aa263e" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#BB2E4A" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#BB2E4A" stopOpacity={0.1} />
                 </linearGradient>
                 <linearGradient id="guaranaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f29739" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#f29739" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#C56232" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#C56232" stopOpacity={0.1} />
                 </linearGradient>
                 <linearGradient id="theaninGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#dfdf57" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#dfdf57" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#E0E561" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#E0E561" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <XAxis
@@ -105,8 +105,8 @@ const EnergyChart = () => {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#f4f1e6',
-                  border: '2px solid #3d5a2f',
+                  backgroundColor: '#F4F1E6',
+                  border: '2px solid #3F532E',
                   borderRadius: '12px',
                   padding: '12px'
                 }}
@@ -116,7 +116,7 @@ const EnergyChart = () => {
               <Area
                 type="monotone"
                 dataKey="theanin"
-                stroke="#dfdf57"
+                stroke="#E0E561"
                 strokeWidth={3}
                 fill="url(#theaninGradient)"
                 name="theanin"
@@ -124,7 +124,7 @@ const EnergyChart = () => {
               <Area
                 type="monotone"
                 dataKey="guarana"
-                stroke="#f29739"
+                stroke="#C56232"
                 strokeWidth={3}
                 fill="url(#guaranaGradient)"
                 name="guarana"
@@ -132,7 +132,7 @@ const EnergyChart = () => {
               <Area
                 type="monotone"
                 dataKey="kofein"
-                stroke="#aa263e"
+                stroke="#BB2E4A"
                 strokeWidth={3}
                 fill="url(#kofeinGradient)"
                 name="kofein"
@@ -170,9 +170,9 @@ const EnergyChart = () => {
             <AreaChart data={synergyData} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
               <defs>
                 <linearGradient id="synergyGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3d5a2f" stopOpacity={0.9} />
+                  <stop offset="5%" stopColor="#3F532E" stopOpacity={0.9} />
                   <stop offset="50%" stopColor="#6b8e5a" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#3d5a2f" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#3F532E" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <XAxis
@@ -192,8 +192,8 @@ const EnergyChart = () => {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#f4f1e6',
-                  border: '2px solid #3d5a2f',
+                  backgroundColor: '#F4F1E6',
+                  border: '2px solid #3F532E',
                   borderRadius: '12px',
                   padding: '12px'
                 }}
@@ -203,7 +203,7 @@ const EnergyChart = () => {
               <Area
                 type="monotone"
                 dataKey="synergy"
-                stroke="#3d5a2f"
+                stroke="#3F532E"
                 strokeWidth={4}
                 fill="url(#synergyGradient)"
               />

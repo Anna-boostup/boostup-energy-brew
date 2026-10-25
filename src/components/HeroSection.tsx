@@ -1,159 +1,79 @@
-import { useState } from "react";
-import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDownRight, ArrowRight, Beaker, Bolt, GraduationCap, Timer } from "lucide-react";
 import { Button } from "./ui/button";
-import { useContent } from "@/context/ContentContext";
-import { lazy, Suspense } from "react";
-import bottleSilkyHero from "@/assets/bottle-silky-hero.png";
-const IngredientDialog = lazy(() => import("./IngredientDialog"));
+import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/hooks/useMediaQuery";
+import { FLAVOR_THEMES, FLAVOR_ORDER } from "@/config/flavor-themes";
+import type { FlavorType } from "@/config/product-data";
+import FlavorDecor from "./hero/FlavorDecor";
+import FlavorStage from "./hero/FlavorStage";
+
+const proofPoints = [
+  { icon: GraduationCap, label: "VYVINUTO S ODBORNÍKY", detail: "na Mendelově univerzitě" },
+  { icon: Bolt, label: "SÍLA 2,5 ESPRESSA", detail: "v jednom 60 ml shotu" },
+  { icon: Timer, label: "READY-TO-DRINK", detail: "když není čas nic míchat" },
+  { icon: Beaker, label: "PROMYŠLENÉ SLOŽENÍ", detail: "extrakty · vitamíny · minerály" },
+];
 
 const HeroSection = () => {
-  const { content: SITE_CONTENT } = useContent();
-  const [activeIngredient, setActiveIngredient] = useState<string | null>(null);
+  const [flavor, setFlavor] = useState<FlavorType>("silky");
+  const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
+  const isWide = useMediaQuery("(min-width: 768px)");
+  const animate = isWide && !reducedMotion;
+  const theme = FLAVOR_THEMES[flavor];
 
-  const benefitIcons = [
-    <Zap className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-    <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-    <Brain className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-    <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-  ];
+  useEffect(() => {
+    if (reducedMotion) return;
+    const advance = () => {
+      if (!document.hidden) setFlavor((current) => FLAVOR_ORDER[(FLAVOR_ORDER.indexOf(current) + 1) % FLAVOR_ORDER.length]);
+    };
+    const timer = window.setInterval(advance, 4600);
+    return () => window.clearInterval(timer);
+  }, [reducedMotion]);
 
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 
   return (
-    <section className="pt-24 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
-      <div className="container mx-auto px-4 pt-0 pb-16 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
-          
-          {/* Left column - 60% */}
-          <div className="w-full lg:w-[60%] text-center lg:text-left animate-fade-up lg:pl-12 xl:pl-20">
-            <h1 className="font-display tracking-tight mb-2">
-              <span 
-                className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase leading-[1.1] mb-1"
-                style={{ color: '#3d5a2f' }}
-              >
-                {SITE_CONTENT.hero.headline.part1}
-              </span>
-              <span 
-                className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1]"
-                style={{
-                  background: 'linear-gradient(to right, #dfdf57, #f29739, #aa263e)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                {SITE_CONTENT.hero.headline.gradient}
-              </span>
+    <section data-flavor={flavor} className="relative isolate overflow-hidden pb-10 pt-28 transition-colors duration-700 motion-reduce:transition-none lg:flex lg:min-h-[min(860px,100svh)] lg:items-center lg:pb-14 lg:pt-32" style={{ backgroundColor: theme.base, color: theme.text }}>
+      <FlavorDecor active={flavor} />
+      <div className="container relative z-10 mx-auto px-5 sm:px-8">
+        <div className="grid items-center gap-6 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-0">
+          <div className="text-center lg:col-span-7 lg:row-start-1 lg:self-end lg:pl-6 lg:text-left xl:pl-12">
+            <p className="font-label mb-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] sm:text-xs" style={{ backgroundColor: theme.text, color: theme.base }}>
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: theme.base }} /> BOOSTUP PURE SHOT
+            </p>
+            <h1 className="max-w-4xl font-display text-balance text-[clamp(3rem,6.2vw,6.65rem)] font-black uppercase leading-[0.88] tracking-[-0.065em]">
+              JE 14:37.<br />
+              <span style={{ color: theme.headlineAccent }}>A TY UŽ ČTEŠ</span><br />
+              STEJNÝ MAIL<br className="hidden sm:block" /> POTŘETÍ.
             </h1>
-
-            {/* Benefits */}
-            <div className="flex flex-col gap-4 mt-8 mb-10 items-center lg:items-start">
-              {SITE_CONTENT.hero.benefits.map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#e8eedf' }}>
-                    {benefitIcons[i]}
-                  </div>
-                  <p className="text-sm md:text-base" style={{ color: '#3d5a2f' }}>
-                    <span className="font-bold">{item.bold}</span>
-                    <span className="font-normal"> — {item.text}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button
-                variant="outline"
-                size="xl"
-                className="rounded-full font-black text-base px-10 hover:scale-110 transition-all duration-500 cursor-pointer shadow-sm hover:shadow-xl hover:-rotate-1 active:scale-95"
-                style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent' }}
-                onClick={() => scrollTo('mise')}
-              >
-                {SITE_CONTENT.hero.cta.secondary}
-              </Button>
-
-              <Button
-                size="xl"
-                className="group rounded-full font-black text-base px-10 hover:scale-110 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:rotate-1 active:scale-95"
-                style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
-                onClick={() => scrollTo('produkty')}
-              >
-                {SITE_CONTENT.hero.cta.primary}
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
-              </Button>
-            </div>
-
           </div>
 
-          {/* Right column - 40% */}
-          <div className="w-full lg:w-[40%] flex justify-center items-center animate-fade-up animation-delay-300 lg:-ml-16 relative">
-            {/* Smoke/fog effect behind bottle */}
-            <div className="absolute inset-0 pointer-events-none" style={{ filter: 'blur(50px)', opacity: 0.55 }}>
-              <div className="absolute top-[15%] left-[5%] w-[70%] h-[45%] rounded-full" style={{ background: 'radial-gradient(ellipse, #dfdf57, transparent 65%)' }} />
-              <div className="absolute top-[30%] left-[20%] w-[65%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 65%)' }} />
-              <div className="absolute top-[45%] left-[10%] w-[70%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 65%)' }} />
+          <div className="order-2 flex justify-center lg:order-none lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
+            <FlavorStage active={flavor} animate={animate} alt={`BoostUp Pure Shot (${theme.name})`} />
+          </div>
+
+          <div className="order-3 text-center lg:col-span-7 lg:row-start-2 lg:self-start lg:pl-6 lg:text-left xl:pl-12">
+            <p className="mx-auto max-w-2xl text-lg font-semibold leading-relaxed sm:text-xl lg:mx-0">Funkční shot pro chvíle, kdy hlava jede naplno a potřebuješ zůstat ve svém tempu.</p>
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+              <Button size="xl" className="group rounded-full px-7 text-base font-bold transition-[background-color,color]" style={{ backgroundColor: theme.ctaBg, color: theme.ctaText }} onClick={() => scrollTo("produkty")}>
+                Vybrat příchuť <ArrowRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+              <Button variant="outline" size="xl" className="rounded-full border-2 border-current bg-transparent px-7 text-base font-bold text-inherit hover:bg-[color-mix(in_srgb,currentColor_14%,transparent)] hover:text-inherit" onClick={() => scrollTo("jak-funguje")}>
+                Jak BoostUp funguje <ArrowDownRight className="ml-1 h-5 w-5" />
+              </Button>
             </div>
-            {/* 
-              IMPORTANT: These classes (w-[360px] sm:w-[480px] md:w-[580px] lg:max-h-[85vh]) 
-              must be preserved even if switching back to .webp or different assets 
-              to ensure the bottle remains prominent/enlarged as requested.
-            */}
-            <img
-              src={bottleSilkyHero}
-              alt="BoostUp Pure Shot - prémiový energetický shot"
-              className="w-[360px] sm:w-[480px] md:w-[580px] lg:max-h-[85vh] lg:w-auto lg:max-w-none object-contain relative z-10"
-              style={{ transform: 'rotate(15deg)' }}
-              loading="eager"
-              {...({ fetchPriority: "high" } as any)}
-            />
           </div>
         </div>
 
-        {/* Tags row - full width below both columns */}
-        <div className="flex flex-wrap gap-4 mt-2 justify-center">
-          {SITE_CONTENT.hero.tags.map((item) => (
-            <button
-              key={item.ingredientId}
-              onClick={() => setActiveIngredient(item.ingredientId)}
-              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-black tracking-widest transition-all border-0 hover:scale-110 active:scale-95 shadow-lg hover:shadow-2xl cursor-pointer group hover:rotate-1"
-              style={{
-                background: 'linear-gradient(135deg, #fffcf0, #f4f1e6)',
-                color: '#3d5a2f',
-                fontFamily: 'Poppins, sans-serif',
-                WebkitBackfaceVisibility: 'hidden',
-              }}
-            >
-              <span 
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0 transition-transform duration-300 group-hover:scale-150 group-hover:animate-pulse" 
-                style={{ backgroundColor: item.dotColor }} 
-              />
-              <span className="uppercase">{item.label}</span>
-            </button>
+        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:mt-7 lg:grid-cols-4">
+          {proofPoints.map(({ icon: Icon, label, detail }) => (
+            <article key={label} className="flex min-h-24 items-center gap-4 rounded-[1.65rem] border border-current/20 bg-[color-mix(in_srgb,currentColor_10%,transparent)] px-5 py-4 backdrop-blur-sm">
+              <Icon className="h-6 w-6 shrink-0" strokeWidth={2.3} aria-hidden="true" />
+              <div><p className="font-label text-[10px] leading-tight sm:text-[11px]">{label}</p><p className="mt-1 text-sm font-semibold leading-tight opacity-85">{detail}</p></div>
+            </article>
           ))}
         </div>
       </div>
-
-      {activeIngredient && (
-        <Suspense fallback={null}>
-          <IngredientDialog
-            isOpen={!!activeIngredient}
-            onClose={() => setActiveIngredient(null)}
-            data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
-            colorClass={
-              activeIngredient === 'stimulants' ? 'bg-lime' :
-              activeIngredient === 'electrolytes' ? 'bg-terracotta' :
-              activeIngredient === 'adaptogens' ? 'bg-orange' :
-              'bg-olive'
-            }
-          />
-        </Suspense>
-      )}
     </section>
   );
 };

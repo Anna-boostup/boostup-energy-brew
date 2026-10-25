@@ -16,8 +16,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Poppins", "system-ui", "sans-serif"],
-        display: ["Poppins", "system-ui", "sans-serif"],
+        sans: ['"Open Sans"', "system-ui", "sans-serif"],
+        display: ["Archivo", '"Open Sans"', "system-ui", "sans-serif"],
+      },
+      // Brand cap: manuál používá max. Bold (Open Sans) / Medium (Archivo) – nejtučnější utility se omezují
+      fontWeight: {
+        extrabold: "600",
+        black: "700",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -104,6 +109,14 @@ export default {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
           "50%": { opacity: "0.6", transform: "scale(1.1)" },
         },
+        "flavor-in": {
+          from: { opacity: "0", transform: "rotateY(-70deg) scale(0.96)" },
+          to: { opacity: "1", transform: "rotateY(0deg) scale(1)" },
+        },
+        "flavor-out": {
+          from: { opacity: "1", transform: "rotateY(0deg) scale(1)" },
+          to: { opacity: "0", transform: "rotateY(70deg) scale(0.96)" },
+        },
         "energy-pulse": {
           "0%": { boxShadow: "0 0 0 0 rgba(190, 242, 100, 0.4)" },
           "70%": { boxShadow: "0 0 0 15px rgba(190, 242, 100, 0)" },
@@ -115,6 +128,8 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "energy-pulse": "energy-pulse 2s infinite",
+        "flavor-in": "flavor-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "flavor-out": "flavor-out 0.65s cubic-bezier(0.22, 1, 0.36, 1) both",
       },
     },
   },

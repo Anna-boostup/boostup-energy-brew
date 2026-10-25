@@ -1,17 +1,39 @@
-/* Poppins - Locally Hosted (Fixed) */
+/* BoostUp brand fonts - self-hosted variable fonts (latin + latin-ext for Czech diacritics) */
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Archivo';
   font-style: normal;
-  font-weight: 300 500; /* Regular range */
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
   font-display: swap;
-  src: url('/fonts/poppins-regular.woff2') format('woff2');
+  src: url('/fonts/archivo-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Archivo';
   font-style: normal;
-  font-weight: 600 800; /* Bold range */
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
   font-display: swap;
-  src: url('/fonts/poppins-bold.woff2') format('woff2');
+  src: url('/fonts/archivo-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('/fonts/opensans-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('/fonts/opensans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @tailwind base;
@@ -20,84 +42,74 @@
 
 @layer base {
   :root {
-    /* BoostUp Brand Colors - Original Palette with Official Brand Codes */
-    /* #f4f1e6 - Cream/Background */
-    --background: 47 30% 93%;
-    --foreground: 99 33% 26%;
+    /* BoostUp brand palette (grafický manuál)
+       lime #E0E561 · green #3F532E · orange #C56232 · red #BB2E4A
+       Alt: #CAD44E / #33522F / #F49548 / #B92E40
+       Hlavní AA dvojice: lime na green a green na lime (6.25:1).
+       Cream #F4F1E6 je jen technický neutrál pro plochy a pozadí. */
+    --background: 47 39% 93%;
+    --foreground: 92 29% 25%;
 
-    /* Cards slightly darker cream */
-    --card: 47 25% 90%;
-    --card-foreground: 99 33% 26%;
+    --card: 47 39% 96%;
+    --card-foreground: 92 29% 25%;
 
-    --popover: 47 30% 93%;
-    --popover-foreground: 99 33% 26%;
+    --popover: 47 39% 96%;
+    --popover-foreground: 92 29% 25%;
 
-    /* Primary: #3d5a2f - Dark Green / Olive */
-    --primary: 101 31% 27%;
-    --primary-foreground: 47 39% 93%;
+    /* Primary: green + lime text */
+    --primary: 92 29% 25%;
+    --primary-foreground: 62 72% 64%;
 
-    /* Secondary: Lighter cream */
-    --secondary: 47 25% 88%;
-    --secondary-foreground: 99 33% 26%;
+    --secondary: 47 30% 88%;
+    --secondary-foreground: 92 29% 25%;
 
-    /* Muted */
-    --muted: 47 20% 85%;
-    --muted-foreground: 99 25% 40%;
+    --muted: 47 25% 86%;
+    --muted-foreground: 92 25% 30%;
 
-    /* Accent: #dfdf57 - Official Lime */
-    --accent: 60 68% 61%;
-    --accent-foreground: 101 31% 27%;
+    /* Accent: lime + green text */
+    --accent: 62 72% 64%;
+    --accent-foreground: 92 29% 25%;
 
-    --destructive: 349 63% 41%;
-    --destructive-foreground: 47 30% 93%;
+    --destructive: 348 61% 46%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 99 15% 78%;
-    --input: 99 15% 82%;
-    --ring: 101 31% 27%;
+    --border: 92 15% 76%;
+    --input: 92 15% 80%;
+    --ring: 92 29% 25%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Custom Brand Colors - Official Hex Values */
-    /* #3d5a2f - Dark Green (Olive) */
-    --olive: 101 31% 27%;
-    --olive-dark: 101 35% 15%;
-    --olive-light: 101 25% 40%;
+    --olive: 92 29% 25%;
+    --olive-dark: 98 30% 16%;
+    --olive-light: 92 25% 38%;
 
-    /* #dfdf57 - Official Lime */
-    --lime: 60 68% 61%;
-    --lime-dark: 60 68% 48%;
+    --lime: 62 72% 64%;
+    --lime-dark: 64 61% 57%;
 
-    /* #aa263e - Terracotta (Red Rush) */
-    --terracotta: 349 63% 41%;
-    --terracotta-dark: 349 63% 32%;
+    --terracotta: 348 61% 46%;
+    --terracotta-dark: 348 61% 36%;
 
-    /* #f29739 - Orange */
-    --orange: 31 88% 58%;
-    --orange-dark: 31 88% 46%;
+    --orange: 20 60% 48%;
+    --orange-dark: 20 60% 38%;
 
-    /* #f4f1e6 - Cream (Background) */
-    --cream: 47 30% 93%;
+    --cream: 47 39% 93%;
     --cream-dark: 47 30% 88%;
 
-    /* Admin background */
-    --admin-bg: 101 20% 18%;
+    --admin-bg: 98 20% 18%;
 
-    /* Contrast text on dark bg */
-    --text-primary: 101 35% 10%;
-    --text-muted: 101 20% 38%;
+    --text-primary: 98 30% 14%;
+    --text-muted: 92 25% 30%;
 
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(48 30% 93%) 0%, hsl(48 25% 88%) 100%);
-    --gradient-olive: linear-gradient(135deg, hsl(101 35% 15%) 0%, hsl(101 31% 27%) 100%);
-    --gradient-energy: linear-gradient(135deg, hsl(60 68% 61%) 0%, hsl(31 88% 58%) 50%, hsl(349 63% 41%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(47 39% 93%) 0%, hsl(47 30% 88%) 100%);
+    --gradient-olive: linear-gradient(135deg, hsl(98 30% 16%) 0%, hsl(92 29% 25%) 100%);
+    /* Pouze dekorace / přechod mezi atmosférami příchutí, nikdy výplň textu */
+    --gradient-energy: linear-gradient(135deg, hsl(62 72% 64%) 0%, hsl(20 60% 48%) 55%, hsl(348 61% 46%) 100%);
 
-    /* Shadows */
-    --shadow-product: 0 30px 60px -15px hsl(101 35% 15% / 0.35);
-    --shadow-card: 0 8px 30px -8px hsl(101 25% 18% / 0.15);
-    --shadow-button: 0 6px 20px -4px hsl(101 31% 27% / 0.4);
-    --shadow-levitate: 0 40px 60px -20px hsl(101 40% 15% / 0.4);
+    --shadow-product: 0 30px 60px -15px hsl(98 30% 16% / 0.3);
+    --shadow-card: 0 8px 30px -8px hsl(98 25% 18% / 0.14);
+    --shadow-button: 0 6px 20px -6px hsl(92 29% 25% / 0.35);
+    --shadow-levitate: 0 40px 60px -20px hsl(98 40% 15% / 0.35);
 
-    /* Sidebar defaults */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -141,11 +153,11 @@
 
 @layer base {
   :root {
-    --font-heading: "Poppins", system-ui, sans-serif;
-    --font-body: "Poppins", system-ui, sans-serif;
-    --font-weight-heading: 800;
+    --font-heading: "Archivo", "Open Sans", system-ui, sans-serif;
+    --font-body: "Open Sans", system-ui, sans-serif;
+    --font-weight-heading: 500;
     --font-weight-body: 400;
-    --letter-spacing-heading: 0.05em;
+    --letter-spacing-heading: -0.01em;
     --letter-spacing-body: 0em;
     --line-height-heading: 1.1;
     --line-height-body: 1.6;
@@ -195,6 +207,15 @@
 }
 
 @layer utilities {
+  /* Archivo SemiExpanded Medium: výrazné all-caps labely (ADAPTOGENS, STIMULANTS, ...) */
+  .font-label {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-stretch: 112.5%;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -475,10 +496,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 30px hsla(var(--lime), 0.3);
 }
 
-/* Text gradient */
+/* Zvýrazněné slovo v nadpisu: pevná brandová červená (gradient se nepoužívá jako výplň textu) */
 .text-gradient-energy {
-  background: linear-gradient(135deg, hsl(60 67% 61%) 0%, hsl(32 88% 58%) 50%, hsl(350 64% 41%) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: hsl(var(--terracotta));
 }
