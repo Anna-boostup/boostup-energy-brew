@@ -478,11 +478,11 @@ export const SITE_CONTENT = {
     },
 
     typography: {
-        headingFont: 'Poppins',
-        bodyFont: 'Poppins',
-        headingWeight: '800',
+        headingFont: 'Archivo',
+        bodyFont: 'Open Sans',
+        headingWeight: '500',
         bodyWeight: '400',
-        headingLetterSpacing: '0.05em',
+        headingLetterSpacing: '-0.01em',
         bodyLetterSpacing: '0em',
         headingLineHeight: '1.1',
         bodyLineHeight: '1.6',
