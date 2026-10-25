@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
 import { useContent } from "@/context/ContentContext";
@@ -9,8 +9,6 @@ import FlavorDecor from "./hero/FlavorDecor";
 import FlavorStage from "./hero/FlavorStage";
 import { FLAVOR_ORDER } from "@/config/flavor-themes";
 
-const IngredientDialog = lazy(() => import("./IngredientDialog"));
-
 const benefitIcons = [Zap, Leaf, Brain, GraduationCap];
 
 /**
@@ -19,7 +17,6 @@ const benefitIcons = [Zap, Leaf, Brain, GraduationCap];
  */
 const HeroSection = () => {
   const { content: SITE_CONTENT } = useContent();
-  const [activeIngredient, setActiveIngredient] = useState<string | null>(null);
   const [flavor, setFlavor] = useState<FlavorType>("silky");
 
   const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
@@ -52,7 +49,7 @@ const HeroSection = () => {
   return (
     <section
       data-flavor={flavor}
-      className="relative isolate m-2 overflow-hidden rounded-[2rem] pt-28 pb-10 transition-colors duration-700 motion-reduce:transition-none sm:m-3 sm:rounded-[2.5rem] lg:flex lg:min-h-[min(820px,calc(100svh-1.5rem))] lg:items-center lg:pb-14 lg:pt-32"
+      className="relative isolate overflow-hidden pt-28 pb-10 transition-colors duration-700 motion-reduce:transition-none lg:flex lg:min-h-[min(820px,100svh)] lg:items-center lg:pb-14 lg:pt-32"
       style={{ backgroundColor: theme.base, color: theme.text }}
     >
       <FlavorDecor active={flavor} />
@@ -69,8 +66,8 @@ const HeroSection = () => {
                 className="mt-2 block text-3xl font-medium uppercase leading-[1.15] sm:text-4xl md:text-5xl lg:text-6xl"
               >
                 <span
-                  className="underline decoration-4 underline-offset-[0.2em] motion-safe:transition-[color,text-decoration-color] motion-safe:duration-700"
-                  style={{ color: theme.headlineAccent, textDecorationColor: theme.underline }}
+                  className="font-bold motion-safe:transition-colors motion-safe:duration-700"
+                  style={{ color: theme.headlineAccent }}
                 >
                   {SITE_CONTENT.hero.headline.gradient}
                 </span>
@@ -127,41 +124,7 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
-
-        {/* Štítky složení (otevírají detail složky) */}
-        <div className="mt-10 flex flex-wrap justify-center gap-3 lg:mt-12">
-          {SITE_CONTENT.hero.tags.map((item) => (
-            <button
-              key={item.ingredientId}
-              type="button"
-              onClick={() => setActiveIngredient(item.ingredientId)}
-              className="font-label group flex min-h-[44px] items-center gap-2.5 rounded-full border border-[color-mix(in_srgb,currentColor_35%,transparent)] px-5 py-2 text-xs transition-colors hover:bg-[color-mix(in_srgb,currentColor_14%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current motion-reduce:transition-none"
-            >
-              <span aria-hidden="true" className="h-2 w-2 flex-shrink-0 rounded-full bg-current" />
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </div>
       </div>
-
-      {activeIngredient && (
-        <Suspense fallback={null}>
-          <IngredientDialog
-            isOpen={!!activeIngredient}
-            onClose={() => setActiveIngredient(null)}
-            data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
-            colorClass={
-              activeIngredient === "stimulants"
-                ? "bg-lime"
-                : activeIngredient === "electrolytes"
-                  ? "bg-terracotta"
-                  : activeIngredient === "adaptogens"
-                    ? "bg-orange"
-                    : "bg-olive"
-            }
-          />
-        </Suspense>
-      )}
     </section>
   );
 };
