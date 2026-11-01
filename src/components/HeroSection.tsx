@@ -34,12 +34,22 @@ const HeroSection = () => {
   return (
     <section aria-label="BoostUp Pure Shot" className="relative isolate min-h-[max(760px,100svh)] overflow-hidden bg-[#062B11] pb-12 pt-28 text-[#E0E561] lg:flex lg:min-h-[min(920px,100svh)] lg:items-center lg:pb-16 lg:pt-32">
       <div aria-hidden="true" className="absolute inset-0 bg-[#062B11]">
+        {/* Rozostřená vrstva stejné fotografie vyplní celý desktopový podklad.
+            Díky tomu zmenšený ostrý render nemá nahoře ani dole viditelnou hranu. */}
+        {FLAVORS.map((item) => (
+          <img
+            key={`${item.id}-backdrop`}
+            src={item.image}
+            alt=""
+            className={`absolute inset-[-6%] hidden h-[112%] w-[112%] max-w-none scale-110 object-cover object-right blur-[30px] brightness-[0.58] saturate-[0.82] transition-opacity duration-700 ease-out motion-reduce:transition-none lg:block ${item.id === flavor ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
         {FLAVORS.map((item) => (
           <img
             key={item.id}
             src={item.image}
             alt=""
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:-right-[3%] lg:left-auto lg:w-[64%] lg:object-contain lg:object-right ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:-right-[3%] lg:left-auto lg:w-[64%] lg:object-contain lg:object-right lg:[mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_88%,transparent_100%)] ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
           />
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#33522F_0%,#33522F_32%,rgba(51,82,47,0.94)_43%,rgba(51,82,47,0.34)_59%,rgba(51,82,47,0)_72%)]" />
