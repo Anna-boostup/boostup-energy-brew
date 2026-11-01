@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { ArrowDownRight, ArrowRight } from "lucide-react";
+import flavorsImage from "@/assets/boostup-four-flavors.png";
 import { Button } from "./ui/button";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/hooks/useMediaQuery";
 
 const FLAVORS = [
-  { id: "apple-ginger", name: "Jablko & zázvor", eyebrow: "PŘIROZENĚ OSTRÝ START", note: "Svěží jablko, zázvor a čistá energie pro dny, kdy chceš zůstat v tempu.", image: "/hero/apple-ginger.webp", dot: "#E0E561" },
-  { id: "apple-cinnamon", name: "Jablko & skořice", eyebrow: "HŘEJIVÝ RYTMUS", note: "Jemné jablko, skořice a soustředění, které nekončí po první hodině.", image: "/hero/apple-cinnamon.webp", dot: "#F49548" },
-  { id: "blackcurrant", name: "Černý rybíz", eyebrow: "TEMNĚ OVOCNÁ VLNA", note: "Výrazný rybíz pro chvíle, kdy hlava jede naplno a potřebuješ držet směr.", image: "/hero/blackcurrant.webp", dot: "#A55BB8" },
-  { id: "raspberry", name: "Malina", eyebrow: "JASNÝ ČERVENÝ IMPULZ", note: "Šťavnatá malina a funkční energie bez zbytečného hluku kolem.", image: "/hero/raspberry.webp", dot: "#BB2E4A" },
+  { id: "apple-ginger", name: "Jablko & zázvor", eyebrow: "PŘIROZENĚ OSTRÝ START", note: "Svěží jablko, zázvor a čistá energie pro dny, kdy chceš zůstat v tempu.", dot: "#E0E561", crop: { left: "0%", top: "0%" } },
+  { id: "apple-cinnamon", name: "Jablko & skořice", eyebrow: "HŘEJIVÝ RYTMUS", note: "Jemné jablko, skořice a soustředění, které nekončí po první hodině.", dot: "#F49548", crop: { left: "-100%", top: "0%" } },
+  { id: "blackcurrant", name: "Černý rybíz", eyebrow: "TEMNĚ OVOCNÁ VLNA", note: "Výrazný rybíz pro chvíle, kdy hlava jede naplno a potřebuješ držet směr.", dot: "#A55BB8", crop: { left: "0%", top: "-100%" } },
+  { id: "raspberry", name: "Malina", eyebrow: "JASNÝ ČERVENÝ IMPULZ", note: "Šťavnatá malina a funkční energie bez zbytečného hluku kolem.", dot: "#BB2E4A", crop: { left: "-100%", top: "-100%" } },
 ] as const;
 
 type FlavorId = (typeof FLAVORS)[number]["id"];
@@ -35,12 +36,9 @@ const HeroSection = () => {
     <section aria-label="BoostUp Pure Shot" className="relative isolate min-h-[max(760px,100svh)] overflow-hidden bg-[#33522F] pb-12 pt-28 text-[#E0E561] lg:flex lg:min-h-[min(920px,100svh)] lg:items-center lg:pb-16 lg:pt-32">
       <div aria-hidden="true" className="absolute inset-0 bg-[#33522F]">
         {FLAVORS.map((item) => (
-          <img
-            key={item.id}
-            src={item.image}
-            alt=""
-            className={`absolute inset-0 h-full w-full object-cover object-[67%_center] transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
-          />
+          <div key={item.id} className={`absolute inset-0 overflow-hidden transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}>
+            <img src={flavorsImage} alt="" className="absolute h-[200%] w-[200%] max-w-none" style={item.crop} />
+          </div>
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#33522F_0%,#33522F_25%,rgba(51,82,47,0.97)_38%,rgba(51,82,47,0.5)_54%,rgba(51,82,47,0.03)_74%)]" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(0deg,rgba(51,82,47,0.82),transparent)]" />
