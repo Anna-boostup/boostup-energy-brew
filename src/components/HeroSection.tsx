@@ -30,21 +30,21 @@ const HeroSection = () => {
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 
   return (
-    <section data-flavor={flavor} className="relative isolate overflow-hidden pb-10 pt-28 transition-colors duration-700 motion-reduce:transition-none lg:flex lg:min-h-[min(860px,100svh)] lg:items-center lg:pb-14 lg:pt-32" style={{ backgroundColor: theme.base, color: theme.text }}>
+    <section data-flavor={flavor} className="relative isolate overflow-hidden bg-[#33522F] pb-10 pt-28 text-[#E0E561] lg:flex lg:min-h-[min(860px,100svh)] lg:items-center lg:pb-14 lg:pt-32">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -right-[12%] -top-[22%] h-[78vw] w-[78vw] rounded-full opacity-30 blur-3xl transition-colors duration-700" style={{ backgroundColor: theme.accent }} />
-        <div className="absolute -bottom-[32%] left-[15%] h-[45vw] w-[45vw] rounded-full border border-current/20 transition-transform duration-700" style={{ transform: `rotate(${SHOWCASE_FLAVOR_ORDER.indexOf(flavor) * 21}deg)` }} />
+        <div className="absolute -right-[12%] -top-[22%] h-[78vw] w-[78vw] rounded-full bg-[#E0E561]/15 blur-3xl" />
+        <div className="absolute -bottom-[32%] left-[15%] h-[45vw] w-[45vw] rounded-full border border-current/20" />
         <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:22px_22px]" />
       </div>
       <div className="container relative z-10 mx-auto px-5 sm:px-8">
         <div className="grid items-center gap-6 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-0">
           <div className="text-center lg:col-span-7 lg:row-start-1 lg:self-end lg:pl-6 lg:text-left xl:pl-12">
-            <p className="font-label mb-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] sm:text-xs" style={{ backgroundColor: theme.text, color: theme.base }}>
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: theme.base }} /> BOOSTUP PURE SHOT
+            <p className="font-label mb-5 inline-flex items-center gap-2 rounded-full bg-[#E0E561] px-4 py-2 text-[10px] text-[#33522F] sm:text-xs">
+              <span className="h-2 w-2 rounded-full bg-[#33522F]" /> BOOSTUP PURE SHOT
             </p>
             <h1 className="max-w-4xl font-display text-balance text-[clamp(3rem,6.2vw,6.65rem)] font-black uppercase leading-[0.88] tracking-[-0.065em]">
               JE 14:37.<br />
-              <span style={{ color: theme.accent }}>A TY UŽ ČTEŠ</span><br />
+              <span className="text-white">A TY UŽ ČTEŠ</span><br />
               STEJNÝ MAIL<br className="hidden sm:block" /> POTŘETÍ.
             </h1>
           </div>
@@ -54,7 +54,7 @@ const HeroSection = () => {
           <div className="order-3 text-center lg:col-span-7 lg:row-start-2 lg:self-start lg:pl-6 lg:text-left xl:pl-12">
             <p className="mx-auto max-w-2xl text-lg font-semibold leading-relaxed sm:text-xl lg:mx-0">Funkční shot pro chvíle, kdy hlava jede naplno a potřebuješ zůstat ve svém tempu.</p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
-              <Button size="xl" className="group rounded-full px-7 text-base font-bold transition-[background-color,color]" style={{ backgroundColor: theme.ctaBg, color: theme.ctaText }} onClick={() => scrollTo("produkty")}>
+              <Button size="xl" className="group rounded-full bg-[#E0E561] px-7 text-base font-bold text-[#33522F] hover:bg-white" onClick={() => scrollTo("produkty")}>
                 Vybrat příchuť <ArrowRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button variant="outline" size="xl" className="rounded-full border-2 border-current bg-transparent px-7 text-base font-bold text-inherit hover:bg-[color-mix(in_srgb,currentColor_14%,transparent)] hover:text-inherit" onClick={() => scrollTo("jak-funguje")}>
