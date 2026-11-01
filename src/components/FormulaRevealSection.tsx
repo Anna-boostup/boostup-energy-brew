@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, Sparkles } from "lucide-react";
 import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/hooks/useMediaQuery";
-import { Crop } from "./hero/ShowcaseFlavorStage";
+import { FLAVOR_THEMES } from "@/config/flavor-themes";
 
 const layers = [
   { title: "ZŮSTAT V TEMPU", text: "Plynulá energie místo krátkého impulzu.", ingredients: "Guarana · přírodní kofein", className: "bg-lime text-olive", vector: "translate(-55%, -105%) rotate(-7deg)" },
@@ -16,6 +16,7 @@ const FormulaRevealSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
+  const image = FLAVOR_THEMES.silky.image.lg;
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -53,9 +54,7 @@ const FormulaRevealSection = () => {
                 const clipTop = index * 25;
                 const clipBottom = 75 - index * 25;
                 return (
-                  <div key={layer.title} aria-hidden="true" className="absolute inset-0 overflow-hidden drop-shadow-[0_28px_24px_rgba(0,0,0,0.36)]" style={{ clipPath: `inset(${clipTop}% 0 ${clipBottom}% 0)`, transform: `translate(${segmentReveal * (index % 2 ? 34 : -34)}%, ${segmentReveal * (index < 2 ? -31 : 31)}%) rotate(${segmentReveal * (index % 2 ? 5 : -5)}deg)`, transition: "transform 80ms linear" }}>
-                    <Crop id="apple-ginger" alt="" />
-                  </div>
+                  <img key={layer.title} src={image} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_28px_24px_rgba(0,0,0,0.36)]" style={{ clipPath: `inset(${clipTop}% 0 ${clipBottom}% 0)`, transform: `translate(${segmentReveal * (index % 2 ? 34 : -34)}%, ${segmentReveal * (index < 2 ? -31 : 31)}%) rotate(${segmentReveal * (index % 2 ? 5 : -5)}deg)`, transition: "transform 80ms linear" }} />
                 );
               })}
             </div>
