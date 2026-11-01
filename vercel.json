@@ -51,19 +51,5 @@
     "api/send-email.ts": {
       "includeFiles": "public/**"
     }
-  },
-  "crons": [
-    {
-      "path": "/api/sync-packeta-status",
-      "schedule": "0 */2 * * *"
-    },
-    {
-      "path": "/api/cron-monthly-report",
-      "schedule": "0 8 1 * *"
-    },
-    {
-      "path": "/api/cron-abandoned-carts",
-      "schedule": "0 * * * *"
-    }
-  ]
+  }
 }
