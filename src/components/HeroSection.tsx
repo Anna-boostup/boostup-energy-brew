@@ -39,7 +39,7 @@ const HeroSection = () => {
             key={item.id}
             src={item.image}
             alt=""
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:object-contain lg:object-right ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:left-auto lg:w-[66%] lg:object-contain lg:object-right ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
           />
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#33522F_0%,#33522F_25%,rgba(51,82,47,0.97)_38%,rgba(51,82,47,0.5)_54%,rgba(51,82,47,0.03)_74%)]" />
