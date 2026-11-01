@@ -32,18 +32,17 @@ const HeroSection = () => {
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 
   return (
-    <section aria-label="BoostUp Pure Shot" className="relative isolate min-h-[max(760px,100svh)] overflow-hidden bg-[#33522F] pb-12 pt-28 text-[#E0E561] lg:flex lg:min-h-[min(920px,100svh)] lg:items-center lg:pb-16 lg:pt-32">
-      <div aria-hidden="true" className="absolute inset-0 bg-[#33522F]">
+    <section aria-label="BoostUp Pure Shot" className="relative isolate min-h-[max(760px,100svh)] overflow-hidden bg-[#062B11] pb-12 pt-28 text-[#E0E561] lg:flex lg:min-h-[min(920px,100svh)] lg:items-center lg:pb-16 lg:pt-32">
+      <div aria-hidden="true" className="absolute inset-0 bg-[#062B11]">
         {FLAVORS.map((item) => (
           <img
             key={item.id}
             src={item.image}
             alt=""
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:left-auto lg:w-[66%] lg:object-contain lg:object-right ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:-right-[3%] lg:left-auto lg:w-[64%] lg:object-contain lg:object-right ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
           />
         ))}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,#33522F_0%,#33522F_25%,rgba(51,82,47,0.97)_38%,rgba(51,82,47,0.5)_54%,rgba(51,82,47,0.03)_74%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(0deg,rgba(51,82,47,0.82),transparent)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#33522F_0%,#33522F_32%,rgba(51,82,47,0.94)_43%,rgba(51,82,47,0.34)_59%,rgba(51,82,47,0)_72%)]" />
       </div>
 
       <div className="container relative z-10 mx-auto px-5 sm:px-8">
