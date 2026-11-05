@@ -38,6 +38,8 @@ jobs:
           npm install --global vercel@latest
       - name: Typecheck API (Vercel Serverless)
         run: npm run lint:api
+      - name: Typecheck app (ratchet)
+        run: npm run typecheck:ci
       - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
       - name: Build
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}

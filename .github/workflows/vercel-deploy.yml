@@ -58,7 +58,7 @@ jobs:
       - name: Static Analysis (Lint & TypeCheck)
         run: |
           npm run lint
-          npx tsc --noEmit
+          npm run typecheck:ci
 
       - name: Unit Tests (Vitest)
         run: npm run test
