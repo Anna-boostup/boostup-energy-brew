@@ -94,6 +94,10 @@ jobs:
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
           echo "Deployment created: $DEPLOYMENT_URL"
+          case "$DEPLOYMENT_URL" in
+            https://*) ;;
+            *) echo "::error::vercel deploy nevrátil URL nasazení — deploy selhal, alias se nemění (viz výstup výše)"; exit 1 ;;
+          esac
           echo "RAW_DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           vercel alias set $DEPLOYMENT_URL test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
           # Keep the www.* alias in sync too (Stripe webhook may target www.test.*); tolerate a missing domain

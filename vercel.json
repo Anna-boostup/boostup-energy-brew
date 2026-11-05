@@ -55,7 +55,7 @@
   "crons": [
     {
       "path": "/api/sync-packeta-status",
-      "schedule": "0 */2 * * *"
+      "schedule": "0 6 * * *"
     },
     {
       "path": "/api/cron-monthly-report",
@@ -63,7 +63,7 @@
     },
     {
       "path": "/api/cron-abandoned-carts",
-      "schedule": "0 * * * *"
+      "schedule": "0 7 * * *"
     }
   ]
 }

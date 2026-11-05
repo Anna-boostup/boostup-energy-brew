@@ -51,6 +51,11 @@ jobs:
       - name: Deploy & Alias
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
+          echo "Deployment created: $DEPLOYMENT_URL"
+          case "$DEPLOYMENT_URL" in
+            https://*) ;;
+            *) echo "::error::vercel deploy nevrátil URL nasazení — deploy selhal, alias se nemění (viz výstup výše)"; exit 1 ;;
+          esac
           vercel alias set $DEPLOYMENT_URL preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
           # Keep the www.* alias in sync too (tolerate a missing domain)
           vercel alias set $DEPLOYMENT_URL www.preview.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} || echo "www.preview.drinkboostup.cz alias not configured — skipping"
