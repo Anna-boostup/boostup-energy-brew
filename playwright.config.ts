@@ -191,6 +191,15 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
     },
+
+    // Vykreslení textů na mobilu (přetečení, oříznutí, špatné písmo / chybějící česká diakritika)
+    {
+      name: 'text-mobile',
+      testMatch: 'tests/mobile-text.spec.ts',
+      use: {
+        ...devices['Pixel 5'],
+      },
+    },
   ],
 
   /* Run your local dev server before starting the tests */

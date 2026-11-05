@@ -20,7 +20,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:visual": "playwright test --project=visual-desktop --project=visual-mobile",
     "test:visual:update": "playwright test --project=visual-desktop --project=visual-mobile --update-snapshots",
-    "test:layout": "playwright test --project=layout-and-a11y"
+    "test:layout": "playwright test --project=layout-and-a11y",
+    "test:mobile:text": "playwright test --project=text-mobile"
   },
   "dependencies": {
     "@emnapi/core": "^1.11.1",
