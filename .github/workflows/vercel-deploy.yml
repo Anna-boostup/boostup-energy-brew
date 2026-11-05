@@ -74,10 +74,27 @@ jobs:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           
+      - name: "Diagnostics: what will be uploaded"
+        continue-on-error: true
+        run: |
+          echo "commit: $(git rev-parse --short HEAD)"
+          echo "--- Vercel project settings (.vercel/project.json, settings only)"
+          node -e "const p=require('./.vercel/project.json');console.log(JSON.stringify(p.settings||{},null,2))" || true
+          echo "--- dist/ vs .vercel/output/static"
+          ls dist/assets 2>/dev/null | grep -E '^(index|CheckoutPage)-' || echo "no dist/assets"
+          ls .vercel/output/static/assets 2>/dev/null | grep -E '^(index|CheckoutPage)-' || echo "no .vercel/output/static/assets"
+          for f in dist/assets/CheckoutPage-*.js .vercel/output/static/assets/CheckoutPage-*.js; do [ -f "$f" ] && echo "$f checkout-terms=$(grep -c checkout-terms "$f")"; done
+          echo "--- .vercel/output/static/index.html script"
+          grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' .vercel/output/static/index.html || true
+          echo "--- .vercel/output/config.json"
+          head -c 1500 .vercel/output/config.json 2>/dev/null || true
+
       - name: Deploy to Test
         id: deploy
         run: |
           DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} | tail -n 1)
+          echo "Deployment created: $DEPLOYMENT_URL"
+          echo "RAW_DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
           vercel alias set $DEPLOYMENT_URL test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }}
           # Keep the www.* alias in sync too (Stripe webhook may target www.test.*); tolerate a missing domain
           vercel alias set $DEPLOYMENT_URL www.test.drinkboostup.cz --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_ORG_ID }} || echo "www.test.drinkboostup.cz alias not configured — skipping"
@@ -88,6 +105,16 @@ jobs:
         run: |
           timeout 120s bash -c 'until curl -sI -L -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$DEPLOYMENT_URL" | grep "200" > /dev/null; do sleep 5; done'
           
+      - name: "Diagnostics: what is live"
+        continue-on-error: true
+        run: |
+          for u in "$RAW_DEPLOYMENT_URL" https://test.drinkboostup.cz; do
+            [ -z "$u" ] && continue
+            idx=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$u/" | grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' | head -1)
+            chk=$(curl -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$u$idx" | grep -oE 'CheckoutPage-[A-Za-z0-9_-]+\.js' | head -1)
+            echo "$u -> $idx -> $chk"
+          done
+
       # Browsers are pre-installed in the container, but we ensure chromium for our tests
       - name: Ensure Browsers
         run: npx playwright install chromium
