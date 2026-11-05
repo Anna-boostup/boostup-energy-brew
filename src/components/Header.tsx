@@ -13,7 +13,6 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 // Sub-components
 import Logo from "./header/Logo";
 import DesktopNav from "./header/DesktopNav";
-import SocialLinks from "./header/SocialLinks";
 import AuthButton from "./header/AuthButton";
 import CartButton from "./header/CartButton";
 import MobileMenu from "./header/MobileMenu";
@@ -96,24 +95,18 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
   }, [location.state, navigate, location.pathname]);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-[100] border-b transition-all duration-300 ${
-      isMenuOpen 
-        ? 'bg-background border-border h-[100dvh] overflow-y-auto' 
-        : 'bg-background/95 backdrop-blur-sm border-border/50'
-    }`}>
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
+    <header data-site-header className="fixed inset-x-0 top-0 z-[100] px-3 pt-3 sm:px-4">
+      <div className="mx-auto max-w-6xl">
+        <div className="relative grid grid-cols-[auto_1fr] items-center gap-3 rounded-full border border-olive/15 bg-cream px-3 py-2 shadow-[0_10px_30px_-14px_rgba(63,83,46,0.45)] sm:px-5 lg:grid-cols-[1fr_auto_1fr]">
           <Logo />
 
-          {variant === 'default' && (
+          {variant === 'default' ? (
             <DesktopNav navigation={SITE_CONTENT.navigation} />
+          ) : (
+            <span className="hidden lg:block" />
           )}
 
-          <div className="hidden md:flex items-center gap-4">
-            {variant === 'default' && (
-              <SocialLinks social={SITE_CONTENT.social} />
-            )}
-
+          <div className="hidden items-center justify-end gap-1.5 lg:flex">
             <LanguageToggle />
 
             <AuthButton user={user} profile={profile} />
@@ -121,8 +114,9 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             {profile?.role === 'admin' && (
               <Link 
                 to="/admin/messages" 
-                className="p-2 relative group hover:scale-110 transition-all"
+                className="relative rounded-full p-2 transition-colors hover:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 title="Zprávy"
+                aria-label="Zprávy"
               >
                 <Mail className="w-5 h-5 text-olive-dark" />
                 {unreadCount > 0 && (
@@ -136,14 +130,16 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
           </div>
 
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex items-center justify-end gap-1 lg:hidden">
             <LanguageToggle />
             <CartButton cartCount={cartCount} setIsCartOpen={setIsCartOpen} mobile />
 
             <button
-              className="p-2"
+              type="button"
+              className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Zavřít menu" : "Otevřít menu"}
+              aria-expanded={isMenuOpen}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -151,16 +147,18 @@ const Header = ({ variant = 'default' }: HeaderProps) => {
         </div>
 
         {isMenuOpen && (
-          <MobileMenu 
-            variant={variant}
-            navigation={SITE_CONTENT.navigation}
-            social={SITE_CONTENT.social}
-            user={user}
-            profile={profile}
-            cartCount={cartCount}
-            setIsCartOpen={setIsCartOpen}
-            setIsMenuOpen={setIsMenuOpen}
-          />
+          <div className="mt-2 max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-[2rem] border border-olive/15 bg-cream p-4 shadow-[0_24px_50px_-20px_rgba(63,83,46,0.5)] lg:hidden">
+            <MobileMenu 
+              variant={variant}
+              navigation={SITE_CONTENT.navigation}
+              social={SITE_CONTENT.social}
+              user={user}
+              profile={profile}
+              cartCount={cartCount}
+              setIsCartOpen={setIsCartOpen}
+              setIsMenuOpen={setIsMenuOpen}
+            />
+          </div>
         )}
       </div>
       {isCartOpen && (

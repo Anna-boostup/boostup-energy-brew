@@ -1,159 +1,97 @@
-import { useState } from "react";
-import { ArrowRight, Zap, Leaf, Brain, GraduationCap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDownRight, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
-import { useContent } from "@/context/ContentContext";
-import { lazy, Suspense } from "react";
-import bottleSilkyHero from "@/assets/bottle-silky-hero.png";
-const IngredientDialog = lazy(() => import("./IngredientDialog"));
+import { useMediaQuery, REDUCED_MOTION_QUERY } from "@/hooks/useMediaQuery";
+
+const FLAVORS = [
+  { id: "apple-ginger", name: "Jablko & zázvor", eyebrow: "PŘIROZENĚ OSTRÝ START", note: "Svěží jablko, zázvor a čistá energie pro dny, kdy chceš zůstat v tempu.", image: "/hero/apple-ginger.png", dot: "#E0E561" },
+  { id: "apple-cinnamon", name: "Jablko & skořice", eyebrow: "HŘEJIVÝ RYTMUS", note: "Jemné jablko, skořice a soustředění, které nekončí po první hodině.", image: "/hero/apple-cinnamon.png", dot: "#F49548" },
+  { id: "blackcurrant", name: "Černý rybíz", eyebrow: "TEMNĚ OVOCNÁ VLNA", note: "Výrazný rybíz pro chvíle, kdy hlava jede naplno a potřebuješ držet směr.", image: "/hero/blackcurrant.png", dot: "#A55BB8" },
+  { id: "raspberry", name: "Malina", eyebrow: "JASNÝ ČERVENÝ IMPULZ", note: "Šťavnatá malina a funkční energie bez zbytečného hluku kolem.", image: "/hero/raspberry.png", dot: "#BB2E4A" },
+] as const;
+
+type FlavorId = (typeof FLAVORS)[number]["id"];
 
 const HeroSection = () => {
-  const { content: SITE_CONTENT } = useContent();
-  const [activeIngredient, setActiveIngredient] = useState<string | null>(null);
+  const [flavor, setFlavor] = useState<FlavorId>("apple-ginger");
+  const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
+  const activeFlavor = FLAVORS.find(({ id }) => id === flavor) ?? FLAVORS[0];
 
-  const benefitIcons = [
-    <Zap className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-    <Leaf className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-    <Brain className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-    <GraduationCap className="w-5 h-5" style={{ color: '#3d5a2f' }} />,
-  ];
+  useEffect(() => {
+    if (reducedMotion) return;
+    const timer = window.setInterval(() => {
+      if (document.hidden) return;
+      setFlavor((current) => {
+        const index = FLAVORS.findIndex(({ id }) => id === current);
+        return FLAVORS[(index + 1) % FLAVORS.length].id;
+      });
+    }, 5600);
+    return () => window.clearInterval(timer);
+  }, [reducedMotion]);
 
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 
   return (
-    <section className="pt-24 relative overflow-hidden" style={{ backgroundColor: '#f4f1e6' }}>
-      <div className="container mx-auto px-4 pt-0 pb-16 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-4">
-          
-          {/* Left column - 60% */}
-          <div className="w-full lg:w-[60%] text-center lg:text-left animate-fade-up lg:pl-12 xl:pl-20">
-            <h1 className="font-display tracking-tight mb-2">
-              <span 
-                className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase leading-[1.1] mb-1"
-                style={{ color: '#3d5a2f' }}
-              >
-                {SITE_CONTENT.hero.headline.part1}
-              </span>
-              <span 
-                className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[1.1]"
-                style={{
-                  background: 'linear-gradient(to right, #dfdf57, #f29739, #aa263e)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                {SITE_CONTENT.hero.headline.gradient}
-              </span>
-            </h1>
+    <section aria-label="BoostUp Pure Shot" className="relative isolate min-h-[max(760px,100svh)] overflow-hidden bg-[#062B11] pb-12 pt-28 text-[#E0E561] lg:flex lg:min-h-[min(920px,100svh)] lg:items-center lg:pb-16 lg:pt-32">
+      <div aria-hidden="true" className="absolute inset-0 bg-[#062B11]">
+        {/* Rozostřená vrstva stejné fotografie vyplní celý desktopový podklad.
+            Díky tomu zmenšený ostrý render nemá nahoře ani dole viditelnou hranu. */}
+        {FLAVORS.map((item) => (
+          <img
+            key={`${item.id}-backdrop`}
+            src={item.image}
+            alt=""
+            className={`absolute inset-[-6%] hidden h-[112%] w-[112%] max-w-none scale-110 object-cover object-right blur-[30px] brightness-[0.58] saturate-[0.82] transition-opacity duration-700 ease-out motion-reduce:transition-none lg:block ${item.id === flavor ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
+        {FLAVORS.map((item) => (
+          <img
+            key={item.id}
+            src={item.image}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none lg:-right-[3%] lg:left-auto lg:w-[64%] lg:object-contain lg:object-right lg:[mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_88%,transparent_100%)] ${item.id === flavor ? "scale-100 opacity-100" : "scale-[1.025] opacity-0"}`}
+          />
+        ))}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,#33522F_0%,#33522F_32%,rgba(51,82,47,0.94)_43%,rgba(51,82,47,0.34)_59%,rgba(51,82,47,0)_72%)]" />
+      </div>
 
-            {/* Benefits */}
-            <div className="flex flex-col gap-4 mt-8 mb-10 items-center lg:items-start">
-              {SITE_CONTENT.hero.benefits.map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#e8eedf' }}>
-                    {benefitIcons[i]}
-                  </div>
-                  <p className="text-sm md:text-base" style={{ color: '#3d5a2f' }}>
-                    <span className="font-bold">{item.bold}</span>
-                    <span className="font-normal"> — {item.text}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button
-                variant="outline"
-                size="xl"
-                className="rounded-full font-black text-base px-10 hover:scale-110 transition-all duration-500 cursor-pointer shadow-sm hover:shadow-xl hover:-rotate-1 active:scale-95"
-                style={{ borderColor: '#3d5a2f', color: '#3d5a2f', backgroundColor: 'transparent' }}
-                onClick={() => scrollTo('mise')}
-              >
-                {SITE_CONTENT.hero.cta.secondary}
-              </Button>
-
-              <Button
-                size="xl"
-                className="group rounded-full font-black text-base px-10 hover:scale-110 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-2xl hover:rotate-1 active:scale-95"
-                style={{ backgroundColor: '#3d5a2f', color: '#f4f1e6' }}
-                onClick={() => scrollTo('produkty')}
-              >
-                {SITE_CONTENT.hero.cta.primary}
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform ml-2" />
-              </Button>
-            </div>
-
+      <div className="container relative z-10 mx-auto px-5 sm:px-8">
+        <div className="max-w-[43rem] pt-8 lg:pl-6 xl:pl-12">
+          <p className="font-label mb-5 inline-flex items-center gap-2 rounded-full border border-[#E0E561]/25 bg-[#33522F]/80 px-4 py-2 text-[10px] tracking-[0.16em] backdrop-blur-sm sm:text-xs">
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: activeFlavor.dot }} />
+            {activeFlavor.eyebrow}
+          </p>
+          <h1 className="font-display max-w-xl text-balance text-[clamp(3.1rem,6.3vw,6.65rem)] font-black uppercase leading-[0.87] tracking-[-0.065em]">
+            ENERGIE,<br />
+            KTERÁ <span className="text-white">DRŽÍ</span><br />
+            KROK.
+          </h1>
+          <div className="mt-7 max-w-md">
+            <p className="font-label text-xs uppercase tracking-[0.18em] text-[#E0E561]/70">{activeFlavor.name}</p>
+            <p className="mt-3 text-base font-semibold leading-relaxed text-white/85 sm:text-lg">{activeFlavor.note}</p>
           </div>
-
-          {/* Right column - 40% */}
-          <div className="w-full lg:w-[40%] flex justify-center items-center animate-fade-up animation-delay-300 lg:-ml-16 relative">
-            {/* Smoke/fog effect behind bottle */}
-            <div className="absolute inset-0 pointer-events-none" style={{ filter: 'blur(50px)', opacity: 0.55 }}>
-              <div className="absolute top-[15%] left-[5%] w-[70%] h-[45%] rounded-full" style={{ background: 'radial-gradient(ellipse, #dfdf57, transparent 65%)' }} />
-              <div className="absolute top-[30%] left-[20%] w-[65%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #f29739, transparent 65%)' }} />
-              <div className="absolute top-[45%] left-[10%] w-[70%] h-[40%] rounded-full" style={{ background: 'radial-gradient(ellipse, #aa263e, transparent 65%)' }} />
-            </div>
-            {/* 
-              IMPORTANT: These classes (w-[360px] sm:w-[480px] md:w-[580px] lg:max-h-[85vh]) 
-              must be preserved even if switching back to .webp or different assets 
-              to ensure the bottle remains prominent/enlarged as requested.
-            */}
-            <img
-              src={bottleSilkyHero}
-              alt="BoostUp Pure Shot - prémiový energetický shot"
-              className="w-[360px] sm:w-[480px] md:w-[580px] lg:max-h-[85vh] lg:w-auto lg:max-w-none object-contain relative z-10"
-              style={{ transform: 'rotate(15deg)' }}
-              loading="eager"
-              {...({ fetchPriority: "high" } as any)}
-            />
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button size="xl" className="group rounded-full bg-[#E0E561] px-7 text-base font-bold text-[#33522F] hover:bg-white" onClick={() => scrollTo("produkty")}>
+              Vybrat příchuť <ArrowRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Button>
+            <Button variant="outline" size="xl" className="rounded-full border-2 border-[#E0E561]/80 bg-transparent px-7 text-base font-bold text-[#E0E561] hover:bg-[#E0E561]/10 hover:text-[#E0E561]" onClick={() => scrollTo("jak-funguje")}>
+              Jak BoostUp funguje <ArrowDownRight className="ml-1 h-5 w-5" />
+            </Button>
           </div>
-        </div>
-
-        {/* Tags row - full width below both columns */}
-        <div className="flex flex-wrap gap-4 mt-2 justify-center">
-          {SITE_CONTENT.hero.tags.map((item) => (
-            <button
-              key={item.ingredientId}
-              onClick={() => setActiveIngredient(item.ingredientId)}
-              className="flex items-center gap-2.5 px-7 py-3 rounded-full text-sm font-black tracking-widest transition-all border-0 hover:scale-110 active:scale-95 shadow-lg hover:shadow-2xl cursor-pointer group hover:rotate-1"
-              style={{
-                background: 'linear-gradient(135deg, #fffcf0, #f4f1e6)',
-                color: '#3d5a2f',
-                fontFamily: 'Poppins, sans-serif',
-                WebkitBackfaceVisibility: 'hidden',
-              }}
-            >
-              <span 
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0 transition-transform duration-300 group-hover:scale-150 group-hover:animate-pulse" 
-                style={{ backgroundColor: item.dotColor }} 
-              />
-              <span className="uppercase">{item.label}</span>
-            </button>
-          ))}
         </div>
       </div>
 
-      {activeIngredient && (
-        <Suspense fallback={null}>
-          <IngredientDialog
-            isOpen={!!activeIngredient}
-            onClose={() => setActiveIngredient(null)}
-            data={SITE_CONTENT.ingredientDetails[activeIngredient as keyof typeof SITE_CONTENT.ingredientDetails]}
-            colorClass={
-              activeIngredient === 'stimulants' ? 'bg-lime' :
-              activeIngredient === 'electrolytes' ? 'bg-terracotta' :
-              activeIngredient === 'adaptogens' ? 'bg-orange' :
-              'bg-olive'
-            }
-          />
-        </Suspense>
-      )}
+      <div className="absolute bottom-7 right-5 z-20 flex items-center gap-2 rounded-full bg-[#33522F]/80 px-3 py-2 backdrop-blur-md sm:bottom-10 sm:right-8 lg:right-12">
+        <span className="sr-only">Vyber příchuť</span>
+        {FLAVORS.map((item) => {
+          const selected = item.id === flavor;
+          return (
+            <button key={item.id} type="button" onClick={() => setFlavor(item.id)} className="group relative flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" aria-label={`Zobrazit příchuť ${item.name}`} aria-pressed={selected}>
+              <span className={`block rounded-full transition-all duration-300 ${selected ? "h-4 w-4 ring-2 ring-white ring-offset-2 ring-offset-[#33522F]" : "h-2.5 w-2.5 group-hover:h-3.5 group-hover:w-3.5"}`} style={{ backgroundColor: item.dot }} />
+            </button>
+          );
+        })}
+      </div>
     </section>
   );
 };

@@ -3,6 +3,8 @@ import { useContent } from '@/context/ContentContext';
 
 // List of popular Google Fonts available in the picker
 export const AVAILABLE_FONTS = [
+    { name: 'Archivo', weights: [100, 200, 300, 400, 500, 600, 700, 800, 900] },
+    { name: 'Open Sans', weights: [300, 400, 500, 600, 700, 800] },
     { name: 'Poppins', weights: [300, 400, 500, 600, 700, 800, 900] },
     { name: 'Inter', weights: [300, 400, 500, 600, 700, 800, 900] },
     { name: 'Outfit', weights: [300, 400, 500, 600, 700, 800, 900] },
@@ -30,11 +32,15 @@ export const FONT_WEIGHTS = [
     { label: '900 – Black', value: '900' },
 ];
 
+// Brand fonts are self-hosted (see @font-face in index.css), no external request needed
+const SELF_HOSTED_FONTS = ['Archivo', 'Open Sans'];
+
 /**
  * Builds a Google Fonts URL for the given font families.
  */
 function buildGoogleFontsUrl(fonts: string[]): string {
-    const unique = [...new Set(fonts)];
+    const unique = [...new Set(fonts)].filter((name) => !SELF_HOSTED_FONTS.includes(name));
+    if (!unique.length) return '';
     const families = unique
         .map((name) => {
             const spec = AVAILABLE_FONTS.find((f) => f.name === name);
@@ -57,11 +63,11 @@ export function useDynamicFonts() {
     const { content } = useContent();
     const typo = (content as any).typography || {};
 
-    const headingFont = typo.headingFont || 'Poppins';
-    const bodyFont = typo.bodyFont || 'Poppins';
-    const headingWeight = typo.headingWeight || '800';
+    const headingFont = typo.headingFont || 'Archivo';
+    const bodyFont = typo.bodyFont || 'Open Sans';
+    const headingWeight = typo.headingWeight || '500';
     const bodyWeight = typo.bodyWeight || '400';
-    const headingLetterSpacing = typo.headingLetterSpacing || '0.05em';
+    const headingLetterSpacing = typo.headingLetterSpacing || '-0.01em';
     const bodyLetterSpacing = typo.bodyLetterSpacing || '0em';
     const headingLineHeight = typo.headingLineHeight || '1.1';
     const bodyLineHeight = typo.bodyLineHeight || '1.6';
@@ -80,7 +86,9 @@ export function useDynamicFonts() {
             link.rel = 'stylesheet';
             document.head.appendChild(link);
         }
-        link.href = buildGoogleFontsUrl(fontsToLoad);
+        const href = buildGoogleFontsUrl(fontsToLoad);
+        if (href) link.href = href;
+        else link.remove();
     }, [headingFont, bodyFont]);
 
     // Apply CSS custom properties to :root

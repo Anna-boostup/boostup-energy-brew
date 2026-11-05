@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="preload" as="image" href="/bottle-silky.webp" imagesrcset="/bottle-silky-mobile.webp 600w, /bottle-silky.webp 1200w" imagesizes="(max-width: 600px) 100vw, 800px" fetchpriority="high" />
-  <link rel="preload" href="/fonts/poppins-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
-  <link rel="preload" href="/fonts/poppins-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+  <link rel="preload" as="image" href="/hero/silky-lg.webp" imagesrcset="/hero/silky-sm.webp 455w, /hero/silky-lg.webp 781w" imagesizes="(max-width: 1023px) 250px, 380px" fetchpriority="high" />
+  <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/opensans-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 
@@ -37,17 +37,17 @@
   <!-- Critical CSS Inlining (Above the Fold) -->
   <style>
     :root {
-      --background: 47 30% 93%;
-      --foreground: 99 33% 26%;
-      --primary: 99 33% 26%;
-      --primary-foreground: 47 30% 93%;
-      --accent: 349 63% 41%;
-      --lime: 61 65% 65%;
-      --terracotta: 349 63% 41%;
-      --orange: 18 65% 51%;
-      --cream: 47 30% 93%;
-      --font-heading: "Poppins", system-ui, sans-serif;
-      --font-body: "Poppins", system-ui, sans-serif;
+      --background: 47 39% 93%;
+      --foreground: 92 29% 25%;
+      --primary: 92 29% 25%;
+      --primary-foreground: 62 72% 64%;
+      --accent: 62 72% 64%;
+      --lime: 62 72% 64%;
+      --terracotta: 348 61% 46%;
+      --orange: 20 60% 48%;
+      --cream: 47 39% 93%;
+      --font-heading: "Archivo", "Open Sans", system-ui, sans-serif;
+      --font-body: "Open Sans", system-ui, sans-serif;
     }
     html, body {
       background-color: hsl(var(--background));
@@ -57,14 +57,10 @@
       padding: 0;
       overflow-x: hidden;
     }
-    header {
+    header[data-site-header] {
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: 72px;
-      background-color: hsla(47, 30%, 93%, 0.95);
-      backdrop-filter: blur(8px);
-      z-index: 50;
-      border-bottom: 1px solid hsla(99, 15%, 78%, 0.5);
+      z-index: 100;
     }
     section.pt-24 { padding-top: 6rem; }
     @keyframes fade-up {

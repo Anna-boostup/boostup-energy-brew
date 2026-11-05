@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Logo = () => {
   return (
-    <Link to="/" className="relative z-10 hidden sm:block">
+    <Link to="/" className="relative z-10 block rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-cream">
       <img src="/logo-green.png" alt="BoostUp - přírodní energetický shot" className="h-8 w-auto dark:hidden" width={178} height={32} />
       <img src="/logo-white.png" alt="BoostUp - přírodní energetický shot" className="h-8 w-auto hidden dark:block" width={222} height={40} />
     </Link>

@@ -64,7 +64,7 @@ const ProductSection = () => {
                   <Sparkles className="w-3 h-3" />
                   {content.configurator?.badge || "Konfigurátor balení"}
                 </div>
-                <h2 className="text-4xl md:text-6xl font-display font-black text-foreground leading-[0.9] tracking-tighter uppercase whitespace-nowrap">
+                <h2 className="text-4xl md:text-6xl font-display font-black text-foreground leading-[0.9] tracking-tighter uppercase sm:whitespace-nowrap">
                   {content.configurator?.headline?.split(' ').slice(0, 2).join(' ') || "VYTVOŘTE SI SVOU"} <br />
                   <span className="text-gradient-energy italic pr-4">{content.configurator?.headline?.split(' ').slice(2).join(' ') || "ENERGII"}</span>
                 </h2>
@@ -138,7 +138,7 @@ const ProductSection = () => {
                           className={`group relative overflow-hidden w-full h-[76px] rounded-2xl sm:rounded-3xl transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] ${
                             isOutOfStock || content?.isSalesEnabled === false
                               ? "bg-muted grayscale border-border text-muted-foreground opacity-70 cursor-not-allowed"
-                              : "bg-[#3d5a2f] text-[#dfdf57] font-black border-2 border-[#dfdf57]/20 transition-all hover:opacity-90 shadow-xl shadow-black/20"
+                              : "bg-primary text-primary-foreground font-black border-2 border-primary-foreground/20 transition-all hover:opacity-90 shadow-xl shadow-black/20"
                           }`}
                         >
                       <div className="relative z-10 flex flex-col items-center">

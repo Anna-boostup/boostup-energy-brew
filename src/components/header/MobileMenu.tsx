@@ -28,8 +28,8 @@ const MobileMenu = ({
   setIsMenuOpen
 }: MobileMenuProps) => {
   return (
-    <div className="md:hidden mt-4 pb-6 animate-in slide-in-from-top duration-300">
-      <nav className="flex flex-col gap-4 mb-6">
+    <div className="animate-in fade-in-0 slide-in-from-top-2 duration-200 motion-reduce:animate-none">
+      <nav className="flex flex-col gap-1 mb-4">
         {variant === 'default' && (
           <>
             {navigation.map((link) => (
@@ -44,7 +44,7 @@ const MobileMenu = ({
                   }
                   setIsMenuOpen(false);
                 }}
-                className="text-lg font-medium py-2 border-b border-border/50"
+                className="rounded-2xl px-4 py-3 text-base font-semibold hover:bg-lime focus-visible:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {link.label}
               </a>
@@ -57,7 +57,7 @@ const MobileMenu = ({
             <Link
               to={profile?.role === 'admin' ? "/admin" : profile?.account_type === 'company' ? "/company-account/profile" : "/account/profile"}
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+              className="flex items-center gap-2 rounded-2xl px-4 py-3 text-base font-semibold hover:bg-lime focus-visible:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <User className="w-5 h-5" />
               {profile?.role === 'admin' ? "Admin Menu" : "Můj profil"}
@@ -67,7 +67,7 @@ const MobileMenu = ({
                 <Link
                   to={profile?.account_type === 'company' ? "/company-account/orders" : "/account/orders"}
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  className="flex items-center gap-2 rounded-2xl px-4 py-3 text-base font-semibold hover:bg-lime focus-visible:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
                 >
                   <Package className="w-5 h-5" />
                   Moje objednávky
@@ -75,7 +75,7 @@ const MobileMenu = ({
                 <Link
                   to={profile?.account_type === 'company' ? "/company-account/subscriptions" : "/account/subscriptions"}
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-foreground"
+                  className="flex items-center gap-2 rounded-2xl px-4 py-3 text-base font-semibold hover:bg-lime focus-visible:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
                 >
                   <CreditCard className="w-5 h-5" />
                   Moje předplatné
@@ -87,7 +87,7 @@ const MobileMenu = ({
           <Link
             to="/login"
             onClick={() => setIsMenuOpen(false)}
-            className="flex items-center gap-2 text-lg font-medium py-2 border-b border-border/50 text-primary"
+            className="flex items-center gap-2 rounded-2xl px-4 py-3 text-base font-semibold hover:bg-lime focus-visible:bg-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-primary"
           >
             <User className="w-5 h-5" />
             Přihlásit se
@@ -108,18 +108,18 @@ const MobileMenu = ({
             }
             setIsMenuOpen(false);
           }}
-          className="flex items-center gap-2 text-lg font-medium py-2 text-primary"
+          className="mt-2 flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-base font-bold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
         >
           <ShoppingCart className="w-5 h-5" />
           {cartCount === 0 ? "Nakoupit" : `Košík (${cartCount})`}
         </button>
       </nav>
 
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/50">
+      <div className="flex items-center justify-between pt-4 border-t border-border/60">
         <div className="flex gap-4">
-          <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 bg-secondary rounded-full transform hover:scale-110 transition-transform"><Instagram className="w-5 h-5" /></a>
-          <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 bg-secondary rounded-full transform hover:scale-110 transition-transform"><Facebook className="w-5 h-5" /></a>
-          <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2 bg-secondary rounded-full transform hover:scale-110 transition-transform"><Linkedin className="w-5 h-5" /></a>
+          <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 bg-secondary rounded-full hover:bg-lime transition-colors"><Instagram className="w-5 h-5" /></a>
+          <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 bg-secondary rounded-full hover:bg-lime transition-colors"><Facebook className="w-5 h-5" /></a>
+          <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2 bg-secondary rounded-full hover:bg-lime transition-colors"><Linkedin className="w-5 h-5" /></a>
         </div>
         
         {user && (
@@ -130,7 +130,7 @@ const MobileMenu = ({
               setIsMenuOpen(false);
               window.location.href = "/logout";
             }}
-            className="flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 px-4 py-2 bg-red-50 rounded-full"
+            className="flex items-center gap-2 text-sm font-bold text-terracotta hover:bg-terracotta hover:text-white px-4 py-2 border border-terracotta/30 rounded-full transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Odhlásit se

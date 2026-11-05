@@ -5,6 +5,7 @@ import { lazy, Suspense } from "react";
 
 const MissionSection = lazy(() => import("@/components/MissionSection"));
 const ProductSection = lazy(() => import("@/components/ProductSection"));
+const FormulaRevealSection = lazy(() => import("@/components/FormulaRevealSection"));
 
 const ConceptSection = lazy(() => import("@/components/ConceptSection"));
 const CTASection = lazy(() => import("@/components/CTASection"));
@@ -29,6 +30,10 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
+
+        <Suspense fallback={<div className="h-[900px] bg-olive/10 animate-pulse" />}>
+          <FormulaRevealSection />
+        </Suspense>
         
         <div id="mise">
           <Suspense fallback={<div className="h-[600px] bg-secondary/5 animate-pulse rounded-3xl" />}>

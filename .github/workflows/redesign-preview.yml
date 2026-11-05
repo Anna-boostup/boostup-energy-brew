@@ -1,0 +1,72 @@
+name: "🎨 Redesign Preview"
+
+on:
+  # Runs for the existing redesign PR and for every later update of that PR.
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+  # Lets an administrator run it again manually from GitHub Actions.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: redesign-preview-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # Never deploy another pull request by accident.
+    if: github.ref_name == 'redesign' || github.event.pull_request.head.ref == 'redesign'
+    name: Create isolated redesign preview
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Check out the redesign code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies and Vercel
+        run: |
+          npm ci
+          npm install --global vercel@latest
+
+      - name: Get preview environment settings
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ env.VERCEL_ORG_ID }}
+
+      # This review URL is visual-only. Hobby plans reject both the scheduled
+      # production tasks and the project's larger serverless API set. Remove
+      # them only from the runner copy; repository and production stay intact.
+      - name: Exclude backend-only features from this isolated preview
+        run: |
+          mv api .api-preview-excluded
+          node -e "const fs = require('fs'); const file = 'vercel.json'; const config = JSON.parse(fs.readFileSync(file, 'utf8')); delete config.crons; delete config.functions; fs.writeFileSync(file, JSON.stringify(config, null, 2) + '\\n');"
+
+      - name: Build isolated preview
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ env.VERCEL_ORG_ID }}
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Deploy without changing any domain
+        id: deploy
+        run: |
+          set -o pipefail
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ env.VERCEL_ORG_ID }} | tail -n 1)
+          echo "url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "### Redesign preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "[$DEPLOYMENT_URL]($DEPLOYMENT_URL)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Show preview link
+        run: |
+          echo "Redesign preview: ${{ steps.deploy.outputs.url }}"
