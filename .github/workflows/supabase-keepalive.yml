@@ -1,0 +1,54 @@
+# Supabase Keep-Alive
+#
+# Free tier Supabase pozastaví projekt po ~7 dnech bez API aktivity.
+# Tento workflow 2× denně pošle lehký REST dotaz na produkční i preview
+# projekt, takže se počítají jako aktivní a nikdy neusnou.
+#
+# Dotaz čte 1 řádek z `app_settings` (tabulka s anonymním čtením — používá ji
+# oznamovací banner), takže se prokazatelně dotkne databáze přes API gateway.
+#
+# Pozor: `schedule` běží jen z default větve (main). Selhání workflow pošle
+# GitHub e-mailem vlastníkovi repa — to je zároveň alert, že je něco špatně.
+
+name: 🫀 Supabase Keep-Alive
+
+on:
+  schedule:
+    # 2× denně, mimo celou hodinu (GH Actions mají ve špičce zpoždění)
+    - cron: '17 5,17 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping production Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/app_settings?select=key&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "production: HTTP $code"
+          if [ "$code" != "200" ] && [ "$code" != "206" ]; then
+            echo "::error::Produkční Supabase odpověděla HTTP $code (čekáno 200)"
+            exit 1
+          fi
+
+      - name: Ping preview Supabase
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_PREVIEW }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_PREVIEW }}
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/app_settings?select=key&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "preview: HTTP $code"
+          if [ "$code" != "200" ] && [ "$code" != "206" ]; then
+            echo "::error::Preview Supabase odpověděla HTTP $code (čekáno 200)"
+            exit 1
+          fi
